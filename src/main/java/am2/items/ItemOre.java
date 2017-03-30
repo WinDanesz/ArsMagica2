@@ -45,6 +45,6 @@ public class ItemOre extends ItemArsMagica {
 	
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return "item.arsmagica2:ore." + names[MathHelper.clamp_int(stack.getItemDamage(), 0, names.length - 1)];
+		return "item.arsmagica2:ore." + names[MathHelper.clamp(stack.getItemDamage(), 0, names.length - 1)];
 	}
 }

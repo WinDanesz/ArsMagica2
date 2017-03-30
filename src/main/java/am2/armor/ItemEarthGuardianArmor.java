@@ -45,7 +45,6 @@ public class ItemEarthGuardianArmor extends AMArmor{
 		return 16;
 	}
 
-	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
 		par3List.add(ItemDefs.earthArmorEnchanted.copy());

@@ -174,7 +174,7 @@ public class ItemSpellStaff extends ItemArsMagica{
 						List<PowerTypes> types = ((IPowerNode<?>)te).getValidPowerTypes();
 						for (PowerTypes type : types){
 							float power = PowerNodeRegistry.For(world).getPower((IPowerNode<?>)te, type);
-							player.addChatMessage(
+							player.sendMessage(
 									new TextComponentString(String.format(I18n.translateToLocal("am2.tooltip.det_eth"),
 											type.getChatColor(), type.name(), String.format("%.2f", power))));
 						}
@@ -252,7 +252,7 @@ public class ItemSpellStaff extends ItemArsMagica{
 			if (isMagiTechStaff()) return;
 			ItemStack spell = getSpellStack(stack);
 			if (spell != null){
-				if (SpellUtils.applyStackStageOnUsing(spell, player, player, player.posX, player.posY, player.posZ, player.worldObj, false, true, count - 1) == SpellCastResult.SUCCESS)
+				if (SpellUtils.applyStackStageOnUsing(spell, player, player, player.posX, player.posY, player.posZ, player.world, false, true, count - 1) == SpellCastResult.SUCCESS)
 					consumeStaffCharge(stack, (EntityPlayer)player);
 			}
 		}
@@ -282,7 +282,7 @@ public class ItemSpellStaff extends ItemArsMagica{
 		staffStack.getTagCompound().setFloat(NBT_CHARGE, chargeRemaining);
 
 		if (chargeRemaining <= 0){
-			if (!caster.worldObj.isRemote){
+			if (!caster.world.isRemote){
 				if (caster.getActiveItemStack() != null) {
 					caster.getActiveItemStack().damageItem(9001, caster);
 				}

@@ -29,11 +29,11 @@ public class ItemMagicBroom extends ItemArsMagica{
 					EntityBroom broom = new EntityBroom(world);
 					broom.setPosition(player.posX, player.posY, player.posZ);
 					broom.setChestLocation(new AMVector3(mop.getBlockPos()));
-					world.spawnEntityInWorld(broom);
+					world.spawnEntity(broom);
 
-					stack.stackSize--;
+					stack.shrink(1);
 
-					if (stack.stackSize == 0){
+					if (stack.getCount() == 0){
 						player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
 					}
 					return EnumActionResult.SUCCESS;

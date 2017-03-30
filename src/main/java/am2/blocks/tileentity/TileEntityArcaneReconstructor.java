@@ -86,33 +86,33 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 	@Override
 	public void update(){
 		if (isFirstTick) {
-			outerRingRotationSpeeds = new AMVector3(worldObj.rand.nextDouble() * 4 - 2, worldObj.rand.nextDouble() * 4 - 2, worldObj.rand.nextDouble() * 4 - 2);
-			middleRingRotationSpeeds = new AMVector3(worldObj.rand.nextDouble() * 4 - 2, worldObj.rand.nextDouble() * 4 - 2, worldObj.rand.nextDouble() * 4 - 2);
-			innerRingRotationSpeeds = new AMVector3(worldObj.rand.nextDouble() * 4 - 2, worldObj.rand.nextDouble() * 4 - 2, worldObj.rand.nextDouble() * 4 - 2);
+			outerRingRotationSpeeds = new AMVector3(world.rand.nextDouble() * 4 - 2, world.rand.nextDouble() * 4 - 2, world.rand.nextDouble() * 4 - 2);
+			middleRingRotationSpeeds = new AMVector3(world.rand.nextDouble() * 4 - 2, world.rand.nextDouble() * 4 - 2, world.rand.nextDouble() * 4 - 2);
+			innerRingRotationSpeeds = new AMVector3(world.rand.nextDouble() * 4 - 2, world.rand.nextDouble() * 4 - 2, world.rand.nextDouble() * 4 - 2);
 			isFirstTick = false;
 		}
 
-		if (PowerNodeRegistry.For(this.worldObj).checkPower(this, this.getRepairCost())) {// has enough power
+		if (PowerNodeRegistry.For(this.world).checkPower(this, this.getRepairCost())) {// has enough power
 			if ((repairCounter++ % getRepairRate() == 0) && (!queueRepairableItem())) {// has ticked and already has item queued
 				if (performRepair()){// something to repair
-					if (!worldObj.isRemote){
-						PowerNodeRegistry.For(this.worldObj).consumePower(this, PowerNodeRegistry.For(worldObj).getHighestPowerType(this), this.getRepairCost());
+					if (!world.isRemote){
+						PowerNodeRegistry.For(this.world).consumePower(this, PowerNodeRegistry.For(world).getHighestPowerType(this), this.getRepairCost());
 					}
 				}
 			}
 			deactivationDelayTicks = 0;
-		} else if (!worldObj.isRemote && active){// out of power, on server and active
+		} else if (!world.isRemote && active){// out of power, on server and active
 			if (deactivationDelayTicks++ > 100) {// 5 seconds
 				deactivationDelayTicks = 0;
 				this.active = false;
-				if (!worldObj.isRemote)
-					worldObj.markAndNotifyBlock(pos, worldObj.getChunkFromBlockCoords(pos), worldObj.getBlockState(pos), worldObj.getBlockState(pos), 2);
+				if (!world.isRemote)
+					world.markAndNotifyBlock(pos, world.getChunkFromBlockCoords(pos), world.getBlockState(pos), world.getBlockState(pos), 2);
 			}
 		}
-		if (worldObj.isRemote){
+		if (world.isRemote){
 			updateRotations();
 			if (shouldRenderItemStack()){
-				AMParticle p = (AMParticle)ArsMagica2.proxy.particleManager.spawn(worldObj, "sparkle2", pos.getX() + 0.2 + (worldObj.rand.nextDouble() * 0.6), pos.getY() + 0.4, pos.getZ() + 0.2 + (worldObj.rand.nextDouble() * 0.6));
+				AMParticle p = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "sparkle2", pos.getX() + 0.2 + (world.rand.nextDouble() * 0.6), pos.getY() + 0.4, pos.getZ() + 0.2 + (world.rand.nextDouble() * 0.6));
 				if (p != null){
 					p.AddParticleController(new ParticleFloatUpward(p, 0.0f, 0.02f, 1, false));
 					p.setIgnoreMaxAge(true);
@@ -239,8 +239,8 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 		if (inventory[SLOT_ACTIVE] != null) {
 			if (!active) {
 				this.active = true;
-				if (!worldObj.isRemote)
-					worldObj.markAndNotifyBlock(pos, worldObj.getChunkFromBlockCoords(pos), worldObj.getBlockState(pos), worldObj.getBlockState(pos), 2);
+				if (!world.isRemote)
+					world.markAndNotifyBlock(pos, world.getChunkFromBlockCoords(pos), world.getBlockState(pos), world.getBlockState(pos), 2);
 			}
 			return false;
 		}
@@ -249,14 +249,14 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 				inventory[SLOT_ACTIVE] = inventory[i].copy();
 				inventory[i] = null;
 				this.active = true;
-				if (!worldObj.isRemote)
-					worldObj.markAndNotifyBlock(pos, worldObj.getChunkFromBlockCoords(pos), worldObj.getBlockState(pos), worldObj.getBlockState(pos), 2);
+				if (!world.isRemote)
+					world.markAndNotifyBlock(pos, world.getChunkFromBlockCoords(pos), world.getBlockState(pos), world.getBlockState(pos), 2);
 				return true;
 			}
 		}
 		this.active = false;
-		if (!worldObj.isRemote)
-			worldObj.markAndNotifyBlock(pos, worldObj.getChunkFromBlockCoords(pos), worldObj.getBlockState(pos), worldObj.getBlockState(pos), 2);
+		if (!world.isRemote)
+			world.markAndNotifyBlock(pos, world.getChunkFromBlockCoords(pos), world.getBlockState(pos), world.getBlockState(pos), 2);
 		return true;
 	}
 
@@ -266,7 +266,7 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 
 	private EntityLiving getDummyEntity(){
 		if (dummyEntity == null)
-			dummyEntity = new EntityDummyCaster(this.worldObj);
+			dummyEntity = new EntityDummyCaster(this.world);
 		return dummyEntity;
 	}
 
@@ -279,14 +279,14 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 		}
 
 		if (inventory[SLOT_ACTIVE].isItemDamaged()){
-			if (!worldObj.isRemote)
+			if (!world.isRemote)
 				inventory[SLOT_ACTIVE].damageItem(-1, getDummyEntity());
 			return true;
 		}else{
 			boolean did_copy = false;
 			for (int i = 10; i < 16; ++i){
 				if (inventory[i] == null){
-					if (!worldObj.isRemote){
+					if (!world.isRemote){
 						inventory[i] = inventory[SLOT_ACTIVE].copy();
 						inventory[SLOT_ACTIVE] = null;
 					}
@@ -294,7 +294,7 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 					break;
 				}
 			}
-			worldObj.playSound(pos.getX(), pos.getY(), pos.getZ(), AMSounds.RECONSTRUCTOR_COMPLETE, SoundCategory.BLOCKS, 1.0f, 1.0f, true);
+			world.playSound(pos.getX(), pos.getY(), pos.getZ(), AMSounds.RECONSTRUCTOR_COMPLETE, SoundCategory.BLOCKS, 1.0f, 1.0f, true);
 
 			return did_copy;
 		}
@@ -316,13 +316,13 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 	@Override
 	public ItemStack decrStackSize(int i, int j){
 		if (inventory[i] != null){
-			if (inventory[i].stackSize <= j){
+			if (inventory[i].getCount() <= j){
 				ItemStack itemstack = inventory[i];
 				inventory[i] = null;
 				return itemstack;
 			}
 			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].stackSize == 0){
+			if (inventory[i].getCount() == 0){
 				inventory[i] = null;
 			}
 			return itemstack1;
@@ -345,8 +345,8 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
 		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()){
-			itemstack.stackSize = getInventoryStackLimit();
+		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
+			itemstack.setCount(getInventoryStackLimit());
 		}
 	}
 
@@ -358,11 +358,6 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 	@Override
 	public int getInventoryStackLimit(){
 		return 1;
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer){
-		return entityplayer.getDistanceSqToCenter(pos) <= 64D;
 	}
 
 	@Override
@@ -383,7 +378,7 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
 			byte byte0 = nbttagcompound1.getByte(tag);
 			if (byte0 >= 0 && byte0 < inventory.length){
-				inventory[byte0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+				inventory[byte0] = new ItemStack(nbttagcompound1);
 			}
 		}
 		active = nbttagcompound.getBoolean("ArcaneReconstructorActive");
@@ -504,31 +499,50 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 
 	@Override
 	public ITextComponent getDisplayName() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public int getField(int id) {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
 	@Override
 	public void setField(int id, int value) {
-		// TODO Auto-generated method stub
+
 		
 	}
 
 	@Override
 	public int getFieldCount() {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
+
 		
+	}
+
+	@Override
+	public boolean isEmpty() {
+		for (ItemStack itemstack : this.inventory)
+        {
+            if (!itemstack.isEmpty())
+            {
+                return false;
+            }
+        }
+
+        return true;
+	}
+
+	@Override
+	public boolean isUsableByPlayer(EntityPlayer player) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

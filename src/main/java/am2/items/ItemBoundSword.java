@@ -28,7 +28,7 @@ public class ItemBoundSword extends ItemSword implements IBoundItem {
 		copiedStack.setItem(ItemDefs.spell);
 		int hurtResist = target.hurtResistantTime;
 		target.hurtResistantTime = 0;
-		SpellUtils.applyStackStage(copiedStack, attacker, target, target.posX, target.posY, target.posZ, null, attacker.worldObj, true, true, 0);
+		SpellUtils.applyStackStage(copiedStack, attacker, target, target.posX, target.posY, target.posZ, null, attacker.world, true, true, 0);
 		target.hurtResistantTime = hurtResist;
 		return true;
 	}

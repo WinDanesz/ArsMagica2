@@ -265,7 +265,7 @@ public class GuiArmorImbuer extends GuiContainer{
 		drawTexturedModalRect(l, i1, 0, 0, xSize, ySize);
 
 		if (hoverLines.size() > 0)
-			AMGuiHelper.drawHoveringText(hoverLines, i, j, fontRendererObj, width, height);
+			AMGuiHelper.drawHoveringText(hoverLines, i, j, fontRenderer, width, height);
 	}
 
 	private void drawInfusionIconAt(int x, int y, boolean active){

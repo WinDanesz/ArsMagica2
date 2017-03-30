@@ -296,16 +296,16 @@ public class ClientProxy extends CommonProxy {
 	public boolean setMouseDWheel(int dwheel){
 		if (dwheel == 0) return false;
 
-		ItemStack stack = Minecraft.getMinecraft().thePlayer.getHeldItemMainhand();
+		ItemStack stack = Minecraft.getMinecraft().player.getHeldItemMainhand();
 		if (stack == null) return false;
 
 		boolean store = checkForTKMove(stack);
 		if (!store && stack.getItem() instanceof ItemSpellBook){
-			store = Minecraft.getMinecraft().thePlayer.isSneaking();
+			store = Minecraft.getMinecraft().player.isSneaking();
 		}
 
 		if (store){
-			clientTickHandler.setDWheel(dwheel / 120, Minecraft.getMinecraft().thePlayer.inventory.currentItem, Minecraft.getMinecraft().thePlayer.isHandActive());
+			clientTickHandler.setDWheel(dwheel / 120, Minecraft.getMinecraft().player.inventory.currentItem, Minecraft.getMinecraft().player.isHandActive());
 			return true;
 		}else{
 			clientTickHandler.setDWheel(0, -1, false);
@@ -319,7 +319,7 @@ public class ClientProxy extends CommonProxy {
 			if (activeStack != null)
 				stack = activeStack;
 		}
-		if (stack.getItem() instanceof ItemSpellBase && stack.hasTagCompound() && Minecraft.getMinecraft().thePlayer.isHandActive()){
+		if (stack.getItem() instanceof ItemSpellBase && stack.hasTagCompound() && Minecraft.getMinecraft().player.isHandActive()){
 			for (SpellComponent component : SpellUtils.getComponentsForStage(stack, -1)){
 				if (component instanceof Telekinesis){
 					return true;
@@ -333,12 +333,12 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void drawPowerOnBlockHighlight(EntityPlayer player, RayTraceResult target, float partialTicks){
 		
-		if (Minecraft.getMinecraft().thePlayer.getItemStackFromSlot(EntityEquipmentSlot.HEAD) != null &&
-				(Minecraft.getMinecraft().thePlayer.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemDefs.magitechGoggles)
-					|| ArmorHelper.isInfusionPreset(Minecraft.getMinecraft().thePlayer.getItemStackFromSlot(EntityEquipmentSlot.HEAD), GenericImbuement.magitechGoggleIntegration)){
+		if (Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD) != null &&
+				(Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemDefs.magitechGoggles)
+					|| ArmorHelper.isInfusionPreset(Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD), GenericImbuement.magitechGoggleIntegration)){
 			if (target.getBlockPos() == null)
 				return;
-			TileEntity te = player.worldObj.getTileEntity(target.getBlockPos());
+			TileEntity te = player.world.getTileEntity(target.getBlockPos());
 			if (te != null && te instanceof IPowerNode){
 				ArsMagica2.proxy.setTrackedLocation(new AMVector3(target.getBlockPos()));
 			}else{
@@ -347,7 +347,7 @@ public class ClientProxy extends CommonProxy {
 
 			if (ArsMagica2.proxy.hasTrackedLocationSynced()){
 				PowerNodeEntry data = ArsMagica2.proxy.getTrackedData();
-				Block block = player.worldObj.getBlockState(target.getBlockPos()).getBlock();
+				Block block = player.world.getBlockState(target.getBlockPos()).getBlock();
 				float yOff = 0.5f;
 				if (data != null){
 					GlStateManager.pushAttrib();
@@ -362,14 +362,14 @@ public class ClientProxy extends CommonProxy {
 						if (target.getBlockPos().getY() <= player.posY + player.getEyeHeight()){
 							RenderUtils.drawTextInWorldAtOffset(String.format("%s%.2f (%.2f%%)", type.getChatColor(), pwr, pct),
 									target.getBlockPos().getX() - (player.prevPosX - (player.prevPosX - player.posX) * partialTicks) + 0.5f - offset.x,
-									target.getBlockPos().getY() + yOff - (player.prevPosY - (player.prevPosY - player.posY) * partialTicks) + block.getBoundingBox(player.worldObj.getBlockState(target.getBlockPos()), player.worldObj, target.getBlockPos()).maxY * 0.8f,
+									target.getBlockPos().getY() + yOff - (player.prevPosY - (player.prevPosY - player.posY) * partialTicks) + block.getBoundingBox(player.world.getBlockState(target.getBlockPos()), player.world, target.getBlockPos()).maxY * 0.8f,
 									target.getBlockPos().getZ() - (player.prevPosZ - (player.prevPosZ - player.posZ) * partialTicks) + 0.5f - offset.z,
 									0xFFFFFF);
 							yOff += 0.12f;
 						}else{
 							RenderUtils.drawTextInWorldAtOffset(String.format("%s%.2f (%.2f%%)", type.getChatColor(), pwr, pct),
 									target.getBlockPos().getX() - (player.prevPosX - (player.prevPosX - player.posX) * partialTicks) + 0.5f - offset.x,
-									target.getBlockPos().getY() - yOff - (player.prevPosY - (player.prevPosY - player.posY) * partialTicks) - block.getBoundingBox(player.worldObj.getBlockState(target.getBlockPos()), player.worldObj, target.getBlockPos()).maxY * 0.2f,
+									target.getBlockPos().getY() - yOff - (player.prevPosY - (player.prevPosY - player.posY) * partialTicks) - block.getBoundingBox(player.world.getBlockState(target.getBlockPos()), player.world, target.getBlockPos()).maxY * 0.2f,
 									target.getBlockPos().getZ() - (player.prevPosZ - (player.prevPosZ - player.posZ) * partialTicks) + 0.5f - offset.z,
 									0xFFFFFF);
 							yOff -= 0.12f;
@@ -404,7 +404,7 @@ public class ClientProxy extends CommonProxy {
 	
 	@Override
 	public EntityPlayer getLocalPlayer() {
-		return Minecraft.getMinecraft().thePlayer;
+		return Minecraft.getMinecraft().player;
 	}
 	
 	@Override

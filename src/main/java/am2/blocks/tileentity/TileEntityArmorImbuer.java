@@ -94,13 +94,13 @@ public class TileEntityArmorImbuer extends TileEntityAMPower implements IInvento
 	@Override
 	public ItemStack decrStackSize(int i, int j){
 		if (inventory[i] != null){
-			if (inventory[i].stackSize <= j){
+			if (inventory[i].getCount() <= j){
 				ItemStack itemstack = inventory[i];
 				inventory[i] = null;
 				return itemstack;
 			}
 			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].stackSize == 0){
+			if (inventory[i].getCount() == 0){
 				inventory[i] = null;
 			}
 			return itemstack1;
@@ -123,8 +123,8 @@ public class TileEntityArmorImbuer extends TileEntityAMPower implements IInvento
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
 		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()){
-			itemstack.stackSize = getInventoryStackLimit();
+		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
+			itemstack.setCount(getInventoryStackLimit());
 		}
 	}
 
@@ -137,10 +137,10 @@ public class TileEntityArmorImbuer extends TileEntityAMPower implements IInvento
 	public int getInventoryStackLimit(){
 		return 64;
 	}
-
+	
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer){
-		if (worldObj.getTileEntity(pos) != this){
+	public boolean isUsableByPlayer(EntityPlayer entityplayer){
+		if (world.getTileEntity(pos) != this){
 			return false;
 		}
 
@@ -170,7 +170,7 @@ public class TileEntityArmorImbuer extends TileEntityAMPower implements IInvento
 			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
 			byte byte0 = nbttagcompound1.getByte(tag);
 			if (byte0 >= 0 && byte0 < inventory.length){
-				inventory[byte0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+				inventory[byte0] = new ItemStack(nbttagcompound1);
 			}
 		}
 	}
@@ -239,4 +239,16 @@ public class TileEntityArmorImbuer extends TileEntityAMPower implements IInvento
 	public void clear() {
 	}
 
+	@Override
+	public boolean isEmpty() {
+		for (ItemStack itemstack : this.inventory)
+        {
+            if (!itemstack.isEmpty())
+            {
+                return false;
+            }
+        }
+
+        return true;
+	}
 }

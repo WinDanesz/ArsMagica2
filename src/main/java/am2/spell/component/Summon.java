@@ -21,7 +21,6 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.SkeletonType;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -29,6 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.translation.I18n;
@@ -51,14 +51,11 @@ public class Summon extends SpellComponent{
 		if (entity == null){
 			return null;
 		}
-		if (entity instanceof EntitySkeleton){
-			((EntitySkeleton)entity).setSkeletonType(SkeletonType.NORMAL);
-			((EntitySkeleton)entity).setHeldItem(EnumHand.MAIN_HAND, new ItemStack(Items.BOW));
-		}else if (entity instanceof EntityHorse && caster instanceof EntityPlayer){
+		if (entity instanceof EntityHorse && caster instanceof EntityPlayer){
 			((EntityHorse)entity).setTamedBy(((EntityPlayer)caster));
 		}
 		entity.setPosition(x, y, z);
-		world.spawnEntityInWorld(entity);
+		world.spawnEntity(entity);
 		if (caster instanceof EntityPlayer){
 			EntityUtils.makeSummon_PlayerFaction((EntityCreature)entity, (EntityPlayer)caster, false);
 		}else{
@@ -103,7 +100,7 @@ public class Summon extends SpellComponent{
 		String s = SpellUtils.getSpellMetadata(stack, "SummonType");
 		if (s == null || s == "")
 			s = "Skeleton"; //default!  default!  default!
-		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.NAME_TO_CLASS.get(s);
+		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.getClass();
 		return clazz;
 	}
 
@@ -115,7 +112,7 @@ public class Summon extends SpellComponent{
 	public void setSummonType(NBTTagCompound stack, Class<? extends Entity> clazz){
 		clazz = checkForSpecialSpawns(stack, clazz);
 
-		String s = (String)EntityList.CLASS_TO_NAME.get(clazz);
+		String s = (String)EntityList.getTranslationName(EntityList.getKey(clazz));
 		if (s == null)
 			s = "";
 
@@ -145,7 +142,7 @@ public class Summon extends SpellComponent{
 				}
 			}else{
 				if (caster instanceof EntityPlayer){
-					((EntityPlayer)caster).addChatMessage(new TextComponentString(I18n.translateToLocal("am2.tooltip.noMoreSummons")));
+					((EntityPlayer)caster).sendMessage(new TextComponentString(I18n.translateToLocal("am2.tooltip.noMoreSummons")));
 				}
 			}
 		}
@@ -166,7 +163,7 @@ public class Summon extends SpellComponent{
 				}
 			}else{
 				if (caster instanceof EntityPlayer){
-					((EntityPlayer)caster).addChatComponentMessage(new TextComponentString(I18n.translateToLocal("am2.tooltip.noMoreSummons")));
+					((EntityPlayer)caster).sendMessage(new TextComponentString(I18n.translateToLocal("am2.tooltip.noMoreSummons")));
 				}
 			}
 		}

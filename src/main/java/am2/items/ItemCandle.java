@@ -60,7 +60,7 @@ public class ItemCandle extends ItemArsMagica{
 		if (!worldIn.isRemote){
 
 			if (stack.hasTagCompound() && stack.getTagCompound().hasKey("search_block")){
-				playerIn.addChatMessage(new TextComponentString(I18n.translateToLocal("am2.tooltip.candlecantplace")));
+				playerIn.sendMessage(new TextComponentString(I18n.translateToLocal("am2.tooltip.candlecantplace")));
 				return EnumActionResult.PASS;
 			}
 
@@ -101,7 +101,7 @@ public class ItemCandle extends ItemArsMagica{
 //		if (!world.isRemote){
 //
 //			if (stack.hasTagCompound() && stack.getTagCompound().hasKey("search_block")){
-//				player.addChatMessage(new ChatComponentText(I18n.translateToLocal("am2.tooltip.candlecantplace")));
+//				player.sendMessage(new ChatComponentText(I18n.translateToLocal("am2.tooltip.candlecantplace")));
 //				return false;
 //			}
 //

@@ -34,7 +34,7 @@ public class ItemAirSled extends ItemArsMagica{
 		if (!world.isRemote){
 			EntityAirSled sled = new EntityAirSled(world);
 			sled.setPosition(pos.getX() + hitX, pos.getY() + hitY + 0.5, pos.getZ() + hitZ);
-			world.spawnEntityInWorld(sled);
+			world.spawnEntity(sled);
 			player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
 			return EnumActionResult.PASS;
 		}

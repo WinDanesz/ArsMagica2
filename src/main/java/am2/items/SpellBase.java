@@ -112,7 +112,7 @@ public class SpellBase extends ItemSpellBase{
 	public void onUsingTick(ItemStack stack, EntityLivingBase caster, int count) {
 		SpellShape shape = SpellUtils.getShapeForStage(stack, 0);
 		if (shape.isChanneled())
-			SpellUtils.applyStackStage(stack, caster, null, caster.posX, caster.posY, caster.posZ, EnumFacing.UP, caster.worldObj, true, true, count - 1);
+			SpellUtils.applyStackStage(stack, caster, null, caster.posX, caster.posY, caster.posZ, EnumFacing.UP, caster.world, true, true, count - 1);
 		super.onUsingTick(stack, caster, count);
 	}
 	
@@ -176,7 +176,7 @@ public class SpellBase extends ItemSpellBase{
 
 	@Override
 	public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
-	    player.worldObj.destroyBlock(pos, player.canHarvestBlock(player.worldObj.getBlockState(pos)));
+	    player.world.destroyBlock(pos, player.canHarvestBlock(player.world.getBlockState(pos)));
 	    return true;
 	}
 

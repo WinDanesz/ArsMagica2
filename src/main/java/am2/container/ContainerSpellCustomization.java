@@ -33,7 +33,7 @@ public class ContainerSpellCustomization extends Container{
 		((Slot)this.inventorySlots.get(0)).getStack().setItemDamage(this.iconIndex);
 		((Slot)this.inventorySlots.get(0)).getStack().setStackDisplayName("\247b" + this.name);
 
-		if (inventoryPlayer.player.worldObj.isRemote){
+		if (inventoryPlayer.player.world.isRemote){
 			sendPacketToServer();
 		}
 	}

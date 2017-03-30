@@ -45,7 +45,7 @@ public class ContainerInscriptionTable extends Container{
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer){
-		return table.isUseableByPlayer(entityplayer);
+		return table.isUsableByPlayer(entityplayer);
 	}
 
 	@Override
@@ -80,13 +80,13 @@ public class ContainerInscriptionTable extends Container{
 				return null;
 			}
 
-			if (itemstack1.stackSize == 0){
+			if (itemstack1.getCount() == 0){
 				slot.putStack(null);
 			}else{
 				slot.onSlotChanged();
 			}
 
-			if (itemstack1.stackSize != itemstack.stackSize){
+			if (itemstack1.getCount() != itemstack.getCount()){
 				slot.onSlotChange(itemstack1, itemstack);
 			}else{
 				return null;
@@ -101,12 +101,12 @@ public class ContainerInscriptionTable extends Container{
 			if (bookSlot.getHasStack()) return false;
 
 			ItemStack newStack = stack.copy();
-			newStack.stackSize = 1;
+			newStack.setCount(1);
 			bookSlot.putStack(newStack);
 			bookSlot.onSlotChanged();
 
-			stack.stackSize--;
-			if (stack.stackSize == 0){
+			stack.shrink(1);
+			if (stack.getCount() == 0){
 				slot.putStack(null);
 				slot.onSlotChanged();
 			}

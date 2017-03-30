@@ -31,10 +31,10 @@ public class ItemHellCowHorn extends ItemArsMagica{
 			double dz = player.posZ - entity.posZ;
 			float angle = (float) Math.atan2(dz, dx);
 			((EntityLivingBase)entity).addVelocity(-Math.cos(angle) * 3, 0.4f, -Math.sin(angle) * 3);
-			//entity.attackEntityFrom(DamageSource.generic, 7);
+			//entity.attackEntityFrom(DamageSource.GENERIC, 7);
 */			
-			/*if (player.worldObj.rand.nextInt(10) < 3) 
-				SoundHelper.instance.playSoundAtEntity(player.worldObj, player, player.worldObj.rand.nextBoolean() ? "mob.moo.neutral" : "mob.moo.death", 1.0f);*/
+			/*if (player.world.rand.nextInt(10) < 3) 
+				SoundHelper.instance.playSoundAtEntity(player.world, player, player.world.rand.nextBoolean() ? "mob.moo.neutral" : "mob.moo.death", 1.0f);*/
 		}
 		return false;
 	}

@@ -42,7 +42,7 @@ public class ContainerAstralBarrier extends AM2Container{
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer){
-		return barrier.isUseableByPlayer(entityplayer);
+		return barrier.isUsableByPlayer(entityplayer);
 	}
 
 
@@ -78,13 +78,13 @@ public class ContainerAstralBarrier extends AM2Container{
 				return null;
 			}
 
-			if (itemstack1.stackSize == 0){
+			if (itemstack1.getCount() == 0){
 				slot.putStack(null);
 			}else{
 				slot.onSlotChanged();
 			}
 
-			if (itemstack1.stackSize != itemstack.stackSize){
+			if (itemstack1.getCount() != itemstack.getCount()){
 				slot.onSlotChange(itemstack1, itemstack);
 			}else{
 				return null;
@@ -99,8 +99,8 @@ public class ContainerAstralBarrier extends AM2Container{
 			if (!focusSlot.getHasStack()){
 				focusSlot.putStack(new ItemStack(stack.getItem(), 1, stack.getItemDamage()));
 				focusSlot.onSlotChanged();
-				stack.stackSize--;
-				if (stack.stackSize == 0){
+				stack.shrink(1);
+				if (stack.getCount() == 0){
 					slot.putStack(null);
 					slot.onSlotChanged();
 				}

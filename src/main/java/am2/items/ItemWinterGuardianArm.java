@@ -53,12 +53,12 @@ public class ItemWinterGuardianArm extends ItemArsMagica{
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity){
 		if (entity instanceof EntityLivingBase){
 			((EntityLivingBase)entity).addPotionEffect(new BuffEffectFrostSlowed(60, 3));
-			if (player.worldObj.isRemote){
+			if (player.world.isRemote){
 				for (int i = 0; i < 5; ++i){
-					AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(player.worldObj, "snowflakes", entity.posX + 0.5, entity.posY + 0.5, entity.posZ + 0.5);
+					AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(player.world, "snowflakes", entity.posX + 0.5, entity.posY + 0.5, entity.posZ + 0.5);
 					if (particle != null){
 						particle.addRandomOffset(1, 0.5, 1);
-						particle.addVelocity(player.worldObj.rand.nextDouble() * 0.2 - 0.1, 0.3, player.worldObj.rand.nextDouble() * 0.2 - 0.1);
+						particle.addVelocity(player.world.rand.nextDouble() * 0.2 - 0.1, 0.3, player.world.rand.nextDouble() * 0.2 - 0.1);
 						particle.setAffectedByGravity();
 						particle.setDontRequireControllers();
 						particle.setMaxAge(10);
@@ -88,7 +88,7 @@ public class ItemWinterGuardianArm extends ItemArsMagica{
 			EntityWinterGuardianArm projectile = new EntityWinterGuardianArm(world, player, 1.25f);
 			projectile.setThrowingEntity(player);
 			projectile.setProjectileSpeed(2.0);
-			world.spawnEntityInWorld(projectile);
+			world.spawnEntity(projectile);
 		}
 		EntityExtension.For(player).deductMana(250f);
 		return true;

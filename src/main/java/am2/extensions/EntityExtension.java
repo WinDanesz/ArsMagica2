@@ -369,8 +369,8 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 		return null;
 	}
 	
-	public static EntityExtension For(EntityLivingBase thePlayer) {
-		return (EntityExtension) thePlayer.getCapability(INSTANCE, null);
+	public static EntityExtension For(EntityLivingBase player) {
+		return (EntityExtension) player.getCapability(INSTANCE, null);
 	}
 	
 	@Override
@@ -398,7 +398,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 
 	@Override
 	public boolean addSummon(EntityCreature entityliving) {
-		if (!entity.worldObj.isRemote){
+		if (!entity.world.isRemote){
 			summon_ent_ids.add(entityliving.getEntityId());
 			setCurrentSummons(getCurrentSummons() + 1);
 		}
@@ -417,7 +417,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 	private void verifySummons(){
 		for (int i = 0; i < summon_ent_ids.size(); ++i){
 			int id = summon_ent_ids.get(i);
-			Entity e = entity.worldObj.getEntityByID(id);
+			Entity e = entity.world.getEntityByID(id);
 			if (e == null || !(e instanceof EntityLivingBase)){
 				summon_ent_ids.remove(i);
 				i--;
@@ -431,7 +431,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 		if (getCurrentSummons() == 0){
 			return false;
 		}
-		if (!entity.worldObj.isRemote){
+		if (!entity.world.isRemote){
 			setCurrentSummons(getCurrentSummons() - 1);
 		}
 		return true;
@@ -444,7 +444,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 			this.manaLinks.add(mle);
 		else
 			this.manaLinks.remove(mle);
-		if (!this.entity.worldObj.isRemote)
+		if (!this.entity.world.isRemote)
 			AMNetHandler.INSTANCE.sendPacketToAllClientsNear(entity.dimension, entity.posX, entity.posY, entity.posZ, 32, AMPacketIDs.MANA_LINK_UPDATE, getManaLinkUpdate());
 
 	}
@@ -455,7 +455,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 		this.setCurrentMana(getCurrentMana() - manaCost);
 		if (leftOver > 0){
 			for (ManaLinkEntry entry : this.manaLinks){
-				leftOver -= entry.deductMana(entity.worldObj, entity, leftOver);
+				leftOver -= entry.deductMana(entity.world, entity, leftOver);
 				if (leftOver <= 0)
 					break;
 			}
@@ -467,7 +467,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 		Iterator<ManaLinkEntry> it = this.manaLinks.iterator();
 		while (it.hasNext()){
 			ManaLinkEntry entry = it.next();
-			Entity e = this.entity.worldObj.getEntityByID(entry.entityID);
+			Entity e = this.entity.world.getEntityByID(entry.entityID);
 			if (e == null)
 				it.remove();
 		}
@@ -477,7 +477,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 	public float getBonusCurrentMana(){
 		float bonus = 0;
 		for (ManaLinkEntry entry : this.manaLinks){
-			bonus += entry.getAdditionalCurrentMana(entity.worldObj, entity);
+			bonus += entry.getAdditionalCurrentMana(entity.world, entity);
 		}
 		return bonus;
 	}
@@ -486,7 +486,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 	public float getBonusMaxMana(){
 		float bonus = 0;
 		for (ManaLinkEntry entry : this.manaLinks){
-			bonus += entry.getAdditionalMaxMana(entity.worldObj, entity);
+			bonus += entry.getAdditionalMaxMana(entity.world, entity);
 		}
 		return bonus;
 	}
@@ -502,11 +502,11 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 	
 	@Override
 	public void spawnManaLinkParticles(){
-		if (entity.worldObj != null && entity.worldObj.isRemote){
+		if (entity.world != null && entity.world.isRemote){
 			for (ManaLinkEntry entry : this.manaLinks){
-				Entity e = entity.worldObj.getEntityByID(entry.entityID);
+				Entity e = entity.world.getEntityByID(entry.entityID);
 				if (e != null && e.getDistanceSqToEntity(entity) < entry.range && e.ticksExisted % 90 == 0){
-					AMLineArc arc = (AMLineArc)ArsMagica2.proxy.particleManager.spawn(entity.worldObj, "textures/blocks/oreblockbluetopaz.png", e, entity);
+					AMLineArc arc = (AMLineArc)ArsMagica2.proxy.particleManager.spawn(entity.world, "textures/blocks/oreblockbluetopaz.png", e, entity);
 					if (arc != null){
 						arc.setIgnoreAge(false);
 						arc.setRBGColorF(0.17f, 0.88f, 0.88f);
@@ -673,7 +673,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 
 					int numArmorPieces = 0;
 					for (int i = 0; i < 4; ++i) {
-						ItemStack stack = player.inventory.armorInventory[i];
+						ItemStack stack = player.inventory.armorInventory.get(i);
 						if (ImbuementRegistry.instance.isImbuementPresent(stack, GenericImbuement.manaRegen))
 							numArmorPieces++;
 					}
@@ -708,7 +708,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 			if (entity instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) entity;
 				for (int i = 0; i < 4; ++i) {
-					ItemStack stack = player.inventory.armorInventory[i];
+					ItemStack stack = player.inventory.armorInventory.get(i);
 					if (stack == null) continue;
 					if (ImbuementRegistry.instance.isImbuementPresent(stack, GenericImbuement.burnoutReduction))
 						numArmorPieces++;
@@ -737,7 +737,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 		this.manaLinks.clear();
 		int numLinks = rdr.getInt();
 		for (int i = 0; i < numLinks; ++i){
-			Entity e = entity.worldObj.getEntityByID(rdr.getInt());
+			Entity e = entity.world.getEntityByID(rdr.getInt());
 			if (e != null && e instanceof EntityLivingBase)
 				updateManaLink((EntityLivingBase)e);
 		}
@@ -781,7 +781,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 		//this.setInverted(true);
 		boolean flipped = getIsFlipped();
 
-		ItemStack boots = ((EntityPlayer)entity).inventory.armorInventory[0];
+		ItemStack boots = ((EntityPlayer)entity).inventory.armorInventory.get(0);
 		if (boots == null || boots.getItem() != ItemDefs.enderBoots)
 			setInverted(false);
 

@@ -45,7 +45,6 @@ public class BlockWitchwoodLog extends BlockLog{
 		return 0;
 	}
 
-	@Override
 	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
 		par3List.add(new ItemStack(this));
 	}
@@ -62,7 +61,7 @@ public class BlockWitchwoodLog extends BlockLog{
 	
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(LOG_AXIS, EnumAxis.values()[MathHelper.clamp_int(meta, 0, 3)]);
+		return getDefaultState().withProperty(LOG_AXIS, EnumAxis.values()[MathHelper.clamp(meta, 0, 3)]);
 	}
 	
 	public BlockWitchwoodLog registerAndName(ResourceLocation rl) {

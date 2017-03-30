@@ -99,7 +99,7 @@ public class ItemNatureGuardianSickle extends ItemArsMagica{
 			projectile.setThrowingEntity(player);
 			projectile.setProjectileSpeed(2.0);
 			//projectile.setInMotion(1.25);
-			world.spawnEntityInWorld(projectile);
+			world.spawnEntity(projectile);
 			EntityExtension.For(player).deductMana(250f);
 		}
 		return true;
