@@ -51,7 +51,7 @@ public class ItemFireGuardianEars extends AMArmor{
 		return "arsmagica2:textures/mobs/bosses/fire_guardian.png";
 	}
 
-	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
+	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, NonNullList<ItemStack> par3List){
 		par3List.add(ItemDefs.fireEarsEnchanted.copy());
 	}
 

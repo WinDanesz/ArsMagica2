@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
@@ -23,7 +24,8 @@ import net.minecraft.world.World;
 public class ItemInfinityOrb extends ItemArsMagica {
 	
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
+		ItemStack itemStackIn = playerIn.getHeldItem(hand);
 		SkillPoint point = SkillPointRegistry.getPointForTier(itemStackIn.getItemDamage());
 		if (point == null)
 			playerIn.sendMessage(new TextComponentString("Broken Item : Please use a trash bin."));
@@ -68,7 +70,7 @@ public class ItemInfinityOrb extends ItemArsMagica {
 	}
 	
 	@Override
-	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		subItems.add(new ItemStack(itemIn, 1, 0));
 		subItems.add(new ItemStack(itemIn, 1, 1));
 		subItems.add(new ItemStack(itemIn, 1, 2));

@@ -20,7 +20,8 @@ public class ItemMagicBroom extends ItemArsMagica{
 	}
 
 	@Override
-	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand){
+	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand){
+		ItemStack stack = player.getHeldItem(hand);
 		if (!world.isRemote){
 			RayTraceResult mop = this.rayTrace(world, player, true);
 			if (mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK){

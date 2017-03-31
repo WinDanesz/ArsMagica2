@@ -73,10 +73,11 @@ public class ItemSpellBook extends ItemArsMagica{
 	}
 	
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
+		ItemStack itemStackIn = playerIn.getHeldItem(hand);
 		if (playerIn.isSneaking()){
 			FMLNetworkHandler.openGui(playerIn, ArsMagica2.instance, IDDefs.GUI_SPELL_BOOK, worldIn, (int)playerIn.posX, (int)playerIn.posY, (int)playerIn.posZ);
-			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
+			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn );
 		}
 
 		playerIn.setActiveHand(hand);
@@ -307,7 +308,7 @@ public class ItemSpellBook extends ItemArsMagica{
 	}
 
 	@Override
-	public boolean isItemTool(ItemStack par1ItemStack){
+	public boolean isFull3D(){
 		return true;
 	}
 

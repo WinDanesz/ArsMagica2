@@ -152,8 +152,7 @@ public class ItemSpellStaff extends ItemArsMagica{
 	}
 	
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
+	public EnumActionResult onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
 		if (isMagiTechStaff()){
 			return EnumActionResult.SUCCESS;
 		}
@@ -162,8 +161,7 @@ public class ItemSpellStaff extends ItemArsMagica{
 	}
 	
 	@Override
-	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
-			EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand){
+	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand){
 		if (isMagiTechStaff()){
 			if (!world.isRemote){
 				TileEntity te = world.getTileEntity(pos);
@@ -231,12 +229,13 @@ public class ItemSpellStaff extends ItemArsMagica{
 		if (!staffStack.hasTagCompound() || !staffStack.getTagCompound().hasKey(NBT_SPELL))
 			return null;
 		ItemStack stack = new ItemStack(ItemDefs.spell);
-		stack.readFromNBT(staffStack.getTagCompound().getCompoundTag(NBT_SPELL));
+		//stack.readFromNBT(staffStack.getTagCompound().getCompoundTag(NBT_SPELL));
 		return stack;
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer, EnumHand hand){
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer entityplayer, EnumHand hand){
+		ItemStack itemstack = entityplayer.getHeldItem(hand);
 		if (isMagiTechStaff())
 			return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
 

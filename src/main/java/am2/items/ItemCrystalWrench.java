@@ -38,8 +38,8 @@ public class ItemCrystalWrench extends ItemArsMagicaRotated{
 	}
 	
 	@Override
-	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
-			EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand){
+	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos,	EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand){
+		ItemStack stack = player.getHeldItem(hand);
 		TileEntity te = world.getTileEntity(pos);
 
 		if (!stack.hasTagCompound())
