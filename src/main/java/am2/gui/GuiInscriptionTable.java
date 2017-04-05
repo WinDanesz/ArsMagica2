@@ -8,6 +8,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import am2.LogHelper;
 import am2.api.ArsMagicaAPI;
 import am2.api.SkillRegistry;
 import am2.api.SpellRegistry;
@@ -104,7 +105,7 @@ public class GuiInscriptionTable extends GuiContainer{
 
 	@Override
 	public boolean doesGuiPauseGame(){
-		return false;
+		return true;
 	}
 
 	@Override
