@@ -54,6 +54,7 @@ public class PlayerTracker{
 		if (hasAA(event.player)){
 			AMNetHandler.INSTANCE.requestClientAuras((EntityPlayerMP)event.player);
 		}
+		System.out.println("UUID: " + event.player.getUniqueID());
 		
 		ArsMagica2.disabledSkills.getDisabledSkills(true);
 		int[] disabledSkills = ArsMagica2.disabledSkills.getDisabledSkillIDs();
@@ -176,19 +177,21 @@ public class PlayerTracker{
 	
 	private ArrayList<String> addContributors(ArrayList<String> lines){
 		//Growlith
-		lines.add("95ca1edb-b0d6-46a8-825d-2299763f03f0, :AL,3, :CL,http://i.imgur.com/QBCa5O0.png,6,growlith1223");
+		lines.add("95ca1edb-b0d6-46a8-825d-2299763f03f0,:AL,3,:CL,http://i.imgur.com/QBCa5O0.png,6,growlith1223");
 		//JJT
-		lines.add("6b93546d-100a-403d-b352-f2bf75fd3b0c, :AL,3 :CL,http://i.imgur.com/QBCa5O0.png,6,jjtparadox");
+		lines.add("6b93546d-100a-403d-b352-f2bf75fd3b0c,:AL,3,:CL,http://i.imgur.com/QBCa5O0.png,6,jjtparadox");
+		//Testing
+		lines.add("a08eaa4a-e3df-416d-9ced-d6d4fcd0e88b,:AL,3,:CL,http://i.imgur.com/QBCa5O0.png,6,The_Icy_One");
 		return lines;
 	}
 
 	private void populateAALList(){
-
+		System.out.println("Registering Cloaks.");
 		aals = new TreeMap<String, Integer>();
 		clls = new TreeMap<String, String>();
 		cldm = new TreeMap<String, Integer>();
 
-		String dls = "http://qorconcept.com/mc/AREW0152.txt";
+		String dls = "https://qorconcept.com/mc/AREW0152.txt";
 		char[] dl = dls.toCharArray();
 		
 		
@@ -196,9 +199,9 @@ public class PlayerTracker{
 			String s = WebRequestUtils.sendPost(new String(dl), new HashMap<String, String>());
 			@SuppressWarnings("unchecked")
 			ArrayList<String> lines = new ArrayList<String>(Arrays.asList(s.replace("\r\n", "\n").split("\n")));
-			addContributors(lines);
+			lines = (addContributors(lines));
 			for (String line : lines){
-				
+				System.out.println(line);
 				String[] split = line.split(",");
 				for (int i = 1; i < split.length; ++i){
 					if (split[i].equals(":AL")){
@@ -219,6 +222,7 @@ public class PlayerTracker{
 			}
 		}catch (Throwable t){
 			//well, we tried.
+			System.out.println("Cloak initialization failed.");
 		}
 	}
 
