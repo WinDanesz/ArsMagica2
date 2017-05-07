@@ -50,7 +50,7 @@ public class ItemSpellBook extends ItemArsMagica{
 	@Override
 	public String getItemStackDisplayName(ItemStack par1ItemStack){
 		ItemStack activeSpell = GetActiveItemStack(par1ItemStack);
-		if (activeSpell != null){
+		if (activeSpell != ItemStack.EMPTY){
 			return String.format("\2477%s (" + activeSpell.getDisplayName() + "\2477)", I18n.translateToLocal("item.arsmagica2:spellbook.name"));
 		}
 		return I18n.translateToLocal("item.arsmagica2:spellbook.name");
@@ -238,6 +238,8 @@ public class ItemSpellBook extends ItemArsMagica{
 		NBTTagList list = itemStack.getTagCompound().getTagList("spell_book_inventory", Constants.NBT.TAG_COMPOUND);
 		for (int i = 0; i < list.tagCount(); ++i){
 			NBTTagCompound spell = (NBTTagCompound)list.getCompoundTagAt(i);
+			if (spell.getTag("data") == null) continue;
+			if (spell == null) continue;
 			int meta = spell.getInteger("meta");
 			NBTTagCompound tag = spell.getCompoundTag("data");
 			int index = spell.getInteger("index");

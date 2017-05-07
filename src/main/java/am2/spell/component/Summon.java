@@ -92,22 +92,23 @@ public class Summon extends SpellComponent{
 
 	public void setSummonType(NBTTagCompound stack, ItemStack phylacteryStack){
 		if (phylacteryStack.getItemDamage() == ItemCrystalPhylactery.META_FULL && phylacteryStack.getItem() instanceof ItemCrystalPhylactery){
-			setSummonType(stack, ItemDefs.crystalPhylactery.getSpawnClass(phylacteryStack));
+			setSummonType(stack, EntityList.getClassFromID(ItemDefs.crystalPhylactery.getSpawnClass(phylacteryStack)));
 		}
 	}
 
 	public Class<? extends Entity> getSummonType(ItemStack stack){
-		String s = SpellUtils.getSpellMetadata(stack, "SummonType");
-		if (s == null || s == "")
-			s = "Skeleton"; //default!  default!  default!
-		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.getClass();
+		String str = SpellUtils.getSpellMetadata(stack, "SummonType");
+		Integer s = Integer.parseInt(str);
+		if (s == null || s == 0)
+			return EntitySkeleton.class; //default!  default!  default!
+		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.getClassFromID(s);
 		return clazz;
 	}
 
-	public void setSummonType(NBTTagCompound stack, String s){
+/*	public void setSummonType(NBTTagCompound stack, String s){
 		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.NAME_TO_CLASS.get(s);
 		setSummonType(stack, clazz);
-	}
+	}*/
 
 	public void setSummonType(NBTTagCompound stack, Class<? extends Entity> clazz){
 		clazz = checkForSpecialSpawns(stack, clazz);

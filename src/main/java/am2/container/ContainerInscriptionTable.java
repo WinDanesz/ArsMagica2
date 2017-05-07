@@ -7,6 +7,7 @@ import am2.api.spell.AbstractSpellPart;
 import am2.api.spell.SpellModifier;
 import am2.api.spell.SpellModifiers;
 import am2.blocks.tileentity.TileEntityInscriptionTable;
+import am2.container.slot.AM2Container;
 import am2.container.slot.SlotInscriptionTable;
 import am2.spell.SpellValidator;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +18,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemWritableBook;
 
-public class ContainerInscriptionTable extends Container{
+public class ContainerInscriptionTable extends AM2Container{
 
 	private final TileEntityInscriptionTable table;
 	private final InventoryPlayer inventoryPlayer;

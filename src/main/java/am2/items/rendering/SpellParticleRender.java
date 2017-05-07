@@ -112,7 +112,7 @@ public class SpellParticleRender extends ItemOverrideList{
 		if (item.getItem() instanceof ItemSpellBase){
 			scrollStack = item;
 		}else if (item.getItem() instanceof ItemSpellBook){
-			scrollStack = ((ItemSpellBook)item.getItem()).getActiveScrollInventory(item)[((ItemSpellBook)item.getItem()).GetActiveSlot(item)];
+			scrollStack = ((ItemSpellBook)item.getItem()).getActiveScrollInventory(item).get(((ItemSpellBook)item.getItem()).GetActiveSlot(item));
 		}
 
 

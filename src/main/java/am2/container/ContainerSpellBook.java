@@ -9,6 +9,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 public class ContainerSpellBook extends AM2Container{
@@ -62,10 +63,10 @@ public class ContainerSpellBook extends AM2Container{
 		return itemStack;
 	}
 
-	public ItemStack[] GetFullInventory(){
-		ItemStack[] stack = new ItemStack[40];
+	public NonNullList<ItemStack> GetFullInventory(){
+		NonNullList<ItemStack> stack = NonNullList.<ItemStack>withSize(40, ItemStack.EMPTY);
 		for (int i = 0; i < 40; ++i){
-			stack[i] = ((Slot)inventorySlots.get(i)).getStack();
+			stack.set(i, ((Slot)inventorySlots.get(i)).getStack());
 		}
 		return stack;
 	}
@@ -77,7 +78,7 @@ public class ContainerSpellBook extends AM2Container{
 		if (!world.isRemote){
 			ItemStack spellBookItemStack = bookStack;
 			ItemSpellBook spellBook = (ItemSpellBook)spellBookItemStack.getItem();
-			ItemStack[] items = GetFullInventory();
+			NonNullList<ItemStack> items = GetFullInventory();
 			spellBook.UpdateStackTagCompound(spellBookItemStack, items);
 			entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, spellBookItemStack);
 		}

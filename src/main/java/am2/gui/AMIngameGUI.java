@@ -43,6 +43,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -141,7 +142,7 @@ public class AMIngameGUI extends Gui {
 		this.zLevel = -5;
 		drawTexturedModalRect_Classic(spellUI_x, spellUI_y, 0, 0, 106, 15, spellUI_width, spellUI_height);
 
-		ItemStack[] activeScrolls = ((ItemSpellBook)bookStack.getItem()).getActiveScrollInventory(bookStack);
+		NonNullList<ItemStack> activeScrolls = ((ItemSpellBook)bookStack.getItem()).getActiveScrollInventory(bookStack);
 
 		Minecraft.getMinecraft().getTextureMapBlocks();
 		mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -149,7 +150,7 @@ public class AMIngameGUI extends Gui {
 		this.zLevel = 0;
 		for (int n = 0; n < 8; ++n){
 			float IIconX = spellUI_x + 1.5f + n * 12.9f;
-			ItemStack stackItem = activeScrolls[n];
+			ItemStack stackItem = activeScrolls.get(n);
 			if (stackItem == null){
 				continue;
 			}

@@ -42,6 +42,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -56,7 +57,7 @@ import java.util.*;
 
 public class TileEntityInscriptionTable extends TileEntity implements IInventory, ITickable, ITileEntityAMBase {
 
-	private ItemStack inscriptionTableItemStacks[];
+	private NonNullList<ItemStack> inscriptionTableItemStacks = NonNullList.<ItemStack>withSize(1, ItemStack.EMPTY);
 	private final ArrayList<AbstractSpellPart> currentRecipe;
 	private final ArrayList<ArrayList<AbstractSpellPart>> shapeGroups;
 	private int numStageGroups = 2;
@@ -77,7 +78,7 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 	private static final byte RESET_NAME = 0x4;
 
 	public TileEntityInscriptionTable(){
-		inscriptionTableItemStacks = new ItemStack[getSizeInventory()];
+		inscriptionTableItemStacks = NonNullList.<ItemStack>withSize(1, ItemStack.EMPTY);
 		currentPlayerUsing = null;
 		currentSpellName = "";
 		currentRecipe = new ArrayList<AbstractSpellPart>();
@@ -102,20 +103,20 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 
 	@Override
 	public ItemStack getStackInSlot(int i){
-		return inscriptionTableItemStacks[i];
+		return inscriptionTableItemStacks.get(i);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j){
-		if (inscriptionTableItemStacks[i] != ItemStack.EMPTY){
-			if (inscriptionTableItemStacks[i].getCount() <= j){
-				ItemStack itemstack = inscriptionTableItemStacks[i];
-				inscriptionTableItemStacks[i] = ItemStack.EMPTY;
+		if (inscriptionTableItemStacks.get(i) != ItemStack.EMPTY){
+			if (inscriptionTableItemStacks.get(i).getCount() <= j){
+				ItemStack itemstack = inscriptionTableItemStacks.get(i);
+				inscriptionTableItemStacks.set(i, ItemStack.EMPTY);
 				return itemstack;
 			}
-			ItemStack itemstack1 = inscriptionTableItemStacks[i].splitStack(j);
-			if (inscriptionTableItemStacks[i].getCount() == 0){
-				inscriptionTableItemStacks[i] = ItemStack.EMPTY;
+			ItemStack itemstack1 = inscriptionTableItemStacks.get(i).splitStack(j);
+			if (inscriptionTableItemStacks.get(i).getCount() == 0){
+				inscriptionTableItemStacks.set(i, ItemStack.EMPTY);
 			}
 			return itemstack1;
 		}else{
@@ -125,7 +126,7 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inscriptionTableItemStacks[i] = itemstack;
+		inscriptionTableItemStacks.set(i, itemstack);
 		if (itemstack != ItemStack.EMPTY && itemstack.getCount() > getInventoryStackLimit()){
 			itemstack.setCount(getInventoryStackLimit());
 		}
@@ -307,9 +308,9 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 
 	@Override
 	public ItemStack removeStackFromSlot(int i){
-		if (inscriptionTableItemStacks[i] != ItemStack.EMPTY){
-			ItemStack itemstack = inscriptionTableItemStacks[i];
-			inscriptionTableItemStacks[i] = ItemStack.EMPTY;
+		if (inscriptionTableItemStacks.get(i) != ItemStack.EMPTY){
+			ItemStack itemstack = inscriptionTableItemStacks.get(i);
+			inscriptionTableItemStacks.set(i, ItemStack.EMPTY);
 			return itemstack;
 		}else{
 			return null;
@@ -325,13 +326,13 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 
 	private void parseTagCompound(NBTTagCompound par1NBTTagCompound){
 		NBTTagList nbttaglist = par1NBTTagCompound.getTagList("InscriptionTableInventory", Constants.NBT.TAG_COMPOUND);
-		inscriptionTableItemStacks = new ItemStack[getSizeInventory()];
+		inscriptionTableItemStacks = NonNullList.<ItemStack>withSize(1, ItemStack.EMPTY);
 		for (int i = 0; i < nbttaglist.tagCount(); i++){
 			String tag = String.format("ArrayIndex", i);
 			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
 			byte byte0 = nbttagcompound1.getByte(tag);
-			if (byte0 >= 0 && byte0 < inscriptionTableItemStacks.length){
-				inscriptionTableItemStacks[byte0] = new ItemStack(nbttagcompound1);
+			if (byte0 >= 0 && byte0 < inscriptionTableItemStacks.size()){
+				inscriptionTableItemStacks.set(byte0, new ItemStack(nbttagcompound1));
 			}
 		}
 		shapeGroups.clear();
@@ -358,12 +359,12 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 	public NBTTagCompound writeToNBT(NBTTagCompound par1NBTTagCompound){
 		super.writeToNBT(par1NBTTagCompound);
 		NBTTagList nbttaglist = new NBTTagList();
-		for (int i = 0; i < inscriptionTableItemStacks.length; i++){
-			if (inscriptionTableItemStacks[i] != null){
+		for (int i = 0; i < inscriptionTableItemStacks.size(); i++){
+			if (inscriptionTableItemStacks.get(i) != null){
 				String tag = String.format("ArrayIndex", i);
 				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
 				nbttagcompound1.setByte(tag, (byte)i);
-				inscriptionTableItemStacks[i].writeToNBT(nbttagcompound1);
+				inscriptionTableItemStacks.get(i).writeToNBT(nbttagcompound1);
 				nbttaglist.appendTag(nbttagcompound1);
 			}
 		}
