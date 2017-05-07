@@ -30,6 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
@@ -51,13 +52,12 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 	@SideOnly(Side.CLIENT)
 	AMParticle radiant;
 
-	private ItemStack[] inventory;
+	private NonNullList<ItemStack> inventory = NonNullList.<ItemStack>withSize(16, ItemStack.EMPTY);
 
 	private ItemStack[] deconstructionRecipe;
 
 	public TileEntityArcaneDeconstructor(){
 		super(500);
-		inventory = new ItemStack[getSizeInventory()];
 	}
 
 	@Override
@@ -87,11 +87,14 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 			}
 		}else{
 			if (!isActive()){
-				if (inventory[0] != null){
+				if (inventory.get(0) != ItemStack.EMPTY){
 					current_deconstruction_time = 1;
 				}
 			}else{
-				if (inventory[0] == null){
+				System.out.println("This is silly.");
+				System.out.println(inventory.size());
+				System.out.println(inventory.get(0) == null);
+				if (inventory.get(0).isEmpty()){
 					current_deconstruction_time = 0;
 					deconstructionRecipe = null;
 					this.markDirty();
@@ -100,8 +103,8 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 					if (PowerNodeRegistry.For(world).checkPower(this, PowerTypes.DARK, DECONSTRUCTION_POWER_COST)){
 						if (deconstructionRecipe == null){
 							if (!getDeconstructionRecipe()){
-								transferOrEjectItem(inventory[0]);
-								setInventorySlotContents(0, null);
+								transferOrEjectItem(inventory.get(0));
+								setInventorySlotContents(0, ItemStack.EMPTY);
 							}
 						}else{
 							if (current_deconstruction_time++ >= DECONSTRUCTION_TIME){
@@ -128,7 +131,7 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 	private boolean getDeconstructionRecipe(){
 		ItemStack checkStack = getStackInSlot(0);
 		ArrayList<ItemStack> recipeItems = new ArrayList<ItemStack>();
-		if (checkStack == null)
+		if (checkStack.isEmpty())
 			return false;
 		if (checkStack.getItem()== ItemDefs.spell){
 			int numStages = SpellUtils.numStages(checkStack);
@@ -139,7 +142,7 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 				if (componentParts != null){
 					for (Object o : componentParts){
 						ItemStack stack = objectToItemStack(o);
-						if (stack != null){
+						if (stack != ItemStack.EMPTY){
 							if (stack.getItem() == ItemDefs.bindingCatalyst){
 								stack.setItemDamage(((Binding)ArsMagicaAPI.getSpellRegistry().getObject(new ResourceLocation("arsmagica2", "binding"))).getBindingType(checkStack));
 							}
@@ -153,7 +156,7 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 					if (componentParts != null){
 						for (Object o : componentParts){
 							ItemStack stack = objectToItemStack(o);
-							if (stack != null){
+							if (!stack.isEmpty()){
 								if (stack.getItem() == ItemDefs.crystalPhylactery){
 									ItemDefs.crystalPhylactery.setSpawnClass(stack,((Summon)ArsMagicaAPI.getSpellRegistry().getObject(new ResourceLocation("arsmagica2", "summon"))).getSummonType(checkStack));
 									ItemDefs.crystalPhylactery.addFill(stack, 100);
@@ -169,7 +172,7 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 					if (componentParts != null){
 						for (Object o : componentParts){
 							ItemStack stack = objectToItemStack(o);
-							if (stack != null)
+							if (!stack.isEmpty())
 								recipeItems.add(stack.copy());
 						}
 					}
@@ -186,7 +189,7 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 					if (componentParts != null){
 						for (Object o : componentParts){
 							ItemStack stack = objectToItemStack(o);
-							if (stack != null){
+							if (!stack.isEmpty()){
 								if (stack.getItem() == ItemDefs.bindingCatalyst){
 									stack.setItemDamage(((Binding)ArsMagicaAPI.getSpellRegistry().getObject(new ResourceLocation("arsmagica2", "binding"))).getBindingType(checkStack));
 								}
@@ -204,13 +207,13 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 			if (recipe == null)
 				return false;
 			Object[] recipeParts = RecipeUtils.getRecipeItems(recipe);
-			if (recipeParts != null && checkStack != null && recipe.getRecipeOutput() != null){
+			if (recipeParts != null && !checkStack.isEmpty() && recipe.getRecipeOutput() != null){
 				if (recipe.getRecipeOutput().getItem() == checkStack.getItem() && recipe.getRecipeOutput().getItemDamage() == checkStack.getItemDamage() && recipe.getRecipeOutput().getCount() > 1)
 					return false;
 
 				for (Object o : recipeParts){
 					ItemStack stack = objectToItemStack(o);
-					if (stack != null && !stack.getItem().hasContainerItem(stack)){
+					if (!stack.isEmpty() && !stack.getItem().hasContainerItem(stack)){
 						stack.setCount(1);
 						recipeItems.add(stack.copy());
 					}
@@ -221,9 +224,9 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	private ItemStack objectToItemStack(Object o){
-		ItemStack output = null;
+		ItemStack output = ItemStack.EMPTY;
 		if (o instanceof ItemStack)
 			output = (ItemStack)o;
 		else if (o instanceof Item)
@@ -233,7 +236,7 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 		else if (o instanceof List)
 			output = objectToItemStack(((List) o).get(0));
 
-		if (output != null){
+		if (!output.isEmpty()){
 			if (output.getCount() == 0)
 				output.setCount(1);
 		}
@@ -279,45 +282,45 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 
 	@Override
 	public ItemStack getStackInSlot(int var1){
-		if (var1 >= inventory.length){
-			return null;
+		if (var1 >= inventory.size()){
+			return ItemStack.EMPTY;
 		}
-		return inventory[var1];
+		return inventory.get(var1);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j){
-		if (inventory[i] != null){
-			if (inventory[i].getCount() <= j){
-				ItemStack itemstack = inventory[i];
-				inventory[i] = null;
+		if (!inventory.get(i).isEmpty()){
+			if (inventory.get(i).getCount() <= j){
+				ItemStack itemstack = inventory.get(i);
+				inventory.set(i, ItemStack.EMPTY);
 				return itemstack;
 			}
-			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].getCount() == 0){
-				inventory[i] = null;
+			ItemStack itemstack1 = inventory.get(i).splitStack(j);
+			if (inventory.get(i).getCount() == 0){
+				inventory.set(i, ItemStack.EMPTY);
 			}
 			return itemstack1;
 		}else{
-			return null;
+			return ItemStack.EMPTY;
 		}
 	}
 
 	@Override
 	public ItemStack removeStackFromSlot(int i){
-		if (inventory[i] != null){
-			ItemStack itemstack = inventory[i];
-			inventory[i] = null;
+		if (!inventory.get(i).isEmpty()){
+			ItemStack itemstack = inventory.get(i);
+			inventory.set(i, ItemStack.EMPTY);
 			return itemstack;
 		}else{
-			return null;
+			return ItemStack.EMPTY;
 		}
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
+		inventory.set(i, itemstack);
+		if (!itemstack.isEmpty() && itemstack.getCount() > getInventoryStackLimit()){
 			itemstack.setCount(getInventoryStackLimit());
 		}
 	}
@@ -368,9 +371,9 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 	@Override
 	public ItemStack[] getRunesInKey(){
 		return new ItemStack[]{
-				inventory[13],
-				inventory[14],
-				inventory[15]
+				inventory.get(13),
+				inventory.get(14),
+				inventory.get(15)
 		};
 	}
 
@@ -393,13 +396,12 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 	public void readFromNBT(NBTTagCompound nbttagcompound){
 		super.readFromNBT(nbttagcompound);
 		NBTTagList nbttaglist = nbttagcompound.getTagList("DeconstructorInventory", Constants.NBT.TAG_COMPOUND);
-		inventory = new ItemStack[getSizeInventory()];
 		for (int i = 0; i < nbttaglist.tagCount(); i++){
 			String tag = String.format("ArrayIndex", i);
 			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
 			byte byte0 = nbttagcompound1.getByte(tag);
-			if (byte0 >= 0 && byte0 < inventory.length){
-				inventory[byte0] = new ItemStack(nbttagcompound1);
+			if (byte0 >= 0 && byte0 < inventory.size()){
+				inventory.set(byte0, new ItemStack(nbttagcompound1));
 			}
 		}
 
@@ -413,12 +415,12 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound){
 		super.writeToNBT(nbttagcompound);
 		NBTTagList nbttaglist = new NBTTagList();
-		for (int i = 0; i < inventory.length; i++){
-			if (inventory[i] != null){
+		for (int i = 0; i < inventory.size(); i++){
+			if (!inventory.get(i).isEmpty()){
 				String tag = String.format("ArrayIndex", i);
 				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
 				nbttagcompound1.setByte(tag, (byte)i);
-				inventory[i].writeToNBT(nbttagcompound1);
+				inventory.get(i).writeToNBT(nbttagcompound1);
 				nbttaglist.appendTag(nbttagcompound1);
 			}
 		}

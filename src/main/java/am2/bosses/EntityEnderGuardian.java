@@ -146,6 +146,8 @@ public class EntityEnderGuardian extends AM2Boss implements IAnimatedEntity{
 		
 		//Thanks but I'm not reading all the code, just fixing.
 		
+		//I actually am a cheater, but got here by accident.
+		
 		if (par1DamageSource.getSourceOfDamage() instanceof EntityEnderman){
 			((EntityEnderman)par1DamageSource.getSourceOfDamage()).attackEntityFrom(DamageSources.wtfBoom, 5000);
 			this.heal(10);

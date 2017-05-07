@@ -1,16 +1,17 @@
 package am2.container;
 
+import am2.container.slot.AM2Container;
 import am2.container.slot.SlotOneItemClassOnly;
 import am2.items.ItemSpellBase;
 import am2.items.ItemSpellBook;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class ContainerSpellBook extends Container{
+public class ContainerSpellBook extends AM2Container{
 	private ItemStack bookStack;
 	private InventorySpellBook spellBookStack;
 //	private int bookSlot;

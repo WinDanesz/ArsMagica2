@@ -207,8 +207,8 @@ public class TileEntityInertSpawner extends TileEntityAMPower implements ISidedI
 				this.powerConsumed = 0;
 				ItemCrystalPhylactery item = (ItemCrystalPhylactery)this.phylactery.getItem();
 				if (item.isFull(phylactery)){
-					String clazzName = item.getSpawnClass(phylactery);
-					if (clazzName != null){
+					Integer entityID = item.getSpawnClass(phylactery);
+					if (entityID != null){
 						Class<?> clazz = (Class<?>)EntityList.getClassFromID(entityID);
 						if (clazz != null){
 							EntityLiving entity = null;

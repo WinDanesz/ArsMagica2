@@ -107,26 +107,26 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 
 	@Override
 	public ItemStack decrStackSize(int i, int j){
-		if (inscriptionTableItemStacks[i] != null){
+		if (inscriptionTableItemStacks[i] != ItemStack.EMPTY){
 			if (inscriptionTableItemStacks[i].getCount() <= j){
 				ItemStack itemstack = inscriptionTableItemStacks[i];
-				inscriptionTableItemStacks[i] = null;
+				inscriptionTableItemStacks[i] = ItemStack.EMPTY;
 				return itemstack;
 			}
 			ItemStack itemstack1 = inscriptionTableItemStacks[i].splitStack(j);
 			if (inscriptionTableItemStacks[i].getCount() == 0){
-				inscriptionTableItemStacks[i] = null;
+				inscriptionTableItemStacks[i] = ItemStack.EMPTY;
 			}
 			return itemstack1;
 		}else{
-			return null;
+			return ItemStack.EMPTY;
 		}
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
 		inscriptionTableItemStacks[i] = itemstack;
-		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
+		if (itemstack != ItemStack.EMPTY && itemstack.getCount() > getInventoryStackLimit()){
 			itemstack.setCount(getInventoryStackLimit());
 		}
 	}
@@ -307,9 +307,9 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 
 	@Override
 	public ItemStack removeStackFromSlot(int i){
-		if (inscriptionTableItemStacks[i] != null){
+		if (inscriptionTableItemStacks[i] != ItemStack.EMPTY){
 			ItemStack itemstack = inscriptionTableItemStacks[i];
-			inscriptionTableItemStacks[i] = null;
+			inscriptionTableItemStacks[i] = ItemStack.EMPTY;
 			return itemstack;
 		}else{
 			return null;
@@ -743,7 +743,7 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 						materialsList.put(materialkey, qty);
 					}
 
-					if (recipeStack != null)
+					if (recipeStack != ItemStack.EMPTY)
 						componentRecipeList.add(recipeStack);
 				}
 			}

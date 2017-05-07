@@ -1,10 +1,13 @@
 package am2.container.slot;
 
+import am2.ArsMagica2;
 import am2.utils.InventoryUtilities;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IContainerListener;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -205,5 +208,25 @@ public abstract class AM2Container extends Container{
 		for (int j1 = 0; j1 < 9; j1++){
 			addSlotToContainer(new Slot(player.inventory, j1, left + j1 * 18, top));
 		}
+	}
+	
+	@Override
+	public void detectAndSendChanges(){
+		for (int i = 0; i < this.inventorySlots.size(); ++i)
+        {
+            ItemStack itemstack = (((Slot)this.inventorySlots.get(i)).getStack() == null) ? ItemStack.EMPTY :((Slot)this.inventorySlots.get(i)).getStack();
+            ItemStack itemstack1 = (ItemStack)this.inventoryItemStacks.get(i);
+
+            if (!ItemStack.areItemStacksEqual(itemstack1, itemstack))
+            {
+                itemstack1 = itemstack.isEmpty() ? ItemStack.EMPTY : itemstack.copy();
+                this.inventoryItemStacks.set(i, itemstack1);
+
+                for (int j = 0; j < this.listeners.size(); ++j)
+                {
+                    ((IContainerListener)this.listeners.get(j)).sendSlotContents(this, i, itemstack1);
+                }
+            }
+        }
 	}
 }
