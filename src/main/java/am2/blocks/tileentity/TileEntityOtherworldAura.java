@@ -143,7 +143,7 @@ public class TileEntityOtherworldAura extends TileEntityAMPower{
 					}
 
 					ItemStack next = watchTarget.getNextPlannedItem();
-					if (next == null){
+					if (next.isEmpty()){
 						setActive(false, null);
 						return;
 					}

@@ -6,7 +6,6 @@ import am2.items.ItemSpellBase;
 import am2.items.ItemSpellBook;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -93,14 +92,14 @@ public class ContainerSpellBook extends AM2Container{
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int i){
-		ItemStack itemstack = null;
+		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = (Slot)inventorySlots.get(i);
 		if (slot != null && slot.getHasStack()){
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 			if (i < 40){
 				if (!mergeItemStack(itemstack1, 40, 75, true)){
-					return null;
+					return ItemStack.EMPTY;
 				}
 			}else if (i >= 40 && i < 67) //range 27 - player inventory
 			{
@@ -116,14 +115,14 @@ public class ContainerSpellBook extends AM2Container{
 						scrollSlot.onSlotChanged();
 						itemstack1.shrink(1);
 						if (itemstack1.getCount() == 0){
-							slot.putStack(null);
+							slot.putStack(ItemStack.EMPTY);
 							slot.onSlotChanged();
 						}
-						return null;
+						return ItemStack.EMPTY;
 					}
 				}
 				if (!mergeItemStack(itemstack1, 67, 75, false)){
-					return null;
+					return ItemStack.EMPTY;
 				}
 			}else if (i >= 67 && i < 76) //range 9 - player action bar
 			{
@@ -139,27 +138,27 @@ public class ContainerSpellBook extends AM2Container{
 						scrollSlot.onSlotChanged();
 						itemstack1.shrink(1);
 						if (itemstack1.getCount() == 0){
-							slot.putStack(null);
+							slot.putStack(ItemStack.EMPTY);
 							slot.onSlotChanged();
 						}
-						return null;
+						return ItemStack.EMPTY;
 					}
 				}
 				if (!mergeItemStack(itemstack1, 40, 67, false)){
-					return null;
+					return ItemStack.EMPTY;
 				}
 			}else if (!mergeItemStack(itemstack1, 40, 75, false)){
-				return null;
+				return ItemStack.EMPTY;
 			}
 			if (itemstack1.getCount() == 0){
-				slot.putStack(null);
+				slot.putStack(ItemStack.EMPTY);
 			}else{
 				slot.onSlotChanged();
 			}
 			if (itemstack1.getCount() != itemstack.getCount()){
 				slot.onSlotChange(itemstack1, itemstack);
 			}else{
-				return null;
+				return ItemStack.EMPTY;
 			}
 		}
 		return itemstack;

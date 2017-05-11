@@ -7,6 +7,7 @@ import am2.blocks.tileentity.TileEntityArcaneReconstructor;
 import am2.defs.IDDefs;
 import am2.utils.KeystoneUtilities;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,11 +27,17 @@ public class BlockArcaneReconstructor extends BlockAMPowered{
 		setHardness(3.0f);
 		setResistance(3.0f);
 		setBlockBounds(0, 0, 0, 1, 0.52f, 1);
+		setDefaultState(blockState.getBaseState());
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int i){
 		return new TileEntityArcaneReconstructor();
+	}
+	
+	@Override
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this);
 	}
 	
 	@Override
@@ -49,6 +56,8 @@ public class BlockArcaneReconstructor extends BlockAMPowered{
 		}
 		return true;
 	}
+	
+	
 	
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state){

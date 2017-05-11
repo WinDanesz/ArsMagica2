@@ -68,7 +68,7 @@ public class ContainerSpellCustomization extends Container{
 			ItemStack itemstack = slot.getStack();
 			return itemstack;
 		}
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	public String getInitialSuggestedName(){

@@ -28,7 +28,7 @@ import net.minecraftforge.common.util.Constants;
 
 public class TileEntityKeystoneChest extends TileEntityLockableLoot implements IInventory, ITickable, IKeystoneLockable<TileEntityKeystoneChest>{
 
-	private ItemStack[] inventory;
+	private NonNullList<ItemStack> inventory = NonNullList.<ItemStack>withSize(getSizeInventory(), ItemStack.EMPTY);
 	public static final int keystoneSlot = 27;
 	private float prevLidAngle = 0f;
 	private float lidAngle = 0f;
@@ -37,7 +37,7 @@ public class TileEntityKeystoneChest extends TileEntityLockableLoot implements I
 	private static final float lidIncrement = 0.1f;
 
 	public TileEntityKeystoneChest(){
-		inventory = new ItemStack[getSizeInventory()];
+		inventory = NonNullList.<ItemStack>withSize(getSizeInventory(), ItemStack.EMPTY);
 	}
 
 	@Override
@@ -100,22 +100,22 @@ public class TileEntityKeystoneChest extends TileEntityLockableLoot implements I
 
 	@Override
 	public ItemStack getStackInSlot(int slot){
-		if (slot >= inventory.length)
-			return null;
-		return inventory[slot];
+		if (slot >= inventory.size())
+			return ItemStack.EMPTY;
+		return inventory.get(slot);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j){
-		if (inventory[i] != null){
-			if (inventory[i].getCount() <= j){
-				ItemStack itemstack = inventory[i];
-				inventory[i] = null;
+		if (!inventory.get(i).isEmpty()){
+			if (inventory.get(i).getCount() <= j){
+				ItemStack itemstack = inventory.get(i);
+				inventory.set(i, ItemStack.EMPTY);
 				return itemstack;
 			}
-			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].getCount() == 0){
-				inventory[i] = null;
+			ItemStack itemstack1 = inventory.get(i).splitStack(j);
+			if (inventory.get(i).getCount() == 0){
+				inventory.set(i, ItemStack.EMPTY);
 			}
 			return itemstack1;
 		}else{
@@ -125,9 +125,9 @@ public class TileEntityKeystoneChest extends TileEntityLockableLoot implements I
 
 	@Override
 	public ItemStack removeStackFromSlot(int i){
-		if (inventory[i] != null){
-			ItemStack itemstack = inventory[i];
-			inventory[i] = null;
+		if (!inventory.get(i).isEmpty()){
+			ItemStack itemstack = inventory.get(i);
+			inventory.set(i, ItemStack.EMPTY);
 			return itemstack;
 		}else{
 			return null;
@@ -136,8 +136,8 @@ public class TileEntityKeystoneChest extends TileEntityLockableLoot implements I
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
+		inventory.set(i, itemstack);
+		if (!itemstack.isEmpty() && itemstack.getCount() > getInventoryStackLimit()){
 			itemstack.setCount(getInventoryStackLimit());
 		}
 	}
@@ -165,13 +165,13 @@ public class TileEntityKeystoneChest extends TileEntityLockableLoot implements I
 	public void readFromNBT(NBTTagCompound nbttagcompound){
 		super.readFromNBT(nbttagcompound);
 		NBTTagList nbttaglist = nbttagcompound.getTagList("KeystoneChestInventory", Constants.NBT.TAG_COMPOUND);
-		inventory = new ItemStack[getSizeInventory()];
+		inventory = NonNullList.<ItemStack>withSize(getSizeInventory(), ItemStack.EMPTY);;
 		for (int i = 0; i < nbttaglist.tagCount(); i++){
 			String tag = String.format("ArrayIndex", i);
 			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
 			byte byte0 = nbttagcompound1.getByte(tag);
-			if (byte0 >= 0 && byte0 < inventory.length){
-				inventory[byte0] = new ItemStack(nbttagcompound1);
+			if (byte0 >= 0 && byte0 < inventory.size()){
+				inventory.set(byte0, new ItemStack(nbttagcompound1));
 			}
 		}
 		checkLootAndRead(nbttagcompound);
@@ -181,12 +181,12 @@ public class TileEntityKeystoneChest extends TileEntityLockableLoot implements I
 	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound){
 		super.writeToNBT(nbttagcompound);
 		NBTTagList nbttaglist = new NBTTagList();
-		for (int i = 0; i < inventory.length; i++){
-			if (inventory[i] != null){
+		for (int i = 0; i < inventory.size(); i++){
+			if (!inventory.get(i).isEmpty()){
 				String tag = String.format("ArrayIndex", i);
 				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
 				nbttagcompound1.setByte(tag, (byte)i);
-				inventory[i].writeToNBT(nbttagcompound1);
+				inventory.get(i).writeToNBT(nbttagcompound1);
 				nbttaglist.appendTag(nbttagcompound1);
 			}
 		}
@@ -234,9 +234,9 @@ public class TileEntityKeystoneChest extends TileEntityLockableLoot implements I
 	@Override
 	public ItemStack[] getRunesInKey(){
 		ItemStack[] runes = new ItemStack[3];
-		runes[0] = inventory[27];
-		runes[1] = inventory[28];
-		runes[2] = inventory[29];
+		runes[0] = inventory.get(27);
+		runes[1] = inventory.get(28);
+		runes[2] = inventory.get(29);
 		return runes;
 	}
 

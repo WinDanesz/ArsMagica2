@@ -52,7 +52,7 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 	@SideOnly(Side.CLIENT)
 	AMParticle radiant;
 
-	private NonNullList<ItemStack> inventory = NonNullList.<ItemStack>withSize(16, ItemStack.EMPTY);
+	private NonNullList<ItemStack> inventory = NonNullList.<ItemStack>withSize(getSizeInventory(), ItemStack.EMPTY);
 
 	private ItemStack[] deconstructionRecipe;
 
@@ -91,9 +91,6 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
 					current_deconstruction_time = 1;
 				}
 			}else{
-				System.out.println("This is silly.");
-				System.out.println(inventory.size());
-				System.out.println(inventory.get(0) == null);
 				if (inventory.get(0).isEmpty()){
 					current_deconstruction_time = 0;
 					deconstructionRecipe = null;

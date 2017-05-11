@@ -40,6 +40,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -47,7 +48,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
-public class TileEntityKeystoneRecepticle extends TileEntityAMPower implements IInventory, IMultiblockStructureController, IKeystoneLockable<TileEntityKeystoneRecepticle>{
+public class TileEntityKeystoneRecepticle extends TileEntityAMPoweredContainer implements IInventory, IMultiblockStructureController, IKeystoneLockable<TileEntityKeystoneRecepticle>{
 
 	private boolean isActive;
 	private long key;
@@ -58,12 +59,9 @@ public class TileEntityKeystoneRecepticle extends TileEntityAMPower implements I
 
 	public static int keystoneSlot = 0;
 
-	private ItemStack[] inventory;
-
 	public TileEntityKeystoneRecepticle(){
 		super(250000);
 		this.isActive = false;
-		inventory = new ItemStack[getSizeInventory()];
 		initMultiblock();
 	}
 
@@ -337,9 +335,9 @@ public class TileEntityKeystoneRecepticle extends TileEntityAMPower implements I
 	@Override
 	public ItemStack[] getRunesInKey(){
 		ItemStack[] runes = new ItemStack[3];
-		runes[0] = inventory[0];
-		runes[1] = inventory[1];
-		runes[2] = inventory[2];
+		runes[0] = inventory.get(0);
+		runes[1] = inventory.get(1);
+		runes[2] = inventory.get(2);
 		return runes;
 	}
 
@@ -354,23 +352,16 @@ public class TileEntityKeystoneRecepticle extends TileEntityAMPower implements I
 	}
 
 	@Override
-	public ItemStack getStackInSlot(int slot){
-		if (slot >= inventory.length)
-			return null;
-		return inventory[slot];
-	}
-
-	@Override
 	public ItemStack decrStackSize(int i, int j){
-		if (inventory[i] != null){
-			if (inventory[i].getCount() <= j){
-				ItemStack itemstack = inventory[i];
-				inventory[i] = null;
+		if (!inventory.get(i).isEmpty()){
+			if (inventory.get(i).getCount() <= j){
+				ItemStack itemstack = inventory.get(i);
+				inventory.set(i, ItemStack.EMPTY);
 				return itemstack;
 			}
-			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].getCount() == 0){
-				inventory[i] = null;
+			ItemStack itemstack1 = inventory.get(i).splitStack(j);
+			if (inventory.get(i).getCount() == 0){
+				inventory.set(i, ItemStack.EMPTY);
 			}
 			return itemstack1;
 		}else{
@@ -380,9 +371,9 @@ public class TileEntityKeystoneRecepticle extends TileEntityAMPower implements I
 
 	@Override
 	public ItemStack removeStackFromSlot(int i){
-		if (inventory[i] != null){
-			ItemStack itemstack = inventory[i];
-			inventory[i] = null;
+		if (!inventory.get(i).isEmpty()){
+			ItemStack itemstack = inventory.get(i);
+			inventory.set(i, ItemStack.EMPTY);
 			return itemstack;
 		}else{
 			return null;
@@ -391,7 +382,7 @@ public class TileEntityKeystoneRecepticle extends TileEntityAMPower implements I
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inventory[i] = itemstack;
+		inventory.set(i, itemstack);
 		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
 			itemstack.setCount(getInventoryStackLimit());
 		}
@@ -427,13 +418,13 @@ public class TileEntityKeystoneRecepticle extends TileEntityAMPower implements I
 	public void readFromNBT(NBTTagCompound nbttagcompound){
 		super.readFromNBT(nbttagcompound);
 		NBTTagList nbttaglist = nbttagcompound.getTagList("KeystoneRecepticleInventory", Constants.NBT.TAG_COMPOUND);
-		inventory = new ItemStack[getSizeInventory()];
+		inventory = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
 		for (int i = 0; i < nbttaglist.tagCount(); i++){
 			String tag = String.format("ArrayIndex", i);
 			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
 			byte byte0 = nbttagcompound1.getByte(tag);
-			if (byte0 >= 0 && byte0 < inventory.length){
-				inventory[byte0] = new ItemStack(nbttagcompound1);
+			if (byte0 >= 0 && byte0 < inventory.size()){
+				inventory.set(byte0, new ItemStack(nbttagcompound1));
 			}
 		}
 		ArsMagica2.proxy.blocks.registerKeystonePortal(pos, nbttagcompound.getInteger("keystone_receptacle_dimension_id"));
@@ -445,12 +436,12 @@ public class TileEntityKeystoneRecepticle extends TileEntityAMPower implements I
 	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound){
 		super.writeToNBT(nbttagcompound);
 		NBTTagList nbttaglist = new NBTTagList();
-		for (int i = 0; i < inventory.length; i++){
-			if (inventory[i] != null){
+		for (int i = 0; i < inventory.size(); i++){
+			if (!inventory.get(i).isEmpty()){
 				String tag = String.format("ArrayIndex", i);
 				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
 				nbttagcompound1.setByte(tag, (byte)i);
-				inventory[i].writeToNBT(nbttagcompound1);
+				inventory.get(i).writeToNBT(nbttagcompound1);
 				nbttaglist.appendTag(nbttagcompound1);
 			}
 		}
@@ -543,16 +534,19 @@ public class TileEntityKeystoneRecepticle extends TileEntityAMPower implements I
 
 		
 	}
-	
+
 	@Override
-	public boolean isEmpty() {
-		for (ItemStack itemstack : this.inventory)
-        {
-            if (!itemstack.isEmpty())
-            {
-                return false;
-            }
-        }
-        return true;
+	public int[] getSlotsForFace(EnumFacing side) {
+		return null;
+	}
+
+	@Override
+	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+		return false;
 	}
 }

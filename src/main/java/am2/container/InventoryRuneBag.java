@@ -28,7 +28,7 @@ public class InventoryRuneBag implements IInventory{
 	@Override
 	public ItemStack getStackInSlot(int i){
 		if (i < 0 || i > inventoryItems.length - 1){
-			return null;
+			return ItemStack.EMPTY;
 		}
 		return inventoryItems[i];
 	}
@@ -48,7 +48,7 @@ public class InventoryRuneBag implements IInventory{
 			}
 			return itemstack1;
 		}else{
-			return null;
+			return ItemStack.EMPTY;
 		}
 	}
 
@@ -86,12 +86,12 @@ public class InventoryRuneBag implements IInventory{
 
 	@Override
 	public ItemStack removeStackFromSlot(int i){
-		if (inventoryItems[i] != null){
+		if (inventoryItems[i] != ItemStack.EMPTY){
 			ItemStack itemstack = inventoryItems[i];
-			inventoryItems[i] = null;
+			inventoryItems[i] = ItemStack.EMPTY;
 			return itemstack;
 		}else{
-			return null;
+			return ItemStack.EMPTY;
 		}
 	}
 

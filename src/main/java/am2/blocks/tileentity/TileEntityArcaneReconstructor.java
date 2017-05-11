@@ -24,6 +24,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.MinecraftForge;
@@ -31,7 +32,7 @@ import net.minecraftforge.common.util.Constants;
 
 public class TileEntityArcaneReconstructor extends TileEntityAMPower implements IInventory, ISidedInventory, IKeystoneLockable<TileEntityArcaneReconstructor>{
 
-	private ItemStack[] inventory;
+	private NonNullList<ItemStack> inventory;
 	private boolean active;
 	private int repairCounter;
 	private final static float repairCostPerDamagePoint = 250;
@@ -53,7 +54,7 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 
 	public TileEntityArcaneReconstructor(){
 		super(500);
-		inventory = new ItemStack[getSizeInventory()];
+		inventory = NonNullList.<ItemStack>withSize(getSizeInventory(), ItemStack.EMPTY);
 		active = false;
 		repairCounter = 0;
 
@@ -220,7 +221,7 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 	}
 
 	public ItemStack getCurrentItem(){
-		return inventory[SLOT_ACTIVE];
+		return inventory.get(SLOT_ACTIVE);
 	}
 
 	public AMVector3 getInnerRingRotation(){
@@ -236,7 +237,7 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 	}
 
 	private boolean queueRepairableItem(){
-		if (inventory[SLOT_ACTIVE] != null) {
+		if (!inventory.get(SLOT_ACTIVE).isEmpty()) {
 			if (!active) {
 				this.active = true;
 				if (!world.isRemote)
@@ -245,9 +246,9 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 			return false;
 		}
 		for (int i = 4; i < 10; ++i){
-			if (itemStackIsValid(inventory[i])){
-				inventory[SLOT_ACTIVE] = inventory[i].copy();
-				inventory[i] = null;
+			if (itemStackIsValid(inventory.get(i))){
+				inventory.set(SLOT_ACTIVE, inventory.get(i).copy());
+				inventory.set(i, ItemStack.EMPTY);
 				this.active = true;
 				if (!world.isRemote)
 					world.markAndNotifyBlock(pos, world.getChunkFromBlockCoords(pos), world.getBlockState(pos), world.getBlockState(pos), 2);
@@ -271,24 +272,24 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 	}
 
 	private boolean performRepair(){
-		if (inventory[SLOT_ACTIVE] == null) return false;
+		if (inventory.get(SLOT_ACTIVE).isEmpty()) return false;
 
-		ReconstructorRepairEvent event = new ReconstructorRepairEvent(inventory[SLOT_ACTIVE]);
+		ReconstructorRepairEvent event = new ReconstructorRepairEvent(inventory.get(SLOT_ACTIVE));
 		if (MinecraftForge.EVENT_BUS.post(event)){
 			return true;
 		}
 
-		if (inventory[SLOT_ACTIVE].isItemDamaged()){
+		if (inventory.get(SLOT_ACTIVE).isItemDamaged()){
 			if (!world.isRemote)
-				inventory[SLOT_ACTIVE].damageItem(-1, getDummyEntity());
+				inventory.get(SLOT_ACTIVE).damageItem(-1, getDummyEntity());
 			return true;
 		}else{
 			boolean did_copy = false;
 			for (int i = 10; i < 16; ++i){
-				if (inventory[i] == null){
+				if (inventory.get(i).isEmpty()){
 					if (!world.isRemote){
-						inventory[i] = inventory[SLOT_ACTIVE].copy();
-						inventory[SLOT_ACTIVE] = null;
+						inventory.set(i, inventory.get(SLOT_ACTIVE).copy());
+						inventory.set(SLOT_ACTIVE, ItemStack.EMPTY);
 					}
 					did_copy = true;
 					break;
@@ -307,45 +308,45 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 
 	@Override
 	public ItemStack getStackInSlot(int var1){
-		if (var1 >= inventory.length){
+		if (var1 >= inventory.size()){
 			return null;
 		}
-		return inventory[var1];
+		return inventory.get(var1);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j){
-		if (inventory[i] != null){
-			if (inventory[i].getCount() <= j){
-				ItemStack itemstack = inventory[i];
-				inventory[i] = null;
+		if (!inventory.get(i).isEmpty()){
+			if (inventory.get(i).getCount() <= j){
+				ItemStack itemstack = inventory.get(i);
+				inventory.set(i, ItemStack.EMPTY);
 				return itemstack;
 			}
-			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].getCount() == 0){
-				inventory[i] = null;
+			ItemStack itemstack1 = inventory.get(i).splitStack(j);
+			if (inventory.get(i).getCount() == 0){
+				inventory.set(i, ItemStack.EMPTY);
 			}
 			return itemstack1;
 		}else{
-			return null;
+			return ItemStack.EMPTY;
 		}
 	}
 
 	@Override
 	public ItemStack removeStackFromSlot(int i){
-		if (inventory[i] != null){
-			ItemStack itemstack = inventory[i];
-			inventory[i] = null;
+		if (!inventory.get(i).isEmpty()){
+			ItemStack itemstack = inventory.get(i);
+			inventory.set(i, ItemStack.EMPTY);
 			return itemstack;
 		}else{
-			return null;
+			return ItemStack.EMPTY;
 		}
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
+		inventory.set(i, itemstack);
+		if (!itemstack.isEmpty() && itemstack.getCount() > getInventoryStackLimit()){
 			itemstack.setCount(getInventoryStackLimit());
 		}
 	}
@@ -372,13 +373,13 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 	public void readFromNBT(NBTTagCompound nbttagcompound){
 		super.readFromNBT(nbttagcompound);
 		NBTTagList nbttaglist = nbttagcompound.getTagList("ArcaneReconstructorInventory", Constants.NBT.TAG_COMPOUND);
-		inventory = new ItemStack[getSizeInventory()];
+		inventory = NonNullList.<ItemStack>withSize(getSizeInventory(), ItemStack.EMPTY);
 		for (int i = 0; i < nbttaglist.tagCount(); i++){
 			String tag = String.format("ArrayIndex", i);
 			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
 			byte byte0 = nbttagcompound1.getByte(tag);
-			if (byte0 >= 0 && byte0 < inventory.length){
-				inventory[byte0] = new ItemStack(nbttagcompound1);
+			if (byte0 >= 0 && byte0 < inventory.size()){
+				inventory.set(i, new ItemStack(nbttagcompound1));
 			}
 		}
 		active = nbttagcompound.getBoolean("ArcaneReconstructorActive");
@@ -389,12 +390,14 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound){
 		super.writeToNBT(nbttagcompound);
 		NBTTagList nbttaglist = new NBTTagList();
-		for (int i = 0; i < inventory.length; i++){
-			if (inventory[i] != null){
+		for (int i = 0; i < inventory.size(); i++){
+			if (!inventory.get(i).isEmpty()){
 				String tag = String.format("ArrayIndex", i);
 				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
 				nbttagcompound1.setByte(tag, (byte)i);
-				inventory[i].writeToNBT(nbttagcompound1);
+				ItemStack s = inventory.get(i);
+				s.writeToNBT(nbttagcompound1);
+				inventory.set(i, s);
 				nbttaglist.appendTag(nbttagcompound1);
 			}
 		}
@@ -408,7 +411,7 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 	private int numFociOfType(Class<?> type){
 		int count = 0;
 		for (int i = 0; i < 3; ++i){
-			if (inventory[i] != null && type.isInstance(inventory[i].getItem())){
+			if (!inventory.get(i).isEmpty() && type.isInstance(inventory.get(i).getItem())){
 				count++;
 			}
 		}
@@ -480,9 +483,9 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 	@Override
 	public ItemStack[] getRunesInKey(){
 		ItemStack[] runes = new ItemStack[3];
-		runes[0] = inventory[16];
-		runes[1] = inventory[17];
-		runes[2] = inventory[18];
+		runes[0] = inventory.get(16);
+		runes[1] = inventory.get(17);
+		runes[2] = inventory.get(18);
 
 		return runes;
 	}
@@ -542,7 +545,6 @@ public class TileEntityArcaneReconstructor extends TileEntityAMPower implements 
 
 	@Override
 	public boolean isUsableByPlayer(EntityPlayer player) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 }

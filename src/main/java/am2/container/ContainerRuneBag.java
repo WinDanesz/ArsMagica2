@@ -80,7 +80,7 @@ public class ContainerRuneBag extends Container{
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int i){
-		ItemStack itemstack = null;
+		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = (Slot)inventorySlots.get(i);
 
 		if (slot != null && slot.getHasStack()){
@@ -88,34 +88,34 @@ public class ContainerRuneBag extends Container{
 			itemstack = itemstack1.copy();
 			if (i < mainInventoryStart){
 				if (!mergeItemStack(itemstack1, mainInventoryStart, actionBarEnd, true)){
-					return null;
+					return ItemStack.EMPTY;
 				}
 			}else if (i >= mainInventoryStart && i < actionBarStart) //player inventory
 			{
 				if (!mergeRunes(itemstack1, slot))
-					return null;
+					return ItemStack.EMPTY;
 				if (!mergeItemStack(itemstack1, actionBarStart, actionBarEnd, false)){
-					return null;
+					return ItemStack.EMPTY;
 				}
 			}else if (i >= actionBarStart && i < actionBarEnd) //player action bar
 			{
 				if (!mergeRunes(itemstack1, slot))
-					return null;
+					return ItemStack.EMPTY;
 				if (!mergeItemStack(itemstack1, mainInventoryStart, actionBarStart - 1, false)){
-					return null;
+					return ItemStack.EMPTY;
 				}
 			}else if (!mergeItemStack(itemstack1, mainInventoryStart, actionBarEnd, false)){
-				return null;
+				return ItemStack.EMPTY;
 			}
 			if (itemstack1.getCount() == 0){
-				slot.putStack(null);
+				slot.putStack(ItemStack.EMPTY);
 			}else{
 				slot.onSlotChanged();
 			}
 			if (itemstack1.getCount() != itemstack.getCount()){
 				slot.onSlotChange(itemstack1, itemstack);
 			}else{
-				return null;
+				return ItemStack.EMPTY;
 			}
 		}
 		return itemstack;
@@ -133,7 +133,7 @@ public class ContainerRuneBag extends Container{
 				itemstack1.shrink(1);
 
 				if (itemstack1.getCount() <= 0){
-					slot.putStack(null);
+					slot.putStack(ItemStack.EMPTY);
 					slot.onSlotChanged();
 				}
 				return false;

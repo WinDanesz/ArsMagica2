@@ -28,12 +28,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
-public class TileEntitySeerStone extends TileEntityAMPower implements IInventory, IKeystoneLockable<TileEntitySeerStone>{
+public class TileEntitySeerStone extends TileEntityAMPoweredContainer implements IInventory, IKeystoneLockable<TileEntitySeerStone>{
 
 	private boolean hasSight;
 	private ArrayList<SpriteRenderInfo> animations;
@@ -41,7 +42,6 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	private SpriteRenderInfo currentAnimation;
 	private int ticksToNextCheck;
 	private int maxTicksToCheck = 20;
-	private ItemStack[] inventory;
 	int tickCounter;
 	public static int keystoneSlot = 1;
 
@@ -82,7 +82,7 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 		currentAnimation = animations.get(0);
 		currentAnimation.isDone = true;
 
-		inventory = new ItemStack[getSizeInventory()];
+		inventory = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
 		ticksToNextCheck = maxTicksToCheck;
 	}
 
@@ -337,10 +337,10 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 
 	private int GetSearchRadius(){
 		int focusLevel = -1;
-		int inventoryIndex = 0;
+		int i = 0;
 
-		if (inventory[inventoryIndex] != null && inventory[inventoryIndex].getItem() instanceof ISpellFocus){
-			int tempFocusLevel = ((ISpellFocus)inventory[inventoryIndex].getItem()).getFocusLevel();
+		if (!inventory.get(i).isEmpty() && inventory.get(i).getItem() instanceof ISpellFocus){
+			int tempFocusLevel = ((ISpellFocus)inventory.get(i).getItem()).getFocusLevel();
 			if (tempFocusLevel > focusLevel){
 				focusLevel = tempFocusLevel;
 			}
@@ -350,8 +350,8 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	}
 
 	private Class<? extends Entity> GetSearchClass(){
-		if (inventory[1] != null && inventory[1].getItem() instanceof ItemFilterFocus){
-			return ((ItemFilterFocus)inventory[1].getItem()).getFilterClass();
+		if (!inventory.get(1).isEmpty() && inventory.get(1).getItem() instanceof ItemFilterFocus){
+			return ((ItemFilterFocus)inventory.get(1).getItem()).getFilterClass();
 		}
 		return null;
 	}
@@ -368,9 +368,9 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	@Override
 	public ItemStack[] getRunesInKey(){
 		ItemStack[] runes = new ItemStack[3];
-		runes[0] = inventory[2];
-		runes[1] = inventory[3];
-		runes[2] = inventory[4];
+		runes[0] = inventory.get(2);
+		runes[1] = inventory.get(3);
+		runes[2] = inventory.get(4);
 		return runes;
 	}
 
@@ -385,23 +385,16 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	}
 
 	@Override
-	public ItemStack getStackInSlot(int slot){
-		if (slot >= inventory.length)
-			return null;
-		return inventory[slot];
-	}
-
-	@Override
 	public ItemStack decrStackSize(int i, int j){
-		if (inventory[i] != null){
-			if (inventory[i].getCount() <= j){
-				ItemStack itemstack = inventory[i];
-				inventory[i] = null;
+		if (!inventory.get(i).isEmpty()){
+			if (inventory.get(i).getCount() <= j){
+				ItemStack itemstack = inventory.get(i);
+				inventory.set(i, ItemStack.EMPTY);
 				return itemstack;
 			}
-			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].getCount() == 0){
-				inventory[i] = null;
+			ItemStack itemstack1 = inventory.get(i).splitStack(j);
+			if (inventory.get(i).getCount() == 0){
+				inventory.set(i, ItemStack.EMPTY);
 			}
 			return itemstack1;
 		}else{
@@ -411,9 +404,9 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 
 	@Override
 	public ItemStack removeStackFromSlot(int i){
-		if (inventory[i] != null){
-			ItemStack itemstack = inventory[i];
-			inventory[i] = null;
+		if (!inventory.get(i).isEmpty()){
+			ItemStack itemstack = inventory.get(i);
+			inventory.set(i, ItemStack.EMPTY);
 			return itemstack;
 		}else{
 			return null;
@@ -422,8 +415,8 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
+		inventory.set(i, itemstack);
+		if (!itemstack.isEmpty() && itemstack.getCount() > getInventoryStackLimit()){
 			itemstack.setCount(getInventoryStackLimit());
 		}
 	}
@@ -459,13 +452,13 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 		super.readFromNBT(nbttagcompound);
 		this.swapDetectionMode = nbttagcompound.getBoolean("seerStoneIsInverting");
 		NBTTagList nbttaglist = nbttagcompound.getTagList("SeerStoneInventory", Constants.NBT.TAG_COMPOUND);
-		inventory = new ItemStack[getSizeInventory()];
+		inventory = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
 		for (int i = 0; i < nbttaglist.tagCount(); i++){
 			String tag = String.format("ArrayIndex", i);
 			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
 			byte byte0 = nbttagcompound1.getByte(tag);
-			if (byte0 >= 0 && byte0 < inventory.length){
-				inventory[byte0] = new ItemStack(nbttagcompound1);
+			if (byte0 >= 0 && byte0 < inventory.size()){
+				inventory.set(byte0, new ItemStack(nbttagcompound1));
 			}
 		}
 
@@ -475,12 +468,12 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound){
 		super.writeToNBT(nbttagcompound);
 		NBTTagList nbttaglist = new NBTTagList();
-		for (int i = 0; i < inventory.length; i++){
-			if (inventory[i] != null){
+		for (int i = 0; i < inventory.size(); i++){
+			if (!inventory.get(i).isEmpty()){
 				String tag = String.format("ArrayIndex", i);
 				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
 				nbttagcompound1.setByte(tag, (byte)i);
-				inventory[i].writeToNBT(nbttagcompound1);
+				inventory.get(i).writeToNBT(nbttagcompound1);
 				nbttaglist.appendTag(nbttagcompound1);
 			}
 		}
@@ -552,14 +545,17 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	}
 
 	@Override
-	public boolean isEmpty() {
-		for (ItemStack itemstack : this.inventory)
-        {
-            if (!itemstack.isEmpty())
-            {
-                return false;
-            }
-        }
-        return true;
+	public int[] getSlotsForFace(EnumFacing side) {
+		return null;
+	}
+
+	@Override
+	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+		return false;
 	}
 }

@@ -25,6 +25,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -40,7 +41,7 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockS
 	protected static int pillarBlockID = 98; //stone brick
 	protected static int pillarBlockMeta = 3; //arcane texture
 	protected int surroundingCheckTicks;
-	private ItemStack[] inventory;
+	private NonNullList<ItemStack> inventory = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
 	protected float powerMultiplier = 1f;
 	protected float powerBase = 5.0f;
 
@@ -73,7 +74,7 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockS
 	
 	public TileEntityObelisk(){
 		this(5000);
-		inventory = new ItemStack[this.getSizeInventory()];
+		inventory = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
 	}
 
 	protected void checkNearbyBlockState(){
@@ -168,11 +169,11 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockS
 	}
 
 	public boolean isActive(){
-		return burnTimeRemaining > 0 || (inventory[0] != null && ObeliskFuelHelper.instance.getFuelBurnTime(inventory[0]) > 0);
+		return burnTimeRemaining > 0 || (!inventory.get(0).isEmpty() && ObeliskFuelHelper.instance.getFuelBurnTime(inventory.get(0)) > 0);
 	}
 
 	public boolean isHighPowerActive(){
-		return burnTimeRemaining > 200 && inventory[0] != null;
+		return burnTimeRemaining > 200 && !inventory.get(0).isEmpty();
 	}
 
 	public int getCookProgressScaled(int par1){
@@ -248,18 +249,18 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockS
 			}
 
 			float powerAmt = PowerNodeRegistry.For(world).getPower(this, PowerTypes.NEUTRAL);
-			float powerAdded = inventory[0] != null ? ObeliskFuelHelper.instance.getFuelBurnTime(inventory[0]) * (powerBase * powerMultiplier) : 0;
+			float powerAdded = !inventory.get(0).isEmpty() ? ObeliskFuelHelper.instance.getFuelBurnTime(inventory.get(0)) * (powerBase * powerMultiplier) : 0;
 
 			float chargeThreshold = Math.max(this.getCapacity() - powerAdded, this.getCapacity() * 0.75f);
 
 			if (burnTimeRemaining <= 0 && powerAmt < chargeThreshold){
-				burnTimeRemaining = ObeliskFuelHelper.instance.getFuelBurnTime(inventory[0]);
+				burnTimeRemaining = ObeliskFuelHelper.instance.getFuelBurnTime(inventory.get(0));
 				if (burnTimeRemaining > 0){
 					setMaxBurnTime(burnTimeRemaining);
-					if (this.inventory[0].getItem() instanceof UniversalBucket)
-						this.inventory[0] = ((UniversalBucket)this.inventory[0].getItem()).getEmpty().copy();
-					else if (this.inventory[0].getItem().hasContainerItem(this.inventory[0]))
-						this.inventory[0] = new ItemStack(this.inventory[0].getItem().getContainerItem());
+					if (this.inventory.get(0).getItem() instanceof UniversalBucket)
+						this.inventory.set(0, ((UniversalBucket)this.inventory.get(0).getItem()).getEmpty().copy());
+					else if (this.inventory.get(0).getItem().hasContainerItem(this.inventory.get(0)))
+						this.inventory.set(0, new ItemStack(this.inventory.get(0).getItem().getContainerItem()));
 					else
 						InventoryUtilities.decrementStackQuantity(this, 0, 1);
 					sendCookUpdateToClients();
@@ -310,12 +311,12 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockS
 
 		if (inventory != null){
 			NBTTagList nbttaglist = new NBTTagList();
-			for (int i = 0; i < inventory.length; i++){
-				if (inventory[i] != null){
+			for (int i = 0; i < inventory.size(); i++){
+				if (!inventory.get(i).isEmpty()){
 					String tag = String.format("ArrayIndex", i);
 					NBTTagCompound nbttagcompound1 = new NBTTagCompound();
 					nbttagcompound1.setByte(tag, (byte)i);
-					inventory[i].writeToNBT(nbttagcompound1);
+					inventory.get(i).writeToNBT(nbttagcompound1);
 					nbttaglist.appendTag(nbttagcompound1);
 				}
 			}
@@ -333,13 +334,13 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockS
 
 		if (nbttagcompound.hasKey("BurnInventory")){
 			NBTTagList nbttaglist = nbttagcompound.getTagList("BurnInventory", Constants.NBT.TAG_COMPOUND);
-			inventory = new ItemStack[getSizeInventory()];
+			inventory = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
 			for (int i = 0; i < nbttaglist.tagCount(); i++){
 				String tag = String.format("ArrayIndex", i);
 				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
 				byte byte0 = nbttagcompound1.getByte(tag);
-				if (byte0 >= 0 && byte0 < inventory.length){
-					inventory[byte0] = new ItemStack(nbttagcompound1);
+				if (byte0 >= 0 && byte0 < inventory.size()){
+					inventory.set(byte0, new ItemStack(nbttagcompound1));
 				}
 			}
 		}
@@ -373,21 +374,21 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockS
 	@Override
 	public ItemStack getStackInSlot(int i){
 		if (i < 0 || i >= this.getSizeInventory())
-			return null;
-		return inventory[i];
+			return ItemStack.EMPTY;
+		return inventory.get(i);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j){
-		if (inventory[i] != null){
-			if (inventory[i].getCount() <= j){
-				ItemStack itemstack = inventory[i];
-				inventory[i] = null;
+		if (!inventory.get(i).isEmpty()){
+			if (inventory.get(i).getCount() <= j){
+				ItemStack itemstack = inventory.get(i);
+				inventory.set(i, ItemStack.EMPTY);
 				return itemstack;
 			}
-			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].getCount() == 0){
-				inventory[i] = null;
+			ItemStack itemstack1 = inventory.get(i).splitStack(j);
+			if (inventory.get(i).getCount() == 0){
+				inventory.set(i, ItemStack.EMPTY);
 			}
 			return itemstack1;
 		}else{
@@ -397,9 +398,9 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockS
 
 	@Override
 	public ItemStack removeStackFromSlot(int i){
-		if (inventory[i] != null){
-			ItemStack itemstack = inventory[i];
-			inventory[i] = null;
+		if (!inventory.get(i).isEmpty()){
+			ItemStack itemstack = inventory.get(i);
+			inventory.set(i, ItemStack.EMPTY);
 			return itemstack;
 		}else{
 			return null;
@@ -408,8 +409,8 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockS
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
+		inventory.set(i, itemstack);
+		if (!itemstack.isEmpty() && itemstack.getCount() > getInventoryStackLimit()){
 			itemstack.setCount(getInventoryStackLimit());
 		}
 	}

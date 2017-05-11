@@ -50,7 +50,7 @@ public class ItemSpellBook extends ItemArsMagica{
 	@Override
 	public String getItemStackDisplayName(ItemStack par1ItemStack){
 		ItemStack activeSpell = GetActiveItemStack(par1ItemStack);
-		if (activeSpell != ItemStack.EMPTY){
+		if (!activeSpell.isEmpty()){
 			return String.format("\2477%s (" + activeSpell.getDisplayName() + "\2477)", I18n.translateToLocal("item.arsmagica2:spellbook.name"));
 		}
 		return I18n.translateToLocal("item.arsmagica2:spellbook.name");
@@ -109,8 +109,8 @@ public class ItemSpellBook extends ItemArsMagica{
 
 	public ItemStack GetActiveItemStack(ItemStack bookStack){
 		NonNullList<ItemStack> inventoryItems = getMyInventory(bookStack);
-		if (inventoryItems.get(GetActiveSlot(bookStack)) == null){
-			return null;
+		if (inventoryItems.get(GetActiveSlot(bookStack)).isEmpty()){
+			return ItemStack.EMPTY;
 		}
 		return inventoryItems.get(GetActiveSlot(bookStack)).copy();
 	}
@@ -128,7 +128,7 @@ public class ItemSpellBook extends ItemArsMagica{
 			FMLNetworkHandler.openGui((EntityPlayer) entityLiving, ArsMagica2.instance, IDDefs.GUI_SPELL_BOOK, worldIn, (int)entityLiving.posX, (int)entityLiving.posY, (int)entityLiving.posZ);
 		}else{
 			ItemStack currentSpellStack = GetActiveItemStack(stack);
-			if (currentSpellStack != null){
+			if (!currentSpellStack.isEmpty()){
 				ItemDefs.spell.onPlayerStoppedUsing(currentSpellStack, worldIn, entityLiving, timeLeft);
 			}
 		}
@@ -157,7 +157,7 @@ public class ItemSpellBook extends ItemArsMagica{
 
 		ItemStack active = GetActiveItemStack(itemStack);
 		boolean Soulbound = EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, itemStack) > 0;
-		if (active != null)
+		if (!active.isEmpty())
 			AMEnchantmentHelper.copyEnchantments(active, itemStack);
 		if (Soulbound)
 			AMEnchantmentHelper.soulbindStack(itemStack);

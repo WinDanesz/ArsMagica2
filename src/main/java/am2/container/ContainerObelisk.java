@@ -38,20 +38,20 @@ public class ContainerObelisk extends Container{
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int i){
-		ItemStack itemstack = null;
+		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = (Slot)inventorySlots.get(i);
 		if (slot != null && slot.getHasStack()){
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 			if (i < INVENTORY_STORAGE_START){
 				if (!mergeItemStack(itemstack1, INVENTORY_STORAGE_START, PLAYER_ACTION_BAR_END, true)){
-					return null;
+					return ItemStack.EMPTY;
 				}
 			}else if (i >= INVENTORY_STORAGE_START && i < PLAYER_INVENTORY_START) //from player inventory
 			{
 				if (ObeliskFuelHelper.instance.getFuelBurnTime(itemstack) > 0){
 					if (!mergeItemStack(itemstack1, PLAYER_INVENTORY_START, PLAYER_ACTION_BAR_END, false)){
-						return null;
+						return ItemStack.EMPTY;
 					}
 				}
 			}else if (i >= PLAYER_INVENTORY_START && i < PLAYER_ACTION_BAR_START) //from player inventory
@@ -59,22 +59,22 @@ public class ContainerObelisk extends Container{
 				if (ObeliskFuelHelper.instance.getFuelBurnTime(itemstack) > 0){
 					if (!mergeItemStack(itemstack1, INVENTORY_STORAGE_START, PLAYER_INVENTORY_START, false)){
 						if (!mergeItemStack(itemstack1, PLAYER_ACTION_BAR_START, PLAYER_ACTION_BAR_END, false)){
-							return null;
+							return ItemStack.EMPTY;
 						}
 					}
 				}
 			}else if (i >= PLAYER_ACTION_BAR_START && i < PLAYER_ACTION_BAR_END){
 				if (ObeliskFuelHelper.instance.getFuelBurnTime(itemstack) > 0){
 					if (!mergeItemStack(itemstack1, INVENTORY_STORAGE_START, PLAYER_ACTION_BAR_START - 1, false)){
-						return null;
+						return ItemStack.EMPTY;
 					}
 				}
 			}else if (!mergeItemStack(itemstack1, PLAYER_INVENTORY_START, PLAYER_ACTION_BAR_END, false)){
-				return null;
+				return ItemStack.EMPTY;
 			}
 
 			if (itemstack1.getCount() == 0){
-				slot.putStack(null);
+				slot.putStack(ItemStack.EMPTY);
 			}else{
 				slot.onSlotChanged();
 			}
@@ -82,7 +82,7 @@ public class ContainerObelisk extends Container{
 			if (itemstack1.getCount() != itemstack.getCount()){
 				slot.onSlotChange(itemstack1, itemstack);
 			}else{
-				return null;
+				return ItemStack.EMPTY;
 			}
 		}
 		return itemstack;
