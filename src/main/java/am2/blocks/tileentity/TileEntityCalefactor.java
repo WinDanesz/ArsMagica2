@@ -33,9 +33,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
-public class TileEntityCalefactor extends TileEntityAMPower implements IInventory, ISidedInventory, IKeystoneLockable<TileEntityCalefactor>, ITileEntityAMBase {
+public class TileEntityCalefactor extends TileEntityAMPoweredContainer implements IInventory, ISidedInventory, IKeystoneLockable<TileEntityCalefactor>, ITileEntityAMBase {
 
-	private NonNullList<ItemStack> inventory = NonNullList.<ItemStack>withSize(getSizeInventory(), ItemStack.EMPTY);
 	private float rotationX, rotationY, rotationZ;
 	private float rotationStepX;
 	private final short baseCookTime = 220; //default to the same as a standard furnace
@@ -575,17 +574,5 @@ public class TileEntityCalefactor extends TileEntityAMPower implements IInventor
 	@Override
 	public void clean() {
 		this.dirty = false;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		for (ItemStack itemstack : this.inventory)
-        {
-            if (!itemstack.isEmpty())
-            {
-                return false;
-            }
-        }
-        return true;
 	}
 }
