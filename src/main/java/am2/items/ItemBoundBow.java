@@ -13,6 +13,7 @@ import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -56,7 +57,10 @@ public class ItemBoundBow extends ItemBow implements IBoundItem {
 			return;
 		ItemStack copiedStack = SpellUtils.merge(stack.copy());
 		copiedStack.getTagCompound().getCompoundTag("AM2").setInteger("CurrentGroup", SpellUtils.currentStage(stack) + 1);
-		copiedStack.setItem(ItemDefs.spell);
+		ItemStack spell = new ItemStack(ItemDefs.spell);
+		spell.setTagCompound(copiedStack.getTagCompound());
+		spell.getTagCompound().getCompoundTag("AM2").setInteger("CurrentGroup", SpellUtils.currentStage(stack) + 1);
+		copiedStack = spell.copy();
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer entityplayer = (EntityPlayer) entityLiving;
 			int i = this.getMaxItemUseDuration(stack) - timeLeft;
@@ -96,7 +100,9 @@ public class ItemBoundBow extends ItemBow implements IBoundItem {
 	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player) {
-		item.setItem(ItemDefs.spell);
+		NBTTagCompound nbt = item.getTagCompound();
+		item = new ItemStack(ItemDefs.spell);
+		item.setTagCompound(nbt);
 		return false;
 	}
 

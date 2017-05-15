@@ -30,8 +30,11 @@ public class ItemBoundAxe extends ItemAxe implements IBoundItem {
 			return true;
 		ItemStack copiedStack = SpellUtils.merge(stack.copy());
 		copiedStack.getTagCompound().getCompoundTag("AM2").setInteger("CurrentGroup", SpellUtils.currentStage(stack) + 1);
-		copiedStack.setItem(ItemDefs.spell);
-		SpellUtils.applyStackStage(copiedStack, entityLiving, null, pos.getX(), pos.getY(), pos.getZ(), null, worldIn, true, true, 0);
+		ItemStack spell = new ItemStack(ItemDefs.spell);
+		spell.setTagCompound(copiedStack.getTagCompound());
+		spell.getTagCompound().getCompoundTag("AM2").setInteger("CurrentGroup", SpellUtils.currentStage(stack) + 1);
+		copiedStack = spell.copy();
+		SpellUtils.applyStackStage(spell, entityLiving, null, pos.getX(), pos.getY(), pos.getZ(), null, worldIn, true, true, 0);
 		return true;
 	}
 	
