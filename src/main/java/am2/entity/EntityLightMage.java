@@ -12,6 +12,7 @@ import am2.extensions.EntityExtension;
 import am2.extensions.SkillData;
 import am2.utils.EntityUtils;
 import am2.utils.NPCSpells;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
@@ -242,6 +243,9 @@ public class EntityLightMage extends EntityCreature{
 					}
 				}else{
 					player.sendMessage(new TextComponentString(String.format("\247o%s", I18n.translateToLocal("am2.npc.partyfull"))));
+					for (Entity entity : EntityExtension.For(player).getSummonedEntities()){
+						player.sendMessage(new TextComponentString(String.format("\247o%s", I18n.translateToLocal(entity.getName()))));
+					}
 				}
 			}
 		}else{

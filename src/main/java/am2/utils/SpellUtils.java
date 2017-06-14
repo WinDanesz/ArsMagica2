@@ -509,7 +509,7 @@ public class SpellUtils {
 		if (caster instanceof EntityPlayer) {
 			if (consumeMBR && !((EntityPlayer) caster).capabilities.isCreativeMode && (result == SpellCastResult.SUCCESS || result == SpellCastResult.SUCCESS_REDUCE_MANA || result == SpellCastResult.MALFORMED_SPELL_STACK)) {
 				ext.deductMana(manaCost);
-				ext.setCurrentBurnout(getBurnoutCost(stack));
+				ext.setCurrentBurnout(ext.getCurrentBurnout() + getBurnoutCost(stack));
 				consumeReagents(caster, stack);
 				if (ext.getCurrentBurnout() > ext.getMaxBurnout())
 					ext.setCurrentBurnout(ext.getMaxBurnout());

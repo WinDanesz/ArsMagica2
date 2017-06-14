@@ -213,7 +213,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 	
 	@Override
 	public void setCurrentBurnout(float currentBurnout) {
-		DataSyncExtension.For(entity).set(CURRENT_MANA_FATIGUE, currentBurnout);
+		DataSyncExtension.For(entity).set(CURRENT_MANA_FATIGUE, Math.min(this.getMaxBurnout(), currentBurnout));
 	}
 	
 	@Override
@@ -400,7 +400,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 	public boolean addSummon(EntityCreature entityliving) {
 		if (!entity.world.isRemote){
 			summon_ent_ids.add(entityliving.getEntityId());
-			setCurrentSummons(getCurrentSummons() + 1);
+			setCurrentSummons(this.getCurrentSummons() + 1);
 		}
 		return true;
 	}
@@ -418,7 +418,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 		for (int i = 0; i < summon_ent_ids.size(); ++i){
 			int id = summon_ent_ids.get(i);
 			Entity e = entity.world.getEntityByID(id);
-			if (e == null || !(e instanceof EntityLivingBase)){
+			if (e == null || !(e instanceof EntityLivingBase || e.isDead)){
 				summon_ent_ids.remove(i);
 				i--;
 				removeSummon();
@@ -428,11 +428,12 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 	
 	@Override
 	public boolean removeSummon(){
-		if (getCurrentSummons() == 0){
+		if (this.getCurrentSummons() == 0){
+			this.setCurrentSummons(0);
 			return false;
 		}
 		if (!entity.world.isRemote){
-			setCurrentSummons(getCurrentSummons() - 1);
+			this.setCurrentSummons(getCurrentSummons() - 1);
 		}
 		return true;
 	}
@@ -826,5 +827,16 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 	
 	public void addMagicShieldingCapped(float manaShield) {
 		setManaShielding(Math.min(getManaShielding() + manaShield, getMaxMagicShielding()));
+	}
+	
+	public ArrayList<Entity> getSummonedEntities(){
+		verifySummons();
+		ArrayList<Entity> ents = new ArrayList<Entity>();
+			for (int id : this.summon_ent_ids.toArray(new Integer[this.summon_ent_ids.size()])){
+			Entity e = entity.world.getEntityByID(id);
+			ents.add(e);
+			}
+			setCurrentSummons(ents.size());
+		return ents;
 	}
 }
