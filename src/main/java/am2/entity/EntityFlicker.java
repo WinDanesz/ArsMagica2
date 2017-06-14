@@ -337,8 +337,10 @@ public class EntityFlicker extends EntityAmbientCreature{
 		if (biome != null){
 			//get the tags on this biome
 			Type[] biomeTags = (Type[]) BiomeDictionary.getTypes(biome).toArray();
+			//biome has no types? We probably shouldn't spawn anything here
+			if (biomeTags.length <=0) return false;
 			//pick a random tag to focus on
-			Type tagType = biomeTags[1];
+			Type tagType = biomeTags[0];
 			//create a list of valid types based on that tag
 			ArrayList<Affinity> validAffinities = new ArrayList<Affinity>();
 			//populate the list
