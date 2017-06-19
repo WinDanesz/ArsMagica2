@@ -219,7 +219,7 @@ public class SpellParticleRender extends ItemOverrideList{
 	}
 
 	private void renderFirstPersonArm(EntityPlayerSP player) {
-		EnumHandSide hand = EnumHandSide.LEFT;
+		EnumHandSide hand = player.getPrimaryHand();
 		boolean flag = hand != EnumHandSide.LEFT;
 		float f = flag ? 1.0F : -1.0F;
 		float f1 = MathHelper.sqrt(0);

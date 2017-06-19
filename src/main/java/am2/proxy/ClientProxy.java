@@ -144,7 +144,7 @@ public class ClientProxy extends CommonProxy {
 		case GUI_SPELL_CUSTOMIZATION: return new GuiSpellCustomization(player);
 		case GUI_RIFT: return new GuiRiftStorage(player, RiftStorage.For(player));
 		case GUI_SPELL_BOOK: 
-			ItemStack bookStack = player.getHeldItemMainhand();
+			ItemStack bookStack = player.getActiveItemStack());
 			if (bookStack.getItem() == null || !(bookStack.getItem() instanceof ItemSpellBook)){
 				return null;
 			}
@@ -155,7 +155,7 @@ public class ClientProxy extends CommonProxy {
 		case GUI_INSCRIPTION_TABLE: return new GuiInscriptionTable(player.inventory, (TileEntityInscriptionTable)world.getTileEntity(new BlockPos(x, y, z)));
 		case GUI_ARMOR_INFUSION: return new GuiArmorImbuer(player, (TileEntityArmorImbuer) world.getTileEntity(new BlockPos(x, y, z)));
 		case GUI_KEYSTONE:
-			ItemStack keystoneStack = player.getHeldItemMainhand();
+			ItemStack keystoneStack = player.getActiveItemStack();
 			if (keystoneStack.getItem() == null || !(keystoneStack.getItem() instanceof ItemKeystone)){
 				return null;
 			}
@@ -166,7 +166,7 @@ public class ClientProxy extends CommonProxy {
 			if (runeBagSlot > -1)
 				runeBag = player.inventory.getStackInSlot(runeBagSlot);
 
-			return new GuiKeystone(player.inventory, player.getHeldItemMainhand(), runeBag, keystone.ConvertToInventory(keystoneStack), runeBag == null ? null : ItemDefs.runeBag.ConvertToInventory(runeBag), runeBagSlot);
+			return new GuiKeystone(player.inventory, player.getActiveItemStack(), runeBag, keystone.ConvertToInventory(keystoneStack), runeBag == null ? null : ItemDefs.runeBag.ConvertToInventory(runeBag), runeBagSlot);
 		case GUI_KEYSTONE_LOCKABLE:
 			if (!(te instanceof IKeystoneLockable)){
 				return null;
@@ -175,12 +175,12 @@ public class ClientProxy extends CommonProxy {
 		case GUI_SPELL_SEALED_DOOR: return new GuiSpellSealedDoor(player.inventory, (TileEntitySpellSealedDoor)te);
 		case GUI_KEYSTONE_CHEST: return new GuiKeystoneChest(player.inventory, (TileEntityKeystoneChest)te);
 		case GUI_RUNE_BAG: 
-			ItemStack bagStack = player.getHeldItemMainhand();
+			ItemStack bagStack = player.getActiveItemStack();
 			if (bagStack.getItem() == null || !(bagStack.getItem() instanceof ItemRuneBag)){
 				return null;
 			}
 			ItemRuneBag runebag = (ItemRuneBag)bagStack.getItem();
-			return new GuiRuneBag(player.inventory, player.getHeldItemMainhand(), runebag.ConvertToInventory(bagStack));
+			return new GuiRuneBag(player.inventory, player.getActiveItemStack(), runebag.ConvertToInventory(bagStack));
 		case GUI_FLICKER_HABITAT: return new GuiFlickerHabitat(player, (TileEntityFlickerHabitat) te);
 		case GUI_ARCANE_DECONSTRUCTOR: return new GuiArcaneDeconstructor(player.inventory, (TileEntityArcaneDeconstructor) te);
 		case GUI_ARCANE_RECONSTRUCTOR: return new GuiArcaneReconstructor(player.inventory, (TileEntityArcaneReconstructor) te);
@@ -192,12 +192,12 @@ public class ClientProxy extends CommonProxy {
 		case GUI_INERT_SPAWNER: return new GuiInertSpawner(player, (TileEntityInertSpawner) te);
 		case GUI_SUMMONER: return new GuiSummoner(player.inventory, (TileEntitySummoner) te);
 		case GUI_ESSENCE_BAG: 
-			bagStack = player.getHeldItemMainhand();
+			bagStack = player.getActiveItemStack();
 			if (bagStack.getItem() == null || !(bagStack.getItem() instanceof ItemEssenceBag)){
 				return null;
 			}
 			ItemEssenceBag essenceBag = (ItemEssenceBag)bagStack.getItem();
-			return new GuiEssenceBag(player.inventory, player.getHeldItemMainhand(), essenceBag.ConvertToInventory(bagStack));
+			return new GuiEssenceBag(player.inventory, player.getActiveItemStack(), essenceBag.ConvertToInventory(bagStack));
 		}
 		return super.getClientGuiElement(ID, player, world, x, y, z);
 	}
