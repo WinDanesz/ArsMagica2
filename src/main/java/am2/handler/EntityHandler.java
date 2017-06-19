@@ -142,8 +142,9 @@ public class EntityHandler {
 	
 	@SubscribeEvent
 	public void entityJoinWorld(EntityJoinWorldEvent event) {
-		if (event.getEntity() instanceof EntityPlayer)
-			DataSyncExtension.For((EntityLivingBase) event.getEntity()).scheduleFullUpdate();
+		if (event.getEntity() instanceof EntityPlayer){
+			EntityExtension.For((EntityPlayer)event.getEntity()).clearPlayerSummons();
+			DataSyncExtension.For((EntityLivingBase) event.getEntity()).scheduleFullUpdate();}
 	}
 	
 	@SubscribeEvent

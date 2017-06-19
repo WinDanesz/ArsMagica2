@@ -77,7 +77,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 	@CapabilityInject(value = IEntityExtension.class)
 	public static Capability<IEntityExtension> INSTANCE = null;
 	
-	private ArrayList<Integer> summon_ent_ids = new ArrayList<Integer>();
+	private ArrayList<Entity> summon_ents = new ArrayList<>();
 	private EntityLivingBase entity;
 
 	private ArrayList<ManaLinkEntry> manaLinks = new ArrayList<>();
@@ -399,7 +399,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 	@Override
 	public boolean addSummon(EntityCreature entityliving) {
 		if (!entity.world.isRemote){
-			summon_ent_ids.add(entityliving.getEntityId());
+			summon_ents.add(entityliving);
 			setCurrentSummons(this.getCurrentSummons() + 1);
 		}
 		return true;
@@ -409,17 +409,22 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 	public boolean getCanHaveMoreSummons() {
 		if (entity instanceof EntityLifeGuardian)
 			return true;
-		
 		verifySummons();
-		return this.getCurrentSummons() < getMaxSummons();
+		return this.getCurrentSummons() < this.getMaxSummons();
 	}
 	
 	private void verifySummons(){
-		for (int i = 0; i < summon_ent_ids.size(); ++i){
-			int id = summon_ent_ids.get(i);
-			Entity e = entity.world.getEntityByID(id);
-			if (e == null || !(e instanceof EntityLivingBase || e.isDead)){
-				summon_ent_ids.remove(i);
+		for (int i = 0; i < summon_ents.size(); ++i){
+			Entity e = summon_ents.get(i);
+			for (int j = 0; j < i; ++j){
+				if (e.equals(summon_ents.get(j))){
+					summon_ents.remove(j);
+					j--;
+					i--;
+				}
+			}
+			if (e == null || !(e instanceof EntityLivingBase) || e.isDead){
+				summon_ents.remove(i);
 				i--;
 				removeSummon();
 			}
@@ -832,11 +837,18 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 	public ArrayList<Entity> getSummonedEntities(){
 		verifySummons();
 		ArrayList<Entity> ents = new ArrayList<Entity>();
-			for (int id : this.summon_ent_ids.toArray(new Integer[this.summon_ent_ids.size()])){
-			Entity e = entity.world.getEntityByID(id);
+			for (Entity e : this.summon_ents.toArray(new Entity[this.summon_ents.size()])){
 			ents.add(e);
 			}
 			setCurrentSummons(ents.size());
 		return ents;
+	}
+	
+	public void clearPlayerSummons(){
+		return;
+		/*for (int id : this.summon_ents.toArray(new Integer[this.summon_ents.size()])){
+			entity.world.getEntityByID(id).setDead();
+			}
+		this.setCurrentSummons(0);*/
 	}
 }

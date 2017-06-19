@@ -244,7 +244,7 @@ public class EntityLightMage extends EntityCreature{
 				}else{
 					player.sendMessage(new TextComponentString(String.format("\247o%s", I18n.translateToLocal("am2.npc.partyfull"))));
 					for (Entity entity : EntityExtension.For(player).getSummonedEntities()){
-						player.sendMessage(new TextComponentString(String.format("\247o%s", I18n.translateToLocal(entity.getName()))));
+						player.sendMessage(new TextComponentString(String.format("\247o%s", I18n.translateToLocal(entity.getName() + entity.getPosition().toString()))));
 					}
 				}
 			}
