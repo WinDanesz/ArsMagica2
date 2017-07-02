@@ -144,7 +144,7 @@ public class ClientProxy extends CommonProxy {
 		case GUI_SPELL_CUSTOMIZATION: return new GuiSpellCustomization(player);
 		case GUI_RIFT: return new GuiRiftStorage(player, RiftStorage.For(player));
 		case GUI_SPELL_BOOK: 
-			ItemStack bookStack = player.getActiveItemStack());
+			ItemStack bookStack = player.getActiveItemStack();
 			if (bookStack.getItem() == null || !(bookStack.getItem() instanceof ItemSpellBook)){
 				return null;
 			}
