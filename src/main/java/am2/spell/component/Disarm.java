@@ -18,6 +18,7 @@ import am2.entity.EntityLightMage;
 import am2.particles.AMParticle;
 import am2.particles.ParticleFadeOut;
 import am2.particles.ParticleMoveOnHeading;
+import am2.utils.SpellUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -40,27 +41,68 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-public class Disarm extends SpellComponent{
 
+public class Disarm extends SpellComponent{	
 	@Override
 	public boolean applyEffectEntity(ItemStack stack, World world, EntityLivingBase caster, Entity target){
+		Random rnd = new Random();
+		double damage = SpellUtils.getModifiedInt_Mul(1, stack, caster, target, world, SpellModifiers.DAMAGE);
 
-		if (target instanceof EntityLightMage || target instanceof EntityDarkMage)
+		if (target instanceof EntityLightMage)
 			return false;
+		
+		if (target instanceof EntityDarkMage && !world.isRemote){
+				EntityItem item = new EntityItem(world);
+				ItemStack dropstack = ((EntityMob)target).getHeldItemMainhand().copy();
+				if (dropstack.getMaxDamage() > 0)
+					dropstack.setItemDamage((int)Math.floor(dropstack.getMaxDamage() * (0.8f + (world.rand.nextFloat() * 0.19f))));
+				item.setEntityItemStack(dropstack);
+				item.setPosition(target.posX, target.posY, target.posZ);
+				item.setPickupDelay(15);
+				world.spawnEntity(item);
+				((EntityDarkMage)target).setItemStackToSlot(EntityMob.getSlotForItemStack(stack), null);
+				((EntityDarkMage)target).disarm();
+
+			return true;
+		}
 
 		if (target instanceof EntityPlayer && (!ArsMagica2.config.getDisarmAffectsPlayers() || (!world.isRemote && !FMLCommonHandler.instance().getMinecraftServerInstance().isPVPEnabled())))
 			return false;
-
-		if (target instanceof EntityPlayer && ((EntityPlayer)target).getActiveItemStack() != null && !target.worldObj.isRemote){
-			if (EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, ((EntityPlayer)target).getActiveItemStack()) > 0)
+		
+		if (target instanceof EntityPlayer && ((EntityPlayer)target).getHeldItemOffhand() != null && !target.world.isRemote && (rnd.nextInt(9) + 1 <= damage)
+			&& EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, ((EntityPlayer)target).getHeldItemOffhand()) <= 0){
+			//Drop mainhand item? 1 line. You want to drop the offhand? You'd better like workarounds.
+			EntityItem item = new EntityItem(world);
+			ItemStack dropstack = ((EntityPlayer)target).getHeldItemOffhand().copy();
+			item.setEntityItemStack(dropstack);
+			item.setPosition(target.posX, target.posY, target.posZ);
+			item.setDefaultPickupDelay();
+			world.spawnEntity(item);
+			((EntityPlayer)target).inventory.offHandInventory.set(0, null);
+		}
+		
+		if (target instanceof EntityPlayer && ((EntityPlayer)target).getHeldItemMainhand() != null && !target.world.isRemote){
+			if (EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, ((EntityPlayer)target).getHeldItemMainhand()) > 0)
 				return true;
 			((EntityPlayer)target).dropItem(true);
 			return true;
-		}else if (target instanceof EntityMob && ((EntityMob)target).getHeldItemMainhand() != null){
+			
+		}else if (target instanceof EntityEnderman){
+			IBlockState blockID = ((EntityEnderman)target).getHeldBlockState();
 
+			if (blockID != null){
+				((EntityEnderman)target).setHeldBlockState(null);
+				ItemStack dropstack = new ItemStack(blockID.getBlock(), 1, blockID.getBlock().getMetaFromState(blockID));
+				EntityItem item = new EntityItem(world);
+				item.setEntityItemStack(dropstack);
+				item.setPosition(target.posX, target.posY, target.posZ);
+				world.spawnEntity(item);
+			}
+			((EntityMob)target).setAttackTarget(caster);
+			
+		}else if (target instanceof EntityMob && ((EntityMob)target).getHeldItemMainhand() != null){
 			if (EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, ((EntityMob)target).getActiveItemStack()) > 0)
 				return true;
-
 			if (!world.isRemote){
 				EntityItem item = new EntityItem(world);
 				ItemStack dropstack = ((EntityMob)target).getHeldItemMainhand().copy();
@@ -69,7 +111,7 @@ public class Disarm extends SpellComponent{
 				item.setEntityItemStack(dropstack);
 				item.setPosition(target.posX, target.posY, target.posZ);
 				item.setDefaultPickupDelay();
-				world.spawnEntityInWorld(item);
+				world.spawnEntity(item);
 			}
 			((EntityMob)target).setItemStackToSlot(EntityMob.getSlotForItemStack(stack), null);;
 
@@ -90,25 +132,13 @@ public class Disarm extends SpellComponent{
 				((EntityMob)target).tasks.addTask(5, new EntityAIAttackMelee((EntityCreature)target, 0.5, true));
 				((EntityMob)target).setCanPickUpLoot(true);
 			}
-		}else if (target instanceof EntityEnderman){
-			IBlockState blockID = ((EntityEnderman)target).getHeldBlockState();
-
-			if (blockID != null){
-				((EntityEnderman)target).setHeldBlockState(null);
-				ItemStack dropstack = new ItemStack(blockID.getBlock(), 1, blockID.getBlock().getMetaFromState(blockID));
-				EntityItem item = new EntityItem(world);
-				item.setEntityItemStack(dropstack);
-				item.setPosition(target.posX, target.posY, target.posZ);
-				world.spawnEntityInWorld(item);
-			}
-			((EntityMob)target).setAttackTarget(caster);
 		}
 		return false;
 	}
 	
 	@Override
 	public EnumSet<SpellModifiers> getModifiers() {
-		return EnumSet.noneOf(SpellModifiers.class);
+		return EnumSet.of(SpellModifiers.DAMAGE);
 	}
 
 	@Override
@@ -162,14 +192,14 @@ public class Disarm extends SpellComponent{
 
 	@Override
 	public void encodeBasicData(NBTTagCompound tag, Object[] recipe) {
-		// TODO Auto-generated method stub
+
 		
 	}
 
 	@Override
 	public boolean applyEffectBlock(ItemStack stack, World world, BlockPos blockPos, EnumFacing blockFace,
 			double impactX, double impactY, double impactZ, EntityLivingBase caster) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 }

@@ -1,8 +1,6 @@
 package am2.buffs;
 
-import am2.ArsMagica2;
 import am2.defs.PotionEffectsDefs;
-import am2.packet.MessageCapabilities;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -16,7 +14,7 @@ public class BuffEffectLevitation extends BuffEffect{
 	public void applyEffect(EntityLivingBase entityliving){
 		if (entityliving instanceof EntityPlayer){
 			((EntityPlayer)entityliving).capabilities.allowFlying = true;
-			ArsMagica2.network.sendToServer(new MessageCapabilities((EntityPlayer)entityliving, 1, true));
+			((EntityPlayer)entityliving).sendPlayerAbilities();
 		}
 	}
 
@@ -35,12 +33,12 @@ public class BuffEffectLevitation extends BuffEffect{
 	@Override
 	public void stopEffect(EntityLivingBase entityliving){
 		if (entityliving instanceof EntityPlayer){
-			if (!((EntityPlayer)entityliving).capabilities.isCreativeMode){
-				((EntityPlayer)entityliving).capabilities.allowFlying = false;
-				((EntityPlayer)entityliving).capabilities.isFlying = false;
-				((EntityPlayer)entityliving).fallDistance = 0f;
-				ArsMagica2.network.sendToServer(new MessageCapabilities((EntityPlayer)entityliving, 0, false));
-				ArsMagica2.network.sendToServer(new MessageCapabilities((EntityPlayer)entityliving, 1, false));
+			EntityPlayer player = (EntityPlayer)entityliving;
+			if (!player.capabilities.isCreativeMode){
+				player.capabilities.allowFlying = false;
+				player.capabilities.isFlying = false;
+				player.fallDistance = 0f;
+				player.sendPlayerAbilities();
 			}
 		}
 	}

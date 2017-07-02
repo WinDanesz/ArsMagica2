@@ -70,17 +70,18 @@ public class WitchwoodTreeSmall extends WorldGenAbstractTree{
 					  int treeHeightLayer = j - (pos.getY() + height);
 					  int leafGenRadius = b1 + 1 - treeHeightLayer / 2;
 					  
-					  for (int i = pos.getY() - leafGenRadius; i <= pos.getY() + leafGenRadius; i++){
-						  int leafGenDeltaX = i - pos.getY();
+					  for (int i = pos.getX() - leafGenRadius; i <= pos.getX() + leafGenRadius; i++){
+						  int leafGenDeltaX = i - pos.getX();
 						  
-						  for (int k = pos.getY() - leafGenRadius; k <= pos.getY() + leafGenRadius; k++){
-							  int leafGenDeltaZ = k - pos.getY();
+						  for (int k = pos.getZ() - leafGenRadius; k <= pos.getZ() + leafGenRadius; k++){
+							  int leafGenDeltaZ = k - pos.getZ();
 							  
 							  if (Math.abs(leafGenDeltaX) != leafGenRadius || Math.abs(leafGenDeltaZ) != leafGenRadius || random.nextInt(2) != 0 && treeHeightLayer != 0){
-								 IBlockState block1 = world.getBlockState(new BlockPos (i, j, k));
+								  BlockPos leafPos = new BlockPos(i, j, k);
+								  IBlockState block1 = world.getBlockState(leafPos);
 								  
-								  if (block1.getBlock().isAir(block1, world, new BlockPos (i, j, k)) || block1.getBlock().isLeaves(block1, world, new BlockPos (i, j, k))){
-									  world.setBlockState(pos, leafBlock);
+								  if (block1.getBlock().isAir(block1, world, leafPos) || block1.getBlock().isLeaves(block1, world, leafPos)){
+									  world.setBlockState(leafPos, leafBlock);
 								  }
 							  }
 						  }

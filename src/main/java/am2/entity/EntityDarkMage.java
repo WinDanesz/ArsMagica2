@@ -2,6 +2,8 @@ package am2.entity;
 
 import java.util.List;
 
+import am2.api.ArsMagicaAPI;
+import am2.api.affinity.Affinity;
 import am2.defs.ItemDefs;
 import am2.defs.LootTablesArsMagica;
 import am2.entity.ai.EntityAIRangedAttackSpell;
@@ -10,15 +12,19 @@ import am2.extensions.EntityExtension;
 import am2.utils.NPCSpells;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
+import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -32,9 +38,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityDarkMage extends EntityMob{
 
-	private static ItemStack diminishedHeldItem = new ItemStack(ItemDefs.affinityTome, 1, 6);
-	private static ItemStack normalHeldItem = new ItemStack(ItemDefs.affinityTome, 1, 3);
-	private static ItemStack augmentedHeldItem = new ItemStack(ItemDefs.affinityTome, 1, 0);
+	private static ItemStack diminishedHeldItem = new ItemStack(ItemDefs.affinityTome, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.NONE));
+	private static ItemStack normalHeldItem = new ItemStack(ItemDefs.affinityTome, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.NONE));
+	private static ItemStack augmentedHeldItem = new ItemStack(ItemDefs.affinityTome, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.NONE));
 
 	public static final DataParameter<Integer> MAGE_SKIN = EntityDataManager.createKey(EntityDarkMage.class, DataSerializers.VARINT);
 	public static final DataParameter<Integer> MAGE_BOOK = EntityDataManager.createKey(EntityDarkMage.class, DataSerializers.VARINT);
@@ -58,11 +64,26 @@ public class EntityDarkMage extends EntityMob{
 		this.dataManager.register(MAGE_BOOK, 0);
 		this.dataManager.register(MAGE_SKIN, rand.nextInt(10) + 1);
 	}
+	
+	public void disarm(){
+		if (this.dataManager.get(MAGE_BOOK) != -1){
+		this.dataManager.set(MAGE_BOOK, -1);
+		for (Object a : this.tasks.taskEntries.toArray()){
+			EntityAIBase ai = ((EntityAITaskEntry)a).action;
+				if (ai instanceof EntityAIRangedAttackSpell)
+					this.tasks.removeTask(ai);
+		}	}
+		this.setCanPickUpLoot(true);
+	}
 
 	@Override
 	public ItemStack getHeldItemMainhand(){
 		int cm = this.dataManager.get(MAGE_BOOK);
-		if (cm == 0)
+		if (this.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND) != null)
+			return this.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
+		if (cm == -1)
+			return null;
+		else if (cm == 0)
 			return diminishedHeldItem;
 		else if (cm == 1)
 			return normalHeldItem;
@@ -76,9 +97,10 @@ public class EntityDarkMage extends EntityMob{
 		this.tasks.addTask(7, new EntityAILookIdle(this));
 		this.tasks.addTask(5, new EntityAIWander(this, MovementSpeed()));
 		this.tasks.addTask(1, new EntityAIAvoidEntity<EntityManaVortex>(this, EntityManaVortex.class, 10, MovementSpeed(), ActionSpeed()));
-
-		this.tasks.addTask(4, new EntityAIRangedAttackSpell(this, MovementSpeed(), 40, NPCSpells.instance.darkMage_DiminishedAttack));
-
+		
+		this.tasks.addTask(3, new EntityAIRangedAttackSpell(this, MovementSpeed(), 40, NPCSpells.instance.darkMage_DiminishedAttack));
+		this.tasks.addTask(4, new EntityAIAttackMelee(this, MovementSpeed(), false));
+		
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityLightMage>(this, EntityLightMage.class, 0, true, false, null));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 0, true, false, null));
@@ -132,8 +154,8 @@ public class EntityDarkMage extends EntityMob{
 	}
 
 	private int getAverageNearbyPlayerMagicLevel(){
-		if (this.worldObj == null) return 0;
-		List<EntityPlayer> players = worldObj.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(this.posX - 250, 0, this.posZ - 250, this.posX + 250, 250, this.posZ + 250));
+		if (this.world == null) return 0;
+		List<EntityPlayer> players = world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(this.posX - 250, 0, this.posZ - 250, this.posX + 250, 250, this.posZ + 250));
 		if (players.size() == 0) return 0;
 		int avgLvl = 0;
 		for (EntityPlayer player : players){
@@ -144,7 +166,7 @@ public class EntityDarkMage extends EntityMob{
 
 	@Override
 	public boolean getCanSpawnHere(){
-		if (!SpawnBlacklists.entityCanSpawnHere(getPosition(), worldObj, this))
+		if (!SpawnBlacklists.entityCanSpawnHere(getPosition(), world, this))
 			return false;
 		if (getAverageNearbyPlayerMagicLevel() < 8){
 			return false;
@@ -171,7 +193,12 @@ public class EntityDarkMage extends EntityMob{
 	}
 	
 	@Override
-	protected void dropEquipment(boolean wasRecentlyHit, int lootingModifier) {}
+	protected void dropEquipment(boolean wasRecentlyHit, int lootingModifier) {
+		if (this.dataManager.get(MAGE_BOOK) == -1){
+			ItemStack itemstack = this.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
+			this.entityDropItem(itemstack, 0.0F);
+		}
+	}
 
 	@SideOnly(Side.CLIENT)
 	public String getTexture(){

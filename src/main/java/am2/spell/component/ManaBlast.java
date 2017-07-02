@@ -69,9 +69,9 @@ public class ManaBlast extends SpellComponent{
 
 	@Override
 	public void spawnParticles(World world, double x, double y, double z, EntityLivingBase caster, Entity target, Random rand, int colorModifier){
-		int snapAngle = 360 / ArsMagica2.config.getGFXLevel() * 5;
+		double snapAngle = (2 * Math.PI) / (ArsMagica2.config.getGFXLevel() + 1)* 5;
 		for (int j = 0; j < 4; j++) {
-			for (int i = 0; i < ArsMagica2.config.getGFXLevel() * 5; i++) {
+			for (int i = 0; i < (ArsMagica2.config.getGFXLevel() + 1) * 5; i++) {
 				double posX = x + (Math.cos(snapAngle * i) * (j * 0.5));
 				double posZ = z + (Math.sin(snapAngle * i) * (j * 0.5));
 				AMParticle particle = (AMParticle) ArsMagica2.proxy.particleManager.spawn(world, "sparkle2", posX, target.posY + target.height / 2 + j * 0.5, posZ);
@@ -98,13 +98,13 @@ public class ManaBlast extends SpellComponent{
 	@Override
 	public boolean applyEffectBlock(ItemStack stack, World world, BlockPos blockPos, EnumFacing blockFace,
 			double impactX, double impactY, double impactZ, EntityLivingBase caster) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 	
 	@Override
 	public void encodeBasicData(NBTTagCompound tag, Object[] recipe) {
-		// TODO Auto-generated method stub
+
 		
 	}
 }
