@@ -30,7 +30,7 @@ public class RenderManaVortex extends Render<EntityManaVortex>{
 		POS_TEX_LIGHTMAP.addElement(DefaultVertexFormats.TEX_2S);
 	}
 
-	private static final ResourceLocation vortex = new ResourceLocation("arsmagica2", "textures/blocks/custom/Magic_Fabricator_2.png");
+	private static final ResourceLocation vortex = new ResourceLocation("arsmagica2", "textures/blocks/custom/magic_fabricator_2.png");
 	private static final ResourceLocation wisp = new ResourceLocation("arsmagica2", "textures/mobs/mob_wisp.png");
 
 	@Override

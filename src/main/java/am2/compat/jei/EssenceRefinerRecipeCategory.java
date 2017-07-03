@@ -26,7 +26,7 @@ public class EssenceRefinerRecipeCategory implements IRecipeCategory<EssenceRefi
 	public EssenceRefinerRecipeCategory(IGuiHelper helpers) {
 		this.helper = helpers;
 		this.name = I18n.translateToLocal("am2.jei.recipe.refiner");
-		this.background = helpers.createDrawable(new ResourceLocation("arsmagica2:textures/gui/essenceExtractorGui.png"), 3, 25, 170, 114);
+		this.background = helpers.createDrawable(new ResourceLocation("arsmagica2:textures/gui/essence_extractor_gui.png"), 3, 25, 170, 114);
 	}
 
 	@Override

@@ -124,7 +124,7 @@ public class FlickerOperatorNaturesBounty extends AbstractFlickerFunctionality{
 	
 	@Override
 	public ResourceLocation getTexture() {
-		return new ResourceLocation("arsmagica2", "FlickerOperatorNaturesBounty");
+		return new ResourceLocation("arsmagica2", "flicker_operator_natures_bounty");
 	}
 
 	@Override

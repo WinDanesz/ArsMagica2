@@ -1,6 +1,6 @@
 {
 	"parent": "block/cross",
     "textures": {
-        "cross": "arsmagica2:blocks/tarmaroot"
+        "cross": "arsmagica2:blocks/tarma_root"
     }
 }

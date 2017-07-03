@@ -30,7 +30,7 @@ public class GuiArmorImbuer extends GuiContainer{
 	private TileEntityArmorImbuer tileEntity;
 	private EntityPlayer player;
 
-	private static final ResourceLocation foreground = new ResourceLocation("arsmagica2", "textures/gui/ArmorUpgradeGUI.png");
+	private static final ResourceLocation foreground = new ResourceLocation("arsmagica2", "textures/gui/armor_upgrade_gui.png");
 
 	int spriteHeight = 24;
 	int spriteWidth = 43;

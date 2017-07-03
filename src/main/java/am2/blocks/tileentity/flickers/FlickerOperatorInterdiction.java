@@ -101,7 +101,7 @@ public class FlickerOperatorInterdiction extends FlickerOperatorContainment{
 	
 	@Override
 	public ResourceLocation getTexture() {
-		return new ResourceLocation("arsmagica2", "FlickerOperatorInterdiction");
+		return new ResourceLocation("arsmagica2", "flicker_operator_interdiction");
 	}
 	
 	@Override

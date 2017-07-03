@@ -40,7 +40,7 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
 			facing = podium.getWorld().getBlockState(podium.getPos()).getValue(BlockLectern.FACING);
 		}
 		Minecraft.getMinecraft().mcProfiler.startSection("rendering");
-		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("arsmagica2", "textures/blocks/custom/archmagePodium.png"));
+		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("arsmagica2", "textures/blocks/custom/archmage_podium.png"));
 		GlStateManager.pushMatrix();
 		GlStateManager.translate((float)x + 0.5F, (float)y + 0.9F, (float)z + 0.5F);
 		GlStateManager.rotate(180 - facing.getHorizontalAngle(), 0, 1, 0);
