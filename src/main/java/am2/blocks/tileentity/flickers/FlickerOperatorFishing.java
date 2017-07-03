@@ -131,7 +131,7 @@ public class FlickerOperatorFishing extends AbstractFlickerFunctionality{
 	
 	@Override
 	public ResourceLocation getTexture() {
-		return new ResourceLocation("arsmagica2", "FlickerOperatorFishing");
+		return new ResourceLocation("arsmagica2", "flicker_operator_fishing");
 	}
 
 	@Override

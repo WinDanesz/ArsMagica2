@@ -58,7 +58,7 @@ public class PageItemStack extends CompendiumPage<ItemStack> {
 			}
 		}
 		RenderRecipe(cx, cy, mouseX, mouseY);
-		mc.renderEngine.bindTexture(new ResourceLocation("arsmagica2", "textures/gui/ArcaneCompendiumGuiExtras.png"));
+		mc.renderEngine.bindTexture(new ResourceLocation("arsmagica2", "textures/gui/arcane_compendium_gui_extras.png"));
 		zLevel++;
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);

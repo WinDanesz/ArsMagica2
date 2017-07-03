@@ -41,7 +41,7 @@ import net.minecraft.util.text.translation.I18n;
 @SuppressWarnings("deprecation")
 public class GuiInscriptionTable extends GuiContainer{
 
-	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/inscriptionTableGui.png");
+	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/inscription_table_gui.png");
 
 	private final EntityPlayer usingPlayer;
 

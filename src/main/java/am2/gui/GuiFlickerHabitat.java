@@ -21,7 +21,7 @@ import net.minecraft.util.text.translation.I18n;
 @SuppressWarnings("deprecation")
 public class GuiFlickerHabitat extends GuiContainer{
 
-	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/FlickerHabitat.png");
+	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/flicker_habitat.png");
 	private final TileEntityFlickerHabitat flickerHabitat;
 
 	/**

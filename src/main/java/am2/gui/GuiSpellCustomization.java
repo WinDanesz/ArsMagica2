@@ -32,7 +32,7 @@ public class GuiSpellCustomization extends GuiContainer{
 	private GuiButtonVariableDims btnRandomName;
 	private GuiTextField spellName;
 
-	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/SpellCustomization.png");
+	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/spell_customization.png");
 
 	public GuiSpellCustomization(EntityPlayer player){
 		super(new ContainerSpellCustomization(player));

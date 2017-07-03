@@ -107,7 +107,7 @@ public class FlickerOperatorGentleRains extends AbstractFlickerFunctionality{
 	
 	@Override
 	public ResourceLocation getTexture() {
-		return new ResourceLocation("arsmagica2", "FlickerOperatorGentleRains");
+		return new ResourceLocation("arsmagica2", "flicker_operator_gentle_rains");
 	}
 
 	@Override

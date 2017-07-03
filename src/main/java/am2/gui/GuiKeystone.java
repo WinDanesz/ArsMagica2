@@ -29,8 +29,8 @@ import net.minecraft.util.text.translation.I18n;
 @SuppressWarnings("deprecation")
 public class GuiKeystone extends GuiContainer{
 
-	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/keystone_GUI.png");
-	private static final ResourceLocation extras = new ResourceLocation("arsmagica2", "textures/gui/spellBookGui_2.png");
+	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/keystone_gui.png");
+	private static final ResourceLocation extras = new ResourceLocation("arsmagica2", "textures/gui/spell_book_gui_2.png");
 
 	private GuiTextField combinationName;
 	private GuiStatedImageButton addCombination;

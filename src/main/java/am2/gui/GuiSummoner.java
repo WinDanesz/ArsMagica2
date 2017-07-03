@@ -14,7 +14,7 @@ import net.minecraft.util.text.translation.I18n;
 @SuppressWarnings("deprecation")
 public class GuiSummoner extends GuiContainer{
 
-	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/SummonerGui.png");
+	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/summoner_gui.png");
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int i, int j){

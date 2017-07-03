@@ -432,7 +432,7 @@ public class FlickerOperatorItemTransport extends AbstractFlickerFunctionality{
 	
 	@Override
 	public ResourceLocation getTexture() {
-		return new ResourceLocation("arsmagica2", "FlickerOperatorItemTransport");
+		return new ResourceLocation("arsmagica2", "flicker_operator_item_transport");
 	}
 
 	@Override

@@ -298,7 +298,7 @@ public class FlickerOperatorFelledOak extends AbstractFlickerFunctionality{
 	
 	@Override
 	public ResourceLocation getTexture() {
-		return new ResourceLocation("arsmagica2", "FlickerOperatorFelledOak");
+		return new ResourceLocation("arsmagica2", "flicker_operator_felled_oak");
 	}
 
 	@Override

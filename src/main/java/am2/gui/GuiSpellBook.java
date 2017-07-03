@@ -18,8 +18,8 @@ public class GuiSpellBook extends GuiContainer{
 
 	private int bookActiveSlot;
 
-	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/spellBookGui.png");
-	private static final ResourceLocation extras = new ResourceLocation("arsmagica2", "textures/gui/spellBookGui_2.png");
+	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/spell_book_gui.png");
+	private static final ResourceLocation extras = new ResourceLocation("arsmagica2", "textures/gui/spell_book_gui_2.png");
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int i, int j){
