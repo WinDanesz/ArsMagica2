@@ -45,7 +45,7 @@ public final class CompendiumCategory {
 	public static final CompendiumCategory TALENT = createCompendiumCategory("talent", new ResourceLocation("arsmagica2", "items/spells/skills/augmentedcasting"));
 	public static final CompendiumCategory MOB = createCompendiumCategory("mob", new ResourceLocation("arsmagica2", "gui_icons/fatigue_icon"));
 	public static final CompendiumCategory MOB_FLICKER = createCompendiumCategory("mob.flicker", new ResourceLocation("missingno"));
-	public static final CompendiumCategory STRUCTURE = createCompendiumCategory("structure", new ResourceLocation("arsmagica2", "gui_icons/	gateway"));
+	public static final CompendiumCategory STRUCTURE = createCompendiumCategory("structure", new ResourceLocation("arsmagica2", "gui_icons/gateway"));
 	public static final CompendiumCategory BOSS = createCompendiumCategory("boss", new ResourceLocation("arsmagica2", "items/evil_book"));
 	
 	private ArrayList<CompendiumEntry> entries;
