@@ -17,6 +17,7 @@ public class BlockLightDecay extends BlockAM {
 		super(Material.AIR);
 		setTickRandomly(true);
 		setCreativeTab(null);
+		this.setLightLevel(15);
 	}
 	
 	@Override

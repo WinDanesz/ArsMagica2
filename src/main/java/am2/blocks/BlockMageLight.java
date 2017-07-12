@@ -31,6 +31,7 @@ public class BlockMageLight extends BlockAMSpecialRender {
 		super(Material.CIRCUITS);
 		//setBlockBounds(0.35f, 0.35f, 0.35f, 0.65f, 0.65f, 0.65f);
 		this.setTickRandomly(true);
+		this.setLightLevel(15);
 	}
 
 	@Override
