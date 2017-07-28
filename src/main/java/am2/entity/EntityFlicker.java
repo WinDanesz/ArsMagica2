@@ -1,6 +1,7 @@
 package am2.entity;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import am2.ArsMagica2;
 import am2.api.ArsMagicaAPI;
@@ -336,11 +337,12 @@ public class EntityFlicker extends EntityAmbientCreature{
 		Biome biome = this.getEntityWorld().getBiome(this.getPosition());
 		if (biome != null){
 			//get the tags on this biome
-			Type[] biomeTags = (Type[]) BiomeDictionary.getTypes(biome).toArray();
+			Set<Type> biomeTags = BiomeDictionary.getTypes(biome);
+
 			//biome has no types? We probably shouldn't spawn anything here
-			if (biomeTags.length <=0) return false;
+			if (biomeTags.size() <=0) return false;
 			//pick a random tag to focus on
-			Type tagType = biomeTags[0];
+			Type tagType = biomeTags.iterator().next();
 			//create a list of valid types based on that tag
 			ArrayList<Affinity> validAffinities = new ArrayList<Affinity>();
 			//populate the list
