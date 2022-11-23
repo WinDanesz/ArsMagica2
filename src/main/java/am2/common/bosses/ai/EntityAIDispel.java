@@ -29,7 +29,7 @@ public class EntityAIDispel extends EntityAIBase{
 	}
 
 	@Override
-	public boolean continueExecuting(){
+	public boolean shouldContinueExecuting(){
 		return !hasCasted && host.getAttackTarget() != null && !host.getAttackTarget().isDead;
 	}
 
@@ -48,11 +48,11 @@ public class EntityAIDispel extends EntityAIBase{
 
 		boltTicks++;
 		if (boltTicks == 16){
-			if (!host.worldObj.isRemote)
-				host.worldObj.playSound(host.posX, host.posY, host.posZ, ((IArsMagicaBoss)host).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
+			if (!host.world.isRemote)
+				host.world.playSound(host.posX, host.posY, host.posZ, ((IArsMagicaBoss)host).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
 			ISpellCaster spell = NPCSpells.instance.dispel.getCapability(SpellCaster.INSTANCE, null);
 			if (spell != null) {
-				spell.cast(NPCSpells.instance.dispel, host.worldObj, host);
+				spell.cast(NPCSpells.instance.dispel, host.world, host);
 			}
 		}
 		if (boltTicks >= 23){

@@ -1,23 +1,22 @@
 package am2.client.blocks.render;
 
-import static net.minecraft.client.renderer.texture.TextureMap.LOCATION_BLOCKS_TEXTURE;
-
-import org.lwjgl.opengl.GL11;
-
 import am2.client.texture.SpellIconManager;
 import am2.common.blocks.tileentity.TileEntityCraftingAltar;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.BlockPos;
+import org.lwjgl.opengl.GL11;
+
+import static net.minecraft.client.renderer.texture.TextureMap.LOCATION_BLOCKS_TEXTURE;
 
 public class TileCraftingAltarRenderer extends TileEntitySpecialRenderer<TileEntityCraftingAltar> {
 	
@@ -25,11 +24,11 @@ public class TileCraftingAltarRenderer extends TileEntitySpecialRenderer<TileEnt
 	private IBlockState prevState;
 	private TextureAtlasSprite def;
 	private TextureAtlasSprite runeStone;
-	
+
 	@Override
-	public void renderTileEntityAt(TileEntityCraftingAltar te, double x, double y, double z, float partialTicks, int destroyStage) {
-		Minecraft.getMinecraft().mcProfiler.startSection("crafting-altar");
-		Minecraft.getMinecraft().mcProfiler.startSection("definitions");
+	public void render(TileEntityCraftingAltar te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+		Minecraft.getMinecraft().profiler.startSection("crafting-altar");
+		Minecraft.getMinecraft().profiler.startSection("definitions");
 		if (def == null)
 			def = SpellIconManager.INSTANCE.getSprite("CasterRuneSide");
 		if (runeStone == null)
@@ -37,33 +36,33 @@ public class TileCraftingAltarRenderer extends TileEntitySpecialRenderer<TileEnt
 		if (te.getMimicState() != prevState || model == null) {
 			model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(te.getMimicState());
 		}
-		Minecraft.getMinecraft().mcProfiler.endSection();
+		Minecraft.getMinecraft().profiler.endSection();
 		BlockPos pos = te.getPos();
 		GL11.glPushMatrix();
 		Tessellator t = Tessellator.getInstance();
 		GL11.glTranslated(x, y, z);
 		RenderHelper.disableStandardItemLighting();
-		Minecraft.getMinecraft().mcProfiler.startSection("block-render");
+		Minecraft.getMinecraft().profiler.startSection("block-render");
 		if (te.isStructureValid() && te.getMimicState() != null) {
-			Minecraft.getMinecraft().mcProfiler.startSection("pre-check");
+			Minecraft.getMinecraft().profiler.startSection("pre-check");
 			GlStateManager.pushMatrix();
 			t.getBuffer().begin(7, DefaultVertexFormats.BLOCK);
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			GlStateManager.translate(-pos.getX(), -pos.getY(), -pos.getZ());
 			Minecraft.getMinecraft().renderEngine.bindTexture(LOCATION_BLOCKS_TEXTURE);
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			Minecraft.getMinecraft().mcProfiler.endStartSection("buffering");
-			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld, model, te.getMimicState(), pos, t.getBuffer(), false);
-			Minecraft.getMinecraft().mcProfiler.endStartSection("drawing");
+			Minecraft.getMinecraft().profiler.endStartSection("buffering");
+			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(Minecraft.getMinecraft().world, model, te.getMimicState(), pos, t.getBuffer(), false);
+			Minecraft.getMinecraft().profiler.endStartSection("drawing");
 			t.draw();
 			GlStateManager.popMatrix();
-			Minecraft.getMinecraft().mcProfiler.endSection();
+			Minecraft.getMinecraft().profiler.endSection();
 		} else {
-			Minecraft.getMinecraft().mcProfiler.startSection("raw-render");
+			Minecraft.getMinecraft().profiler.startSection("raw-render");
 			render(te, def);
-			Minecraft.getMinecraft().mcProfiler.endSection();
+			Minecraft.getMinecraft().profiler.endSection();
 		}
-		Minecraft.getMinecraft().mcProfiler.endSection();
+		Minecraft.getMinecraft().profiler.endSection();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		GL11.glTranslated(-0.005, -0.005, -0.005);
@@ -72,7 +71,7 @@ public class TileCraftingAltarRenderer extends TileEntitySpecialRenderer<TileEnt
 		GlStateManager.disableBlend();
 		RenderHelper.enableStandardItemLighting();
 		GL11.glPopMatrix();
-		Minecraft.getMinecraft().mcProfiler.endSection();
+		Minecraft.getMinecraft().profiler.endSection();
 	}
 	
 	public void render(TileEntityCraftingAltar te, TextureAtlasSprite sprite) {
@@ -87,7 +86,7 @@ public class TileCraftingAltarRenderer extends TileEntitySpecialRenderer<TileEnt
 		RenderHelper.disableStandardItemLighting();
 		//GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer buffer = tessellator.getBuffer();
+		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
 		buffer.pos(0, 1, 0).tex(maxU, minV).endVertex();
 		buffer.pos(1, 1, 0).tex(minU, minV).endVertex();

@@ -104,7 +104,7 @@ public class SpellParticleRender extends ItemOverrideList{
 	
 	public boolean renderItem(ItemStack item, EntityLivingBase entity){
 
-		if (mc.thePlayer.isPotionActive(Potion.getPotionFromResourceLocation("invisibility")))
+		if (mc.player.isPotionActive(Potion.getPotionFromResourceLocation("invisibility")))
 			return true;
 
 		ItemStack scrollStack = null;
@@ -140,7 +140,7 @@ public class SpellParticleRender extends ItemOverrideList{
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		float scale = 3f;
-		if (entity == mc.thePlayer && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0){
+		if (entity == mc.player && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0){
 
 			GL11.glPushMatrix();
 
@@ -161,8 +161,8 @@ public class SpellParticleRender extends ItemOverrideList{
 			GL11.glPopMatrix();
 
 			if (includeArm){
-				Minecraft.getMinecraft().renderEngine.bindTexture(mc.thePlayer.getLocationSkin());
-				renderFirstPersonArm(mc.thePlayer);
+				Minecraft.getMinecraft().renderEngine.bindTexture(mc.player.getLocationSkin());
+				renderFirstPersonArm(mc.player);
 			}
 		}
 		else{
@@ -225,21 +225,20 @@ public class SpellParticleRender extends ItemOverrideList{
 		EnumHandSide hand = EnumHandSide.LEFT;
 		boolean flag = hand != EnumHandSide.LEFT;
 		float f = flag ? 1.0F : -1.0F;
-		float f1 = MathHelper.sqrt_float(0);
+		float f1 = MathHelper.sqrt(0);
 		GlStateManager.rotate(f * 45.0F, 0.0F, 1.0F, 0.0F);
 		float f5 = MathHelper.sin(0 * 0 * (float) Math.PI);
 		float f6 = MathHelper.sin(f1 * (float) Math.PI);
 		GlStateManager.rotate(f * f6 * 70.0F, 0.0F, 1.0F, 0.0F);
 		GlStateManager.rotate(f * f5 * -20.0F, 0.0F, 0.0F, 1.0F);
-		AbstractClientPlayer abstractclientplayer = this.mc.thePlayer;
+		AbstractClientPlayer abstractclientplayer = this.mc.player;
 		this.mc.getTextureManager().bindTexture(abstractclientplayer.getLocationSkin());
 		GlStateManager.translate(f * -1.0F, 3.6F, 3.5F);
 		GlStateManager.rotate(f * 120.0F, 0.0F, 0.0F, 1.0F);
 		GlStateManager.rotate(200.0F, 1.0F, 0.0F, 0.0F);
 		GlStateManager.rotate(f * -135.0F, 0.0F, 1.0F, 0.0F);
 		GlStateManager.translate(f * 5.6F, 0.0F, 0.0F);
-		RenderPlayer renderplayer = (RenderPlayer) Minecraft.getMinecraft().getRenderManager()
-				.getEntityRenderObject(abstractclientplayer);
+		RenderPlayer renderplayer = null ; // todo (RenderPlayer) Minecraft.getMinecraft().getEntityRenderObject(abstractclientplayer);
 		GlStateManager.disableCull();
 		if (flag) {
 			renderplayer.renderRightArm(abstractclientplayer);

@@ -70,7 +70,7 @@ public class ItemBoundBow extends ItemBow implements IBoundItem {
 					if (!worldIn.isRemote) {
 						ItemArrow itemarrow = ItemDefs.BoundArrow;
 						EntityArrow entityarrow = itemarrow.createArrow(worldIn, copiedStack, entityplayer);
-						entityarrow.setAim(entityplayer, entityplayer.rotationPitch, entityplayer.rotationYaw, 0.0F, f * 3.0F, 1.0F);
+						entityarrow.shoot(entityplayer, entityplayer.rotationPitch, entityplayer.rotationYaw, 0.0F, f * 3.0F, 1.0F);
 
 						if (f == 1.0F) {
 							entityarrow.setIsCritical(true);
@@ -79,7 +79,7 @@ public class ItemBoundBow extends ItemBow implements IBoundItem {
 						stack.damageItem(1, entityplayer);
 						entityarrow.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
 
-						worldIn.spawnEntityInWorld(entityarrow);
+						worldIn.spawnEntity(entityarrow);
 					}
 
 					worldIn.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.NEUTRAL, 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
@@ -89,14 +89,14 @@ public class ItemBoundBow extends ItemBow implements IBoundItem {
 			}
 		}
 	}
-
-
-	@SuppressWarnings("deprecation")
-	@Override
-	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player) {
-		item.setItem(ItemDefs.spell);
-		return false;
-	}
+//
+//
+//	@SuppressWarnings("deprecation")
+//	@Override
+//	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player) {
+//		item.setItem(ItemDefs.spell);
+//		return false;
+//	}
 
 	@Override
 	public float maintainCost(EntityPlayer player, ItemStack stack) {
@@ -104,8 +104,8 @@ public class ItemBoundBow extends ItemBow implements IBoundItem {
 	}
 
 	public ItemBoundBow registerAndName(String name) {
-		this.setUnlocalizedName(new ResourceLocation("arsmagica2", name).toString());
-		GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
+//		this.setTranslationKey(new ResourceLocation("arsmagica2", name).toString());
+//		// TODO: registry GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
 		return this;
 	}
 

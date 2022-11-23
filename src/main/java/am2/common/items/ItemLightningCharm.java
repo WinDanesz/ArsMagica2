@@ -4,6 +4,7 @@ import java.util.List;
 
 import am2.api.math.AMVector3;
 import am2.common.utils.MathUtilities;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,12 +12,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
 
 public class ItemLightningCharm extends ItemArsMagica{
 
@@ -43,10 +48,11 @@ public class ItemLightningCharm extends ItemArsMagica{
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, EnumHand hand){
-		if (par3EntityPlayer.isSneaking())
-			toggleActive(par1ItemStack);
-		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, par1ItemStack);
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		ItemStack stack = player.getHeldItem(hand);
+		if (player.isSneaking())
+			toggleActive(stack);
+		return EnumActionResult.SUCCESS;
 	}
 
 	private void attractItems(World world, Entity ent){
@@ -94,8 +100,8 @@ public class ItemLightningCharm extends ItemArsMagica{
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4){
-		par3List.add(I18n.format("am2.tooltip.lightning_charm"));
-		super.addInformation(par1ItemStack, par2EntityPlayer, par3List, par4);
+	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+		tooltip.add(I18n.format("am2.tooltip.lightning_charm"));
+		super.addInformation(stack, world, tooltip, flag);
 	}
 }

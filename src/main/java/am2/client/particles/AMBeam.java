@@ -1,16 +1,14 @@
 package am2.client.particles;
 
-import org.lwjgl.opengl.GL11;
-
 import am2.ArsMagica2;
 import am2.api.particles.IBeamParticle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -20,6 +18,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class AMBeam extends Particle implements IBeamParticle{
@@ -90,8 +89,8 @@ public class AMBeam extends Particle implements IBeamParticle{
 		float deltaY = (float)(this.posY - this.dY);
 		float deltaZ = (float)(this.posZ - this.dZ);
 
-		this.length = MathHelper.sqrt_float(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-		double hDist = MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ);
+		this.length = MathHelper.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+		double hDist = MathHelper.sqrt(deltaX * deltaX + deltaZ * deltaZ);
 		this.yaw = ((float)(Math.atan2(deltaX, deltaZ) * 180.0D / 3.141592653589793D));
 		this.pitch = ((float)(Math.atan2(deltaY, hDist) * 180.0D / 3.141592653589793D));
 
@@ -122,7 +121,7 @@ public class AMBeam extends Particle implements IBeamParticle{
 			this.posY = this.updateY;
 			this.posZ = this.updateZ;
 			if (this.fppc){
-				EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+				EntityPlayer player = Minecraft.getMinecraft().player;
 				if (player != null){
 					float yaw = player.rotationYaw;
 					float rotationYaw = (float)(yaw * Math.PI / 180);
@@ -173,7 +172,7 @@ public class AMBeam extends Particle implements IBeamParticle{
 	}
 
 	@Override
-	public void renderParticle(VertexBuffer tessellator, Entity ent, float par2, float par3, float par4, float par5, float par6, float par7){
+	public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
 		GL11.glPushMatrix();
 		//GlStateManager.disableBlend();
 		//GlStateManager.disableAlpha();
@@ -181,8 +180,8 @@ public class AMBeam extends Particle implements IBeamParticle{
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.003921569F);
 		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 		float scaleFactor = 1.0F;
-//		float slide = this.worldObj.getTotalWorldTime();
-		float rot = this.worldObj.provider.getWorldTime() % (360 / this.rotateSpeed) * this.rotateSpeed + this.rotateSpeed * par2;
+		//		float slide = this.world.getTotalWorldTime();
+		float rot = this.world.provider.getWorldTime() % (360 / this.rotateSpeed) * this.rotateSpeed + this.rotateSpeed * partialTicks;
 
 		float size = (float)this.particleAge / (float)this.maxLengthAge;
 		if (size > 1) size = 1;
@@ -193,24 +192,24 @@ public class AMBeam extends Particle implements IBeamParticle{
 		TextureAtlasSprite beamIcon = null;
 
 		switch (this.type){
-		default:
-			beamIcon = AMParticleIcons.instance.getHiddenIconByName("beam");
-			break;
-		case 1:
-			beamIcon = AMParticleIcons.instance.getHiddenIconByName("beam1");
-			break;
-		case 2:
-			beamIcon = AMParticleIcons.instance.getHiddenIconByName("beam2");
+			default:
+				beamIcon = AMParticleIcons.instance.getHiddenIconByName("beam");
+				break;
+			case 1:
+				beamIcon = AMParticleIcons.instance.getHiddenIconByName("beam1");
+				break;
+			case 2:
+				beamIcon = AMParticleIcons.instance.getHiddenIconByName("beam2");
 		}
 
 		GL11.glTexParameterf(3553, 10242, 10497.0F);
 		GL11.glTexParameterf(3553, 10243, 10497.0F);
-//		float var11 = slide + par2;
-//		float var12 = -var11 * 0.2F - MathHelper.floor_float(-var11 * 0.1F);
+		//		float var11 = slide + par2;
+		//		float var12 = -var11 * 0.2F - MathHelper.floor(-var11 * 0.1F);
 
-		float xx = (float)(this.prevPosX + (this.posX - this.prevPosX) * par2 - interpPosX);
-		float yy = (float)(this.prevPosY + (this.posY - this.prevPosY) * par2 - interpPosY);
-		float zz = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * par2 - interpPosZ);
+		float xx = (float)(this.prevPosX + (this.posX - this.prevPosX) * partialTicks - interpPosX);
+		float yy = (float)(this.prevPosY + (this.posY - this.prevPosY) * partialTicks - interpPosY);
+		float zz = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * partialTicks - interpPosZ);
 		GL11.glTranslated(xx, yy, zz);
 
 		if (fppc){
@@ -219,8 +218,8 @@ public class AMBeam extends Particle implements IBeamParticle{
 
 		float deltaYaw = Math.abs(this.yaw) - Math.abs(this.prevYaw);
 
-		float ry = this.prevYaw + (deltaYaw) * par2;
-		float rp = this.prevPitch + (this.pitch - this.prevPitch) * par2;
+		float ry = this.prevYaw + (deltaYaw) * partialTicks;
+		float rp = this.prevPitch + (this.pitch - this.prevPitch) * partialTicks;
 		GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
 		GL11.glRotatef(180.0F + ry, 0.0F, 0.0F, -1.0F);
 		GL11.glRotatef(rp, 1.0F, 0.0F, 0.0F);
@@ -240,10 +239,10 @@ public class AMBeam extends Particle implements IBeamParticle{
 			i = 1;
 			inc = 180;
 		}
-		
+
 		for (int t = 0; t < i; t++){
 			Tessellator.getInstance().draw();
-			tessellator.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+			buffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 			double l = this.length * size * scaleFactor;
 			double tl = beamIcon.getMinU();
 			double br = beamIcon.getMaxU();
@@ -252,20 +251,20 @@ public class AMBeam extends Particle implements IBeamParticle{
 
 			GL11.glRotatef(inc, 0.0F, 1.0F, 0.0F);
 			GlStateManager.resetColor();
-//			if (t % 2 == 0){
-//				GL11.glColor4f(this.particleRed, this.particleGreen, this.particleBlue, op);
-//			}else{
-//				GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.4f);
-//			}
-	        int b = this.getBrightnessForRender(par7);
-	        int j = b >> 16 & 65535;
-	        int k = b & 65535;
-			tessellator.pos(offset3, l, 0.0D).tex( br, mV).color(this.particleRed, this.particleGreen, this.particleBlue, op).lightmap(j, k).endVertex();
-			tessellator.pos(offset1, 0.0D, 0.0D).tex( br, mU).color(this.particleRed, this.particleGreen, this.particleBlue, op).lightmap(j, k).endVertex();
-			tessellator.pos(offset2, 0.0D, 0.0D).tex( tl, mU).color(this.particleRed, this.particleGreen, this.particleBlue, op).lightmap(j, k).endVertex();
-			tessellator.pos(offset4, l, 0.0D).tex( tl, mV).color(this.particleRed, this.particleGreen, this.particleBlue, op).lightmap(j, k).endVertex();
+			//			if (t % 2 == 0){
+			//				GL11.glColor4f(this.particleRed, this.particleGreen, this.particleBlue, op);
+			//			}else{
+			//				GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.4f);
+			//			}
+			int b = this.getBrightnessForRender(rotationXZ);
+			int j = b >> 16 & 65535;
+			int k = b & 65535;
+			buffer.pos(offset3, l, 0.0D).tex( br, mV).color(this.particleRed, this.particleGreen, this.particleBlue, op).lightmap(j, k).endVertex();
+			buffer.pos(offset1, 0.0D, 0.0D).tex( br, mU).color(this.particleRed, this.particleGreen, this.particleBlue, op).lightmap(j, k).endVertex();
+			buffer.pos(offset2, 0.0D, 0.0D).tex( tl, mU).color(this.particleRed, this.particleGreen, this.particleBlue, op).lightmap(j, k).endVertex();
+			buffer.pos(offset4, l, 0.0D).tex( tl, mV).color(this.particleRed, this.particleGreen, this.particleBlue, op).lightmap(j, k).endVertex();
 			Tessellator.getInstance().draw();
-			tessellator.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+			buffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 		}
 		GL11.glPopMatrix();
 	}

@@ -3,6 +3,8 @@ package am2.common.items;
 import java.util.List;
 
 import am2.common.utils.EntityUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +15,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
 
 public class ItemJournal extends ItemArsMagica{
 
@@ -34,77 +38,75 @@ public class ItemJournal extends ItemArsMagica{
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack journal, EntityPlayer player, List<String> list, boolean par4){
-		String owner = getOwner(journal);
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+		String owner = getOwner(stack);
 		if (owner == null){
-			list.add(I18n.format("am2.tooltip.unowned"));
-			list.add(I18n.format("am2.tooltip.journalUse"));
+			tooltip.add(I18n.format("am2.tooltip.unowned"));
+			tooltip.add(I18n.format("am2.tooltip.stackUse"));
 			return;
 		}else{
-			list.add(String.format(I18n.format("am2.tooltip.journalOwner")));
-			list.add(String.format(I18n.format("am2.tooltip.journalOwner2"), owner));
+			tooltip.add(String.format(I18n.format("am2.tooltip.stackOwner")));
+			tooltip.add(String.format(I18n.format("am2.tooltip.stackOwner2"), owner));
 		}
 
-		if (owner.equals(player.getName()))
-			list.add(String.format(I18n.format("am2.tooltip.containedXP"), getXPInJournal(journal)));
-
-		if (owner == null || owner.equals(player.getName()))
-			list.add(I18n.format("am2.tooltip.journalUse"));
+		if (Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.getName().equals(owner)) {
+			tooltip.add(String.format(I18n.format("am2.tooltip.containedXP"), getXPInJournal(stack)));
+		}
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack journal, World world, EntityPlayer player, EnumHand hand){
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
 
-		if (!player.worldObj.isRemote){
-			if (getOwner(journal) == null){
-				setOwner(journal, player);
-			}else if (!getOwner(journal).equals(player.getName())){
-			  player.addChatMessage(new TextComponentString(I18n.format("am2.tooltip.notYourJournal")));
-				return super.onItemRightClick(journal, world, player, hand);
+		if (!player.world.isRemote){
+			if (getOwner(stack) == null){
+				setOwner(stack, player);
+			}else if (!getOwner(stack).equals(player.getName())){
+			  player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.notYourJournal")));
+				return super.onItemRightClick(world, player, hand);
 			}
 
 			if (player.isSneaking()){
 				int removedXP = EntityUtils.deductXP(10, player);
-				addXPToJournal(journal, removedXP);
+				addXPToJournal(stack, removedXP);
 			}else{
-				int amt = Math.min(getXPInJournal(journal), 10);
+				int amt = Math.min(getXPInJournal(stack), 10);
 				if (amt > 0){
 					player.addExperience(amt);
-					deductXPFromJournal(journal, amt);
+					deductXPFromJournal(stack, amt);
 				}
 			}
 		}
 
-		return super.onItemRightClick(journal, world, player, hand);
+		return super.onItemRightClick(world, player, hand);
 	}
 
-	private void addXPToJournal(ItemStack journal, int amount){
-		if (!journal.hasTagCompound())
-			journal.setTagCompound(new NBTTagCompound());
-		journal.getTagCompound().setInteger(KEY_NBT_XP, journal.getTagCompound().getInteger(KEY_NBT_XP) + amount);
+	private void addXPToJournal(ItemStack stack, int amount){
+		if (!stack.hasTagCompound())
+			stack.setTagCompound(new NBTTagCompound());
+		stack.getTagCompound().setInteger(KEY_NBT_XP, stack.getTagCompound().getInteger(KEY_NBT_XP) + amount);
 	}
 
-	private void deductXPFromJournal(ItemStack journal, int amount){
-		addXPToJournal(journal, -amount);
+	private void deductXPFromJournal(ItemStack stack, int amount){
+		addXPToJournal(stack, -amount);
 	}
 
-	private int getXPInJournal(ItemStack journal){
-		if (!journal.hasTagCompound())
+	private int getXPInJournal(ItemStack stack){
+		if (!stack.hasTagCompound())
 			return 0;
-		return journal.getTagCompound().getInteger(KEY_NBT_XP);
+		return stack.getTagCompound().getInteger(KEY_NBT_XP);
 	}
 
-	private String getOwner(ItemStack journal){
-		if (!journal.hasTagCompound())
+	private String getOwner(ItemStack stack){
+		if (!stack.hasTagCompound())
 			return null;
-		return journal.getTagCompound().getString(KEY_NBT_OWNER);
+		return stack.getTagCompound().getString(KEY_NBT_OWNER);
 	}
 
-	private void setOwner(ItemStack journal, EntityPlayer player){
-		if (!journal.hasTagCompound())
-			journal.setTagCompound(new NBTTagCompound());
-		journal.getTagCompound().setString(KEY_NBT_OWNER, player.getName());
+	private void setOwner(ItemStack stack, EntityPlayer player){
+		if (!stack.hasTagCompound())
+			stack.setTagCompound(new NBTTagCompound());
+		stack.getTagCompound().setString(KEY_NBT_OWNER, player.getName());
 	}
 
 }

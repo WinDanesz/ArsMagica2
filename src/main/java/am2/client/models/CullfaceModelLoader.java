@@ -17,7 +17,7 @@ public class CullfaceModelLoader implements ICustomModelLoader {
 
 	@Override
 	public boolean accepts(ResourceLocation modelLocation) {
-		return modelLocation.getResourcePath().contains("_cullface");
+		return modelLocation.getPath().contains("_cullface");
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class CullfaceModelLoader implements ICustomModelLoader {
 		if (!Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION)) {
 			return ModelLoaderRegistry.getMissingModel();
 		}
-		IModel newModel = OBJLoader.INSTANCE.loadModel(new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath().replaceAll("_cullface", "").replaceAll(".json", ".obj")));
+		IModel newModel = OBJLoader.INSTANCE.loadModel(new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath().replaceAll("_cullface", "").replaceAll(".json", ".obj")));
 		return new ModelCullface(newModel);
 	}
 

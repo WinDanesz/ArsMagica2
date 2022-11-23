@@ -23,7 +23,7 @@ public class SpellPartConfiguration extends Configuration{
 			disabled.clear();
 			for (ResourceLocation rl : ArsMagicaAPI.getSpellRegistry().getKeys()) {
 				String name = rl.toString();
-				if (name.startsWith("arsmagica2:")) name = rl.getResourcePath();
+				if (name.startsWith("arsmagica2:")) name = rl.getPath();
 				Property prop = this.get("enabled_spell_part", name, true);
 				prop.setRequiresWorldRestart(true);
 				if (!prop.getBoolean())
@@ -48,7 +48,7 @@ public class SpellPartConfiguration extends Configuration{
 		for (String disabled : disabled) {
 			ResourceLocation rl = new ResourceLocation(disabled);
 			if (!disabled.contains(":")) rl = new ResourceLocation("arsmagica2:" + disabled);
-			intArray.add(ArsMagicaAPI.getSkillRegistry().getId(rl));
+			// todo registry intArray.add(ArsMagicaAPI.getSkillRegistry().getId(rl));
 		}
 		int[] ret = new int[intArray.size()];
 		for (int i = 0; i < intArray.size(); i++) {
@@ -61,9 +61,9 @@ public class SpellPartConfiguration extends Configuration{
 	public void disableAllSkillsIn(int[] disabledSkills) {
 		disabled.clear();
 		for (int i : disabledSkills) {
-			ResourceLocation rl = ArsMagicaAPI.getSkillRegistry().getObjectById(i).getRegistryName();
+			ResourceLocation rl = null; // todo registry ArsMagicaAPI.getSkillRegistry().getObjectById(i).getRegistryName();
 			String name = rl.toString();
-			if (name.startsWith("arsmagica2:")) name = rl.getResourcePath();
+			if (name.startsWith("arsmagica2:")) name = rl.getPath();
 			disabled.add(name);
 		}
 	}

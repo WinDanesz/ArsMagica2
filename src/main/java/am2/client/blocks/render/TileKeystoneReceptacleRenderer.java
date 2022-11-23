@@ -24,7 +24,7 @@ public class TileKeystoneReceptacleRenderer extends TileEntitySpecialRenderer<Ti
 		rLoc = new ResourceLocation("arsmagica2", "textures/blocks/custom/KeystoneReceptacle.png");
 	}
 
-	public void renderTileEntityAt(TileEntityKeystoneRecepticle tile, double x, double y, double z, float partialTicks,int destroyStage){
+	public void render(TileEntityKeystoneRecepticle tile, double x, double y, double z, float partialTicks,int destroyStage){
 		int i = 3;
 
 		if (tile.getWorld() != null){

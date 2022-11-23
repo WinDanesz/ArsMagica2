@@ -163,7 +163,7 @@ public class SpellCaster implements ISpellCaster, ICapabilityProvider, ICapabili
 
 	@Override
 	public float getBaseManaCost(int shapeGroup) {
-		Float f = this.shapeGroupCosts.get(MathHelper.clamp_int(shapeGroup, 0, Math.max(0, this.shapeGroupCosts.size() - 1)));
+		Float f = this.shapeGroupCosts.get(MathHelper.clamp(shapeGroup, 0, Math.max(0, this.shapeGroupCosts.size() - 1)));
 		return f != null ? f.floatValue() : 0;
 	}
 
@@ -333,7 +333,7 @@ public class SpellCaster implements ISpellCaster, ICapabilityProvider, ICapabili
 
 	@Override
 	public void setCurentShapeGroup(int shapeGroup) {
-		this.currentShapeGroup = MathHelper.clamp_int(shapeGroup, 0, Math.max(this.shapeGroups.size() - 1, 0));
+		this.currentShapeGroup = MathHelper.clamp(shapeGroup, 0, Math.max(this.shapeGroups.size() - 1, 0));
 	}
 	
 	@Override
@@ -394,7 +394,7 @@ public class SpellCaster implements ISpellCaster, ICapabilityProvider, ICapabili
 	public NBTTagCompound getStoredData(int shapeGroup) {
 		if (this.shapeGroupStoredData.isEmpty() || shapeGroup < 0 || shapeGroup >= this.shapeGroupStoredData.size())
 			return new NBTTagCompound();
-		NBTTagCompound tag = this.shapeGroupStoredData.get(MathHelper.clamp_int(shapeGroup, 0, Math.max(this.shapeGroupStoredData.size() - 1, 0)));
+		NBTTagCompound tag = this.shapeGroupStoredData.get(MathHelper.clamp(shapeGroup, 0, Math.max(this.shapeGroupStoredData.size() - 1, 0)));
 		return tag != null ? tag : new NBTTagCompound();
 	}
 

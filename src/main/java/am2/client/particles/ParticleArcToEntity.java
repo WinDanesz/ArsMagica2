@@ -34,17 +34,17 @@ public class ParticleArcToEntity extends ParticleController{
 
 	public ParticleArcToEntity generateControlPoints(){
 		firstControl = new Vec3d(
-				start.xCoord + ((target.posX - start.xCoord) / 3),
-				start.yCoord + ((target.posY - start.yCoord) / 3),
-				start.zCoord + ((target.posZ - start.zCoord) / 3));
+				start.x + ((target.posX - start.x) / 3),
+				start.y + ((target.posY - start.y) / 3),
+				start.z + ((target.posZ - start.z) / 3));
 
 		secondControl = new Vec3d(
-				start.xCoord + ((target.posX - start.xCoord) / 3 * 2),
-				start.yCoord + ((target.posY - start.yCoord) / 3 * 2),
-				start.zCoord + ((target.posZ - start.zCoord) / 3 * 2));
+				start.x + ((target.posX - start.x) / 3 * 2),
+				start.y + ((target.posY - start.y) / 3 * 2),
+				start.z + ((target.posZ - start.z) / 3 * 2));
 
-		double offsetX = (particle.getWorldObj().rand.nextFloat() * offsetFactor) - halfOffsetFactor;
-		double offsetZ = (particle.getWorldObj().rand.nextFloat() * offsetFactor) - halfOffsetFactor;
+		double offsetX = (particle.getWorld().rand.nextFloat() * offsetFactor) - halfOffsetFactor;
+		double offsetZ = (particle.getWorld().rand.nextFloat() * offsetFactor) - halfOffsetFactor;
 
 		Vec3d offset = new Vec3d(offsetX, 0, offsetZ);
 
@@ -60,7 +60,7 @@ public class ParticleArcToEntity extends ParticleController{
 	}
 
 	private void addParticleAtPoint(Vec3d point){
-		AMParticle p = (AMParticle)ArsMagica2.proxy.particleManager.spawn(particle.getWorldObj(), "smoke", point.xCoord, point.yCoord, point.zCoord);
+		AMParticle p = (AMParticle)ArsMagica2.proxy.particleManager.spawn(particle.getWorld(), "smoke", point.x, point.y, point.z);
 		if (p != null){
 			p.setIgnoreMaxAge(false);
 			p.setMaxAge(200);
@@ -88,7 +88,7 @@ public class ParticleArcToEntity extends ParticleController{
 			return;
 		}
 		Vec3d bez = MathUtilities.bezier(start, firstControl, secondControl, new Vec3d(target.posX, target.posY, target.posZ).add(new Vec3d(0.0, target.getEyeHeight(), 0.0)), percent);
-		particle.setPosition(bez.xCoord, bez.yCoord, bez.zCoord);
+		particle.setPosition(bez.x, bez.y, bez.z);
 	}
 
 	@Override

@@ -70,8 +70,8 @@ public class PlayerTracker{
 	@SubscribeEvent
 	public void onPlayerLogout(PlayerLoggedOutEvent event){
 		//kill any summoned creatures
-		if (!event.player.worldObj.isRemote){
-			List<Entity> list = event.player.worldObj.loadedEntityList;
+		if (!event.player.world.isRemote){
+			List<Entity> list = event.player.world.loadedEntityList;
 			for (Object o : list){
 				if (o instanceof EntityLivingBase && EntityUtils.isSummon((EntityLivingBase)o) && EntityUtils.getOwner((EntityLivingBase)o) == event.player.getEntityId()){
 					((EntityLivingBase)o).setDead();
@@ -130,8 +130,8 @@ public class PlayerTracker{
 		for (ItemStack stack : player.inventory.armorInventory){
 			int soulbound_level = EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, stack);
 			if (soulbound_level > 0 || ArmorHelper.isInfusionPreset(stack, GenericImbuement.soulbound)){
-				soulboundItems.put(slotCount + player.inventory.mainInventory.length, stack.copy());
-				player.inventory.setInventorySlotContents(slotCount + player.inventory.mainInventory.length, null);
+				soulboundItems.put(slotCount + player.inventory.mainInventory.size(), stack.copy());
+				player.inventory.setInventorySlotContents(slotCount + player.inventory.mainInventory.size(), null);
 			}
 			slotCount++;
 		}
@@ -148,8 +148,8 @@ public class PlayerTracker{
 		int slotTest = 0;
 		while (soulboundItems.containsKey(slotTest)){
 			slotTest++;
-			if (slotTest == player.inventory.mainInventory.length)
-				slotTest += player.inventory.armorInventory.length;
+			if (slotTest == player.inventory.mainInventory.size())
+				slotTest += player.inventory.armorInventory.size();
 		}
 
 		soulboundItems.put(slotTest, stack);

@@ -10,6 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,6 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -27,6 +29,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
 
 public class ItemWaterGuardianOrbs extends AMArmor{
 
@@ -48,19 +52,13 @@ public class ItemWaterGuardianOrbs extends AMArmor{
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4){
-		par3List.add(I18n.format("am2.tooltip.water_orbs"));
+	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+		tooltip.add(I18n.format("am2.tooltip.water_orbs"));
 	}
 
 	@Override
 	public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type){
 		return "arsmagica2:textures/mobs/bosses/water_guardian.png";
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
-		par3List.add(ItemDefs.waterOrbsEnchanted.copy());
 	}
 
 	@Override
@@ -78,12 +76,12 @@ public class ItemWaterGuardianOrbs extends AMArmor{
 	{
 		AxisAlignedBB bb = entityIn.getEntityBoundingBox();
 
-		int minX = MathHelper.floor_double(bb.minX);
-		int maxX = MathHelper.ceiling_double_int(bb.maxX);
-		int minY = MathHelper.floor_double(bb.minY);
-		int maxY = MathHelper.ceiling_double_int(bb.maxY);
-		int minZ = MathHelper.floor_double(bb.minZ);
-		int maxZ = MathHelper.ceiling_double_int(bb.maxZ);
+		int minX = MathHelper.floor(bb.minX);
+		int maxX = MathHelper.ceil(bb.maxX);
+		int minY = MathHelper.floor(bb.minY);
+		int maxY = MathHelper.ceil(bb.maxY);
+		int minZ = MathHelper.floor(bb.minZ);
+		int maxZ = MathHelper.ceil(bb.maxZ);
 
 		Vec3d vec3d = Vec3d.ZERO;
 		BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain();
@@ -111,13 +109,13 @@ public class ItemWaterGuardianOrbs extends AMArmor{
 					}
 				}
 		blockpos$pooledmutableblockpos.release();
-		if (vec3d.lengthVector() > 0.0D && entityIn.isPushedByWater())
+		if (vec3d.length() > 0.0D && entityIn.isPushedByWater())
 		{
 			vec3d = vec3d.normalize();
 			//double d1 = 0.014D;
-			entityIn.motionX -= vec3d.xCoord * 0.014D;
-			entityIn.motionY -= vec3d.yCoord * 0.014D;
-			entityIn.motionZ -= vec3d.zCoord * 0.014D;
+			entityIn.motionX -= vec3d.x * 0.014D;
+			entityIn.motionY -= vec3d.y * 0.014D;
+			entityIn.motionZ -= vec3d.z * 0.014D;
 		}
 
 	}

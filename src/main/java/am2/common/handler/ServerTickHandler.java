@@ -37,7 +37,7 @@ public class ServerTickHandler{
 		}
 
 		if (firstTick){
-			ItemDefs.crystalPhylactery.getSpawnableEntities(FMLCommonHandler.instance().getMinecraftServerInstance().worldServers[0]);
+			// TODO ItemDefs.crystalPhylactery.getSpawnableEntities(FMLCommonHandler.instance().getMinecraftServerInstance().getWorldServer[0]);
 			firstTick = false;
 		}
 

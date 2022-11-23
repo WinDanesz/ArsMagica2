@@ -49,15 +49,15 @@ public class EntityAIShadowstep extends AIAnimation{
 		EntityEnderGuardian guardian = getEntity();
 		if (guardian.getAttackTarget() != null){
 			Vec3d facing = guardian.getAttackTarget().getLook(1.0f);
-			double x = guardian.getAttackTarget().posX - facing.xCoord * 3;
+			double x = guardian.getAttackTarget().posX - facing.x * 3;
 			double y = guardian.getAttackTarget().posY;
-			double z = guardian.getAttackTarget().posZ - facing.zCoord * 3;
+			double z = guardian.getAttackTarget().posZ - facing.z * 3;
 
 			guardian.setPosition(x, y, z);
 			guardian.lastTickPosX = x;
 			guardian.lastTickPosY = y;
 			guardian.lastTickPosZ = z;
-			guardian.worldObj.playSound(guardian.posX, guardian.posY, guardian.posZ, ((IArsMagicaBoss)guardian).getAttackSound(), SoundCategory.HOSTILE, 1.0f, guardian.getRNG().nextFloat() * 0.5f + 0.5f, false);
+			guardian.world.playSound(guardian.posX, guardian.posY, guardian.posZ, ((IArsMagicaBoss)guardian).getAttackSound(), SoundCategory.HOSTILE, 1.0f, guardian.getRNG().nextFloat() * 0.5f + 0.5f, false);
 		}
 		super.resetTask();
 	}

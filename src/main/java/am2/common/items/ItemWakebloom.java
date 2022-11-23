@@ -18,36 +18,35 @@ public class ItemWakebloom extends ItemBlock{
 	public ItemWakebloom(Block block) {
 		super(block);
 	}
-	
-	
+
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn,
-			EnumHand hand){
-		RayTraceResult mop = this.rayTrace(worldIn, playerIn, true);
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
+		RayTraceResult mop = this.rayTrace(world, player, true);
 
 		if (mop == null){
-			return new ActionResult<ItemStack>(EnumActionResult.PASS, itemStackIn);
+			return new ActionResult<ItemStack>(EnumActionResult.PASS, stack);
 		}else{
 			if (mop.typeOfHit == Type.BLOCK){
 
-				if (!worldIn.canMineBlockBody(playerIn, mop.getBlockPos())){
-					return new ActionResult<ItemStack>(EnumActionResult.PASS, itemStackIn);
+				if (!world.canMineBlockBody(player, mop.getBlockPos())){
+					return new ActionResult<ItemStack>(EnumActionResult.PASS, stack);
 				}
 
-				if (!playerIn.canPlayerEdit(mop.getBlockPos(), mop.sideHit, itemStackIn)){
-					return new ActionResult<ItemStack>(EnumActionResult.PASS, itemStackIn);
+				if (!player.canPlayerEdit(mop.getBlockPos(), mop.sideHit, stack)){
+					return new ActionResult<ItemStack>(EnumActionResult.PASS, stack);
 				}
 
-				if (worldIn.getBlockState(mop.getBlockPos()) == Blocks.FLOWING_WATER.getDefaultState() || worldIn.getBlockState(mop.getBlockPos()) == Blocks.WATER.getDefaultState()){
-					worldIn.setBlockState(mop.getBlockPos().up(), BlockDefs.wakebloom.getDefaultState());
+				if (world.getBlockState(mop.getBlockPos()) == Blocks.FLOWING_WATER.getDefaultState() || world.getBlockState(mop.getBlockPos()) == Blocks.WATER.getDefaultState()){
+					world.setBlockState(mop.getBlockPos().up(), BlockDefs.wakebloom.getDefaultState());
 
-					if (!playerIn.capabilities.isCreativeMode){
-						--itemStackIn.stackSize;
+					if (!player.capabilities.isCreativeMode){
+						stack.shrink(1);
 					}
 				}
 			}
 
-			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
+			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 		}
 	}
 

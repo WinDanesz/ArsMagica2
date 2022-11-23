@@ -13,7 +13,9 @@ import am2.common.extensions.SkillData;
 import am2.common.spell.SpellCaster;
 import am2.common.utils.EntityUtils;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -62,13 +64,15 @@ public class SpellBase extends ItemSpellBase{
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean par4){
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		if (!stack.hasTagCompound()) return;
-		
+		EntityPlayer player = Minecraft.getMinecraft().player;
+
 		ISpellCaster caster = stack.getCapability(SpellCaster.INSTANCE, null);
 
-		list.add("Mana Cost : " + caster.getManaCost(player.getEntityWorld(), player));
+		if (player != null && player.world != null) {
+			tooltip.add("Mana Cost : " + caster.getManaCost(player.world, player));
+		}
 	}
 
 	@Override
@@ -77,15 +81,16 @@ public class SpellBase extends ItemSpellBase{
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer caster, EnumHand hand){
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
 		if (!stack.hasTagCompound()) return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 		if (!stack.hasDisplayName()){
 			if (!world.isRemote)
-				FMLNetworkHandler.openGui(caster, ArsMagica2.instance, IDDefs.GUI_SPELL_CUSTOMIZATION, world, (int)caster.posX, (int)caster.posY, (int)caster.posZ);
+				FMLNetworkHandler.openGui(player, ArsMagica2.instance, IDDefs.GUI_SPELL_CUSTOMIZATION, world, (int)player.posX, (int)player.posY, (int)player.posZ);
 		} else {
-			caster.setActiveHand(hand);
+			player.setActiveHand(hand);
 		}
-		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
+		return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 	}
 
 	@Override
@@ -106,7 +111,7 @@ public class SpellBase extends ItemSpellBase{
 		if (stack.hasCapability(SpellCaster.INSTANCE, null) && caster != null) {
 			ISpellCaster spell = stack.getCapability(SpellCaster.INSTANCE, null);
 			if (spell.createSpellData(stack).isChanneled())
-				spell.cast(stack, caster.worldObj, caster);
+				spell.cast(stack, caster.world, caster);
 		}
 		super.onUsingTick(stack, caster, count);
 	}
@@ -134,7 +139,7 @@ public class SpellBase extends ItemSpellBase{
 		float offsetPitchSin = MathHelper.sin(-interpPitch * 0.017453292F);
 		float finalXOffset = offsetYawSin * offsetPitchCos;
 		float finalZOffset = offsetYawCos * offsetPitchCos;
-		Vec3d targetVector = vec3.addVector(finalXOffset * range, offsetPitchSin * range, finalZOffset * range);
+		Vec3d targetVector = vec3.add(finalXOffset * range, offsetPitchSin * range, finalZOffset * range);
 		RayTraceResult mop = world.rayTraceBlocks(vec3, targetVector, targetWater, !targetWater, false);
 
 		if (entityPos != null && mop != null){
@@ -146,10 +151,6 @@ public class SpellBase extends ItemSpellBase{
 		}
 
 		return entityPos != null ? entityPos : mop;
-	}
-	
-	@Override
-	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
 	}
 
 	@Override
@@ -170,7 +171,7 @@ public class SpellBase extends ItemSpellBase{
 
 	@Override
 	public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
-	    player.worldObj.destroyBlock(pos, player.canHarvestBlock(player.worldObj.getBlockState(pos)));
+	    player.world.destroyBlock(pos, player.canHarvestBlock(player.world.getBlockState(pos)));
 	    return true;
 	}
 
@@ -178,7 +179,7 @@ public class SpellBase extends ItemSpellBase{
 	public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
 		if (stack.hasCapability(SpellCaster.INSTANCE, null) && player != null) {
 			ISpellCaster caster = stack.getCapability(SpellCaster.INSTANCE, null);
-			return (int) caster.createSpellData(stack).getModifiedValue(2, SpellModifiers.MINING_POWER, Operation.ADD, player.worldObj, player, null);
+			return (int) caster.createSpellData(stack).getModifiedValue(2, SpellModifiers.MINING_POWER, Operation.ADD, player.world, player, null);
 		}
 	    return -1;
 	}

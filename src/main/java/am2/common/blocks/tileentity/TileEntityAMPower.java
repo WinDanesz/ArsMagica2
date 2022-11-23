@@ -39,22 +39,22 @@ public abstract class TileEntityAMPower extends TileEntity implements IPowerNode
 
 	@Override
 	public void invalidate() {
-		PowerNodeRegistry.For(this.worldObj).removePowerNode(this);
+		PowerNodeRegistry.For(this.world).removePowerNode(this);
 		super.invalidate();
 	}
 
 	@Override
 	public void update() {
-		if (!this.worldObj.isRemote && this.canRequestPower() && this.tickCounter++ >= this.getRequestInterval()) {
+		if (!this.world.isRemote && this.canRequestPower() && this.tickCounter++ >= this.getRequestInterval()) {
 			this.tickCounter = 0;
 			List<PowerTypes> powerTypes = this.getValidPowerTypes();
 			for (PowerTypes type : powerTypes) {
-				float amtObtained = PowerNodeRegistry.For(this.worldObj).requestPower(this, type, this.getChargeRate());
+				float amtObtained = PowerNodeRegistry.For(this.world).requestPower(this, type, this.getChargeRate());
 				if (amtObtained > 0)
-					PowerNodeRegistry.For(this.worldObj).insertPower(this, type, amtObtained);
+					PowerNodeRegistry.For(this.world).insertPower(this, type, amtObtained);
 			}
 		}
-		//worldObj.markAndNotifyBlock(pos, worldObj.getChunkFromBlockCoords(pos), worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+		//world.markAndNotifyBlock(pos, world.getChunk(pos), world.getBlockState(pos), world.getBlockState(pos), 3);
 	}
 
 	public int getRequestInterval() {
@@ -72,9 +72,9 @@ public abstract class TileEntityAMPower extends TileEntity implements IPowerNode
 	}
 
 	@Override
-	public void setWorldObj(World par1World) {
-		super.setWorldObj(par1World);
-		PowerNodeRegistry.For(this.worldObj).registerPowerNode(this);
+	public void setWorld(World worldIn) {
+		super.setWorld(worldIn);
+		PowerNodeRegistry.For(this.world).registerPowerNode(this);
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public abstract class TileEntityAMPower extends TileEntity implements IPowerNode
 	}
 
 	public void setPower(PowerTypes type, float amount) {
-		PowerNodeRegistry.For(this.worldObj).setPower(this, type, amount);
+		PowerNodeRegistry.For(this.world).setPower(this, type, amount);
 	}
 
 	@Override

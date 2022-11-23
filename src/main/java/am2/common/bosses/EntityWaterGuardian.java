@@ -107,15 +107,15 @@ public class EntityWaterGuardian extends AM2Boss {
 			this.uberSpinAvailable = false;
 		}
 
-		if (!this.worldObj.isRemote && this.uberSpinAvailable && this.currentAction != BossActions.IDLE){
+		if (!this.world.isRemote && this.uberSpinAvailable && this.currentAction != BossActions.IDLE){
 			this.setCurrentAction(BossActions.IDLE);
 		}
 
-		if (!this.worldObj.isRemote && this.isClone() && (this.master == null || this.ticksExisted > 400)){
+		if (!this.world.isRemote && this.isClone() && (this.master == null || this.ticksExisted > 400)){
 			this.setDead();
 		}
 
-		if (this.worldObj.isRemote){
+		if (this.world.isRemote){
 			this.updateRotations();
 		}
 		super.onUpdate();
@@ -149,16 +149,16 @@ public class EntityWaterGuardian extends AM2Boss {
 		super.setCurrentAction(action);
 		this.spinRotation = 0;
 
-		if (!this.worldObj.isRemote){
+		if (!this.world.isRemote){
 			AMNetHandler.INSTANCE.sendActionUpdateToAllAround(this);
 		}
 	}
 
 	@Override
 	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2){
-		if (par1DamageSource.getSourceOfDamage() instanceof EntityWaterGuardian)
+		if (par1DamageSource.getTrueSource() instanceof EntityWaterGuardian)
 			return false;
-		if (par1DamageSource.damageType.equals(DamageSource.outOfWorld.damageType))
+		if (par1DamageSource.damageType.equals(DamageSource.OUT_OF_WORLD.damageType))
 			return super.attackEntityFrom(par1DamageSource, par2);
 		if (this.isClone() && this.master != null){
 			this.master.enableUberAttack();
@@ -168,7 +168,7 @@ public class EntityWaterGuardian extends AM2Boss {
 		}
 
 		if (!this.isClone() && this.rand.nextInt(10) < 6){
-			this.worldObj.playSound(this.posX, this.posY, this.posZ, this.getAmbientSound(), SoundCategory.HOSTILE, 1.0f, 0.4f + this.rand.nextFloat() * 0.6f, false);
+			this.world.playSound(this.posX, this.posY, this.posZ, this.getAmbientSound(), SoundCategory.HOSTILE, 1.0f, 0.4f + this.rand.nextFloat() * 0.6f, false);
 			return false;
 		}
 
@@ -179,7 +179,7 @@ public class EntityWaterGuardian extends AM2Boss {
 	protected float modifyDamageAmount(DamageSource source, float damageAmt){
 		if (source instanceof DamageSourceLightning)
 			damageAmt *= 2.0f;
-		if (source.getSourceOfDamage() != null && source.getSourceOfDamage() instanceof EntityWaterGuardian)
+		if (source.getTrueSource() != null && source.getTrueSource() instanceof EntityWaterGuardian)
 			damageAmt = 0;
 		if (source instanceof DamageSourceFrost)
 			damageAmt = 0;
@@ -227,7 +227,7 @@ public class EntityWaterGuardian extends AM2Boss {
 		int i = this.rand.nextInt(4);
 
 		for (int j = 0; j < i; j++){
-			this.entityDropItem(new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.WATER)), 0.0f);
+			// todo this.entityDropItem(new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.WATER)), 0.0f);
 		}
 		
 		i = this.rand.nextInt(10);
@@ -238,7 +238,7 @@ public class EntityWaterGuardian extends AM2Boss {
 	}
 
 	@Override
-	protected SoundEvent getHurtSound(){
+	protected SoundEvent getHurtSound(DamageSource damageSource) {
 		return AMSounds.WATER_GUARDIAN_HIT;
 	}
 

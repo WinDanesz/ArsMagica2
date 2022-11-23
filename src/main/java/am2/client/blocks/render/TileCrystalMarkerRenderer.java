@@ -41,7 +41,7 @@ public class TileCrystalMarkerRenderer extends TileEntitySpecialRenderer<TileEnt
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntityCrystalMarker tileentity, double x, double y, double z, float partialTicks, int destroyStage){
+	public void render(TileEntityCrystalMarker tileentity, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
 		EnumFacing facing = EnumFacing.UP;
 		
 		if (tileentity.getWorld() != null){

@@ -28,6 +28,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.Nullable;
+
 public class BlockMageLight extends BlockAMSpecialRender {
 	
 	public static final PropertyEnum<EnumDyeColor> COLOR = PropertyEnum.<EnumDyeColor>create("color", EnumDyeColor.class);
@@ -87,7 +89,8 @@ public class BlockMageLight extends BlockAMSpecialRender {
 	
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-			EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ){
+			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+		ItemStack heldItem = player.getHeldItem(hand);
 
 		if (!world.isRemote && heldItem != null){
 
@@ -103,7 +106,7 @@ public class BlockMageLight extends BlockAMSpecialRender {
 			}
 		}
 
-		return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+		return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
 	}
 	
 	@Override
@@ -115,9 +118,10 @@ public class BlockMageLight extends BlockAMSpecialRender {
 	public int quantityDropped(Random random){
 		return 0;
 	}
-	
+
+	@Nullable
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
 		// TODO Auto-generated method stub
 		return new AxisAlignedBB(-0.2, -0.2, -0.2, 0.2, 0.2, 0.2);
 	}
@@ -128,8 +132,8 @@ public class BlockMageLight extends BlockAMSpecialRender {
 	}
 	
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
-	}
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes,
+			@Nullable Entity entityIn, boolean isActualState) {}
 	
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
@@ -138,8 +142,8 @@ public class BlockMageLight extends BlockAMSpecialRender {
 	
 	@Override
 	public BlockAM registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.toString());
-		GameRegistry.register(this, rl);
+		this.setTranslationKey(rl.toString());
+		// TODO: registry GameRegistry.register(this, rl);
 		return this;
 	}
 	

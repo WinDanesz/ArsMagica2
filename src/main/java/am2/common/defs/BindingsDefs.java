@@ -34,7 +34,7 @@ public class BindingsDefs {
 
 	@SubscribeEvent
 	public void onKeyInput(KeyInputEvent event){
-		EntityPlayer clientPlayer = FMLClientHandler.instance().getClient().thePlayer;
+		EntityPlayer clientPlayer = FMLClientHandler.instance().getClient().player;
 
 //		if (Minecraft.getMinecraft().currentScreen != null){
 //			if (Minecraft.getMinecraft().currentScreen instanceof GuiInventory){
@@ -50,7 +50,7 @@ public class BindingsDefs {
 		else if (ICE_BRIDGE.isPressed())
 			AMNetHandler.INSTANCE.sendAbilityToggle(AffinityData.ICE_BRIDGE_STATE);
 		else if (SHAPE_GROUP.isPressed()){
-			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+			EntityPlayer player = Minecraft.getMinecraft().player;
 			ItemStack curItem = player.inventory.getStackInSlot(player.inventory.currentItem);
 			if (curItem == null || (curItem.getItem() != ItemDefs.spell && curItem.getItem() != ItemDefs.spellBook && curItem.getItem() != ItemDefs.arcaneSpellbook)){
 				return;
@@ -77,7 +77,7 @@ public class BindingsDefs {
 
 		}
 		else if (SPELL_BOOK_NEXT.isPressed()){
-			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+			EntityPlayer player = Minecraft.getMinecraft().player;
 			ItemStack curItem = player.getHeldItem(EnumHand.MAIN_HAND);
 			if (curItem != null && curItem.getItem() instanceof ItemSpellBook){
 				AMNetHandler.INSTANCE.sendPacketToServer(
@@ -90,7 +90,7 @@ public class BindingsDefs {
 			}
 		}
 		else if (SPELL_BOOK_PREV.isPressed()){
-			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+			EntityPlayer player = Minecraft.getMinecraft().player;
 			ItemStack curItem = player.getHeldItem(EnumHand.MAIN_HAND);
 			if (curItem != null && curItem.getItem() instanceof ItemSpellBook){
 				AMNetHandler.INSTANCE.sendPacketToServer(
@@ -103,7 +103,7 @@ public class BindingsDefs {
 			}
 		}
 //		else if (this.SpellBookNextSpellKey.isPressed()){
-//			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+//			EntityPlayer player = Minecraft.getMinecraft().player;
 //			ItemStack curItem = player.inventory.getStackInSlot(player.inventory.currentItem);
 //			if (curItem == null){
 //				return;
@@ -113,7 +113,7 @@ public class BindingsDefs {
 //				AMNetHandler.INSTANCE.sendSpellbookSlotChange(player, player.inventory.currentItem, ItemSpellBook.ID_NEXT_SPELL);
 //			}
 //		}else if (this.SpellBookPrevSpellKey.isPressed()){
-//			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+//			EntityPlayer player = Minecraft.getMinecraft().player;
 //			ItemStack curItem = player.inventory.getStackInSlot(player.inventory.currentItem);
 //			if (curItem == null){
 //				return;

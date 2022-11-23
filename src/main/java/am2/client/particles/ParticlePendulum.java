@@ -27,7 +27,7 @@ public class ParticlePendulum extends ParticleController{
 	}
 
 	private void generateNewAngle(){
-		angle = Math.toRadians(particle.getWorldObj().rand.nextInt(360));
+		angle = Math.toRadians(particle.getWorld().rand.nextInt(360));
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class ParticlePendulum extends ParticleController{
 		lastDeltaX = deltaX;
 		lastDeltaZ = deltaZ;
 
-		particle.moveEntity(posX, posY, posZ);
+		particle.move(posX, posY, posZ);
 	}
 
 	@Override

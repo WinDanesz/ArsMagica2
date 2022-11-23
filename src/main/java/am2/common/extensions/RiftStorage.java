@@ -28,6 +28,11 @@ public class RiftStorage implements IRiftStorage, ICapabilityProvider, ICapabili
 	}
 
 	@Override
+	public boolean isEmpty() {
+		return false;
+	}
+
+	@Override
 	public ItemStack getStackInSlot(int i){
 		return this.stacks[i];
 	}
@@ -35,7 +40,7 @@ public class RiftStorage implements IRiftStorage, ICapabilityProvider, ICapabili
 	@Override
 	public ItemStack decrStackSize(int i, int j){
 		if (this.stacks[i] != null){
-			if (this.stacks[i].stackSize <= j){
+			if (this.stacks[i].getCount() <= j){
 				ItemStack itemstack = this.stacks[i];
 				this.stacks[i] = null;
 				return itemstack;
@@ -43,7 +48,7 @@ public class RiftStorage implements IRiftStorage, ICapabilityProvider, ICapabili
 
 			ItemStack itemstack1 = this.stacks[i].splitStack(j);
 
-			if (this.stacks[i].stackSize == 0){
+			if (this.stacks[i].getCount() == 0){
 				this.stacks[i] = null;
 			}
 
@@ -67,8 +72,8 @@ public class RiftStorage implements IRiftStorage, ICapabilityProvider, ICapabili
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
 		this.stacks[i] = itemstack;
-		if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit()){
-			itemstack.stackSize = this.getInventoryStackLimit();
+		if (itemstack != null && itemstack.getCount() > this.getInventoryStackLimit()){
+			itemstack.setCount( this.getInventoryStackLimit());
 		}
 	}
 
@@ -88,9 +93,9 @@ public class RiftStorage implements IRiftStorage, ICapabilityProvider, ICapabili
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer){
+	public boolean isUsableByPlayer(EntityPlayer entityplayer){
 		//if (accessEntity == null || accessEntity.isDead) return false;
-		return true;//entityplayer.getDistanceSqToEntity(accessEntity) < 64;
+		return true;//entityplayer.getDistanceSq(accessEntity) < 64;
 	}
 
 	@Override

@@ -79,13 +79,13 @@ public class SoundDefs {
 		register(CAST_NONE);
 		register(CAST_WATER);
 
-		GameRegistry.register(RUNE_CAST, new ResourceLocation(ArsMagica2.MODID, "spell.rune.cast"));
-		GameRegistry.register(CONTINGENCY, new ResourceLocation(ArsMagica2.MODID, "spell.contingency.contingency"));
-		GameRegistry.register(BINDING_CAST, new ResourceLocation(ArsMagica2.MODID, "spell.binding.cast"));
+		// TODO: registry GameRegistry.register(RUNE_CAST, new ResourceLocation(ArsMagica2.MODID, "spell.rune.cast"));
+		// TODO: registry GameRegistry.register(CONTINGENCY, new ResourceLocation(ArsMagica2.MODID, "spell.contingency.contingency"));
+		// TODO: registry GameRegistry.register(BINDING_CAST, new ResourceLocation(ArsMagica2.MODID, "spell.binding.cast"));
 	}
 
 	private static void register(SoundEvent event) {
-		GameRegistry.register(event);
+		// TODO: registry GameRegistry.register(event);
 	}
 
 	public static void createSoundMaps() {

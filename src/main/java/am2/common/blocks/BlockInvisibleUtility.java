@@ -29,6 +29,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import javax.annotation.Nullable;
+
 /**
  * This is my invisible utility block.  I use it for illumination (meta 0-2), as well as invisible walls (meta 3-10).
  * Meta 0: low illuminated
@@ -85,8 +87,8 @@ public class BlockInvisibleUtility extends BlockAM{
 	
 	@SuppressWarnings("incomplete-switch")
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entity){
-
+	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes,
+			@Nullable Entity entity, boolean isActualState) {
 		if (entity == null || world == null || entity instanceof EntityPlayer) // || entity instanceof EntityBroom
 			return;
 
@@ -149,9 +151,9 @@ public class BlockInvisibleUtility extends BlockAM{
 				spawnBlockParticles(world, pos);
 		}
 	}
-	
+
 	@Override
-	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+	public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
 		if (worldIn.isRemote){
 			if (getType(state).type == EnumType.COLLISION)
 				spawnBlockParticles(worldIn, pos);
@@ -240,7 +242,7 @@ public class BlockInvisibleUtility extends BlockAM{
 	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
 		if (getType(state).type == EnumType.LIGHT){
 			float r = 1.5f;
-			List<EntityLivingBase> ents = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).expandXyz(r));
+			List<EntityLivingBase> ents = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).expand(r,r,r));
 			boolean buffNearby = false;
 			for (EntityLivingBase ent : ents){
 				buffNearby |= ent.isPotionActive(PotionEffectsDefs.ILLUMINATION) ||
@@ -258,7 +260,7 @@ public class BlockInvisibleUtility extends BlockAM{
 	@Override
 	public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
 		if (worldIn.rand.nextInt(10) < 3 && getType(stateIn).type == EnumType.COLLISION){
-			List<Entity> ents = worldIn.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).expandXyz(0.2F));
+			List<Entity> ents = worldIn.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).expand(0.2F,0.2F,0.2F));
 			if (ents.size() > 0){
 				spawnBlockParticles(worldIn, pos);
 			}
@@ -307,8 +309,8 @@ public class BlockInvisibleUtility extends BlockAM{
 	
 	@Override
 	public BlockAM registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.toString());
-		GameRegistry.register(this, rl);
+		this.setTranslationKey(rl.toString());
+		// TODO: registry GameRegistry.register(this, rl);
 		return this;
 	}
 	

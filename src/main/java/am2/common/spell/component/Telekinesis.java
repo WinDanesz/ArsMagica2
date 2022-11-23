@@ -68,10 +68,10 @@ public class Telekinesis extends SpellComponent{
 
 			if (!world.isRemote){
 				float factor = 0.15f;
-				if (movement.yCoord > 0) movement = new Vec3d(movement.xCoord, 0, movement.zCoord);
-				double x = -(movement.xCoord * factor);
-				double y = -(movement.yCoord * factor);
-				double z = -(movement.zCoord * factor);
+				if (movement.y > 0) movement = new Vec3d(movement.x, 0, movement.z);
+				double x = -(movement.x * factor);
+				double y = -(movement.y * factor);
+				double z = -(movement.z * factor);
 
 				e.addVelocity(x, y, z);
 				if (Math.abs(e.motionX) > Math.abs(x * 2)){

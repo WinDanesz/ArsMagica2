@@ -2,6 +2,7 @@ package am2.client.particles.codechicken;
 
 import java.util.Iterator;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import org.lwjgl.opengl.GL11;
 
 import am2.ArsMagica2;
@@ -11,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -133,7 +133,7 @@ public class LightningBolt extends Particle{
 		return new AMVector3((float)renderentity.posX - pos.x, (float)renderentity.posY - pos.y, (float)renderentity.posZ - pos.z);
 	}
 
-	private void renderBolt(VertexBuffer buffer, float partialframe, float cosyaw, float cospitch, float sinyaw, float cossinpitch, int pass){
+	private void renderBolt(BufferBuilder buffer, float partialframe, float cosyaw, float cospitch, float sinyaw, float cossinpitch, int pass){
 		AMVector3 playervec = new AMVector3(sinyaw * -cospitch, -cossinpitch / cosyaw, cosyaw * cospitch);
 		float boltage = this.main.particleAge >= 0 ? this.main.particleAge / this.main.particleMaxAge : 0.0F;
 		float mainalpha = 1.0F;
@@ -191,7 +191,7 @@ public class LightningBolt extends Particle{
 	}
 	
 	@Override
-	public void renderParticle(VertexBuffer worldRendererIn, Entity entityIn, float partialTicks, float cosyaw, float cospitch, float sinyaw, float sinsinpitch, float cossinpitch) {
+	public void renderParticle(BufferBuilder worldRendererIn, Entity entityIn, float partialTicks, float cosyaw, float cospitch, float sinyaw, float sinsinpitch, float cossinpitch) {
 		Tessellator tessellator = Tessellator.getInstance();
 		EntityPlayer renderentity = ArsMagica2.proxy.getLocalPlayer();
 		int visibleDistance = 100;

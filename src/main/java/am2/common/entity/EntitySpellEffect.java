@@ -20,7 +20,8 @@ import am2.common.utils.MathUtilities;
 import am2.common.utils.SpellUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.boss.EntityDragonPart;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -150,7 +151,7 @@ public class EntitySpellEffect extends Entity{
 			break;
 		}
 
-		if (!worldObj.isRemote && this.ticksExisted >= this.ticksToExist){
+		if (!world.isRemote && this.ticksExisted >= this.ticksToExist){
 			this.setDead();
 		}
 	}
@@ -163,7 +164,7 @@ public class EntitySpellEffect extends Entity{
 	}
 
 	private void zoneUpdate(){
-		if (this.worldObj.isRemote){
+		if (this.world.isRemote){
 			if (!ArsMagica2.config.NoGFX()){
 				this.rotation += this.rotationSpeed;
 				this.rotation %= 360;
@@ -179,14 +180,14 @@ public class EntitySpellEffect extends Entity{
 				}
 				spellStack = spellStack.copy();
 
-				int color = spellStack.getColor(worldObj, null, null) & 0xFFFFFF;
+				int color = spellStack.getColor(world, null, null) & 0xFFFFFF;
 
 				if ((ArsMagica2.config.FullGFX() && this.ticksExisted % 2 == 0) || this.ticksExisted % 8 == 0){
 					for (int i = 0; i < 4; ++i){
 						_rotation = (rotation + (90 * i)) % 360;
 						double x = this.posX - Math.cos(3.141 / 180 * (_rotation)) * dist;
 						double z = this.posZ - Math.sin(3.141 / 180 * (_rotation)) * dist;
-						AMParticle effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(worldObj, AMParticleDefs.getParticleForAffinity(spellStack.getMainShift()), x, posY, z);
+						AMParticle effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, AMParticleDefs.getParticleForAffinity(spellStack.getMainShift()), x, posY, z);
 						if (effect != null){
 							effect.setIgnoreMaxAge(false);
 							effect.setMaxAge(20);
@@ -202,38 +203,36 @@ public class EntitySpellEffect extends Entity{
 			}
 		}
 		
-		this.moveEntity(0, (float)this.dataManager.get(WATCHER_GRAVITY), 0);
+		this.move(MoverType.SELF, 0, (float)this.dataManager.get(WATCHER_GRAVITY), 0);
 
 		ticksToEffect--;
 		if (spellStack == null){
-			if (!worldObj.isRemote){
+			if (!world.isRemote){
 				this.setDead();
 			}
 			return;
 		}
 		if (dummycaster == null){
-			dummycaster = DummyEntityPlayer.fromEntityLiving(new EntityDummyCaster(worldObj));
+			dummycaster = DummyEntityPlayer.fromEntityLiving(new EntityDummyCaster(world));
 		}
 		if (ticksToEffect <= 0){
 			ticksToEffect = maxTicksToEffect;
 			float radius = this.dataManager.get(WATCHER_RADIUS);
-			List<Entity> possibleTargets = worldObj.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(posX - radius, posY - 3, posZ - radius, posX + radius, posY + 3, posZ + radius));
+			List<Entity> possibleTargets = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(posX - radius, posY - 3, posZ - radius, posX + radius, posY + 3, posZ + radius));
 			for (Entity e : possibleTargets){
-				if (e instanceof EntityDragonPart && ((EntityDragonPart)e).entityDragonObj instanceof EntityLivingBase)
-					e = (EntityLivingBase)((EntityDragonPart)e).entityDragonObj;
 				if (e instanceof EntityLivingBase)
-					spellStack.copy().execute(worldObj, dummycaster, (EntityLivingBase) e, e.posX, e.posY - 1, e.posZ, null);
+					spellStack.copy().execute(world, dummycaster, (EntityLivingBase) e, e.posX, e.posY - 1, e.posZ, null);
 			}
 			if (this.dataManager.get(WATCHER_GRAVITY) < 0 && !firstApply)
-				spellStack.copy().execute(worldObj, dummycaster, null, posX, posY - 1, posZ, null);
+				spellStack.copy().execute(world, dummycaster, null, posX, posY - 1, posZ, null);
 			else
-				spellStack.copy().execute(worldObj, dummycaster, null, posX, posY, posZ, null);
+				spellStack.copy().execute(world, dummycaster, null, posX, posY, posZ, null);
 			firstApply = false;
 			for (float i = -radius; i <= radius; i++) {
 				for (int j = -3; j <= 3; j++) {
 					Vec3d[] blocks = getAllBlockLocationsBetween(new Vec3d(posX + i, posY + j, posZ - radius), new Vec3d(posX + i, posY + j, posZ + radius));
 					for (Vec3d vec : blocks) {
-						spellStack.pop().applyComponentsToGround(worldObj, dummycaster, new BlockPos(vec), EnumFacing.UP, vec.xCoord + 0.5, vec.yCoord + 0.5, vec.zCoord + 0.5);
+						spellStack.pop().applyComponentsToGround(world, dummycaster, new BlockPos(vec), EnumFacing.UP, vec.x + 0.5, vec.y + 0.5, vec.z + 0.5);
 					}
 				}
 			}
@@ -242,7 +241,7 @@ public class EntitySpellEffect extends Entity{
 
 	private void rainOfFireUpdate(){
 		float radius = this.dataManager.get(WATCHER_RADIUS);
-		if (worldObj.isRemote){
+		if (world.isRemote){
 
 			if (spellStack == null){
 				spellStack = getEffectStack();
@@ -252,14 +251,14 @@ public class EntitySpellEffect extends Entity{
 			}
 			spellStack = spellStack.copy();
 
-			int color = spellStack.getColor(worldObj, null, null) & 0xFFFFFF;
+			int color = spellStack.getColor(world, null, null) & 0xFFFFFF;
 
 			for (int i = 0; i < 10; ++i){
 				double x = this.posX - radius + (rand.nextDouble() * radius * 2);
 				double z = this.posZ - radius + (rand.nextDouble() * radius * 2);
 				double y = this.posY + 10;
 
-				AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(worldObj, "explosion_2", x, y, z);
+				AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "explosion_2", x, y, z);
 				if (particle != null){
 					particle.setMaxAge(20);
 					particle.addVelocity(rand.nextDouble() * 0.2f, 0, rand.nextDouble() * 0.2f);
@@ -269,13 +268,11 @@ public class EntitySpellEffect extends Entity{
 				}
 			}
 
-			//TODO: SoundHelper.instance.loopSound(worldObj, (float)posX, (float)posY, (float)posZ, "arsmagica2:spell.loop.fire", 1.0f);
+			//TODO: SoundHelper.instance.loopSound(world, (float)posX, (float)posY, (float)posZ, "arsmagica2:spell.loop.fire", 1.0f);
 		}else{
-			List<Entity> possibleTargets = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(posX - radius, posY - 1, posZ - radius, posX + radius, posY + 3, posZ + radius));
+			List<Entity> possibleTargets = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(posX - radius, posY - 1, posZ - radius, posX + radius, posY + 3, posZ + radius));
 			for (Entity e : possibleTargets){
 				if (e != dummycaster){
-					if (e instanceof EntityDragonPart && ((EntityDragonPart)e).entityDragonObj instanceof EntityLivingBase)
-						e = (EntityLivingBase)((EntityDragonPart)e).entityDragonObj;
 
 					double lastVelX = e.motionX;
 					double lastVelY = e.motionY;
@@ -292,8 +289,8 @@ public class EntitySpellEffect extends Entity{
 				int pX = (int)(posX - radius + rand.nextInt((int)Math.ceil(radius) * 2));
 				int pY = (int)posY;
 				int pZ = (int)(posZ - radius + rand.nextInt((int)Math.ceil(radius) * 2));
-				if (worldObj.isAirBlock(new BlockPos(pX, pY, pZ)))
-					worldObj.setBlockState(new BlockPos(pX, pY, pZ), Blocks.FIRE.getDefaultState());
+				if (world.isAirBlock(new BlockPos(pX, pY, pZ)))
+					world.setBlockState(new BlockPos(pX, pY, pZ), Blocks.FIRE.getDefaultState());
 			}
 			
 		}
@@ -301,7 +298,7 @@ public class EntitySpellEffect extends Entity{
 
 	private void blizzardUpdate(){
 		float radius = this.dataManager.get(WATCHER_RADIUS);
-		if (worldObj.isRemote){
+		if (world.isRemote){
 
 			if (spellStack == null){
 				spellStack = getEffectStack();
@@ -311,14 +308,14 @@ public class EntitySpellEffect extends Entity{
 			}
 			spellStack = spellStack.copy();
 
-			int color = spellStack.getColor(worldObj, null, null) & 0xFFFFFF;
+			int color = spellStack.getColor(world, null, null) & 0xFFFFFF;
 
 			for (int i = 0; i < 20; ++i){
 				double x = this.posX - radius + (rand.nextDouble() * radius * 2);
 				double z = this.posZ - radius + (rand.nextDouble() * radius * 2);
 				double y = this.posY + 10;
 
-				AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(worldObj, "snowflakes", x, y, z);
+				AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "snowflakes", x, y, z);
 				if (particle != null){
 					particle.setMaxAge(20);
 					particle.setParticleScale(0.1f);
@@ -332,7 +329,7 @@ public class EntitySpellEffect extends Entity{
 			double x = this.posX - radius + (rand.nextDouble() * radius * 2);
 			double z = this.posZ - radius + (rand.nextDouble() * radius * 2);
 			double y = this.posY + rand.nextDouble();
-			AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(worldObj, "smoke", x, y, z);
+			AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "smoke", x, y, z);
 			if (particle != null){
 				particle.setParticleScale(2.0f);
 				particle.setMaxAge(20);
@@ -342,13 +339,11 @@ public class EntitySpellEffect extends Entity{
 				particle.AddParticleController(new ParticleFleePoint(particle, new Vec3d(x, y, z), 0.1f, 3f, 1, false));
 			}
 
-			//TODO: SoundHelper.instance.loopSound(worldObj, (float)posX, (float)posY, (float)posZ, "arsmagica2:spell.loop.air", 1.0f);
+			//TODO: SoundHelper.instance.loopSound(world, (float)posX, (float)posY, (float)posZ, "arsmagica2:spell.loop.air", 1.0f);
 		}else{
-			List<Entity> possibleTargets = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(posX - radius, posY - 1, posZ - radius, posX + radius, posY + 3, posZ + radius));
+			List<Entity> possibleTargets = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(posX - radius, posY - 1, posZ - radius, posX + radius, posY + 3, posZ + radius));
 			for (Entity e : possibleTargets){
 				if (e != dummycaster){
-					if (e instanceof EntityDragonPart && ((EntityDragonPart)e).entityDragonObj instanceof EntityLivingBase)
-						e = (EntityLivingBase)((EntityDragonPart)e).entityDragonObj;
 
 					if (e instanceof EntityLivingBase)
 						((EntityLivingBase)e).addPotionEffect(new BuffEffectFrostSlowed(80, 3));
@@ -369,14 +364,14 @@ public class EntitySpellEffect extends Entity{
 				int pY = (int)posY + rand.nextInt(2);
 				int pZ = (int)(posZ - radius + rand.nextInt((int)Math.ceil(radius) * 2));
 				BlockPos pos = new BlockPos(pX, pY, pZ);
-				if (worldObj.isAirBlock(pos) && !worldObj.isAirBlock(pos.down()) && worldObj.getBlockState(pos).isOpaqueCube())
-					worldObj.setBlockState(pos, Blocks.SNOW.getDefaultState());
+				if (world.isAirBlock(pos) && !world.isAirBlock(pos.down()) && world.getBlockState(pos).isOpaqueCube())
+					world.setBlockState(pos, Blocks.SNOW.getDefaultState());
 			}
 		}
 	}
 
 	private void wallUpdate(){
-		if (worldObj.isRemote){
+		if (world.isRemote){
 			if (spellStack == null){
 				spellStack = getEffectStack();
 				if (spellStack == null){
@@ -387,7 +382,7 @@ public class EntitySpellEffect extends Entity{
 
 			double dist = getRadius();
 
-			int color = spellStack.getColor(worldObj, null, null) & 0xFFFFFF;
+			int color = spellStack.getColor(world, null, null) & 0xFFFFFF;
 
 			double px = Math.cos(3.141 / 180 * (rotationYaw + 90)) * 0.1f;
 			double pz = Math.sin(3.141 / 180 * (rotationYaw + 90)) * 0.1f;
@@ -397,7 +392,7 @@ public class EntitySpellEffect extends Entity{
 				double x = this.posX - Math.cos(3.141 / 180 * (rotationYaw)) * i;
 				double z = this.posZ - Math.sin(3.141 / 180 * (rotationYaw)) * i;
 
-				AMParticle effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(worldObj, AMParticleDefs.getParticleForAffinity(spellStack.getMainShift()), x, posY, z);
+				AMParticle effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, AMParticleDefs.getParticleForAffinity(spellStack.getMainShift()), x, posY, z);
 				if (effect != null){
 					effect.setIgnoreMaxAge(false);
 					effect.setMaxAge(20);
@@ -416,7 +411,7 @@ public class EntitySpellEffect extends Entity{
 				x = this.posX - Math.cos(Math.toRadians(rotationYaw)) * -i;
 				z = this.posZ - Math.sin(Math.toRadians(rotationYaw)) * -i;
 
-				effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(worldObj, AMParticleDefs.getParticleForAffinity(spellStack.getMainShift()), x, posY, z);
+				effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, AMParticleDefs.getParticleForAffinity(spellStack.getMainShift()), x, posY, z);
 				if (effect != null){
 					effect.setIgnoreMaxAge(false);
 					effect.addRandomOffset(1, 1, 1);
@@ -437,24 +432,21 @@ public class EntitySpellEffect extends Entity{
 
 			ticksToEffect--;
 			if (spellStack == null){
-				if (!worldObj.isRemote){
+				if (!world.isRemote){
 					this.setDead();
 				}
 				return;
 			}
 
 			if (dummycaster == null){
-				dummycaster = DummyEntityPlayer.fromEntityLiving(new EntityDummyCaster(worldObj));
+				dummycaster = DummyEntityPlayer.fromEntityLiving(new EntityDummyCaster(world));
 			}
 			if (ticksToEffect <= 0){
 				ticksToEffect = maxTicksToEffect_wall;
 				float radius = this.dataManager.get(WATCHER_RADIUS);
-				List<Entity> possibleTargets = worldObj.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(posX - radius, posY - 1, posZ - radius, posX + radius, posY + 3, posZ + radius));
+				List<Entity> possibleTargets = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(posX - radius, posY - 1, posZ - radius, posX + radius, posY + 3, posZ + radius));
 				for (Entity e : possibleTargets){
 					if (e == this || e == dummycaster || e.getEntityId() == casterEntityID) continue;
-
-					if (e instanceof EntityDragonPart && ((EntityDragonPart)e).entityDragonObj instanceof EntityLivingBase)
-						e = (EntityLivingBase)((EntityDragonPart)e).entityDragonObj;
 
 					Vec3d target = new Vec3d(e.posX, e.posY, e.posZ);
 
@@ -466,8 +458,8 @@ public class EntitySpellEffect extends Entity{
 
 					Vec3d closest = new AMLineSegment(a, b).closestPointOnLine(target);
 
-					closest = new Vec3d(closest.xCoord, 0, closest.zCoord);
-					target = new Vec3d(target.xCoord, 0, target.zCoord);
+					closest = new Vec3d(closest.x, 0, closest.z);
+					target = new Vec3d(target.x, 0, target.z);
 
 					double hDistance = closest.distanceTo(target);
 					double vDistance = Math.abs(this.posY - e.posY);
@@ -475,8 +467,8 @@ public class EntitySpellEffect extends Entity{
 					if (e instanceof EntityLivingBase && hDistance < 0.75f && vDistance < 2){
 						//commented out in favor of line below so as to apply subsequent shapes as well
 						//uncomment and comment out below line to revert to direct target only, but mark wave/wall as terminus
-						//SpellUtils.applyStageToEntity(spellStack, dummycaster, worldObj, e, false);
-						spellStack.copy().execute(worldObj, dummycaster, (EntityLivingBase) e, this.posX, this.posY, this.posZ, null);
+						//SpellUtils.applyStageToEntity(spellStack, dummycaster, world, e, false);
+						spellStack.copy().execute(world, dummycaster, (EntityLivingBase) e, this.posX, this.posY, this.posZ, null);
 					}
 				}
 			}
@@ -489,7 +481,7 @@ public class EntitySpellEffect extends Entity{
 		double dx = Math.cos(Math.toRadians(this.rotationYaw + 90));
 		double dz = Math.sin(Math.toRadians(this.rotationYaw + 90));
 
-		this.moveEntity(dx * moveSpeed, 0, dz * moveSpeed);
+		this.move(MoverType.SELF,dx * moveSpeed, 0, dz * moveSpeed);
 
 		double dxH = Math.cos(Math.toRadians(this.rotationYaw));
 		double dzH = Math.sin(Math.toRadians(this.rotationYaw));
@@ -501,12 +493,12 @@ public class EntitySpellEffect extends Entity{
 			Vec3d b = new Vec3d((this.posX + dx) - dxH * -radius, this.posY + j, (this.posZ + dz) - dzH * -radius);
 	
 			if (dummycaster == null){
-				dummycaster = DummyEntityPlayer.fromEntityLiving(new EntityDummyCaster(worldObj));
+				dummycaster = DummyEntityPlayer.fromEntityLiving(new EntityDummyCaster(world));
 			}
 	
 			Vec3d[] vecs = getAllBlockLocationsBetween(a, b);
 			for (Vec3d vec : vecs){
-				spellStack.copy().pop().applyComponentsToGround(worldObj, dummycaster, new BlockPos(vec), EnumFacing.UP, vec.xCoord + 0.5, vec.yCoord + 0.5, vec.zCoord + 0.5);
+				spellStack.copy().pop().applyComponentsToGround(world, dummycaster, new BlockPos(vec), EnumFacing.UP, vec.x + 0.5, vec.y + 0.5, vec.z + 0.5);
 			}
 		}
 
@@ -516,25 +508,25 @@ public class EntitySpellEffect extends Entity{
 		a = MathUtilities.floorToI(a);
 		b = MathUtilities.floorToI(b);
 
-		double stepX = a.xCoord < b.xCoord ? 0.2f : -0.2f;
-		double stepZ = a.zCoord < b.zCoord ? 0.2f : -0.2f;
+		double stepX = a.x < b.x ? 0.2f : -0.2f;
+		double stepZ = a.z < b.z ? 0.2f : -0.2f;
 		ArrayList<Vec3d> vecList = new ArrayList<Vec3d>();
-		Vec3d curPos = new Vec3d(a.xCoord, a.yCoord, a.zCoord);
+		Vec3d curPos = new Vec3d(a.x, a.y, a.z);
 		for (int i = 0; i < this.height; ++i){
-			vecList.add(new Vec3d(curPos.xCoord, curPos.yCoord + i, curPos.zCoord));
+			vecList.add(new Vec3d(curPos.x, curPos.y + i, curPos.z));
 		}
 
 		while (stepX != 0 || stepZ != 0){
-			if ((stepX < 0 && curPos.xCoord <= b.xCoord) || (stepX > 0 && curPos.xCoord >= b.xCoord))
+			if ((stepX < 0 && curPos.x <= b.x) || (stepX > 0 && curPos.x >= b.x))
 				stepX = 0;
-			if ((stepZ < 0 && curPos.zCoord <= b.zCoord) || (stepZ > 0 && curPos.zCoord >= b.zCoord))
+			if ((stepZ < 0 && curPos.z <= b.z) || (stepZ > 0 && curPos.z >= b.z))
 				stepZ = 0;
-			curPos = new Vec3d(curPos.xCoord + stepX, curPos.yCoord, curPos.zCoord + stepZ);
+			curPos = new Vec3d(curPos.x + stepX, curPos.y, curPos.z + stepZ);
 			Vec3d tempPos = curPos.add(Vec3d.ZERO);
 			tempPos = MathUtilities.roundToI(tempPos);
 			if (!vecList.contains(tempPos)){
 				for (int i = 0; i < this.height; ++i){
-					vecList.add(new Vec3d(tempPos.xCoord, tempPos.yCoord + i, tempPos.zCoord));
+					vecList.add(new Vec3d(tempPos.x, tempPos.y + i, tempPos.z));
 				}
 			}
 		}

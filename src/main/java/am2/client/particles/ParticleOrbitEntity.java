@@ -20,10 +20,10 @@ public final class ParticleOrbitEntity extends ParticleController{
 	public ParticleOrbitEntity(AMParticle particleEffect, Entity orbitTarget, double orbitSpeed, int priority, boolean exclusive){
 		super(particleEffect, priority, exclusive);
 		this.target = orbitTarget;
-		this.orbitAngle = this.particle.getWorldObj().rand.nextInt(360);
-		this.rotateClockwise = this.particle.getWorldObj().rand.nextBoolean();
+		this.orbitAngle = this.particle.getWorld().rand.nextInt(360);
+		this.rotateClockwise = this.particle.getWorld().rand.nextBoolean();
 		this.generateNewTargetY();
-		this.targetDistance = 1 + (this.particle.getWorldObj().rand.nextDouble() * 0.5);
+		this.targetDistance = 1 + (this.particle.getWorld().rand.nextDouble() * 0.5);
 		this.orbitSpeed = orbitSpeed;
 	}
 
@@ -39,7 +39,7 @@ public final class ParticleOrbitEntity extends ParticleController{
 
 	private void generateNewTargetY(){
 		if (this.target != null){
-			this.targetY = this.particle.getWorldObj().rand.nextDouble() * this.target.height;
+			this.targetY = this.particle.getWorld().rand.nextDouble() * this.target.height;
 		}else{
 			this.targetY = 0;
 		}
@@ -47,7 +47,7 @@ public final class ParticleOrbitEntity extends ParticleController{
 
 //	private void generateNewDistance(){
 //		if (target != null){
-//			targetDistance = particle.getWorldObj().rand.nextDouble() * 2;
+//			targetDistance = particle.getWorld().rand.nextDouble() * 2;
 //		}else{
 //			targetDistance = 0;
 //		}

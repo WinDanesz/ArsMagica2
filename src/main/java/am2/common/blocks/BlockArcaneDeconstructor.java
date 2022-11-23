@@ -53,7 +53,7 @@ public class BlockArcaneDeconstructor extends BlockAMPowered{
 	
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta & 0x3));
+		return getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta & 0x3));
 	}
 	
 	@Override
@@ -64,12 +64,11 @@ public class BlockArcaneDeconstructor extends BlockAMPowered{
 	public boolean isOpaqueCube(IBlockState state){
 		return false;
 	}
-	
-	@Override
-	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+
+	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
 		return this.getStateFromMeta(meta).withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
-	
+
 	@Override
 	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
 		IKeystoneLockable<?> lockable = (IKeystoneLockable<?>)world.getTileEntity(pos);
@@ -90,14 +89,14 @@ public class BlockArcaneDeconstructor extends BlockAMPowered{
 			float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
 			float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
 			do{
-				if (itemstack.stackSize <= 0){
+				if (itemstack.getCount() <= 0){
 					break;
 				}
 				int i1 = world.rand.nextInt(21) + 10;
-				if (i1 > itemstack.stackSize){
-					i1 = itemstack.stackSize;
+				if (i1 > itemstack.getCount()){
+					i1 = itemstack.getCount();
 				}
-				itemstack.stackSize -= i1;
+				itemstack.shrink(i1);
 				ItemStack newItem = new ItemStack(itemstack.getItem(), i1, itemstack.getItemDamage());
 				newItem.setTagCompound(itemstack.getTagCompound());
 				EntityItem entityitem = new EntityItem(world, pos.getX() + f, pos.getY() + f1, pos.getZ() + f2, newItem);
@@ -105,7 +104,7 @@ public class BlockArcaneDeconstructor extends BlockAMPowered{
 				entityitem.motionX = (float)world.rand.nextGaussian() * f3;
 				entityitem.motionY = (float)world.rand.nextGaussian() * f3 + 0.2F;
 				entityitem.motionZ = (float)world.rand.nextGaussian() * f3;
-				world.spawnEntityInWorld(entityitem);
+				world.spawnEntity(entityitem);
 			}while (true);
 
 		}
@@ -114,7 +113,7 @@ public class BlockArcaneDeconstructor extends BlockAMPowered{
 	
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ){
+			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
 		if (HandleSpecialItems(worldIn, playerIn, pos)){
 			return true;
 		}
@@ -123,7 +122,7 @@ public class BlockArcaneDeconstructor extends BlockAMPowered{
 				return true;
 			if (KeystoneUtilities.instance.canPlayerAccess((IKeystoneLockable<?>)worldIn.getTileEntity(pos), playerIn, KeystoneAccessType.USE)){
 				FMLNetworkHandler.openGui(playerIn, ArsMagica2.instance, IDDefs.GUI_ARCANE_DECONSTRUCTOR, worldIn, pos.getX(), pos.getY(), pos.getZ());
-				super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
+				super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
 			}
 		}
 		return true;
@@ -135,7 +134,7 @@ public class BlockArcaneDeconstructor extends BlockAMPowered{
 	}
 	
 	@Override
-	public BlockRenderLayer getBlockLayer() {
+	public BlockRenderLayer getRenderLayer() {
 		return BlockRenderLayer.CUTOUT;
 	}
 }

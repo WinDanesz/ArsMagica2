@@ -39,13 +39,13 @@ public class DivineIntervention extends SpellComponent{
 
 		if (((EntityLivingBase)target).isPotionActive(PotionEffectsDefs.ASTRAL_DISTORTION)){
 			if (target instanceof EntityPlayer)
-				((EntityPlayer)target).addChatMessage(new TextComponentString("The distortion around you prevents you from teleporting"));
+				((EntityPlayer)target).sendMessage(new TextComponentString("The distortion around you prevents you from teleporting"));
 			return true;
 		}
 
 		if (target.dimension == 1){
 			if (target instanceof EntityPlayer)
-				((EntityPlayer)target).addChatMessage(new TextComponentString("Nothing happens..."));
+				((EntityPlayer)target).sendMessage(new TextComponentString("Nothing happens..."));
 			return true;
 		}else if (target.dimension == 0){
 			BlockPos coords = target instanceof EntityPlayer ? ((EntityPlayer)target).getBedLocation(target.dimension) : null;

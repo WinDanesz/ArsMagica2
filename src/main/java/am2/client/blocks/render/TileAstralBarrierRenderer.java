@@ -17,7 +17,8 @@ public class TileAstralBarrierRenderer extends TileEntitySpecialRenderer<TileEnt
 		rLoc = new ResourceLocation("arsmagica2", "textures/blocks/custom/blockAstralBarrier.png");
 	}
 
-	public void renderTileEntityAt(TileEntityAstralBarrier tile, double d, double d1, double d2, float f, int destroyStage){
+	@Override
+	public void render(TileEntityAstralBarrier tile, double d, double d1, double d2, float f, int destroyStage, float alpha) {
 		int i = 0;
 
 		if (destroyStage != -10 && tile.getWorld() != null){

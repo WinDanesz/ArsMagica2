@@ -1,19 +1,9 @@
 package am2.client.models;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.vecmath.Matrix4f;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
 import am2.api.event.RenderingItemEvent;
 import am2.common.utils.ModelUtils;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -31,18 +21,29 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
+import org.apache.commons.lang3.tuple.Pair;
+
+import javax.vecmath.Matrix4f;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
 
 public class SpecialRenderModelLoader implements ICustomModelLoader{
 	
-	public class Baked implements IPerspectiveAwareModel {
+	public class Baked extends PerspectiveMapWrapper {
 		
 		private ItemStack stack = null;
 		private EntityLivingBase entity = null;
-		
+
+		public Baked(IBakedModel parent, ImmutableMap<TransformType, TRSRTransformation> transforms) {
+			super(parent, transforms);
+		}
+
 		@Override
 		public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
 			return new ArrayList<>();
@@ -81,7 +82,7 @@ public class SpecialRenderModelLoader implements ICustomModelLoader{
 		@Override
 		public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
 			MinecraftForge.EVENT_BUS.post(new RenderingItemEvent(this.stack, cameraTransformType, this.entity));
-			return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, cameraTransformType);
+			return PerspectiveMapWrapper.handlePerspective(this, transforms, cameraTransformType);
 		}
 
 	}
@@ -117,8 +118,13 @@ public class SpecialRenderModelLoader implements ICustomModelLoader{
 
 		@Override
 		public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-			return new SpecialRenderModelLoader.Baked();
+			return null;
 		}
+
+		//		@Override
+//		public IBakedModel bake(IModelState state, VertexFormat format, java.util.function.Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+//			return new SpecialRenderModelLoader.Baked();
+//		}
 
 		@Override
 		public IModelState getDefaultState() {
@@ -126,7 +132,7 @@ public class SpecialRenderModelLoader implements ICustomModelLoader{
 		}
 	}
 
-	static ImmutableMap<TransformType, TRSRTransformation> transforms = IPerspectiveAwareModel.MapWrapper.getTransforms(ModelUtils.DEFAULT_ITEM_STATE);
+	static ImmutableMap<TransformType, TRSRTransformation> transforms = PerspectiveMapWrapper.getTransforms(ModelUtils.DEFAULT_ITEM_STATE);
 
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager) {
@@ -155,7 +161,7 @@ public class SpecialRenderModelLoader implements ICustomModelLoader{
 				modelLocation.toString().contains("magicians_workbench") ||
 				modelLocation.toString().contains("summoner") ||
 				modelLocation.toString().contains("astral_barrier") ||
-				modelLocation.toString().contains("otherworld_aura")) && modelLocation.getResourceDomain().equals("arsmagica2") && !modelLocation.toString().contains(".obj");
+				modelLocation.toString().contains("otherworld_aura")) && modelLocation.getNamespace().equals("arsmagica2") && !modelLocation.toString().contains(".obj");
 	}
 
 	@Override

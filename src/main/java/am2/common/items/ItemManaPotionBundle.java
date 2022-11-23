@@ -4,6 +4,7 @@ import java.util.List;
 
 import am2.common.defs.ItemDefs;
 import am2.common.extensions.EntityExtension;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,9 +16,12 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
 
 public class ItemManaPotionBundle extends ItemArsMagica{
 	public ItemManaPotionBundle(){
@@ -48,54 +52,55 @@ public class ItemManaPotionBundle extends ItemArsMagica{
 	}
 
 	@Override
-	public int getMaxItemUseDuration(ItemStack par1ItemStack){
+	public int getMaxItemUseDuration(ItemStack stack){
 		return 32;
 	}
 
 	@Override
-	public EnumAction getItemUseAction(ItemStack par1ItemStack){
+	public EnumAction getItemUseAction(ItemStack stack){
 		return EnumAction.DRINK;
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, EnumHand hand){
-		EntityExtension props = EntityExtension.For(par3EntityPlayer);
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+		ItemStack stack = player.getHeldItem(hand);
+		EntityExtension props = EntityExtension.For(player);
 		if (props.getCurrentMana() < props.getMaxMana()){
-			par3EntityPlayer.setActiveHand(hand);
-			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, par1ItemStack);
+			player.setActiveHand(hand);
+			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 		}
-		return new ActionResult<ItemStack>(EnumActionResult.FAIL, par1ItemStack);
+		return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 	}
 
 
 	@Override
-	public ItemStack onItemUseFinish(ItemStack par1ItemStack, World par2World, EntityLivingBase ent){
-		if (!(ent instanceof EntityPlayer)) return super.onItemUseFinish(par1ItemStack, par2World, ent);
+	public ItemStack onItemUseFinish(ItemStack stack, World par2World, EntityLivingBase ent){
+		if (!(ent instanceof EntityPlayer)) return super.onItemUseFinish(stack, par2World, ent);
 		EntityPlayer par3EntityPlayer = (EntityPlayer)ent;
-		Item potion = getPotion(par1ItemStack.getItemDamage());
+		Item potion = getPotion(stack.getItemDamage());
 		if (potion == ItemDefs.lesserManaPotion){
-			ItemDefs.lesserManaPotion.onItemUseFinish(par1ItemStack, par2World, par3EntityPlayer);
+			ItemDefs.lesserManaPotion.onItemUseFinish(stack, par2World, par3EntityPlayer);
 		}else if (potion == ItemDefs.standardManaPotion){
-			ItemDefs.standardManaPotion.onItemUseFinish(par1ItemStack, par2World, par3EntityPlayer);
+			ItemDefs.standardManaPotion.onItemUseFinish(stack, par2World, par3EntityPlayer);
 		}else if (potion == ItemDefs.greaterManaPotion){
-			ItemDefs.greaterManaPotion.onItemUseFinish(par1ItemStack, par2World, par3EntityPlayer);
+			ItemDefs.greaterManaPotion.onItemUseFinish(stack, par2World, par3EntityPlayer);
 		}else if (potion == ItemDefs.epicManaPotion){
-			ItemDefs.epicManaPotion.onItemUseFinish(par1ItemStack, par2World, par3EntityPlayer);
+			ItemDefs.epicManaPotion.onItemUseFinish(stack, par2World, par3EntityPlayer);
 		}else if (potion == ItemDefs.legendaryManaPotion){
-			ItemDefs.legendaryManaPotion.onItemUseFinish(par1ItemStack, par2World, par3EntityPlayer);
+			ItemDefs.legendaryManaPotion.onItemUseFinish(stack, par2World, par3EntityPlayer);
 		}
 
-		par1ItemStack.setItemDamage(((par1ItemStack.getItemDamage() >> 8) << 8) + getUses(par1ItemStack.getItemDamage()) - 1);
+		stack.setItemDamage(((stack.getItemDamage() >> 8) << 8) + getUses(stack.getItemDamage()) - 1);
 
-		if (getUses(par1ItemStack.getItemDamage()) == 0){
+		if (getUses(stack.getItemDamage()) == 0){
 			giveOrDropItem(par3EntityPlayer, new ItemStack(Items.STRING));
-			if (par1ItemStack.stackSize-- == 0)
-				par1ItemStack = null;
+			if (stack.getCount() == 0)
+				stack = ItemStack.EMPTY;
 		}
 
 		giveOrDropItem(par3EntityPlayer, new ItemStack(Items.GLASS_BOTTLE));
 
-		return par1ItemStack;
+		return stack;
 	}
 
 	private void giveOrDropItem(EntityPlayer player, ItemStack stack){
@@ -105,36 +110,35 @@ public class ItemManaPotionBundle extends ItemArsMagica{
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4){
-		Item potion = getPotion(par1ItemStack.getItemDamage());
+	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+		Item potion = getPotion(stack.getItemDamage());
 		if (potion == ItemDefs.lesserManaPotion){
-			par3List.add("Lesser Mana Restoration");
+			tooltip.add("Lesser Mana Restoration");
 		}else if (potion == ItemDefs.standardManaPotion){
-			par3List.add("Standard Mana Restoration");
+			tooltip.add("Standard Mana Restoration");
 		}else if (potion == ItemDefs.greaterManaPotion){
-			par3List.add("Greater Mana Restoration");
+			tooltip.add("Greater Mana Restoration");
 		}else if (potion == ItemDefs.epicManaPotion){
-			par3List.add("Epic Mana Restoration");
+			tooltip.add("Epic Mana Restoration");
 		}else if (potion == ItemDefs.legendaryManaPotion){
-			par3List.add("Legendary Mana Restoration");
+			tooltip.add("Legendary Mana Restoration");
 		}
-		par3List.add("" + getUses(par1ItemStack.getItemDamage()) + " " + I18n.format("am2.tooltip.uses") + ".");
+		tooltip.add("" + getUses(stack.getItemDamage()) + " " + I18n.format("am2.tooltip.uses") + ".");
+	}
+
+	@Override
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+		items.add(new ItemStack(ItemDefs.manaPotionBundle, 1, 3));
+		items.add(new ItemStack(ItemDefs.manaPotionBundle, 1, (1 << 8) + 3));
+		items.add(new ItemStack(ItemDefs.manaPotionBundle, 1, (2 << 8) + 3));
+		items.add(new ItemStack(ItemDefs.manaPotionBundle, 1, (3 << 8) + 3));
+		items.add(new ItemStack(ItemDefs.manaPotionBundle, 1, (4 << 8) + 3));
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
-		par3List.add(new ItemStack(ItemDefs.manaPotionBundle, 1, (0 << 8) + 3));
-		par3List.add(new ItemStack(ItemDefs.manaPotionBundle, 1, (1 << 8) + 3));
-		par3List.add(new ItemStack(ItemDefs.manaPotionBundle, 1, (2 << 8) + 3));
-		par3List.add(new ItemStack(ItemDefs.manaPotionBundle, 1, (3 << 8) + 3));
-		par3List.add(new ItemStack(ItemDefs.manaPotionBundle, 1, (4 << 8) + 3));
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public String getItemStackDisplayName(ItemStack par1ItemStack){
-		Item potion = getPotion(par1ItemStack.getItemDamage());
+	public String getItemStackDisplayName(ItemStack stack){
+		Item potion = getPotion(stack.getItemDamage());
 		if (potion == ItemDefs.lesserManaPotion){
 			return String.format("%s %s", I18n.format("item.arsmagica2:lesser_mana_potion.name"), I18n.format("item.arsmagica2:potion_bundle.name"));
 		}else if (potion == ItemDefs.standardManaPotion){

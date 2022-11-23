@@ -67,7 +67,7 @@ public class ArsMagicaModelLoader implements ICustomModelLoader {
 		    ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
 		    IResource iresource =
 	        Minecraft.getMinecraft().getResourceManager()
-	                 .getResource(new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath() + ".json"));
+	                 .getResource(new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath() + ".json"));
 		    Reader reader = new InputStreamReader(iresource.getInputStream(), Charsets.UTF_8);
 		    for (String s : ((Map<String,String>) ModelUtils.GSON.fromJson(reader, ModelUtils.mapType)).values()) {
 				builder.add(new ResourceLocation(s));
@@ -83,7 +83,7 @@ public class ArsMagicaModelLoader implements ICustomModelLoader {
 	@SubscribeEvent
 	public void preStitch(TextureStitchEvent.Pre e) {
 		for (Affinity aff : ArsMagicaAPI.getAffinityRegistry().getValues()) {
-			e.getMap().registerSprite(new ResourceLocation(aff.getRegistryName().getResourceDomain(), "blocks/runes/rune_" + aff.getRegistryName().getResourcePath()));
+			e.getMap().registerSprite(new ResourceLocation(aff.getRegistryName().getNamespace(), "blocks/runes/rune_" + aff.getRegistryName().getPath()));
 			sprites.put(aff, e.getMap().registerSprite(new ResourceLocation("arsmagica2", "items/particles/" + aff.getName().toLowerCase() + "_hand")));
 		}
 		registerParticle(e.getMap(), "arcane");

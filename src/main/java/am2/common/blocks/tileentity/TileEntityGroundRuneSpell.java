@@ -50,9 +50,9 @@ public class TileEntityGroundRuneSpell extends TileEntity implements ITickable{
 
 	private void prepForActivate(){
 		if (placedByName != null)
-			caster = worldObj.getPlayerEntityByName(placedByName);
+			caster = world.getPlayerEntityByName(placedByName);
 		if (caster == null){
-			caster = DummyEntityPlayer.fromEntityLiving(new EntityDummyCaster(worldObj));
+			caster = DummyEntityPlayer.fromEntityLiving(new EntityDummyCaster(world));
 			EntityExtension.For(caster).setMagicLevelWithMana(99);
 		}
 	}
@@ -68,7 +68,7 @@ public class TileEntityGroundRuneSpell extends TileEntity implements ITickable{
 		if (spell == null) return false;
 		if (!canApply(target)) return false;
 		prepForActivate();
-		spell.execute(worldObj, caster, target, target.posX, target.posY, target.posZ, null);
+		spell.execute(world, caster, target, target.posX, target.posY, target.posZ, null);
 		return true;
 	}
 
@@ -109,6 +109,6 @@ public class TileEntityGroundRuneSpell extends TileEntity implements ITickable{
 
 	@Override
 	public void update() {
-		worldObj.markAndNotifyBlock(pos, worldObj.getChunkFromBlockCoords(pos), worldObj.getBlockState(pos), worldObj.getBlockState(pos), 2);
+		world.markAndNotifyBlock(pos, world.getChunk(pos), world.getBlockState(pos), world.getBlockState(pos), 2);
 	}
 }

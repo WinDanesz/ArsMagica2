@@ -35,7 +35,7 @@ public class Zone extends SpellShape {
 		zone.setGravity(gravity);
 		zone.SetCasterAndStack(caster, spell);
 		zone.setPosition(x, y, z);
-		world.spawnEntityInWorld(zone);
+		world.spawnEntity(zone);
 		return SpellCastResult.SUCCESS;
 	}
 

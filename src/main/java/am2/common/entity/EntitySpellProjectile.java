@@ -14,7 +14,7 @@ import am2.common.defs.ItemDefs;
 import am2.common.utils.NBTUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.boss.EntityDragonPart;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -47,7 +47,7 @@ public class EntitySpellProjectile extends Entity {
 	}
 	
 	public void setTargetWater(){
-		if (!this.worldObj.isRemote)
+		if (!this.world.isRemote)
 			this.getDataManager().set(DW_TARGETGRASS, true);
 	}
 	
@@ -94,7 +94,7 @@ public class EntitySpellProjectile extends Entity {
 			motionZ = -motionZ;			
 		}
 		else {
-			double projectileSpeed = getSpell().getModifiedValue(SpellModifiers.VELOCITY_ADDED, Operation.MULTIPLY, worldObj, getShooter(), null);
+			double projectileSpeed = getSpell().getModifiedValue(SpellModifiers.VELOCITY_ADDED, Operation.MULTIPLY, world, getShooter(), null);
 			double newMotionX = motionX / projectileSpeed;
 			double newMotionY = motionY / projectileSpeed;
 			double newMotionZ = motionZ / projectileSpeed;
@@ -119,15 +119,15 @@ public class EntitySpellProjectile extends Entity {
 		try {
 			if (ticksExisted > 200)
 				this.setDead();
-			RayTraceResult mop = worldObj.rayTraceBlocks(new Vec3d(posX, posY, posZ),new Vec3d(posX + motionX, posY + motionY, posZ + motionZ));
+			RayTraceResult mop = world.rayTraceBlocks(new Vec3d(posX, posY, posZ),new Vec3d(posX + motionX, posY + motionY, posZ + motionZ));
 			if (mop != null && mop.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {
-				if (worldObj.getBlockState(mop.getBlockPos()).getBlock().isBlockSolid(worldObj, mop.getBlockPos(), mop.sideHit) || targetWater()) {
-					worldObj.getBlockState(mop.getBlockPos()).getBlock().onEntityCollidedWithBlock(worldObj, mop.getBlockPos(), worldObj.getBlockState(mop.getBlockPos()), this);
+				if (world.getBlockState(mop.getBlockPos()).getBlock().isSideSolid(world.getBlockState(mop.getBlockPos()), world, mop.getBlockPos(), mop.sideHit) || targetWater()) {
+					world.getBlockState(mop.getBlockPos()).getBlock().onEntityCollision(world, mop.getBlockPos(), world.getBlockState(mop.getBlockPos()), this);
 					if (getBounces() > 0) {
 						bounce(mop.sideHit);
 					} else {
-						getSpell().applyComponentsToGround(worldObj, getShooter(), mop.getBlockPos(), mop.sideHit, posX, posY, posZ);
-						getSpell().execute(worldObj, getShooter(), null, posX, posY, posZ, mop.sideHit);
+						getSpell().applyComponentsToGround(world, getShooter(), mop.getBlockPos(), mop.sideHit, posX, posY, posZ);
+						getSpell().execute(world, getShooter(), null, posX, posY, posZ, mop.sideHit);
 						if (this.getPierces() == 1 || !getSpell().isModifierPresent(SpellModifiers.PIERCING))
 							this.setDead();
 						else
@@ -135,18 +135,16 @@ public class EntitySpellProjectile extends Entity {
 					}
 				}
 			} else {
-				List<Entity> list = worldObj.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().addCoord(motionX, motionY, motionZ).expand(0.25D, 0.25D, 0.25D));
+				List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().grow(motionX, motionY, motionZ).expand(0.25D, 0.25D, 0.25D));
 				int effSize = list.size();
 				for (Entity entity : list) {
-					if (entity instanceof EntityDragonPart && ((EntityDragonPart)entity).entityDragonObj instanceof EntityLivingBase)
-						entity = (EntityLivingBase)((EntityDragonPart)entity).entityDragonObj;
 					if (entity instanceof EntityLivingBase) {
 						if (entity.equals(getShooter())) {
 							effSize--;
 							continue;
 						}
-						getSpell().applyComponentsToEntity(worldObj, getShooter(), entity);
-						getSpell().execute(worldObj, getShooter(), (EntityLivingBase) entity, entity.posX, entity.posY, entity.posZ, null);
+						getSpell().applyComponentsToEntity(world, getShooter(), entity);
+						getSpell().execute(world, getShooter(), (EntityLivingBase) entity, entity.posX, entity.posY, entity.posZ, null);
 						break;
 					} else {
 						effSize--;
@@ -168,7 +166,7 @@ public class EntitySpellProjectile extends Entity {
 	
 	public EntityLivingBase getShooter() {
 		try {
-			return (EntityLivingBase) worldObj.getEntityByID(this.getDataManager().get(DW_SHOOTER));
+			return (EntityLivingBase) world.getEntityByID(this.getDataManager().get(DW_SHOOTER));
 		} catch (RuntimeException e) {
 			this.setDead();
 			return null;
@@ -209,7 +207,7 @@ public class EntitySpellProjectile extends Entity {
 	}
 	
 	public void selectHomingTarget () {
-		List<Entity> entities = worldObj.getEntitiesWithinAABBExcludingEntity(this, this.getCollisionBoundingBox().expand(10.0F, 10.0F, 10.0F));
+		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(this, this.getCollisionBoundingBox().expand(10.0F, 10.0F, 10.0F));
 		Vec3d pos = new Vec3d(posX, posY, posZ);
 		EntityLivingBase target = null;
 		double dist = 900;
@@ -230,7 +228,7 @@ public class EntitySpellProjectile extends Entity {
 	}
 	
 	public EntityLivingBase getHomingTarget() {
-		return (EntityLivingBase) worldObj.getEntityByID(this.getDataManager().get(DW_HOMING_TARGET));
+		return (EntityLivingBase) world.getEntityByID(this.getDataManager().get(DW_HOMING_TARGET));
 	}
 	
 	public void setGravity(float projectileGravity) {

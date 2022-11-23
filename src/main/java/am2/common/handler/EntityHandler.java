@@ -3,6 +3,7 @@ package am2.common.handler;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.item.Item;
 import org.lwjgl.opengl.GL11;
 
 import am2.ArsMagica2;
@@ -111,7 +112,7 @@ public class EntityHandler {
 	}
 	
 	@SubscribeEvent
-	public void attachItemStack(AttachCapabilitiesEvent.Item event) {
+	public void attachItemStack(AttachCapabilitiesEvent<Item> event) {
 		if (event.getObject() == ItemDefs.spell) {
 			event.addCapability(SpellCaster.ID, new SpellCaster());
 		}
@@ -171,7 +172,7 @@ public class EntityHandler {
 	@SubscribeEvent
 	public void entityTick (LivingUpdateEvent event) {
 		//Pre Tick, Data Sync
-		if (!event.getEntity().worldObj.isRemote) {
+		if (!event.getEntity().world.isRemote) {
 			if (EntityExtension.For(event.getEntityLiving()).shouldUpdate())
 				sendUpdate(event.getEntityLiving(), AMPacketIDs.SYNC_EXTENDED_PROPS, EntityExtension.For(event.getEntityLiving()).generateUpdatePacket());
 			if (event.getEntityLiving() instanceof EntityPlayer) {
@@ -185,19 +186,19 @@ public class EntityHandler {
 		}
 		if (event.getEntityLiving() instanceof EntityPlayer) playerTick((EntityPlayer) event.getEntityLiving());
 		
-		if (event.getEntity().worldObj.isRemote)
+		if (event.getEntity().world.isRemote)
 			EntityExtension.For(event.getEntityLiving()).spawnManaLinkParticles();
 		else
 			EntityExtension.For(event.getEntityLiving()).manaBurnoutTick();
 		EntityExtension ext = EntityExtension.For(event.getEntityLiving());
-		EntityLivingBase ent = event.getEntityLiving();
+		EntityLivingBase entity = event.getEntityLiving();
 		if (event.getEntity().ticksExisted % 20 == 0){
 			ArrayList<SpellData> rs = ext.runningStacks;
 			int foundID = -1;
 			for (int i = 0; i < rs.size(); i++) {
 				SpellData is = rs.get(i);
 				if (is != null) {
-					SpellCastResult result = is.execute(ent.worldObj, ent, ent, ent.posX, ent.posY, ent.posZ, null);
+					SpellCastResult result = is.execute(entity.world, entity, entity, entity.posX, entity.posY, entity.posZ, null);
 					if (result != SpellCastResult.SUCCESS && result != SpellCastResult.SUCCESS_REDUCE_MANA) {
 						foundID = i;
 						break;
@@ -207,8 +208,8 @@ public class EntityHandler {
 			if (foundID != -1) {
 				SpellData is = ext.runningStacks.get(foundID);
 				ext.runningStacks.remove(foundID);
-				if (ent instanceof EntityPlayer) {
-					InventoryPlayer inv = ((EntityPlayer)ent).inventory;
+				if (entity instanceof EntityPlayer) {
+					InventoryPlayer inv = ((EntityPlayer)entity).inventory;
 					for (int i = 0; i < inv.getSizeInventory(); i++) {
 						ItemStack is2 = inv.getStackInSlot(i);
 						if (is2 != null && is2.getItem() instanceof SpellBase && is2.getTagCompound() != null && is.getSource().getTagCompound().getString("ToggleShapeID").equals(is2.getTagCompound().getString("ToggleShapeID"))) {
@@ -261,12 +262,12 @@ public class EntityHandler {
 		//Contingency
 		ContingencyType type = ext.getContingencyType();
 		if (event.getEntityLiving().isBurning() && type == ContingencyType.FIRE) {
-			ext.getContingencyStack().execute(event.getEntityLiving().worldObj, event.getEntityLiving(), null, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, null);
+			ext.getContingencyStack().execute(event.getEntityLiving().world, event.getEntityLiving(), null, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, null);
 			if (ext.getContingencyType() == ContingencyType.FIRE)
 				ext.setContingency(ContingencyType.NULL, null);		
 		}
 		else if (event.getEntityLiving().getHealth() * 4 < event.getEntityLiving().getMaxHealth() && type == ContingencyType.HEALTH) {
-			ext.getContingencyStack().execute(event.getEntityLiving().worldObj, event.getEntityLiving(), null, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, null);
+			ext.getContingencyStack().execute(event.getEntityLiving().world, event.getEntityLiving(), null, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, null);
 			if (ext.getContingencyType() == ContingencyType.HEALTH) {
 				ext.setContingency(ContingencyType.NULL, null);
 			}
@@ -282,21 +283,21 @@ public class EntityHandler {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void renderTick (RenderGameOverlayEvent event) {
-		Minecraft.getMinecraft().mcProfiler.startSection("ArsMagica2-Overlay");
+		Minecraft.getMinecraft().profiler.startSection("ArsMagica2-Overlay");
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
 		if (event.getType() == ElementType.CROSSHAIRS)
 			ArsMagica2.proxy.renderGameOverlay();
 		GL11.glPopMatrix();
 		GL11.glPopAttrib();
-		Minecraft.getMinecraft().mcProfiler.endSection();
+		Minecraft.getMinecraft().profiler.endSection();
 	}
 	
 	public void playerTick (EntityPlayer player) {
 		EntityExtension ext = EntityExtension.For(player);
 		IAffinityData affData = player.getCapability(AffinityData.INSTANCE, null);
 		ext.flipTick();
-		if (!player.worldObj.isRemote) {
+		if (!player.world.isRemote) {
 			affData.tickDiminishingReturns();
 		}
 		if (!player.capabilities.isCreativeMode) {
@@ -310,13 +311,13 @@ public class EntityHandler {
 				}
 			}
 		}
-		if (player.worldObj.isRemote)
+		if (player.world.isRemote)
 			AMNetHandler.INSTANCE.sendPacketToServer(AMPacketIDs.PLAYER_FLIP, new AMDataWriter().add(ext.getIsFlipped()).generate()); // This needs optimizing
 		if (ext.getIsFlipped()){
 			if ((player).motionY < 2 && !player.capabilities.isFlying)
 				(player).motionY += 0.15f;
 			double posY = player.posY + player.height;
-			World world = player.worldObj;
+			World world = player.world;
 			RayTraceResult mop = world.rayTraceBlocks(new Vec3d(player.posX, posY, player.posZ), new Vec3d(player.posX, posY + 1, player.posZ), true);
 			if (mop != null){
 				if (!player.onGround){
@@ -365,8 +366,8 @@ public class EntityHandler {
 			ArsMagica2.proxy.playerTracker.onPlayerDeath((EntityPlayer)e.getEntityLiving());
 		}
 		
-		if (e.getSource() != null && e.getEntityLiving() != null && e.getEntityLiving() instanceof EntityLiving && e.getSource().getEntity() instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) e.getSource().getEntity();
+		if (e.getSource() != null && e.getEntityLiving() != null && e.getEntityLiving() instanceof EntityLiving && e.getSource().getTrueSource() instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) e.getSource().getTrueSource();
 			for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
 				ItemStack stack = player.inventory.getStackInSlot(i);
 				if (stack == null || stack.getItem() != ItemDefs.crystalPhylactery) continue;
@@ -378,10 +379,10 @@ public class EntityHandler {
 			}
 		}
 		
-		if (e.getSource() != null && e.getSource().getEntity() instanceof EntityLivingBase)
-			target = e.getSource().getEntity() != null ? (EntityLivingBase)e.getSource().getEntity() : null;
+		if (e.getSource() != null && e.getSource().getTrueSource() instanceof EntityLivingBase)
+			target = e.getSource().getTrueSource() != null ? (EntityLivingBase)e.getSource().getTrueSource() : null;
 		if (type == ContingencyType.DEATH) {
-			ext.getContingencyStack().execute(e.getEntityLiving().worldObj, e.getEntityLiving(), (target != null ? target : (EntityLivingBase) e.getEntity()), (target != null ? target : e.getEntity()).posX, (target != null ? target : e.getEntity()).posY, (target != null ? target : e.getEntity()).posZ, null);
+			ext.getContingencyStack().execute(e.getEntityLiving().world, e.getEntityLiving(), (target != null ? target : (EntityLivingBase) e.getEntity()), (target != null ? target : e.getEntity()).posX, (target != null ? target : e.getEntity()).posY, (target != null ? target : e.getEntity()).posZ, null);
 			if (ext.getContingencyType() == ContingencyType.DEATH)
 				ext.setContingency(ContingencyType.NULL, null);		
 		}
@@ -397,13 +398,13 @@ public class EntityHandler {
 				if (EntityExtension.For(player).hasEnoughMana(e.getAmount() * 10)) {
 					stack.getItem().onDroppedByPlayer(stack, player);
 					EntityExtension.For(player).deductMana(e.getAmount() * 10);
-				} else if (EntityExtension.For(player).hasEnoughMana(spell.getManaCost(player.worldObj, player))) {
-					EntityLivingBase target = e.getSource().getEntity() instanceof EntityLivingBase ? (EntityLivingBase)e.getSource().getEntity() : null;
+				} else if (EntityExtension.For(player).hasEnoughMana(spell.getManaCost(player.world, player))) {
+					EntityLivingBase target = e.getSource().getTrueSource() instanceof EntityLivingBase ? (EntityLivingBase)e.getSource().getTrueSource() : null;
 					double posX = target != null ? target.posX : player.posX;
 					double posY = target != null ? target.posY : player.posY;
 					double posZ = target != null ? target.posZ : player.posZ;
 					ItemStack copiedStack = stack.copy();
-					spell.createSpellData(copiedStack).execute(player.worldObj, player, target, posX, posY, posZ, null);
+					spell.createSpellData(copiedStack).execute(player.world, player, target, posX, posY, posZ, null);
 				} else {
 					stack.getItem().onDroppedByPlayer(stack, player);
 				}
@@ -414,7 +415,7 @@ public class EntityHandler {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void onPlayerRender(RenderPlayerEvent.Pre event){
-		ItemStack chestPlate = event.getEntityPlayer().inventory.armorInventory[2];
+		ItemStack chestPlate = event.getEntityPlayer().inventory.armorInventory.get(2);
 
 		ModelBiped mainModel = event.getRenderer().getMainModel();
 
@@ -432,13 +433,13 @@ public class EntityHandler {
 			}
 		}
 
-		double dX = Minecraft.getMinecraft().thePlayer.posX - event.getEntityPlayer().posX;
-		double dY = Minecraft.getMinecraft().thePlayer.posY - event.getEntityPlayer().posY;
-		double dZ = Minecraft.getMinecraft().thePlayer.posZ - event.getEntityPlayer().posZ;
+		double dX = Minecraft.getMinecraft().player.posX - event.getEntityPlayer().posX;
+		double dY = Minecraft.getMinecraft().player.posY - event.getEntityPlayer().posY;
+		double dZ = Minecraft.getMinecraft().player.posZ - event.getEntityPlayer().posZ;
 
-		double dpX = Minecraft.getMinecraft().thePlayer.prevPosX - event.getEntityPlayer().prevPosX;
-		double dpY = Minecraft.getMinecraft().thePlayer.prevPosY - event.getEntityPlayer().prevPosY;
-		double dpZ = Minecraft.getMinecraft().thePlayer.prevPosZ - event.getEntityPlayer().prevPosZ;
+		double dpX = Minecraft.getMinecraft().player.prevPosX - event.getEntityPlayer().prevPosX;
+		double dpY = Minecraft.getMinecraft().player.prevPosY - event.getEntityPlayer().prevPosY;
+		double dpZ = Minecraft.getMinecraft().player.prevPosZ - event.getEntityPlayer().prevPosZ;
 
 		double transX = dpX + (dX - dpX) * event.getPartialRenderTick();
 		double transY = dpY + (dY - dpY) * event.getPartialRenderTick();
@@ -473,11 +474,11 @@ public class EntityHandler {
 		if (event.getSource() == DamageSources.darkNexus){
 			event.setCanceled(true);
 		}
-		if (!event.getEntityLiving().worldObj.isRemote && event.getEntityLiving() instanceof EntityPig && event.getEntityLiving().getRNG().nextDouble() < 0.3f){
-			EntityItem animalFat = new EntityItem(event.getEntityLiving().worldObj);
+		if (!event.getEntityLiving().world.isRemote && event.getEntityLiving() instanceof EntityPig && event.getEntityLiving().getRNG().nextDouble() < 0.3f){
+			EntityItem animalFat = new EntityItem(event.getEntityLiving().world);
 			ItemStack stack = new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ANIMALFAT);
 			animalFat.setPosition(event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ);
-			animalFat.setEntityItemStack(stack);
+			animalFat.setItem(stack);
 			event.getDrops().add(animalFat);
 		}
 	}
@@ -506,8 +507,8 @@ public class EntityHandler {
 		if (event.player == null)
 			return;
 
-		if (!event.player.worldObj.isRemote && EntityExtension.For(event.player).getCurrentLevel() <= 0 && event.pickedUp.getEntityItem().getItem() == ItemDefs.arcaneCompendium){
-			event.player.addChatMessage(new TextComponentString("You have unlocked the secrets of the arcane!"));
+		if (!event.player.world.isRemote && EntityExtension.For(event.player).getCurrentLevel() <= 0 && event.pickedUp.getItem().getItem() == ItemDefs.arcaneCompendium){
+			event.player.sendStatusMessage(new TextComponentString("You have unlocked the secrets of the arcane!"), false);
 			// Not implemented client side
 //			AMNetHandler.INSTANCE.sendCompendiumUnlockPacket((EntityPlayerMP)event.player, "shapes", true);
 //			AMNetHandler.INSTANCE.sendCompendiumUnlockPacket((EntityPlayerMP)event.player, "components", true);

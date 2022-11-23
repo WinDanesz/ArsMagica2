@@ -12,10 +12,12 @@ public class ItemArsMagica extends Item{
 		setMaxDamage(0);
 		setHasSubtypes(true);
 	}
-	
+
+
 	public ItemArsMagica registerAndName(String name) {
-		this.setUnlocalizedName(new ResourceLocation("arsmagica2", name).toString());
-		GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
+	// todo registry
+//		this.setTranslationKey(new ResourceLocation("arsmagica2", name).toString());
+//		// TODO: registry GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
 		return this;
 	}
 }

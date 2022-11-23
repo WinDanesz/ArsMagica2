@@ -45,7 +45,7 @@ public class Dispel extends SpellComponent{
 
 		if (EntityUtils.isSummon((EntityLivingBase)target)){
 			if (EntityUtils.getOwner((EntityLivingBase)target) == caster.getEntityId()){
-				target.attackEntityFrom(DamageSource.magic, 50000);
+				target.attackEntityFrom(DamageSource.MAGIC, 50000);
 				return true;
 			}
 		}

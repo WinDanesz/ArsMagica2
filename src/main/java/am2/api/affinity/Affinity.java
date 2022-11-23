@@ -9,8 +9,9 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 /**
  * Affinity :<BR>
@@ -79,17 +80,18 @@ public class Affinity extends IForgeRegistryEntry.Impl<Affinity> implements Comp
 			.addMinorOpposite(ARCANE_LOC, ICE_LOC);
 	
 	public static void registerAffinities() {
-		GameRegistry.register(NONE, NONE_LOC);
-		GameRegistry.register(ARCANE, ARCANE_LOC);
-		GameRegistry.register(WATER, WATER_LOC);
-		GameRegistry.register(FIRE, FIRE_LOC);
-		GameRegistry.register(EARTH, EARTH_LOC);
-		GameRegistry.register(AIR, AIR_LOC);
-		GameRegistry.register(LIGHTNING, LIGHTNING_LOC);
-		GameRegistry.register(ICE, ICE_LOC);
-		GameRegistry.register(NATURE, NATURE_LOC);
-		GameRegistry.register(LIFE, LIFE_LOC);
-		GameRegistry.register(ENDER, ENDER_LOC);
+//		TODO:
+//		// TODO: registry GameRegistry.register(NONE, NONE_LOC);
+//		// TODO: registry GameRegistry.register(ARCANE, ARCANE_LOC);
+//		// TODO: registry GameRegistry.register(WATER, WATER_LOC);
+//		// TODO: registry GameRegistry.register(FIRE, FIRE_LOC);
+//		// TODO: registry GameRegistry.register(EARTH, EARTH_LOC);
+//		// TODO: registry GameRegistry.register(AIR, AIR_LOC);
+//		// TODO: registry GameRegistry.register(LIGHTNING, LIGHTNING_LOC);
+//		// TODO: registry GameRegistry.register(ICE, ICE_LOC);
+//		// TODO: registry GameRegistry.register(NATURE, NATURE_LOC);
+//		// TODO: registry GameRegistry.register(LIFE, LIFE_LOC);
+//		// TODO: registry GameRegistry.register(ENDER, ENDER_LOC);
 	}
 	private int color;
 	private String name;
@@ -162,7 +164,7 @@ public class Affinity extends IForgeRegistryEntry.Impl<Affinity> implements Comp
 		ArrayList<Affinity> affinities = new ArrayList<Affinity>();
 		for (int i = 0; i < affinityTag.tagCount(); i++) {
 			NBTTagCompound tmp = affinityTag.getCompoundTagAt(i);
-			Affinity aff = ArsMagicaAPI.getAffinityRegistry().getObject(new ResourceLocation(tmp.getString("Name")));
+			Affinity aff = ArsMagicaAPI.getAffinityRegistry().getValue(new ResourceLocation(tmp.getString("Name")));
 			affinities.add(aff);
 		}
 		return affinities;
@@ -183,15 +185,15 @@ public class Affinity extends IForgeRegistryEntry.Impl<Affinity> implements Comp
 		return 0.0F;
 	}
 
-	@Override
-	public int compareTo(Affinity b) {
-		return ArsMagicaAPI.getAffinityRegistry().getId(b) - ArsMagicaAPI.getAffinityRegistry().getId(this);
-	}
+//	@Override
+//	public int compareTo(Affinity b) {
+//		return ArsMagicaAPI.getAffinityRegistry().getId(b) - ArsMagicaAPI.getAffinityRegistry().getId(this);
+//	}
 
 	public ArrayList<Affinity> getMinorOpposingAffinities() {
 		ArrayList<Affinity> returnList = new ArrayList<>();
 		for (ResourceLocation rl : minorOpposites) {
-			Affinity aff = ArsMagicaAPI.getAffinityRegistry().getObject(rl);
+			Affinity aff = ArsMagicaAPI.getAffinityRegistry().getValue(rl);
 			if (aff != NONE)
 				returnList.add(aff);
 		}
@@ -201,7 +203,7 @@ public class Affinity extends IForgeRegistryEntry.Impl<Affinity> implements Comp
 	public ArrayList<Affinity> getMajorOpposingAffinities() {
 		ArrayList<Affinity> returnList = new ArrayList<>();
 		for (ResourceLocation rl : majorOpposites) {
-			Affinity aff = ArsMagicaAPI.getAffinityRegistry().getObject(rl);
+			Affinity aff = ArsMagicaAPI.getAffinityRegistry().getValue(rl);
 			if (aff != NONE)
 				returnList.add(aff);
 		}
@@ -211,7 +213,7 @@ public class Affinity extends IForgeRegistryEntry.Impl<Affinity> implements Comp
 	public ArrayList<Affinity> getAdjacentAffinities() {
 		ArrayList<Affinity> returnList = new ArrayList<>();
 		for (ResourceLocation rl : ArsMagicaAPI.getAffinityRegistry().getKeys()) {
-			Affinity aff = ArsMagicaAPI.getAffinityRegistry().getObject(rl);
+			Affinity aff = ArsMagicaAPI.getAffinityRegistry().getValue(rl);
 			if (aff == NONE || majorOpposites.contains(rl) || minorOpposites.contains(rl) || directOpposite == rl || aff == this)
 				continue;
 			returnList.add(aff);
@@ -220,7 +222,7 @@ public class Affinity extends IForgeRegistryEntry.Impl<Affinity> implements Comp
 	}
 	
 	public Affinity getOpposingAffinity() {
-		return ArsMagicaAPI.getAffinityRegistry().getObject(directOpposite);
+		return ArsMagicaAPI.getAffinityRegistry().getValue(directOpposite);
 	}
 	
 	public Affinity setDirectOpposite(ResourceLocation directOpposite) {
@@ -251,5 +253,10 @@ public class Affinity extends IForgeRegistryEntry.Impl<Affinity> implements Comp
 	@Override
 	public int hashCode() {
 		return this.getRegistryName().hashCode();
+	}
+
+	@Override
+	public int compareTo(Affinity o) {
+		return 0;
 	}
 }

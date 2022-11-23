@@ -32,14 +32,14 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
 	}
 
 	public void renderTileEntityArchmagePodiumAt(TileEntityLectern podium, double x, double y, double z, float f1) throws Exception{
-		Minecraft.getMinecraft().mcProfiler.startSection("Lectern-Render");
-		Minecraft.getMinecraft().mcProfiler.startSection("model");
+		Minecraft.getMinecraft().profiler.startSection("Lectern-Render");
+		Minecraft.getMinecraft().profiler.startSection("model");
 		RenderHelper.disableStandardItemLighting();
 		EnumFacing facing = EnumFacing.NORTH;
-		if (podium.hasWorldObj()) {
+		if (podium.hasWorld()) {
 			facing = podium.getWorld().getBlockState(podium.getPos()).getValue(BlockLectern.FACING);
 		}
-		Minecraft.getMinecraft().mcProfiler.startSection("rendering");
+		Minecraft.getMinecraft().profiler.startSection("rendering");
 		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("arsmagica2", "textures/blocks/custom/archmagePodium.png"));
 		GlStateManager.pushMatrix();
 		GlStateManager.translate((float)x + 0.5F, (float)y + 0.9F, (float)z + 0.5F);
@@ -48,8 +48,8 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
 		GlStateManager.scale(1.0F, 0.6F, 1.0F);
 		this.podium.renderModel(0.0625F);
 		GlStateManager.popMatrix();
-		Minecraft.getMinecraft().mcProfiler.endSection();
-		Minecraft.getMinecraft().mcProfiler.endStartSection("book-model");
+		Minecraft.getMinecraft().profiler.endSection();
+		Minecraft.getMinecraft().profiler.endStartSection("book-model");
 		if (podium.hasStack()){
 			if (podium.getOverpowered())
 				GlStateManager.color(0.7f, 0.2f, 0.2f, 1.0f);
@@ -65,8 +65,8 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
 		}
 		renderHelperIcon(podium, x, y, z, f1);
 		GlStateManager.disableBlend();
-		Minecraft.getMinecraft().mcProfiler.endSection();
-		Minecraft.getMinecraft().mcProfiler.endSection();
+		Minecraft.getMinecraft().profiler.endSection();
+		Minecraft.getMinecraft().profiler.endSection();
 	}
 
 	private void renderHelperIcon(TileEntityLectern podium, double x, double y, double z, float f){
@@ -80,7 +80,7 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
 
 
 		ItemStack stack = podium.getTooltipStack().copy();
-		stack.stackSize = 1;
+		stack.setCount(1);
 		Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		GlStateManager.translate(x +0.5f, y+1.4f, z+0.5f);
 		GlStateManager.rotate(deg, 0, f, 0);
@@ -180,7 +180,7 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
 
 //		float var11 = podium.bookRotationPrev + f2 * partialTicks;
 		EnumFacing facing = EnumFacing.NORTH;
-		if (podium.hasWorldObj())
+		if (podium.hasWorld())
 			facing = podium.getWorld().getBlockState(podium.getPos()).getValue(BlockLectern.FACING);
 		GlStateManager.rotate(270 - facing.getHorizontalAngle(), 0, 1, 0);
 //		if (facing == EnumFacing.EAST || facing == EnumFacing.SOUTH)
@@ -191,11 +191,11 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
 		bindTexture(new ResourceLocation("textures/entity/enchanting_table_book.png"));
 		float var12 = podium.pageFlipPrev + (podium.pageFlip - podium.pageFlipPrev) * partialTicks + 0.25F;
 		float var13 = podium.pageFlipPrev + (podium.pageFlip - podium.pageFlipPrev) * partialTicks + 0.75F;
-		var12 = (var12 - MathHelper.truncateDoubleToInt(var12)) * 1.6F - 0.3F;
-		var13 = (var13 - MathHelper.truncateDoubleToInt(var13)) * 1.6F - 0.3F;
+		var12 = (var12 - MathHelper.floor(var12)) * 1.6F - 0.3F;
+		var13 = (var13 - MathHelper.floor(var13)) * 1.6F - 0.3F;
 		
-		var12 = MathHelper.clamp_float(var12, 0, 1);
-		var13 = MathHelper.clamp_float(var13, 0, 1);
+		var12 = MathHelper.clamp(var12, 0, 1);
+		var13 = MathHelper.clamp(var13, 0, 1);
 
 //		float var14 = podium.bookSpreadPrev + (podium.bookSpread - podium.bookSpreadPrev) * partialTicks;
 		this.enchantmentBook.setRotationAngles(var9, var12, var13, 1f, 0.0F, 0.0625F, (Entity)null);
@@ -210,7 +210,7 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntityLectern te, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void render(TileEntityLectern te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		GlStateManager.pushMatrix();
 		try {
 			renderTileEntityArchmagePodiumAt(te, x, y, z, partialTicks);

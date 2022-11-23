@@ -38,7 +38,7 @@ public class TileCelestialPrismRenderer extends TileEntitySpecialRenderer<TileEn
 	}
 	
 	@Override
-	public void renderTileEntityAt(TileEntityCelestialPrism te, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void render(TileEntityCelestialPrism te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		GlStateManager.pushAttrib();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, z);
@@ -68,7 +68,7 @@ public class TileCelestialPrismRenderer extends TileEntitySpecialRenderer<TileEn
 		if (x != 0 || y != 0 || z != 0) {
 			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(te.getWorld(), this.getBakedModel(), te.getWorld().getBlockState(te.getPos()), te.getPos(), tessellator.getBuffer(), false);
 		} else {
-			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld, this.getBakedModel(), BlockDefs.celestialPrism.getDefaultState(), BlockPos.ORIGIN, tessellator.getBuffer(), false);
+			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(Minecraft.getMinecraft().world, this.getBakedModel(), BlockDefs.celestialPrism.getDefaultState(), BlockPos.ORIGIN, tessellator.getBuffer(), false);
 		}
 		tessellator.draw();
 		RenderHelper.enableStandardItemLighting();

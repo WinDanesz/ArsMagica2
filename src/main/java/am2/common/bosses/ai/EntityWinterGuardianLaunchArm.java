@@ -26,15 +26,15 @@ public class EntityWinterGuardianLaunchArm extends EntityAIBase{
 	@Override
 	public boolean shouldExecute(){
 		if (cooldownTicks-- > 0 || host.getAttackTarget() == null) return false;
-		if (host.getAttackTarget().getDistanceSqToEntity(host) > 16D){
+		if (host.getAttackTarget().getDistanceSq(host) > 16D){
 			target = host.getAttackTarget();
 			return true;
 		}
-		List<EntityLivingBase> entities = host.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(20, 20, 20));
+		List<EntityLivingBase> entities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(20, 20, 20));
 		if (entities.size() > 0){
 			for (EntityLivingBase entity : entities){
 				if (entity instanceof EntityPlayer && ((EntityPlayer)entity).capabilities.isCreativeMode) continue;
-				if (entity.getDistanceSqToEntity(host) > 49D){
+				if (entity.getDistanceSq(host) > 49D){
 					target = entity;
 					return true;
 				}
@@ -44,8 +44,8 @@ public class EntityWinterGuardianLaunchArm extends EntityAIBase{
 	}
 
 	@Override
-	public boolean continueExecuting(){
-		if (target == null || target.isDead || host.getDistanceSqToEntity(target) < 49D || host.getDistanceSqToEntity(target) > 225D || (host.getCurrentAction() == BossActions.LAUNCHING && host.getTicksInCurrentAction() > host.getCurrentAction().getMaxActionTime())){
+	public boolean shouldContinueExecuting(){
+		if (target == null || target.isDead || host.getDistanceSq(target) < 49D || host.getDistanceSq(target) > 225D || (host.getCurrentAction() == BossActions.LAUNCHING && host.getTicksInCurrentAction() > host.getCurrentAction().getMaxActionTime())){
 			host.setCurrentAction(BossActions.IDLE);
 			target = null;
 			if (!host.hasLeftArm() && !host.hasRightArm())
@@ -58,24 +58,24 @@ public class EntityWinterGuardianLaunchArm extends EntityAIBase{
 	@Override
 	public void updateTask(){
 		host.getLookHelper().setLookPositionWithEntity(target, 30, 30);
-		if (host.getDistanceSqToEntity(target) > 144 && host.getCurrentAction() == BossActions.IDLE){
+		if (host.getDistanceSq(target) > 144 && host.getCurrentAction() == BossActions.IDLE){
 			host.getNavigator().tryMoveToEntityLiving(target, moveSpeed);
 		}else{
-			host.getNavigator().clearPathEntity();
+			host.getNavigator().clearPath();
 			if (host.getCurrentAction() != BossActions.LAUNCHING)
 				host.setCurrentAction(BossActions.LAUNCHING);
 
 			if (host.getTicksInCurrentAction() == 14){
 				host.faceEntity(target, 180, 180);
-				if (!host.worldObj.isRemote){
+				if (!host.world.isRemote){
 
-					if (!host.worldObj.isRemote)
-						host.worldObj.playSound(host.posX, host.posY, host.posZ, AMSounds.WINTER_GUARDIAN_LAUNCH_ARM, SoundCategory.HOSTILE, 1.0f, 1.0f, false);
+					if (!host.world.isRemote)
+						host.world.playSound(host.posX, host.posY, host.posZ, AMSounds.WINTER_GUARDIAN_LAUNCH_ARM, SoundCategory.HOSTILE, 1.0f, 1.0f, false);
 
-					EntityWinterGuardianArm projectile = new EntityWinterGuardianArm(host.worldObj, host, 1.25f);
+					EntityWinterGuardianArm projectile = new EntityWinterGuardianArm(host.world, host, 1.25f);
 					projectile.setThrowingEntity(host);
 					projectile.setProjectileSpeed(2.0);
-					host.worldObj.spawnEntityInWorld(projectile);
+					host.world.spawnEntity(projectile);
 				}
 			}
 		}

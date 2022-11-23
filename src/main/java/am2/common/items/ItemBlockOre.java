@@ -17,6 +17,6 @@ public class ItemBlockOre extends ItemBlockSubtypes {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public String getItemStackDisplayName(ItemStack stack) {
-		return I18n.format("tile.arsmagica2:ore_" + EnumOreType.values()[MathHelper.clamp_int(stack.getItemDamage(), 0, EnumOreType.values().length - 1)].getName().toLowerCase() + ".name");
+		return I18n.format("tile.arsmagica2:ore_" + EnumOreType.values()[MathHelper.clamp(stack.getItemDamage(), 0, EnumOreType.values().length - 1)].getName().toLowerCase() + ".name");
 	}
 }

@@ -32,7 +32,7 @@ public class EntityAIStrikeAttack extends EntityAIBase{
 			return false;
 		EntityLivingBase AITarget = host.getAttackTarget();
 		if (AITarget == null || AITarget.isDead) return false;
-		if (AITarget != null && host.getDistanceSqToEntity(AITarget) > 4D){
+		if (AITarget != null && host.getDistanceSq(AITarget) > 4D){
 			if (!host.getNavigator().tryMoveToEntityLiving(AITarget, moveSpeed))
 				return false;
 		}
@@ -41,7 +41,7 @@ public class EntityAIStrikeAttack extends EntityAIBase{
 	}
 
 	@Override
-	public boolean continueExecuting(){
+	public boolean shouldContinueExecuting(){
 		EntityLivingBase AITarget = host.getAttackTarget();
 		if (AITarget == null || AITarget.isDead || (((IArsMagicaBoss)host).getCurrentAction() == BossActions.STRIKE && ((IArsMagicaBoss)host).getTicksInCurrentAction() > ((IArsMagicaBoss)host).getCurrentAction().getMaxActionTime())){
 			((IArsMagicaBoss)host).setCurrentAction(BossActions.IDLE);
@@ -55,18 +55,18 @@ public class EntityAIStrikeAttack extends EntityAIBase{
 	public void updateTask(){
 		host.getLookHelper().setLookPositionWithEntity(target, 30, 30);
 		host.getNavigator().tryMoveToEntityLiving(target, moveSpeed);
-		if (host.getDistanceSqToEntity(target) < 16)
+		if (host.getDistanceSq(target) < 16)
 			if (((IArsMagicaBoss)host).getCurrentAction() != BossActions.STRIKE)
 				((IArsMagicaBoss)host).setCurrentAction(BossActions.STRIKE);
 
 		if (((IArsMagicaBoss)host).getCurrentAction() == BossActions.STRIKE && ((IArsMagicaBoss)host).getTicksInCurrentAction() > 12){
 
-			if (!host.worldObj.isRemote)
-				host.worldObj.playSound(host.posX, host.posY, host.posZ, ((IArsMagicaBoss)host).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
+			if (!host.world.isRemote)
+				host.world.playSound(host.posX, host.posY, host.posZ, ((IArsMagicaBoss)host).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
 
 			double offsetX = Math.cos(host.rotationYaw) * 2;
 			double offsetZ = Math.sin(host.rotationYaw) * 2;
-			List<EntityLivingBase> aoeEntities = host.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().offset(offsetX, 0, offsetZ).expand(2.5, 2, 2.5));
+			List<EntityLivingBase> aoeEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().offset(offsetX, 0, offsetZ).expand(2.5, 2, 2.5));
 			for (EntityLivingBase ent : aoeEntities){
 				if (ent == host) continue;
 				ent.attackEntityFrom(DamageSources.causeDamage(damageType, host, true), damage);

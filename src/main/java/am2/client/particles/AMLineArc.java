@@ -1,11 +1,9 @@
 package am2.client.particles;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +13,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class AMLineArc extends Particle{
@@ -40,7 +39,7 @@ public class AMLineArc extends Particle{
 	public AMLineArc(World world, double x, double y, double z, double targetX, double targetY, double targetZ, String IIconName){
 		super(world, x, y, z);
 		targetPoint = new Vec3d(targetX, targetY, targetZ);
-		currentTargetPoint = new Vec3d(targetPoint.xCoord, targetPoint.yCoord, targetPoint.zCoord);
+		currentTargetPoint = new Vec3d(targetPoint.x, targetPoint.y, targetPoint.z);
 		sourcePoint = new Vec3d(x, y, z);
 		deviation = 1.0;
 		speed = 0.01f;
@@ -126,7 +125,7 @@ public class AMLineArc extends Particle{
 	}
 
 	@Override
-	public void renderParticle(VertexBuffer par1Tessellator, Entity ent, float partialTicks, float rotationX, float rotationXZ, float rotationZ, float rotationYZ, float rotationXY){
+	public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
 		if (targetEntity != null && sourceEntity != null){
 			drawArcingLine(
 					sourceEntity.prevPosX + (sourceEntity.posX - sourceEntity.prevPosX) * partialTicks,
@@ -146,7 +145,7 @@ public class AMLineArc extends Particle{
 					targetEntity.prevPosZ + (targetEntity.posZ - targetEntity.prevPosZ) * partialTicks,
 					partialTicks, speed, deviation);
 		}else{
-			drawArcingLine(prevPosX + (posX - prevPosX) * partialTicks, prevPosY + (posY - prevPosY) * partialTicks, prevPosZ + (posZ - prevPosZ) * partialTicks, currentTargetPoint.xCoord, currentTargetPoint.yCoord, currentTargetPoint.zCoord, partialTicks, speed, deviation);
+			drawArcingLine(prevPosX + (posX - prevPosX) * partialTicks, prevPosY + (posY - prevPosY) * partialTicks, prevPosZ + (posZ - prevPosZ) * partialTicks, currentTargetPoint.x, currentTargetPoint.y, currentTargetPoint.z, partialTicks, speed, deviation);
 		}
 	}
 
@@ -158,7 +157,7 @@ public class AMLineArc extends Particle{
 
 		int fxQuality = 8;//AMCore.config.getGFXLevel() * 8;
 
-		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+		EntityPlayer player = Minecraft.getMinecraft().player;
 		double interpolatedX = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
 		double interpolatedY = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
 		double interpolatedZ = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
@@ -171,7 +170,7 @@ public class AMLineArc extends Particle{
 
 		float time = System.nanoTime() / 10000000L;
 
-		float dist = MathHelper.sqrt_double(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+		float dist = MathHelper.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 		float blocks = Math.round(dist);
 		float length = blocks * (fxQuality / 2.0F);
 

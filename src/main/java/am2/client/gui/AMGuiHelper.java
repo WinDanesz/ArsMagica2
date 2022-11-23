@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
@@ -33,7 +34,6 @@ import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -137,7 +137,7 @@ public class AMGuiHelper{
 	public void tick(){
 
 		if (dummyItem == null){
-			dummyItem = new EntityItem(Minecraft.getMinecraft().theWorld);
+			dummyItem = new EntityItem(Minecraft.getMinecraft().world);
 		}else{
 			dummyItem.rotationYaw += 0.1f;
 			ReflectionHelper.setPrivateValue(EntityItem.class, dummyItem, (Integer)ReflectionHelper.getPrivateValue(EntityItem.class, dummyItem, "age", "field_70292_b", "d") + 1, "age", "field_70292_b", "d");
@@ -252,7 +252,7 @@ public class AMGuiHelper{
 
 		Tessellator tessellator = Tessellator.getInstance();
 
-		boolean drawing = ReflectionHelper.getPrivateValue(VertexBuffer.class, tessellator.getBuffer(), "isDrawing", "field_179010_r");
+		boolean drawing = ReflectionHelper.getPrivateValue(BufferBuilder.class, tessellator.getBuffer(), "isDrawing", "field_179010_r");
 		if (drawing)
 			tessellator.draw();
 
@@ -306,7 +306,7 @@ public class AMGuiHelper{
 		}else {
 			if (stack.getItem() instanceof ItemSpellComponent) {
 				Minecraft.getMinecraft().renderEngine.bindTexture(LOCATION_BLOCKS_TEXTURE);
-				TextureAtlasSprite icon = SpellIconManager.INSTANCE.getSprite(ArsMagicaAPI.getSpellRegistry().getValue(ArsMagicaAPI.getSkillRegistry().getObjectById(stack.getItemDamage()).getRegistryName()).getRegistryName().toString());
+				TextureAtlasSprite icon = SpellIconManager.INSTANCE.getSprite(ArsMagicaAPI.getSpellRegistry().getValue(ArsMagicaAPI.getSkillRegistry().getValues().get(stack.getItemDamage()).getRegistryName()).getRegistryName().toString());
 				GlStateManager.color(1, 1, 1, 1);
 				if (icon != null)
 					DrawIconAtXY(icon, x, y, zLevel + 1, 16, 16, false);
@@ -665,13 +665,13 @@ public class AMGuiHelper{
 	}
 
 	public static void flipView(float f){
-		float flip = EntityExtension.For(Minecraft.getMinecraft().thePlayer).getFlipRotation();
-		float lastFlip = EntityExtension.For(Minecraft.getMinecraft().thePlayer).getPrevFlipRotation();
+		float flip = EntityExtension.For(Minecraft.getMinecraft().player).getFlipRotation();
+		float lastFlip = EntityExtension.For(Minecraft.getMinecraft().player).getPrevFlipRotation();
 		GlStateManager.rotate(lastFlip + (flip - lastFlip) * f, 0, 0, 1);
 	}
 
 	public static void shiftView(float f){
-		EntityPlayer entity = Minecraft.getMinecraft().thePlayer;
+		EntityPlayer entity = Minecraft.getMinecraft().player;
 //		int viewSet = Minecraft.getMinecraft().gameSettings.thirdPersonView;
 //		if (viewSet == 0){
 //			EntityExtension exProps = EntityExtension.For(entity);
@@ -693,8 +693,8 @@ public class AMGuiHelper{
 
 	public static void overrideKeyboardInput(){
 		Minecraft mc = Minecraft.getMinecraft();
-		if (mc.thePlayer != null && mc.theWorld != null && EntityExtension.For(mc.thePlayer).shouldReverseInput()){
-			EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+		if (mc.player != null && mc.world != null && EntityExtension.For(mc.player).shouldReverseInput()){
+			EntityPlayerSP player = Minecraft.getMinecraft().player;
 			if (mc.gameSettings.keyBindLeft.isKeyDown()){
 				LogHelper.debug("Override Left");
 				player.movementInput.moveStrafe -= 2;
@@ -705,7 +705,7 @@ public class AMGuiHelper{
 				player.movementInput.moveStrafe += 2;
 			}
 
-			if (mc.thePlayer.isPotionActive(PotionEffectsDefs.SCRAMBLE_SYNAPSES)){
+			if (mc.player.isPotionActive(PotionEffectsDefs.SCRAMBLE_SYNAPSES)){
 				if (mc.gameSettings.keyBindForward.isKeyDown()){
 					player.movementInput.moveForward -= 2;
 				}
@@ -719,10 +719,10 @@ public class AMGuiHelper{
 	public static boolean overrideMouseInput(EntityRenderer renderer, float f, boolean b){
 		Minecraft mc = Minecraft.getMinecraft();
 
-		if (!mc.inGameHasFocus || mc.thePlayer == null || mc.theWorld == null)
+		if (!mc.inGameHasFocus || mc.player == null || mc.world == null)
 			return true;
 
-		if (!mc.thePlayer.isPotionActive(PotionEffectsDefs.SCRAMBLE_SYNAPSES)){
+		if (!mc.player.isPotionActive(PotionEffectsDefs.SCRAMBLE_SYNAPSES)){
 			return true;
 		}
 
@@ -756,9 +756,9 @@ public class AMGuiHelper{
 			f3 = (Float)ReflectionHelper.getPrivateValue(EntityRenderer.class, renderer, scfx) * f5;
 			//f4 = renderer.smoothCamFilterY * f5;
 			f4 = (Float)ReflectionHelper.getPrivateValue(EntityRenderer.class, renderer, scfy) * f5;
-			mc.thePlayer.setAngles(-f3, f4 * (float)b0);
+			mc.player.setPositionAndRotation(mc.player.posX,mc.player.posY,mc.player.posY, -f3, f4 * (float)b0);
 		}else{
-			mc.thePlayer.setAngles(-f3, f4 * (float)b0);
+			mc.player.setPositionAndRotation(mc.player.posX,mc.player.posY,mc.player.posY, -f3, f4 * (float)b0);
 		}
 
 		return false;

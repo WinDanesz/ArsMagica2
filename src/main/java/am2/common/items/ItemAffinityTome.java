@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -25,39 +26,41 @@ public class ItemAffinityTome extends ItemArsMagica {
 		setHasSubtypes(true);
 		setMaxDamage(0);
 	}
-	
+
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 		for (int i = 0; i < ArsMagicaAPI.getAffinityRegistry().getValues().size(); i++) {
-			subItems.add(new ItemStack(itemIn, 1, i));
+			items.add(new ItemStack(this, 1, i));
 		}
 	}
 	
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, EnumHand hand){
-		
-		if (par2World.isRemote) return super.onItemRightClick(par1ItemStack, par2World, par3EntityPlayer, hand);
-		
-		if (par1ItemStack.getItemDamage() == ArsMagicaAPI.getAffinityRegistry().getId(Affinity.NONE)){
-			IAffinityData data = AffinityData.For(par3EntityPlayer);
-			data.setLocked(false);
-			for (Affinity aff : ArsMagicaAPI.getAffinityRegistry().getValues()){
-				data.setAffinityDepth(aff, data.getAffinityDepth(aff) * AffinityData.MAX_DEPTH - 20);
-			}
-		}else{
-			AffinityData.For(par3EntityPlayer).incrementAffinity(ArsMagicaAPI.getAffinityRegistry().getObjectById(par1ItemStack.getItemDamage()), 20);
-		}
-		par1ItemStack.stackSize--;
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+		ItemStack itemStack = player.getHeldItem(hand);
+		if (world.isRemote) return super.onItemRightClick(world, player, hand);
+		// Todo registry
+//		if (itemStack.getItemDamage() == ArsMagicaAPI.getAffinityRegistry().getId(Affinity.NONE)){
+//			IAffinityData data = AffinityData.For(player);
+//			data.setLocked(false);
+//			for (Affinity aff : ArsMagicaAPI.getAffinityRegistry().getValues()){
+//				data.setAffinityDepth(aff, data.getAffinityDepth(aff) * AffinityData.MAX_DEPTH - 20);
+//			}
+//		}else{
+//			// Todo registry
+//			//AffinityData.For(player).incrementAffinity(ArsMagicaAPI.getAffinityRegistry().getObjectById(itemStack.getItemDamage()), 20);
+//		}
+		itemStack.shrink(1);
 
-		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, par1ItemStack);
+		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStack);
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public String getItemStackDisplayName(ItemStack stack) {
-		Affinity aff = ArsMagicaAPI.getAffinityRegistry().getObjectById(stack.getItemDamage());
-		return I18n.format("item.arsmagica2:tome.name", aff.getLocalizedName());
+		// Todo registry
+		//Affinity aff = ArsMagicaAPI.getAffinityRegistry().getObjectById(stack.getItemDamage());
+		//return I18n.format("item.arsmagica2:tome.name", aff.getLocalizedName());
+		return null;
 	}
 	
 	@Override

@@ -2,12 +2,12 @@ package am2.common.utils;
 
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.vecmath.Vector3f;
 
 import org.lwjgl.util.vector.Quaternion;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -112,7 +112,7 @@ public class ModelUtils {
 	}
 	
 	public static void transform(IModelState state, TransformType type, boolean leftHand) {
-		TRSRTransformation transform = state.apply(Optional.fromNullable(type)).orNull();
+		TRSRTransformation transform = state.apply(Optional.of(type)).isPresent() ? state.apply(Optional.of(type)).get() : null;
 		if (transform != null) {
 			GlStateManager.translate(transform.getTranslation().x, transform.getTranslation().y, transform.getTranslation().z);
 			GlStateManager.scale(transform.getScale().x, transform.getScale().y, transform.getScale().z);

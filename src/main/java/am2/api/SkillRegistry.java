@@ -18,7 +18,8 @@ public class SkillRegistry {
 	}
 	
 	public static void registerSkill (boolean createEntry, Skill skill) {
-		GameRegistry.register(skill);
+		// todo registry
+		//// TODO: registry GameRegistry.register(skill);
 	}
 	
 	public static void registerSkill (Skill skill) {
@@ -35,7 +36,7 @@ public class SkillRegistry {
 	}
 
 	public static Skill getSkillFromName(String str) {
-		return ArsMagicaAPI.getSkillRegistry().getObject(new ResourceLocation(str));
+		return ArsMagicaAPI.getSkillRegistry().getValue(new ResourceLocation(str));
 	}
 	
 }

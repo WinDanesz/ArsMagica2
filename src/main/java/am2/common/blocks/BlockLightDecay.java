@@ -8,6 +8,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -23,12 +24,12 @@ public class BlockLightDecay extends BlockAM {
 	public int getLightValue(IBlockState state) {
 		return 15;
 	}
-	
+
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
-		return null;
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+		return NULL_AABB;
 	}
-	
+
 	@Override
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.INVISIBLE;
@@ -46,8 +47,8 @@ public class BlockLightDecay extends BlockAM {
 	
 	@Override
 	public BlockAM registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.toString());
-		GameRegistry.register(this, rl);
+		this.setTranslationKey(rl.toString());
+		// TODO: registry GameRegistry.register(this, rl);
 		return this;
 	}
 }

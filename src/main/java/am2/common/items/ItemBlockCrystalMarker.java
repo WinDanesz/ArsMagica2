@@ -17,6 +17,6 @@ public class ItemBlockCrystalMarker extends ItemBlockSubtypes {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public String getItemStackDisplayName(ItemStack stack) {
-		return I18n.format("tile.arsmagica2:" + BlockCrystalMarker.crystalMarkerTypes[MathHelper.clamp_int(stack.getItemDamage(), 0, BlockCrystalMarker.crystalMarkerTypes.length - 1)].toLowerCase() + ".name");
+		return I18n.format("tile.arsmagica2:" + BlockCrystalMarker.crystalMarkerTypes[MathHelper.clamp(stack.getItemDamage(), 0, BlockCrystalMarker.crystalMarkerTypes.length - 1)].toLowerCase() + ".name");
 	}
 }

@@ -71,11 +71,6 @@ public class BlockWitchwoodSapling extends BlockBush implements IGrowable{
 	}
 
 	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list){
-		list.add(new ItemStack(this));
-	}
-
-	@Override
 	public boolean canGrow(World worldIn, BlockPos pos, IBlockState state, boolean isClient) {
 		return state.getValue(AGE) == 15;
 	}
@@ -112,9 +107,9 @@ public class BlockWitchwoodSapling extends BlockBush implements IGrowable{
 	}
 	
 	public BlockWitchwoodSapling registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.toString());
-		GameRegistry.register(this, rl);
-		GameRegistry.register(new ItemBlockSubtypes(this), rl);
+		this.setTranslationKey(rl.toString());
+		// TODO: registry GameRegistry.register(this, rl);
+		// TODO: registry GameRegistry.register(new ItemBlockSubtypes(this), rl);
 		return this;
 	}
 }

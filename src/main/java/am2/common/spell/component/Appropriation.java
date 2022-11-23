@@ -104,7 +104,7 @@ public class Appropriation extends SpellComponent{
 						Entity ent = (Entity)Class.forName(clazz).getConstructor(World.class).newInstance(world);
 						ent.readFromNBT(entData);
 						ent.setPosition(hitX, hitY, hitZ);
-						world.spawnEntityInWorld(ent);
+						world.spawnEntity(ent);
 					}catch (Throwable t){
 						t.printStackTrace();
 					}
@@ -117,8 +117,8 @@ public class Appropriation extends SpellComponent{
 					if (state != null){
 						world.setBlockState(pos, state, 2);
 					}else{
-						if (!player.worldObj.isRemote)
-							player.addChatComponentMessage(new TextComponentString(I18n.format("am2.tooltip.approError")));
+						if (!player.world.isRemote)
+							player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.approError")));
 						stack.getTagCompound().removeTag(storageKey);
 						return;
 					}
@@ -129,7 +129,7 @@ public class Appropriation extends SpellComponent{
 						if (te != null){
 							te.readFromNBT(storageCompound.getCompoundTag("tileEntity"));
 							te.setPos(pos);
-							te.setWorldObj(world);
+							te.setWorld(world);
 						}
 					}
 				}

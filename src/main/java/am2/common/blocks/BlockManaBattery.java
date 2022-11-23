@@ -8,6 +8,7 @@ import am2.common.blocks.tileentity.TileEntityManaBattery;
 import am2.common.power.PowerNodeRegistry;
 import am2.common.power.PowerTypes;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,6 +21,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
@@ -35,17 +37,17 @@ public class BlockManaBattery extends BlockAMPowered{
 		this.setResistance(2.0f);
 	}
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ){
-		if (!super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ))
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+		if (!super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ))
 			return true;
 
 		if (!worldIn.isRemote){
 			TileEntityManaBattery te = getTileEntity(worldIn, pos);
 			if (te != null){
 				if (ArsMagica2.config.colourblindMode()){
-					playerIn.addChatMessage(new TextComponentString(String.format("Charge Level: %.2f %% [%s]", PowerNodeRegistry.For(worldIn).getPower(te, te.getPowerType()) / te.getCapacity() * 100, getColorNameFromPowerType(te.getPowerType()))));
+					playerIn.sendMessage(new TextComponentString(String.format("Charge Level: %.2f %% [%s]", PowerNodeRegistry.For(worldIn).getPower(te, te.getPowerType()) / te.getCapacity() * 100, getColorNameFromPowerType(te.getPowerType()))));
 				}else{
-					playerIn.addChatMessage(new TextComponentString(String.format("Charge Level: %s%.2f \u00A7f%%", te.getPowerType().getChatColor(), PowerNodeRegistry.For(worldIn).getPower(te, te.getPowerType()) / te.getCapacity() * 100)));
+					playerIn.sendMessage(new TextComponentString(String.format("Charge Level: %s%.2f \u00A7f%%", te.getPowerType().getChatColor(), PowerNodeRegistry.For(worldIn).getPower(te, te.getPowerType()) / te.getCapacity() * 100)));
 				}
 			}
 		}
@@ -102,7 +104,7 @@ public class BlockManaBattery extends BlockAMPowered{
 
 	@Override
 	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
-		this.onBlockDestroyedByPlayer(world, pos,state);
+		this.onPlayerDestroy(world, pos,state);
 		if (willHarvest){
 			this.harvestBlock(world, player, pos, state, world.getTileEntity(pos), player.getHeldItemMainhand());
 		}
@@ -132,17 +134,16 @@ public class BlockManaBattery extends BlockAMPowered{
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
+	public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
 		ItemStack stack = new ItemStack(this);
 
-		par3List.add(stack);
+		items.add(stack);
 		for (PowerTypes type : PowerTypes.all()){
 			stack = new ItemStack(this, 1, type.ID());
 			stack.setTagCompound(new NBTTagCompound());
 			stack.getTagCompound().setFloat("mana_battery_charge", new TileEntityManaBattery().getCapacity());
 			stack.getTagCompound().setInteger("mana_battery_powertype", type.ID());
-			par3List.add(stack);
+			items.add(stack);
 		}
 	}
 
@@ -164,7 +165,7 @@ public class BlockManaBattery extends BlockAMPowered{
 //	}
 	
 	@Override
-	public BlockRenderLayer getBlockLayer() {
+	public BlockRenderLayer getRenderLayer() {
 		return BlockRenderLayer.CUTOUT;
 	}
 	
@@ -181,9 +182,7 @@ public class BlockManaBattery extends BlockAMPowered{
     }
 	
 	@Override
-	public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
-		return true;
-	}
+	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) { return BlockFaceShape.SOLID; }
 	
 	@Override
 	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {

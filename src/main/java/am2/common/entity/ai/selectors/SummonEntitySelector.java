@@ -1,9 +1,7 @@
 package am2.common.entity.ai.selectors;
 
-import com.google.common.base.Predicate;
-
 import am2.common.utils.EntityUtils;
-import net.minecraft.entity.EntityLivingBase;
+import com.google.common.base.Predicate;
 import net.minecraft.entity.monster.EntityMob;
 
 public class SummonEntitySelector implements Predicate<EntityMob>{
@@ -14,10 +12,8 @@ public class SummonEntitySelector implements Predicate<EntityMob>{
 	}
 	@Override
 	public boolean apply(EntityMob entity) {
-		if (entity instanceof EntityLivingBase){
-			if (EntityUtils.isSummon((EntityLivingBase)entity))
-				return false;
-			return true;
+		if (entity != null){
+			return !EntityUtils.isSummon(entity);
 		}
 		return false;
 	}

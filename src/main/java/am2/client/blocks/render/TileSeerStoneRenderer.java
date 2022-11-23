@@ -28,7 +28,7 @@ public class TileSeerStoneRenderer extends TileEntitySpecialRenderer<TileEntityS
 		eye = new ResourceLocation("arsmagica2", "textures/blocks/custom/eye_bw.png");
 	}
 
-	public void renderTileEntityAt(TileEntitySeerStone tile, double d, double d1, double d2, float f, int destroyStage){
+	public void render(TileEntitySeerStone tile, double d, double d1, double d2, float f, int destroyStage, float alpha){
 		EnumFacing i = EnumFacing.SOUTH;
 
 		if (destroyStage != -10){

@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 public class TileIllusionBlockRenderer extends TileEntitySpecialRenderer<TileEntityIllusionBlock> {
 
 	@Override
-	public void renderTileEntityAt(TileEntityIllusionBlock te, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void render(TileEntityIllusionBlock te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		GlStateManager.pushMatrix();
 		RenderHelper.disableStandardItemLighting();
@@ -48,7 +48,7 @@ public class TileIllusionBlockRenderer extends TileEntitySpecialRenderer<TileEnt
 		} else {
 			IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(BlockDefs.illusionBlock.getDefaultState());
 			Tessellator t = Tessellator.getInstance();
-			VertexBuffer wr = t.getBuffer();
+			BufferBuilder wr = t.getBuffer();
 			wr.begin(7, DefaultVertexFormats.BLOCK);
 			World world = te.getWorld();
 			IBlockState state = world.getBlockState(te.getPos());

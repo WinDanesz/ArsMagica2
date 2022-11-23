@@ -53,8 +53,8 @@ public class TileEntityCrystalMarker extends TileEntity implements IInventory, I
 	public void cyclePriority(){
 		this.priority++;
 		this.priority %= TileEntityFlickerHabitat.PRIORITY_LEVELS;
-		if (!this.worldObj.isRemote){
-			for (EntityPlayerMP player : this.worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(this.pos).expand(64, 64, 64))){
+		if (!this.world.isRemote){
+			for (EntityPlayerMP player : this.world.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(this.pos).expand(64, 64, 64))){
 				player.connection.sendPacket(this.getUpdatePacket());
 			}
 		}
@@ -134,7 +134,7 @@ public class TileEntityCrystalMarker extends TileEntity implements IInventory, I
 		if (this.hasFilterItems()){
 			for (int i = 0; i < this.filterItems.length; i++){
 				if (this.filterItems[i] != null && InventoryUtilities.compareItemStacks(this.filterItems[i], stack, true, false, true, true)){
-					totalCount += this.filterItems[i].stackSize;
+					totalCount += this.filterItems[i].getCount();
 				}
 			}
 		}
@@ -255,7 +255,7 @@ public class TileEntityCrystalMarker extends TileEntity implements IInventory, I
 				NBTTagCompound nbttagcompound1 = filterItemsList.getCompoundTagAt(i);
 				byte byte0 = nbttagcompound1.getByte(tag);
 				if (byte0 >= 0 && byte0 < this.filterItems.length){
-					this.filterItems[byte0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+					this.filterItems[byte0] = new ItemStack((nbttagcompound1));
 				}
 			}
 		}//end if(par1.hasKey("filterItems")){
@@ -283,6 +283,11 @@ public class TileEntityCrystalMarker extends TileEntity implements IInventory, I
 	}
 
 	@Override
+	public boolean isEmpty() {
+		return false;
+	}
+
+	@Override
 	public ItemStack getStackInSlot(int i){
 		if (i > FILTER_SIZE){
 			return null;
@@ -293,13 +298,13 @@ public class TileEntityCrystalMarker extends TileEntity implements IInventory, I
 	@Override
 	public ItemStack decrStackSize(int i, int j){
 		if (this.filterItems[i] != null){
-			if (this.filterItems[i].stackSize <= j){
+			if (this.filterItems[i].getCount() <= j){
 				ItemStack itemstack = this.filterItems[i];
 				this.filterItems[i] = null;
 				return itemstack;
 			}
 			ItemStack itemstack1 = this.filterItems[i].splitStack(j);
-			if (this.filterItems[i].stackSize == 0){
+			if (this.filterItems[i].getCount() == 0){
 				this.filterItems[i] = null;
 			}
 			return itemstack1;
@@ -322,8 +327,8 @@ public class TileEntityCrystalMarker extends TileEntity implements IInventory, I
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
 		this.filterItems[i] = itemstack;
-		if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit()){
-			itemstack.stackSize = this.getInventoryStackLimit();
+		if (itemstack != null && itemstack.getCount() > this.getInventoryStackLimit()){
+			itemstack.setCount( this.getInventoryStackLimit());
 		}
 	}
 
@@ -347,8 +352,8 @@ public class TileEntityCrystalMarker extends TileEntity implements IInventory, I
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer){
-		if (this.worldObj.getTileEntity(this.pos) != this){
+	public boolean isUsableByPlayer(EntityPlayer entityplayer){
+		if (this.world.getTileEntity(this.pos) != this){
 			return false;
 		}
 		return entityplayer.getDistanceSq(this.pos.getX() + 0.5D, this.pos.getY() + 0.5D, this.pos.getZ() + 0.5D) <= 64D;
@@ -387,7 +392,7 @@ public class TileEntityCrystalMarker extends TileEntity implements IInventory, I
 	}
 
 	public void linkToHabitat(AMVector3 habLocation, EntityPlayer player){
-		TileEntity te = this.worldObj.getTileEntity(habLocation.toBlockPos());
+		TileEntity te = this.world.getTileEntity(habLocation.toBlockPos());
 
 		if (te instanceof TileEntityFlickerHabitat){
 			AMVector3 myLocation = new AMVector3(this.pos);
@@ -407,7 +412,7 @@ public class TileEntityCrystalMarker extends TileEntity implements IInventory, I
 				if (setElementalAttuner)
 					this.setElementalAttuner(habLocation);
 			}else{
-				player.addChatMessage(new TextComponentString(I18n.format("am2.tooltip.habitatToFar")));
+				player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.habitatToFar")));
 			}
 		}
 	}
@@ -452,14 +457,14 @@ public class TileEntityCrystalMarker extends TileEntity implements IInventory, I
 
 	@Override
 	public void update() {
-		if (!this.worldObj.isRemote) {
-			IBlockState state = this.worldObj.getBlockState(this.pos);
+		if (!this.world.isRemote) {
+			IBlockState state = this.world.getBlockState(this.pos);
 			if (!state.getValue(BlockCrystalMarker.FACING).equals(facing))
-				this.worldObj.setBlockState(this.pos, state.withProperty(BlockCrystalMarker.FACING, this.facing), 3);
+				this.world.setBlockState(this.pos, state.withProperty(BlockCrystalMarker.FACING, this.facing), 3);
 			//This is probably the fastest I can get it to go.
 			//If you know of any better way, please feel free to suggest it.
 			if (++tickCount % 20 == 0)
-				this.worldObj.notifyBlockUpdate(this.pos, state, state, 2);
+				this.world.notifyBlockUpdate(this.pos, state, state, 2);
 		}
 	}
 	

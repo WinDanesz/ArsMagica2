@@ -25,6 +25,8 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 public class BlockParticleEmitter extends BlockAMContainer{
 	
 	public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.HORIZONTALS);
@@ -50,7 +52,7 @@ public class BlockParticleEmitter extends BlockAMContainer{
 	
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta & 0x3)).withProperty(HIDDEN, (meta & 0x8) == 0x8);
+		return getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta & 0x3)).withProperty(HIDDEN, (meta & 0x8) == 0x8);
 	}	
 
 	@Override
@@ -83,7 +85,7 @@ public class BlockParticleEmitter extends BlockAMContainer{
 	
 	
 	@Override
-	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
 		return getStateFromMeta(meta).withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
 
@@ -98,7 +100,7 @@ public class BlockParticleEmitter extends BlockAMContainer{
 	}
 	
 	@Override
-	public BlockRenderLayer getBlockLayer() {
+	public BlockRenderLayer getRenderLayer() {
 		return BlockRenderLayer.TRANSLUCENT;
 	}
 	
@@ -106,16 +108,18 @@ public class BlockParticleEmitter extends BlockAMContainer{
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		return state.getValue(HIDDEN) ? new AxisAlignedBB(0, 0, 0, 0, 0, 0) : super.getBoundingBox(state, source, pos);
 	}
-	
+
+	@Nullable
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
 		return blockState.getValue(HIDDEN) ? null : super.getCollisionBoundingBox(blockState, worldIn, pos);
 	}
-	
+
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (worldIn.isRemote) {
+			ItemStack heldItem = playerIn.getHeldItem(hand);
 			TileEntity te = worldIn.getTileEntity(pos);
 			if (te != null && te instanceof TileEntityParticleEmitter) {
 				if (heldItem != null
@@ -124,11 +128,11 @@ public class BlockParticleEmitter extends BlockAMContainer{
 						ArsMagica2.proxy.openParticleBlockGUI(worldIn, playerIn, (TileEntityParticleEmitter) te);
 					} else {
 						if (ArsMagica2.proxy.cwCopyLoc == null) {
-							playerIn.addChatMessage(new TextComponentString("Settings Copied."));
+							playerIn.sendMessage(new TextComponentString("Settings Copied."));
 							ArsMagica2.proxy.cwCopyLoc = new NBTTagCompound();
 							((TileEntityParticleEmitter) te).writeSettingsToNBT(ArsMagica2.proxy.cwCopyLoc);
 						} else {
-							playerIn.addChatMessage(new TextComponentString("Settings Applied."));
+							playerIn.sendMessage(new TextComponentString("Settings Applied."));
 							((TileEntityParticleEmitter) te).readSettingsFromNBT(ArsMagica2.proxy.cwCopyLoc);
 							((TileEntityParticleEmitter) te).syncWithServer();
 							ArsMagica2.proxy.cwCopyLoc = null;

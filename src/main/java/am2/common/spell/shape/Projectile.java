@@ -60,9 +60,9 @@ public class Projectile extends SpellShape {
 			int projectileBounce = (int) spell.getModifiedValue(SpellModifiers.BOUNCE, Operation.ADD, world, caster, target); // SpellUtils.getModifiedInt_Add(stack, caster, target, world, SpellModifiers.BOUNCE);
 			EntitySpellProjectile projectile = new EntitySpellProjectile(world);
 			projectile.setPosition(caster.posX, caster.getEyeHeight() + caster.posY, caster.posZ);
-			projectile.motionX = caster.getLookVec().xCoord * projectileSpeed;
-			projectile.motionY = caster.getLookVec().yCoord * projectileSpeed;
-			projectile.motionZ = caster.getLookVec().zCoord * projectileSpeed;
+			projectile.motionX = caster.getLookVec().x * projectileSpeed;
+			projectile.motionY = caster.getLookVec().y * projectileSpeed;
+			projectile.motionZ = caster.getLookVec().z * projectileSpeed;
 			if (spell.isModifierPresent(SpellModifiers.TARGET_NONSOLID_BLOCKS))
 				projectile.setTargetWater();
 			projectile.setGravity(projectileGravity);
@@ -72,7 +72,7 @@ public class Projectile extends SpellShape {
 			projectile.setHoming(spell.isModifierPresent(SpellModifiers.HOMING));
 			projectile.setSpell(spell);
 			projectile.setIcon(AMParticleDefs.getParticleForAffinity(spell.getMainShift()));
-			world.spawnEntityInWorld(projectile);
+			world.spawnEntity(projectile);
 		}
 		return SpellCastResult.SUCCESS;
 	}

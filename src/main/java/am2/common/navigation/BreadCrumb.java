@@ -33,6 +33,6 @@ public class BreadCrumb implements Comparable<BreadCrumb>{
 
 	@Override
 	public int compareTo(BreadCrumb o){
-		return this.cost < o.cost ? -1 : this.cost > o.cost ? 1 : 0;
+		return Integer.compare(this.cost, o.cost);
 	}
 }

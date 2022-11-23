@@ -80,7 +80,7 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockC
 	}
 
 	protected void checkNearbyBlockState(){
-		List<IMultiblockGroup> groups = structure.getMatchingGroups(worldObj, pos);
+		List<IMultiblockGroup> groups = structure.getMatchingGroups(world, pos);
 
 		float capsLevel = 1;
 		boolean pillarsFound = false;
@@ -97,7 +97,7 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockC
 		}
 		
 		if (pillarsFound && capsFound) {
-			IBlockState capState = worldObj.getBlockState(pos.add(2, 2, 2));
+			IBlockState capState = world.getBlockState(pos.add(2, 2, 2));
 			
 			for (IBlockState cap : caps.keySet()){
 				if (capState == cap){
@@ -222,7 +222,7 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockC
 	}
 
 	private void sendCookUpdateToClients(){
-		if (!worldObj.isRemote){
+		if (!world.isRemote){
 			AMNetHandler.INSTANCE.sendObeliskUpdate(this, new AMDataWriter().add(PK_BURNTIME_CHANGE).add(this.burnTimeRemaining).generate());
 		}
 	}
@@ -238,11 +238,11 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockC
 		surroundingCheckTicks++;
 
 		if (isActive()){
-			if (!worldObj.isRemote && surroundingCheckTicks % 100 == 0){
+			if (!world.isRemote && surroundingCheckTicks % 100 == 0){
 				checkNearbyBlockState();
 				surroundingCheckTicks = 1;
-				if (PowerNodeRegistry.For(this.worldObj).checkPower(this, this.capacity * 0.1f)){
-					List<EntityPlayer> nearbyPlayers = worldObj.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(this.pos.add(-2, 0, -2), pos.add(2, 3, 2)));
+				if (PowerNodeRegistry.For(this.world).checkPower(this, this.capacity * 0.1f)){
+					List<EntityPlayer> nearbyPlayers = world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(this.pos.add(-2, 0, -2), pos.add(2, 3, 2)));
 					for (EntityPlayer p : nearbyPlayers){
 						if (p.isPotionActive(PotionEffectsDefs.MANA_REGEN)) continue;
 						p.addPotionEffect(new BuffEffectManaRegen(600, 1));
@@ -250,7 +250,7 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockC
 				}
 			}
 
-			float powerAmt = PowerNodeRegistry.For(worldObj).getPower(this, PowerTypes.NEUTRAL);
+			float powerAmt = PowerNodeRegistry.For(world).getPower(this, PowerTypes.NEUTRAL);
 			float powerAdded = inventory[0] != null ? ObeliskFuelHelper.instance.getFuelBurnTime(inventory[0]) * (powerBase * powerMultiplier) : 0;
 
 			float chargeThreshold = Math.max(this.getCapacity() - powerAdded, this.getCapacity() * 0.75f);
@@ -271,7 +271,7 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockC
 
 			if (burnTimeRemaining > 0){
 				burnTimeRemaining--;
-				PowerNodeRegistry.For(worldObj).insertPower(this, PowerTypes.NEUTRAL, powerBase * powerMultiplier);
+				PowerNodeRegistry.For(world).insertPower(this, PowerTypes.NEUTRAL, powerBase * powerMultiplier);
 
 				if (burnTimeRemaining % 20 == 0)
 					sendCookUpdateToClients();
@@ -280,9 +280,9 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockC
 			surroundingCheckTicks = 1;
 		}
 
-		if (worldObj.isRemote){
+		if (world.isRemote){
 			lastOffsetY = offsetY;
-			offsetY = (float)Math.max(Math.sin(worldObj.getTotalWorldTime() / 20f) / 5, 0.25f);
+			offsetY = (float)Math.max(Math.sin(world.getTotalWorldTime() / 20f) / 5, 0.25f);
 			if (burnTimeRemaining > 0)
 				burnTimeRemaining--;
 		}
@@ -342,7 +342,7 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockC
 				NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
 				byte byte0 = nbttagcompound1.getByte(tag);
 				if (byte0 >= 0 && byte0 < inventory.length){
-					inventory[byte0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+					inventory[byte0] = new ItemStack((nbttagcompound1));
 				}
 			}
 		}
@@ -374,6 +374,11 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockC
 	}
 
 	@Override
+	public boolean isEmpty() {
+		return false;
+	}
+
+	@Override
 	public ItemStack getStackInSlot(int i){
 		if (i < 0 || i >= this.getSizeInventory())
 			return null;
@@ -383,13 +388,13 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockC
 	@Override
 	public ItemStack decrStackSize(int i, int j){
 		if (inventory[i] != null){
-			if (inventory[i].stackSize <= j){
+			if (inventory[i].getCount() <= j){
 				ItemStack itemstack = inventory[i];
 				inventory[i] = null;
 				return itemstack;
 			}
 			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].stackSize == 0){
+			if (inventory[i].getCount() == 0){
 				inventory[i] = null;
 			}
 			return itemstack1;
@@ -412,8 +417,8 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockC
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
 		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()){
-			itemstack.stackSize = getInventoryStackLimit();
+		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
+			itemstack.setCount( getInventoryStackLimit());
 		}
 	}
 
@@ -438,8 +443,8 @@ public class TileEntityObelisk extends TileEntityAMPower implements IMultiblockC
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer){
-		if (worldObj.getTileEntity(pos) != this){
+	public boolean isUsableByPlayer(EntityPlayer entityplayer){
+		if (world.getTileEntity(pos) != this){
 			return false;
 		}
 		return entityplayer.getDistanceSqToCenter(pos) <= 64D;

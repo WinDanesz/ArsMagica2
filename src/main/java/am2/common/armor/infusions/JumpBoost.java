@@ -34,8 +34,8 @@ public class JumpBoost extends ArmorImbuement{
 		if (matchedType == ImbuementApplicationTypes.ON_JUMP){
 			Vec3d vec = player.getLookVec().normalize();
 			double yVelocity = 1;
-			double xVelocity = player.motionX * 3.5 * Math.abs(vec.xCoord);
-			double zVelocity = player.motionZ * 3.5 * Math.abs(vec.zCoord);
+			double xVelocity = player.motionX * 3.5 * Math.abs(vec.x);
+			double zVelocity = player.motionZ * 3.5 * Math.abs(vec.z);
 
 			if (EntityExtension.For(player).getIsFlipped()){
 				yVelocity *= -1;

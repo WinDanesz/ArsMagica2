@@ -92,7 +92,7 @@ public class ParticleRenderer{
 	}
 
 	private void updateParticles(){
-		Minecraft.getMinecraft().mcProfiler.startSection(name + "-update");
+		Minecraft.getMinecraft().profiler.startSection(name + "-update");
 
 		particles.addAll(deferredParticles);
 		deferredParticles.clear();
@@ -146,12 +146,12 @@ public class ParticleRenderer{
 			}
 		}
 
-		Minecraft.getMinecraft().mcProfiler.endSection();
+		Minecraft.getMinecraft().profiler.endSection();
 	}
 
 	private void render(float partialTicks){
 		GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		Minecraft.getMinecraft().mcProfiler.startSection(name + "-render");
+		Minecraft.getMinecraft().profiler.startSection(name + "-render");
 
 		Entity renderer = Minecraft.getMinecraft().getRenderViewEntity();
 		Particle.interpPosX = renderer.lastTickPosX + (renderer.posX - renderer.lastTickPosX) * partialTicks;
@@ -184,7 +184,7 @@ public class ParticleRenderer{
 		//============================================================================================
 		// End
 		//============================================================================================
-		Minecraft.getMinecraft().mcProfiler.endSection();
+		Minecraft.getMinecraft().profiler.endSection();
 		GL11.glPopAttrib();
 	}
 

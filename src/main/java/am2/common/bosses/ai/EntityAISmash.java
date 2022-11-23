@@ -35,7 +35,7 @@ public class EntityAISmash extends EntityAIBase{
 			return false;
 		EntityLivingBase AITarget = host.getAttackTarget();
 		if (AITarget == null || AITarget.isDead) return false;
-		if (AITarget != null && host.getDistanceSqToEntity(AITarget) > 4D){
+		if (AITarget != null && host.getDistanceSq(AITarget) > 4D){
 			if (!host.getNavigator().tryMoveToEntityLiving(AITarget, moveSpeed))
 				return false;
 		}
@@ -44,9 +44,9 @@ public class EntityAISmash extends EntityAIBase{
 	}
 
 	@Override
-	public boolean continueExecuting(){
+	public boolean shouldContinueExecuting(){
 		EntityLivingBase AITarget = host.getAttackTarget();
-		if (AITarget != null && host.getDistanceSqToEntity(AITarget) > 4D){
+		if (AITarget != null && host.getDistanceSq(AITarget) > 4D){
 			if (host.onGround)
 				return host.getNavigator().tryMoveToEntityLiving(AITarget, moveSpeed);
 		}
@@ -62,31 +62,31 @@ public class EntityAISmash extends EntityAIBase{
 	public void updateTask(){
 		host.getLookHelper().setLookPositionWithEntity(host.getAttackTarget(), 30, 30);
 		host.getNavigator().tryMoveToEntityLiving(target, moveSpeed);
-		if (host.getDistanceSqToEntity(target) < 16)
+		if (host.getDistanceSq(target) < 16)
 			if (((IArsMagicaBoss)host).getCurrentAction() != BossActions.SMASH)
 				((IArsMagicaBoss)host).setCurrentAction(BossActions.SMASH);
 
 		if (((IArsMagicaBoss)host).getCurrentAction() == BossActions.SMASH && ((IArsMagicaBoss)host).getTicksInCurrentAction() == 18){
 
-			if (!host.worldObj.isRemote)
-				host.worldObj.playSound(host.posX, host.posY, host.posZ, ((IArsMagicaBoss)host).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
+			if (!host.world.isRemote)
+				host.world.playSound(host.posX, host.posY, host.posZ, ((IArsMagicaBoss)host).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
 
-			List<EntityLivingBase> aoeEntities = host.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(4, 2, 4));
+			List<EntityLivingBase> aoeEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(4, 2, 4));
 			for (EntityLivingBase ent : aoeEntities){
 				if (ent == host) continue;
 				ent.attackEntityFrom(DamageSources.causeDamage(damageType, host, true), 8);
 				if (ent instanceof EntityPlayer){
-					AMNetHandler.INSTANCE.sendVelocityAddPacket(host.worldObj, ent, 0, 1.3f, 0);
+					AMNetHandler.INSTANCE.sendVelocityAddPacket(host.world, ent, 0, 1.3f, 0);
 				}else{
 					ent.addVelocity(0, 1.4f, 0);
 				}
 			}
-			if (!host.worldObj.isRemote){
+			if (!host.world.isRemote){
 				for (int i = 0; i < 4; ++i){
-					EntityShockwave shockwave = new EntityShockwave(host.worldObj);
+					EntityShockwave shockwave = new EntityShockwave(host.world);
 					shockwave.setPosition(host.posX, host.posY, host.posZ);
 					shockwave.setMoveSpeedAndAngle(0.5f, MathHelper.wrapDegrees(host.rotationYaw + (90 * i)));
-					host.worldObj.spawnEntityInWorld(shockwave);
+					host.world.spawnEntity(shockwave);
 				}
 			}
 		}

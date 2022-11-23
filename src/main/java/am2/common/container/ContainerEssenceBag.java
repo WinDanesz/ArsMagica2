@@ -58,7 +58,7 @@ public class ContainerEssenceBag extends Container{
 
 	@Override
 	public void onContainerClosed(EntityPlayer entityplayer){
-		World world = entityplayer.worldObj;
+		World world = entityplayer.world;
 
 		if (!world.isRemote){
 			ItemStack essenceBagItemStack = bagStack;
@@ -73,7 +73,7 @@ public class ContainerEssenceBag extends Container{
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer){
-		return essBagInventory.isUseableByPlayer(entityplayer);
+		return essBagInventory.isUsableByPlayer(entityplayer);
 	}
 
 	@Override
@@ -101,12 +101,12 @@ public class ContainerEssenceBag extends Container{
 			}else if (!mergeItemStack(itemstack1, mainInventoryStart, actionBarEnd, false)){
 				return null;
 			}
-			if (itemstack1.stackSize == 0){
+			if (itemstack1.getCount() == 0){
 				slot.putStack(null);
 			}else{
 				slot.onSlotChanged();
 			}
-			if (itemstack1.stackSize != itemstack.stackSize){
+			if (itemstack1.getCount() != itemstack.getCount()){
 				slot.onSlotChange(itemstack1, itemstack);
 			}else{
 				return null;

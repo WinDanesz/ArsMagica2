@@ -46,7 +46,7 @@ public class BlockKeystoneReceptacle extends BlockAMPowered{
 	
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta));
+		return getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta));
 	}
 	
 	@Override
@@ -56,8 +56,8 @@ public class BlockKeystoneReceptacle extends BlockAMPowered{
 	
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
+			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+		super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
 
 		if (HandleSpecialItems(worldIn, playerIn, pos)){
 			return true;
@@ -109,7 +109,7 @@ public class BlockKeystoneReceptacle extends BlockAMPowered{
 	}
 	
 	@Override
-	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
 		return getStateFromMeta(meta).withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
 	
@@ -119,7 +119,7 @@ public class BlockKeystoneReceptacle extends BlockAMPowered{
 		IKeystoneLockable<?> lockable = (IKeystoneLockable<?>)world.getTileEntity(pos);
 		if (KeystoneUtilities.instance.getKeyFromRunes(lockable.getRunesInKey()) != 0){
 			if (!world.isRemote)
-				player.addChatMessage(new TextComponentString(I18n.format("am2.tooltip.clearKey")));
+				player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.clearKey")));
 			return false;
 		}
 

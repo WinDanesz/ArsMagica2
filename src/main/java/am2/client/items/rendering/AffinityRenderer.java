@@ -19,14 +19,14 @@ public class AffinityRenderer implements ItemMeshDefinition{
 	
 	public AffinityRenderer addModels(Item item) {
 		for (Affinity aff : ArsMagicaAPI.getAffinityRegistry().getValues())
-			ModelBakery.registerItemVariants(item, new ModelResourceLocation(new ResourceLocation(aff.getRegistryName().getResourceDomain(), prefix + aff.getRegistryName().getResourcePath()), "inventory"));
+			ModelBakery.registerItemVariants(item, new ModelResourceLocation(new ResourceLocation(aff.getRegistryName().getNamespace(), prefix + aff.getRegistryName().getPath()), "inventory"));
 		return this;
 	}
 	
 	@Override
 	public ModelResourceLocation getModelLocation(ItemStack stack) {
-		Affinity aff = ArsMagicaAPI.getAffinityRegistry().getObjectById(stack.getItemDamage());
-		return new ModelResourceLocation(new ResourceLocation(aff.getRegistryName().getResourceDomain(), prefix + aff.getRegistryName().getResourcePath()), "inventory");
+		Affinity aff = null; // todo registry ArsMagicaAPI.getAffinityRegistry().getObjectById(stack.getItemDamage());
+		return new ModelResourceLocation(new ResourceLocation(aff.getRegistryName().getNamespace(), prefix + aff.getRegistryName().getPath()), "inventory");
 	}
 	
 }

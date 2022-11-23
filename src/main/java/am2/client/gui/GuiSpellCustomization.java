@@ -101,9 +101,9 @@ public class GuiSpellCustomization extends GuiContainer{
 		int i1 = (height - ySize) / 2;
 
 		if (ArsMagica2.config.suggestSpellNames())
-			spellName = new GuiTextField(0, fontRendererObj, l + 8, i1 + 8, xSize - 36, 16);
+			spellName = new GuiTextField(0, fontRenderer, l + 8, i1 + 8, xSize - 36, 16);
 		else
-			spellName = new GuiTextField(0, fontRendererObj, l + 8, i1 + 8, xSize - 16, 16);
+			spellName = new GuiTextField(0, fontRenderer, l + 8, i1 + 8, xSize - 16, 16);
 
 		String suggestion = ((ContainerSpellCustomization)this.inventorySlots).getInitialSuggestedName();
 		spellName.setText(suggestion);

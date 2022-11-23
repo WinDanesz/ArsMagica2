@@ -48,7 +48,7 @@ public class Wave extends SpellShape {
 		wave.setWave(caster.rotationYaw, (float) speed);
 		wave.noClip = hasPiercing;
 		wave.setGravity(gravityModifiers * 0.5f);
-		world.spawnEntityInWorld(wave);
+		world.spawnEntity(wave);
 		return SpellCastResult.SUCCESS;
 	}
 

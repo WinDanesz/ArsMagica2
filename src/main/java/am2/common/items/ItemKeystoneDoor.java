@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.client.resources.I18n;
@@ -46,14 +47,15 @@ public class ItemKeystoneDoor extends Item{
 			return I18n.format("item.arsmagica2:unknown.name");
 		}
 	}
-
+	
 	/**
 	 * Callback for item usage. If the item does something special on right clicking, he will have one of those. Return
 	 * True if something happen and false if it don't. This is for ITEMS, not BLOCKS
 	 */
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		ItemStack stack = player.getHeldItem(hand);
+		
 		if (facing != EnumFacing.UP){
 			return EnumActionResult.PASS;
 		}else{
@@ -64,16 +66,16 @@ public class ItemKeystoneDoor extends Item{
 			else
 				block = BlockDefs.spellSealedDoor;
 
-			if (playerIn.canPlayerEdit(pos, facing, stack) && playerIn.canPlayerEdit(pos.up(), facing, stack)){
+			if (player.canPlayerEdit(pos, facing, stack) && player.canPlayerEdit(pos.up(), facing, stack)){
 				if (!block.canPlaceBlockAt(worldIn, pos)){
 					return EnumActionResult.FAIL;
 				}else{
-					EnumFacing enumfacing = EnumFacing.fromAngle((double)playerIn.rotationYaw);
-					int i = enumfacing.getFrontOffsetX();
-	                int j = enumfacing.getFrontOffsetZ();
+					EnumFacing enumfacing = EnumFacing.fromAngle((double)player.rotationYaw);
+					int i = enumfacing.getXOffset();
+	                int j = enumfacing.getZOffset();
 					boolean flag = i < 0 && hitZ < 0.5F || i > 0 && hitZ > 0.5F || j < 0 && hitX > 0.5F || j > 0 && hitX < 0.5F;
 					ItemDoor.placeDoor(worldIn, pos, enumfacing, block, flag);
-					--stack.stackSize;
+					stack.shrink(1);
 					return EnumActionResult.SUCCESS;
 				}
 			}else{
@@ -83,15 +85,14 @@ public class ItemKeystoneDoor extends Item{
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list){
-		list.add(new ItemStack(this, 1, KEYSTONE_DOOR));
-		list.add(new ItemStack(this, 1, SPELL_SEALED_DOOR));
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+		items.add(new ItemStack(this, 1, KEYSTONE_DOOR));
+		items.add(new ItemStack(this, 1, SPELL_SEALED_DOOR));
 	}
 	
 	public Item registerAndName(String name) {
-		this.setUnlocalizedName(name);
-		GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
+		this.setTranslationKey(name);
+		//// TODO: registry GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
 		return this;
 	}
 }

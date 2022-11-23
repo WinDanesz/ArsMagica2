@@ -28,8 +28,8 @@ public class GuiButtonVariableDims extends GuiButton{
 	}
 
 	public void setPosition(int x, int y){
-		this.xPosition = x;
-		this.yPosition = y;
+		this.x = x;
+		this.y = y;
 	}
 
 	public GuiButtonVariableDims setBorderOnly(boolean borderOnly){
@@ -38,7 +38,7 @@ public class GuiButtonVariableDims extends GuiButton{
 	}
 
 	public AMVector2 getPosition(){
-		return new AMVector2(this.xPosition, this.yPosition);
+		return new AMVector2(this.x, this.y);
 	}
 
 	public GuiButtonVariableDims setPopupText(String text){
@@ -55,20 +55,20 @@ public class GuiButtonVariableDims extends GuiButton{
 	}
 
 	@Override
-	public void drawButton(Minecraft par1Minecraft, int par2, int par3){
-		boolean isMousedOver = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks){
+		boolean isMousedOver = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 		if (!renderBorderOnly){
-			super.drawButton(par1Minecraft, par2, par3);
+			super.drawButton(mc, mouseX, mouseY, partialTicks);
 		}else{
 			int color = this.enabled ? 0xFFFFFF : 0x660000;
-			line(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition, color);
-			line(this.xPosition + this.width, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, color);
-			line(this.xPosition + this.width, this.yPosition + this.height, this.xPosition, this.yPosition + this.height, color);
-			line(this.xPosition, this.yPosition + this.height, this.xPosition, this.yPosition, color);
+			line(this.x, this.y, this.x + this.width, this.y, color);
+			line(this.x + this.width, this.y, this.x + this.width, this.y + this.height, color);
+			line(this.x + this.width, this.y + this.height, this.x, this.y + this.height, color);
+			line(this.x, this.y + this.height, this.x, this.y, color);
 		}
 
 		if (isMousedOver && this.hoverTextLines.size() > 0){
-			drawHoveringText(hoverTextLines, par2, par3, Minecraft.getMinecraft().fontRendererObj);
+			drawHoveringText(hoverTextLines, mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
 		}
 	}
 

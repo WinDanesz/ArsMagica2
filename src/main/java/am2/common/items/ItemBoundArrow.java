@@ -22,12 +22,7 @@ public class ItemBoundArrow extends ItemArrow {
 	public ItemBoundArrow() {
 		setCreativeTab(null);
 	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
-	}
-	
+
 	@Override
 	public EntityArrow createArrow(World worldIn, ItemStack stack, EntityLivingBase shooter) {
 		EntityBoundArrow arrow = new EntityBoundArrow(worldIn, shooter);
@@ -39,8 +34,8 @@ public class ItemBoundArrow extends ItemArrow {
 	}
 	
 	public ItemBoundArrow registerAndName(String name) {
-		this.setUnlocalizedName(new ResourceLocation("arsmagica2", name).toString());
-		GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
+//		this.setTranslationKey(new ResourceLocation("arsmagica2", name).toString());
+//		// TODO: registry GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
 		return this;
 	}
 }

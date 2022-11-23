@@ -30,7 +30,7 @@ public class TileEntityManaBattery extends TileEntityAMPower implements ITileEnt
 
 	public void setPowerType(PowerTypes type, boolean forceSubNodes){
 		this.outputPowerType = type;
-		if (worldObj != null && worldObj.isRemote) {
+		if (world != null && world.isRemote) {
 			markDirty();
 		}
 	}
@@ -47,15 +47,15 @@ public class TileEntityManaBattery extends TileEntityAMPower implements ITileEnt
 	@Override
 	public void update(){
 
-		if (worldObj.isBlockIndirectlyGettingPowered(pos) > 0){
+		if (world.getStrongPower(pos) > 0){
 			this.setPowerRequests();
 		}else{
 			this.setNoPowerRequests();
 		}
 
-		if (!this.worldObj.isRemote) {
-			PowerTypes highest = PowerNodeRegistry.For(worldObj).getHighestPowerType(this);
-			float amt = PowerNodeRegistry.For(worldObj).getPower(this, highest);
+		if (!this.world.isRemote) {
+			PowerTypes highest = PowerNodeRegistry.For(world).getHighestPowerType(this);
+			float amt = PowerNodeRegistry.For(world).getPower(this, highest);
 			if (amt > 0) {
 				if(this.outputPowerType != highest) {
 					this.outputPowerType = highest;

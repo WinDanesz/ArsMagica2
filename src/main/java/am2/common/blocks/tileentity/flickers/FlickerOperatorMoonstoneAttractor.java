@@ -42,7 +42,7 @@ public class FlickerOperatorMoonstoneAttractor extends AbstractFlickerFunctional
 	}
 
 	@Override
-	public boolean DoOperation(World worldObj, IFlickerController<?> habitat, boolean powered){
+	public boolean DoOperation(World world, IFlickerController<?> habitat, boolean powered){
 		AMVector3 vec = new AMVector3((TileEntity)habitat);
 		if (powered){
 			if (!attractors.contains(vec)){
@@ -56,12 +56,12 @@ public class FlickerOperatorMoonstoneAttractor extends AbstractFlickerFunctional
 	}
 
 	@Override
-	public boolean DoOperation(World worldObj, IFlickerController<?> habitat, boolean powered, Affinity[] flickers){
-		return DoOperation(worldObj, habitat, powered);
+	public boolean DoOperation(World world, IFlickerController<?> habitat, boolean powered, Affinity[] flickers){
+		return DoOperation(world, habitat, powered);
 	}
 
 	@Override
-	public void RemoveOperator(World worldObj, IFlickerController<?> habitat, boolean powered){
+	public void RemoveOperator(World world, IFlickerController<?> habitat, boolean powered){
 		AMVector3 vec = new AMVector3((TileEntity)habitat);
 		attractors.remove(vec);
 	}
@@ -72,8 +72,8 @@ public class FlickerOperatorMoonstoneAttractor extends AbstractFlickerFunctional
 	}
 
 	@Override
-	public void RemoveOperator(World worldObj, IFlickerController<?> habitat, boolean powered, Affinity[] flickers){
-		RemoveOperator(worldObj, habitat, powered);
+	public void RemoveOperator(World world, IFlickerController<?> habitat, boolean powered, Affinity[] flickers){
+		RemoveOperator(world, habitat, powered);
 	}
 
 	@Override
@@ -83,9 +83,9 @@ public class FlickerOperatorMoonstoneAttractor extends AbstractFlickerFunctional
 				"AME",
 				"I T",
 				Character.valueOf('R'), new ItemStack(ItemDefs.rune, 1, EnumDyeColor.ORANGE.getDyeDamage()),
-				Character.valueOf('L'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.LIGHTNING)),
-				Character.valueOf('A'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ARCANE)),
-				Character.valueOf('E'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.EARTH)),
+				//todo registry 	Character.valueOf('L'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.LIGHTNING)),
+				//todo registry Character.valueOf('A'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ARCANE)),
+				//todo registry 	Character.valueOf('E'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.EARTH)),
 				Character.valueOf('M'), new ItemStack(BlockDefs.ores, 1, BlockArsMagicaOre.EnumOreType.MOONSTONE.ordinal()),
 				Character.valueOf('I'), AffinityShiftUtils.getEssenceForAffinity(Affinity.AIR),
 				Character.valueOf('T'), AffinityShiftUtils.getEssenceForAffinity(Affinity.EARTH)

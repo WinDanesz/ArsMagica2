@@ -41,8 +41,8 @@ public class RitualShapeHelper {
 		for (ItemStack stack : ritual.getRitualReagents()) {
 			boolean matches = false;
 			for (EntityItem item : items) {
-				ItemStack is = item.getEntityItem();
-				if (is.getItem().equals(stack.getItem()) && (stack.getMetadata() == OreDictionary.WILDCARD_VALUE || is.getMetadata() == stack.getMetadata()) && is.stackSize >= stack.stackSize)
+				ItemStack is = item.getItem();
+				if (is.getItem().equals(stack.getItem()) && (stack.getMetadata() == OreDictionary.WILDCARD_VALUE || is.getMetadata() == stack.getMetadata()) && is.getCount() >= stack.getCount())
 					matches = true;
 			}
 			if (!matches)
@@ -56,7 +56,7 @@ public class RitualShapeHelper {
 		Collections.sort(items, new EntityItemComparator());
 		ItemStack[] toReturn = new ItemStack[items.size()];
 		for (int i = 0; i < items.size(); ++i)
-			toReturn[i] = items.get(i).getEntityItem();
+			toReturn[i] = items.get(i).getItem();
 		
 		return toReturn;
 	}
@@ -65,13 +65,13 @@ public class RitualShapeHelper {
 		List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos, pos.add(1, 1, 1)).expand(ritual.getRitualReagentSearchRadius(), ritual.getRitualReagentSearchRadius(), ritual.getRitualReagentSearchRadius()));
 		for (ItemStack stack : ritual.getRitualReagents()) {
 			for (EntityItem item : items) {
-				ItemStack is = item.getEntityItem();
-				if (is.getItem().equals(stack.getItem()) && is.getMetadata() == stack.getMetadata() && is.stackSize >= stack.stackSize) {
-					is.stackSize -= stack.stackSize;
-					if (is.stackSize <= 0)
+				ItemStack is = item.getItem();
+				if (is.getItem().equals(stack.getItem()) && is.getMetadata() == stack.getMetadata() && is.getCount() >= stack.getCount()) {
+					is.shrink(stack.getCount());
+					if (is.getCount() <= 0)
 						item.setDead();
 					else
-						item.setEntityItemStack(is);
+						item.setItem(is);
 				}
 			}
 		}
@@ -81,7 +81,7 @@ public class RitualShapeHelper {
 		int r = interaction.getRitualReagentSearchRadius();
 		List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos, pos.add(1, 1, 1)).expand(r, r, r));
 		for (EntityItem item : items) {
-			LogHelper.debug("Removing Item %s", item.getEntityItem().toString());
+			LogHelper.debug("Removing Item %s", item.getItem().toString());
 			item.setDead();
 		}
 	}

@@ -37,17 +37,17 @@ public class MathUtilities{
 	}
 
 	private static Vec3d calcNewVector(float scaler, Vec3d base){
-		Vec3d retValue = new Vec3d(base.xCoord, base.yCoord, base.zCoord);
+		Vec3d retValue = new Vec3d(base.x, base.y, base.z);
 		retValue.scale(scaler);
 		return retValue;
 	}
 	
 	public static Vec3d floorToI(Vec3d old){
-		return new Vec3d((float)Math.floor(old.xCoord), (float)Math.floor(old.yCoord), (float)Math.floor(old.zCoord));
+		return new Vec3d((float)Math.floor(old.x), (float)Math.floor(old.y), (float)Math.floor(old.z));
 	}
 	
 	public static Vec3d roundToI(Vec3d old){
-		return new Vec3d((float)Math.round(old.xCoord), (float)Math.round(old.yCoord), (float)Math.round(old.zCoord));
+		return new Vec3d((float)Math.round(old.x), (float)Math.round(old.y), (float)Math.round(old.z));
 	}
 
 	public static Vec3d[] GetHorizontalBlocksInFrontOfCharacter(EntityLivingBase entity, int numBlocks, int x, int y, int z){
@@ -260,9 +260,9 @@ public class MathUtilities{
 		double d = range;
 		Vec3d vec3d = new Vec3d(entityplayer.posX, entityplayer.posY + entityplayer.getEyeHeight(), entityplayer.posZ);
 		Vec3d vec3d1 = entityplayer.getLookVec();
-		Vec3d vec3d2 = vec3d.addVector(vec3d1.xCoord * d, vec3d1.yCoord * d, vec3d1.zCoord * d);
+		Vec3d vec3d2 = vec3d.add(vec3d1.x * d, vec3d1.y * d, vec3d1.z * d);
 		double f1 = collideRadius;
-		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(entityplayer, entityplayer.getEntityBoundingBox().addCoord(vec3d1.xCoord * d, vec3d1.yCoord * d, vec3d1.zCoord * d).expand(f1, f1, f1));
+		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(entityplayer, entityplayer.getEntityBoundingBox().expand(vec3d1.x * d, vec3d1.y * d, vec3d1.z * d).expand(f1, f1, f1));
 
 		double d2 = 0.0D;
 		for (int i = 0; i < list.size(); i++){
@@ -275,7 +275,7 @@ public class MathUtilities{
 				float f2 = Math.max(0.8F, entity.getCollisionBorderSize());
 				AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand(f2, f2, f2);
 				RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(vec3d, vec3d2);
-				if (axisalignedbb.isVecInside(vec3d)){
+				if (axisalignedbb.contains(vec3d)){
 					if ((0.0D < d2) || (d2 == 0.0D)){
 						pointedEntity = entity;
 						d2 = 0.0D;
@@ -308,7 +308,7 @@ public class MathUtilities{
 		float var18 = var15 * var16;
 		float var20 = var14 * var16;
 		double var21 = range;
-		Vec3d var23 = var13.addVector(var18 * var21, var17 * var21, var20 * var21);
+		Vec3d var23 = var13.add(var18 * var21, var17 * var21, var20 * var21);
 
 		return var23;
 	}
@@ -337,24 +337,24 @@ public class MathUtilities{
 	}
 
 	public static int getDistanceToGround(EntityLivingBase ent, World world){
-		int yCoord = (int)(ent.posY);
+		int y = (int)(ent.posY);
 		int distance = 0;
 
 		while (distance < 20){
-			if (world.isAirBlock(new BlockPos((int)Math.floor(ent.posX), yCoord, (int)Math.floor(ent.posZ)))){
+			if (world.isAirBlock(new BlockPos((int)Math.floor(ent.posX), y, (int)Math.floor(ent.posZ)))){
 				break;
 			}
-			if (world.isAirBlock(new BlockPos((int)Math.ceil(ent.posX), yCoord, (int)Math.floor(ent.posZ)))){
+			if (world.isAirBlock(new BlockPos((int)Math.ceil(ent.posX), y, (int)Math.floor(ent.posZ)))){
 				break;
 			}
-			if (world.isAirBlock(new BlockPos((int)Math.floor(ent.posX), yCoord, (int)Math.ceil(ent.posZ)))){
+			if (world.isAirBlock(new BlockPos((int)Math.floor(ent.posX), y, (int)Math.ceil(ent.posZ)))){
 				break;
 			}
-			if (world.isAirBlock(new BlockPos((int)Math.ceil(ent.posX), yCoord, (int)Math.ceil(ent.posZ)))){
+			if (world.isAirBlock(new BlockPos((int)Math.ceil(ent.posX), y, (int)Math.ceil(ent.posZ)))){
 				break;
 			}
 			distance++;
-			yCoord--;
+			y--;
 		}
 
 		return distance;

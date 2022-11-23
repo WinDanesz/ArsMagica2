@@ -60,10 +60,10 @@ public class GuiButtonCompendiumLink extends GuiButton{
 	 * Draws this button to the screen.
 	 */
 	@Override
-	public void drawButton(Minecraft par1Minecraft, int par2, int par3){
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks){
 		if (this.visible){
 			GlStateManager.color(1, 1, 1, 1);
-			boolean isMousedOver = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
+			boolean isMousedOver = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 			
 			int textColor = 0x000000;
 			if (category != null)
@@ -72,11 +72,11 @@ public class GuiButtonCompendiumLink extends GuiButton{
 				textColor = 0x6600FF;
 			}
 
-			fontRenderer.drawString(this.displayString, xPosition, yPosition, textColor);
+			fontRenderer.drawString(this.displayString, x, y, textColor);
 			//GL11.glDisable(GL11.GL_LIGHTING);
 			if (isNewItem){
 				GL11.glColor4f(1, 1, 1, 1);
-				AMGuiHelper.DrawIconAtXY(AMGuiIcons.newEntry, xPosition - 6, yPosition + 2, this.zLevel, 5, 5, true);
+				AMGuiHelper.DrawIconAtXY(AMGuiIcons.newEntry, x - 6, y + 2, this.zLevel, 5, 5, true);
 			}
 			//GL11.glEnable(GL11.GL_LIGHTING);
 		}

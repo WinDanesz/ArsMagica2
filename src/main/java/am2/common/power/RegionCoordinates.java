@@ -14,8 +14,8 @@ public class RegionCoordinates{
 	}
 
 	public RegionCoordinates(ChunkPos pair, int dimension){
-		this.x = (int)Math.floor(pair.chunkXPos / 32);
-		this.z = (int)Math.floor(pair.chunkZPos / 32);
+		this.x = (int)Math.floor(pair.x / 32);
+		this.z = (int)Math.floor(pair.z / 32);
 		this.dimension = dimension;
 	}
 

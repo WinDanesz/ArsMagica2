@@ -41,8 +41,8 @@ public class BlockVinteumTorch extends BlockTorch{
         if (enumfacing.getAxis().isHorizontal())
         {
             EnumFacing enumfacing1 = enumfacing.getOpposite();
-            spawnParticle(worldIn, d0 + d4 * (double)enumfacing1.getFrontOffsetX(), d1 + d3, d2 + d4 * (double)enumfacing1.getFrontOffsetZ());
-            spawnParticle(worldIn, d0 + d4 * (double)enumfacing1.getFrontOffsetX(), d1 + d3, d2 + d4 * (double)enumfacing1.getFrontOffsetZ());
+            spawnParticle(worldIn, d0 + d4 * (double)enumfacing1.getXOffset(), d1 + d3, d2 + d4 * (double)enumfacing1.getZOffset());
+            spawnParticle(worldIn, d0 + d4 * (double)enumfacing1.getXOffset(), d1 + d3, d2 + d4 * (double)enumfacing1.getZOffset());
         }
         else
         {
@@ -63,9 +63,9 @@ public class BlockVinteumTorch extends BlockTorch{
 	}
 	
 	public BlockVinteumTorch registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.toString());
-		GameRegistry.register(this, rl);
-		GameRegistry.register(new ItemBlockSubtypes(this), rl);
+		this.setTranslationKey(rl.toString());
+		// TODO: registry GameRegistry.register(this, rl);
+		// TODO: registry GameRegistry.register(new ItemBlockSubtypes(this), rl);
 		return this;
 	}
 }

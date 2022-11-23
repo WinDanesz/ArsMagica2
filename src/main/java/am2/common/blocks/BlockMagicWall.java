@@ -21,7 +21,7 @@ public class BlockMagicWall extends BlockAM {
 	}
 	
 	@Override
-	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+	public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
 		if (entityIn instanceof EntitySpellProjectile) {
 			EntitySpellProjectile projectile = (EntitySpellProjectile)entityIn;
 			projectile.setBounces(projectile.getBounces() + 1);
@@ -35,7 +35,7 @@ public class BlockMagicWall extends BlockAM {
 	}
 	
 	@Override
-	public BlockRenderLayer getBlockLayer() {
+	public BlockRenderLayer getRenderLayer() {
 		return BlockRenderLayer.TRANSLUCENT;
 	}
 	

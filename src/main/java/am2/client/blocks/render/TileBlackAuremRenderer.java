@@ -12,9 +12,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
 public class TileBlackAuremRenderer extends TileEntitySpecialRenderer<TileEntityBlackAurem> {
-	
+
 	@Override
-	public void renderTileEntityAt(TileEntityBlackAurem te, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void render(TileEntityBlackAurem te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		GlStateManager.pushAttrib();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x + 0.5, y + 1, z + 0.5);

@@ -17,8 +17,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.BiomeDictionary;
@@ -74,9 +74,9 @@ public class AM2WorldDecorator implements IWorldGenerator{
 		new WorldGenEssenceLakes(BlockDefs.liquid_essence.getBlock());
 	}
 
+
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator,
-			IChunkProvider chunkProvider){
+	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 
 		if (!SpawnBlacklists.worldgenCanHappenInDimension(world.provider.getDimension()))
 			return;
@@ -84,13 +84,13 @@ public class AM2WorldDecorator implements IWorldGenerator{
 		if (world.getWorldInfo().getTerrainType() == WorldType.FLAT) return;
 		if (dimensionBlacklist.contains(world.provider.getDimension())) return;
 		switch (world.provider.getDimension()){
-		case -1:
-			generateNether(random, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
-			break;
-		case 1:
-			break;
-		default:
-			generateOverworld(random, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
+			case -1:
+				generateNether(random, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
+				break;
+			case 1:
+				break;
+			default:
+				generateOverworld(random, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
 		}
 	}
 
@@ -111,7 +111,7 @@ public class AM2WorldDecorator implements IWorldGenerator{
 		generateFlowers(tarmaRoot, world, random, chunkX, chunkZ);
 
 		Biome biome = world.getBiome(new BlockPos (chunkX << 4, 0, chunkZ << 4));
-		Type[] biomeTypes = BiomeDictionary.getTypesForBiome(biome);
+		Type[] biomeTypes = (BiomeDictionary.Type[]) BiomeDictionary.getTypes(biome).toArray();
 		boolean typeValid = false;
 		for (Type type : biomeTypes){
 			if (type == Type.BEACH || type == Type.SWAMP || type == Type.JUNGLE || type == Type.PLAINS || type == Type.WATER){
@@ -134,7 +134,7 @@ public class AM2WorldDecorator implements IWorldGenerator{
 			generatePools(world, random, chunkX, chunkZ);
 		}
 
-		if ((BiomeDictionary.isBiomeOfType(biome, Type.MAGICAL) || BiomeDictionary.isBiomeOfType(biome, Type.FOREST)) && random.nextInt(4) == 0 && TerrainGen.populate(chunkGenerator, world, random, chunkX, chunkZ, true, LAKE)){
+		if ((BiomeDictionary.hasType(biome, Type.MAGICAL) || BiomeDictionary.hasType(biome, Type.FOREST)) && random.nextInt(4) == 0 && TerrainGen.populate(chunkGenerator, world, random, chunkX, chunkZ, true, LAKE)){
 			int lakeGenX = (chunkX * 16) + random.nextInt(16) + 8;
 			int lakeGenY = random.nextInt(128);
 			int lakeGenZ = (chunkZ * 16) + random.nextInt(16) + 8;

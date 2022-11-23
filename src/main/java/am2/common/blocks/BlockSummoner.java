@@ -48,7 +48,7 @@ public class BlockSummoner extends BlockAMPowered{
 	
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta & 0x3));
+		return getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta & 0x3));
 	}
 	@Override
 	public TileEntity createNewTileEntity(World world, int i){
@@ -56,8 +56,8 @@ public class BlockSummoner extends BlockAMPowered{
 	}
 	
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) { ItemStack heldItem = playerIn.getHeldItem(hand);
+		super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
 		if (HandleSpecialItems(worldIn, playerIn, pos)){
 			return true;
 		}
@@ -66,7 +66,7 @@ public class BlockSummoner extends BlockAMPowered{
 			if (KeystoneUtilities.HandleKeystoneRecovery(playerIn, (IKeystoneLockable<?>)worldIn.getTileEntity(pos)))
 				return true;
 			if (KeystoneUtilities.instance.canPlayerAccess((IKeystoneLockable<?>)worldIn.getTileEntity(pos), playerIn, KeystoneAccessType.USE)){
-				super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
+				super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
 				FMLNetworkHandler.openGui(playerIn, ArsMagica2.instance, IDDefs.GUI_SUMMONER, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			}
 		}
@@ -75,7 +75,7 @@ public class BlockSummoner extends BlockAMPowered{
 	}
 	
 	@Override
-	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
 		return getStateFromMeta(meta).withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
 
@@ -96,14 +96,14 @@ public class BlockSummoner extends BlockAMPowered{
 			float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
 			float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
 			do{
-				if (itemstack.stackSize <= 0){
+				if (itemstack.getCount() <= 0){
 					break;
 				}
 				int i1 = world.rand.nextInt(21) + 10;
-				if (i1 > itemstack.stackSize){
-					i1 = itemstack.stackSize;
+				if (i1 > itemstack.getCount()){
+					i1 = itemstack.getCount();
 				}
-				itemstack.stackSize -= i1;
+				itemstack.shrink(i1);
 				ItemStack newStack = new ItemStack(itemstack.getItem(), i1, itemstack.getItemDamage());
 				if (itemstack.hasTagCompound()){
 					newStack.setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
@@ -113,7 +113,7 @@ public class BlockSummoner extends BlockAMPowered{
 				entityitem.motionX = (float)world.rand.nextGaussian() * f3;
 				entityitem.motionY = (float)world.rand.nextGaussian() * f3 + 0.2F;
 				entityitem.motionZ = (float)world.rand.nextGaussian() * f3;
-				world.spawnEntityInWorld(entityitem);
+				world.spawnEntity(entityitem);
 			}while (true);
 		}
 		super.breakBlock(world, pos, state);

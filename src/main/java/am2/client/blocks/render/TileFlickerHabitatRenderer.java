@@ -40,7 +40,7 @@ public class TileFlickerHabitatRenderer extends TileEntitySpecialRenderer<TileEn
 		bakedModelCrystal = modelCrystal.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
 	}
 
-	public void renderTileEntityAt(TileEntityFlickerHabitat tileentity, double x, double y, double z, float partialTicks, int destroyStage){
+	public void render(TileEntityFlickerHabitat tileentity, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
 		createModels();
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT);

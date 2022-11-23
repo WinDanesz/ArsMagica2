@@ -10,17 +10,17 @@ public class GuiButtonTextOnly extends GuiButtonVariableDims {
 	}
 	
 	@Override
-	public void drawButton(Minecraft par1Minecraft, int par2, int par3){
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float PartialTicks){
 		if (this.visible){
 			GlStateManager.color(1, 1, 1, 1);
-			boolean isMousedOver = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
+			boolean isMousedOver = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 			
 			int textColor = 0xFFFFFF;
 			if (isMousedOver){
 				textColor = 0x6600FF;
 			}
 			GlStateManager.disableAlpha();
-			par1Minecraft.fontRendererObj.drawString(this.displayString, xPosition, yPosition, textColor);
+			mc.fontRenderer.drawString(this.displayString, x, y, textColor);
 		}
 	}
 

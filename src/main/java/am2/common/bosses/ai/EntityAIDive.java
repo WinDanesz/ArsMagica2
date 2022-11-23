@@ -24,7 +24,7 @@ public class EntityAIDive extends EntityAIBase{
 	}
 
 	@Override
-	public boolean continueExecuting(){
+	public boolean shouldContinueExecuting(){
 		if (host.getAttackTarget() == null || host.getAttackTarget().isDead || host.getNumHits() >= 3){
 			this.cooldownTicks = 300;
 			((IArsMagicaBoss)host).setCurrentAction(BossActions.IDLE);
@@ -36,7 +36,7 @@ public class EntityAIDive extends EntityAIBase{
 	@Override
 	public void updateTask(){
 		host.getNavigator().tryMoveToEntityLiving(host.getAttackTarget(), 0.75f);
-		if (((IArsMagicaBoss)host).getTicksInCurrentAction() > 40 && host.getDistanceSqToEntity(host.getAttackTarget()) < 64D){
+		if (((IArsMagicaBoss)host).getTicksInCurrentAction() > 40 && host.getDistanceSq(host.getAttackTarget()) < 64D){
 			((IArsMagicaBoss)host).setCurrentAction(BossActions.SPINNING);
 		}
 	}

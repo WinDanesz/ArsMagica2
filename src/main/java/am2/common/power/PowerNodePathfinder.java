@@ -22,8 +22,8 @@ public class PowerNodePathfinder extends AStar<BlockPos>{
 	}
 
 	private IPowerNode<?> getPowerNode(World world, BlockPos location){
-		if (world.getChunkFromBlockCoords(new BlockPos(location)) != null){
-			Chunk chunk = world.getChunkFromBlockCoords(new BlockPos(location));
+		if (world.getChunk(new BlockPos(location)) != null){
+			Chunk chunk = world.getChunk(new BlockPos(location));
 			if (chunk.isLoaded()){
 				TileEntity te = world.getTileEntity(new BlockPos(location));
 				if (te instanceof IPowerNode)

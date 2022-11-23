@@ -45,8 +45,8 @@ public class PowerNodeCache{
 			}
 		}
 
-		int rX = (int)Math.floor(chunk.chunkXPos / 32);
-		int rZ = (int)Math.floor(chunk.chunkZPos / 32);
+		int rX = (int)Math.floor(chunk.x / 32);
+		int rZ = (int)Math.floor(chunk.z / 32);
 
 		String fileName = String.format("%d_%d%s", rX, rZ, extension);
 
@@ -95,7 +95,7 @@ public class PowerNodeCache{
 		if (dataCompound == null){
 			File file = getFileFromChunk(world, chunk, true);
 			if (file == null || (!file.canWrite() && !file.setWritable(true)) || (!file.canRead() && !file.setReadable(true))){
-				LogHelper.error("Unable to obtain file handle!  The power system data for the chunk at %d, %d will NOT be saved!  To fix this, make sure you have read/write access to the Minecraft instance folder.", chunk.chunkXPos, chunk.chunkZPos);
+				LogHelper.error("Unable to obtain file handle!  The power system data for the chunk at %d, %d will NOT be saved!  To fix this, make sure you have read/write access to the Minecraft instance folder.", chunk.x, chunk.z);
 				return;
 			}
 			try{
@@ -113,7 +113,7 @@ public class PowerNodeCache{
 		if (flushImmediate){
 			File file = getFileFromChunk(world, chunk, true);
 			if (file == null || (!file.canWrite() && !file.setWritable(true)) || (!file.canRead() && !file.setReadable(true))){
-				LogHelper.error("Unable to obtain file handle!  The power system data for the chunk at %d, %d will NOT be saved!  To fix this, make sure you have read/write access to the Minecraft instance folder.", chunk.chunkXPos, chunk.chunkZPos);
+				LogHelper.error("Unable to obtain file handle!  The power system data for the chunk at %d, %d will NOT be saved!  To fix this, make sure you have read/write access to the Minecraft instance folder.", chunk.x, chunk.z);
 				return;
 			}
 			try{
@@ -137,7 +137,7 @@ public class PowerNodeCache{
 				return null;
 			}
 			if ((!file.canRead() && !file.setReadable(true))){
-				LogHelper.error("Unable to obtain readable file handle!  The power system data for the chunk at %d, %d will NOT be saved!  To fix this, make sure you have read access to the Minecraft instance folder.", chunk.chunkXPos, chunk.chunkZPos);
+				LogHelper.error("Unable to obtain readable file handle!  The power system data for the chunk at %d, %d will NOT be saved!  To fix this, make sure you have read access to the Minecraft instance folder.", chunk.x, chunk.z);
 				return null;
 			}
 
@@ -165,17 +165,19 @@ public class PowerNodeCache{
 	public void onChunkUnload(ChunkEvent.Unload event){
 		if (!event.getWorld().isRemote && PowerNodeRegistry.For(event.getWorld()).hasDataForChunk(event.getChunk())){
 			NBTTagCompound dataCompound = new NBTTagCompound();
-			PowerNodeRegistry.For(event.getWorld()).SaveChunkToNBT(event.getChunk().getChunkCoordIntPair(), dataCompound);
-			PowerNodeRegistry.For(event.getWorld()).unloadChunk(event.getChunk());
-			SaveNBTToFile(event.getWorld(), event.getChunk().getChunkCoordIntPair(), dataCompound, false);
+			// TODO:
+//			PowerNodeRegistry.For(event.getWorld()).SaveChunkToNBT(event.getChunk().getChunkCoordIntPair(), dataCompound);
+//			PowerNodeRegistry.For(event.getWorld()).unloadChunk(event.getChunk());
+//			SaveNBTToFile(event.getWorld(), event.getChunk().getChunkCoordIntPair(), dataCompound, false);
 		}
 	}
 	
 	@SubscribeEvent
 	public void onChunkLoad(ChunkEvent.Load event) {
-		NBTTagCompound dataCompound = LoadNBTFromFile(event.getWorld(), event.getChunk().getChunkCoordIntPair());
-		if (dataCompound != null)
-			PowerNodeRegistry.For(event.getWorld()).LoadChunkFromNBT(event.getChunk().getChunkCoordIntPair(), dataCompound);
+		// TODO:
+//		NBTTagCompound dataCompound = LoadNBTFromFile(event.getWorld(), event.getChunk().getChunkCoordIntPair());
+//		if (dataCompound != null)
+//			PowerNodeRegistry.For(event.getWorld()).LoadChunkFromNBT(event.getChunk().getChunkCoordIntPair(), dataCompound);
 	}
 
 	@SubscribeEvent
@@ -239,6 +241,6 @@ public class PowerNodeCache{
 	}
 
 	private String getPNDIdentifier(ChunkPos chunk){
-		return String.format(pndID, chunk.chunkXPos, chunk.chunkZPos);
+		return String.format(pndID, chunk.x, chunk.z);
 	}
 }

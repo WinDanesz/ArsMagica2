@@ -19,12 +19,11 @@ public class EntityAICloneSelf extends EntityAIBase{
 		if (cooldownTicks-- > 0 || host.getCurrentAction() != BossActions.IDLE || !host.isActionValid(BossActions.CLONE) || host.isClone())
 			return false;
 		EntityLivingBase AITarget = host.getAttackTarget();
-		if (AITarget == null || AITarget.isDead) return false;
-		return true;
+		return AITarget != null && !AITarget.isDead;
 	}
 
 	@Override
-	public boolean continueExecuting(){
+	public boolean shouldContinueExecuting(){
 		if (host.isClone())
 			return false;
 		if (host.getCurrentAction() == BossActions.CLONE && host.getTicksInCurrentAction() > host.getCurrentAction().getMaxActionTime()){
@@ -43,7 +42,7 @@ public class EntityAICloneSelf extends EntityAIBase{
 		if (host.getCurrentAction() != BossActions.CLONE)
 			host.setCurrentAction(BossActions.CLONE);
 
-		if (!host.worldObj.isRemote && host.getCurrentAction() == BossActions.CLONE && host.getTicksInCurrentAction() == 30){
+		if (!host.world.isRemote && host.getCurrentAction() == BossActions.CLONE && host.getTicksInCurrentAction() == 30){
 			EntityWaterGuardian clone1 = spawnClone();
 			EntityWaterGuardian clone2 = spawnClone();
 			host.setClones(clone1, clone2);
@@ -52,10 +51,10 @@ public class EntityAICloneSelf extends EntityAIBase{
 	}
 
 	private EntityWaterGuardian spawnClone(){
-		EntityWaterGuardian clone = new EntityWaterGuardian(host.worldObj);
+		EntityWaterGuardian clone = new EntityWaterGuardian(host.world);
 		clone.setMaster(host);
 		clone.setPosition(host.posX, host.posY, host.posZ);
-		host.worldObj.spawnEntityInWorld(clone);
+		host.world.spawnEntity(clone);
 		return clone;
 	}
 }

@@ -1,11 +1,5 @@
 package am2.common.spell.component;
 
-import java.util.EnumSet;
-import java.util.Random;
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-
 import am2.api.affinity.Affinity;
 import am2.api.extensions.ISpellCaster;
 import am2.api.spell.Operation;
@@ -19,6 +13,7 @@ import am2.common.items.ItemCrystalPhylactery;
 import am2.common.items.ItemOre;
 import am2.common.power.PowerTypes;
 import am2.common.utils.EntityUtils;
+import com.google.common.collect.Sets;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
@@ -26,7 +21,6 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.SkeletonType;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -37,6 +31,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+
+import java.util.EnumSet;
+import java.util.Random;
+import java.util.Set;
 
 public class Summon extends SpellComponent{
 	
@@ -55,13 +53,13 @@ public class Summon extends SpellComponent{
 			return null;
 		}
 		if (entity instanceof EntitySkeleton){
-			((EntitySkeleton)entity).setSkeletonType(SkeletonType.NORMAL);
+//			((EntitySkeleton)entity).(SkeletonType.NORMAL);
 			((EntitySkeleton)entity).setHeldItem(EnumHand.MAIN_HAND, new ItemStack(Items.BOW));
 		}else if (entity instanceof EntityHorse && caster instanceof EntityPlayer){
 			((EntityHorse)entity).setTamedBy(((EntityPlayer)caster));
 		}
 		entity.setPosition(x, y, z);
-		world.spawnEntityInWorld(entity);
+		world.spawnEntity(entity);
 		if (caster instanceof EntityPlayer){
 			EntityUtils.makeSummon_PlayerFaction((EntityCreature)entity, (EntityPlayer)caster, false);
 		}else{
@@ -106,7 +104,7 @@ public class Summon extends SpellComponent{
 		String s = spell.getStoredData().getString("SummonType");
 		if (s == null || s == "")
 			s = "Skeleton"; //default!  default!  default!
-		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.NAME_TO_CLASS.get(s);
+		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.getClassFromName(s);
 		return clazz;
 	}
 	
@@ -114,20 +112,20 @@ public class Summon extends SpellComponent{
 		String s = spell.getCommonStoredData().getString("SummonType");
 		if (s == null || s == "")
 			s = "Skeleton"; //default!  default!  default!
-		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.NAME_TO_CLASS.get(s);
+		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.getClassFromName(s);
 		return clazz;
 	}
 
 
 	public void setSummonType(NBTTagCompound stack, String s){
-		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.NAME_TO_CLASS.get(s);
+		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.getClassFromName(s);
 		setSummonType(stack, clazz);
 	}
 
 	public void setSummonType(NBTTagCompound stack, Class<? extends Entity> clazz){
 		clazz = checkForSpecialSpawns(stack, clazz);
 
-		String s = (String)EntityList.CLASS_TO_NAME.get(clazz);
+		String s = (String)EntityList.getKey(clazz).toString();
 		if (s == null)
 			s = "";
 
@@ -157,7 +155,7 @@ public class Summon extends SpellComponent{
 				}
 			}else{
 				if (caster instanceof EntityPlayer){
-					((EntityPlayer)caster).addChatMessage(new TextComponentString(I18n.format("am2.tooltip.noMoreSummons")));
+					((EntityPlayer)caster).sendStatusMessage(new TextComponentString(I18n.format("am2.tooltip.noMoreSummons")), false);
 				}
 			}
 		}
@@ -178,7 +176,7 @@ public class Summon extends SpellComponent{
 				}
 			}else{
 				if (caster instanceof EntityPlayer){
-					((EntityPlayer)caster).addChatComponentMessage(new TextComponentString(I18n.format("am2.tooltip.noMoreSummons")));
+					((EntityPlayer)caster).sendStatusMessage(new TextComponentString(I18n.format("am2.tooltip.noMoreSummons")), false);
 				}
 			}
 		}

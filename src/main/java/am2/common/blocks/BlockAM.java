@@ -16,6 +16,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import javax.annotation.Nullable;
+
 public class BlockAM extends Block {
 
 	public BlockAM(Material materialIn) {
@@ -28,9 +30,10 @@ public class BlockAM extends Block {
 	}
 	
 	public BlockAM registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.toString());
-		GameRegistry.register(this, rl);
-		GameRegistry.register(new ItemBlockSubtypes(this), rl);
+		this.setTranslationKey(rl.toString());
+		// todo registry
+		//// TODO: registry GameRegistry.register(this, rl);
+		//// TODO: registry GameRegistry.register(new ItemBlockSubtypes(this), rl);
 		return this;
 	}
 	
@@ -44,12 +47,7 @@ public class BlockAM extends Block {
 	public void setBlockBounds(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd) {
 		boundingBox = new AxisAlignedBB(xStart, yStart, zStart, xEnd, yEnd, zEnd);
 	}
-	
-	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
-		return getBoundingBox(blockState, worldIn, pos);
-	}
-	
+
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		return boundingBox;

@@ -25,9 +25,9 @@ public class AMVector3{
 	}
 
 	public AMVector3(Vec3d vec){
-		this.x = (float)vec.xCoord;
-		this.y = (float)vec.yCoord;
-		this.z = (float)vec.zCoord;
+		this.x = (float)vec.x;
+		this.y = (float)vec.y;
+		this.z = (float)vec.z;
 	}
 
 	public AMVector3(AMVector3 a, AMVector3 b){
@@ -159,7 +159,7 @@ public class AMVector3{
 		double var2 = target.x - this.x;
 		double var4 = target.y - this.y;
 		double var6 = target.z - this.z;
-		return MathHelper.sqrt_double(var2 * var2 + var4 * var4 + var6 * var6);
+		return MathHelper.sqrt(var2 * var2 + var4 * var4 + var6 * var6);
 	}
 
 	public double distanceSqTo(AMVector3 target){

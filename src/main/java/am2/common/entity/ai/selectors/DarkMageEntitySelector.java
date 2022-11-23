@@ -1,8 +1,7 @@
 package am2.common.entity.ai.selectors;
 
-import com.google.common.base.Predicate;
-
 import am2.common.entity.EntityDarkMage;
+import com.google.common.base.Predicate;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
 
@@ -15,9 +14,7 @@ public class DarkMageEntitySelector implements Predicate<EntityLivingBase>{
 
 	@Override
 	public boolean apply(EntityLivingBase entity){
-		if (entity instanceof EntityDarkMage || (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).getCreatureAttribute() == EnumCreatureAttribute.UNDEAD))
-			return false;
-		return true;
+		return !(entity instanceof EntityDarkMage) && (entity == null || entity.getCreatureAttribute() != EnumCreatureAttribute.UNDEAD);
 	}
 
 }

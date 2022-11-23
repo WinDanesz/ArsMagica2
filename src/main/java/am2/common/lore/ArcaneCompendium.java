@@ -1,11 +1,8 @@
 package am2.common.lore;
 
-import java.util.ArrayList;
-
 import am2.api.compendium.CompendiumCategory;
 import am2.api.compendium.CompendiumEntry;
 import am2.api.extensions.IArcaneCompendium;
-import am2.common.defs.ItemDefs;
 import am2.common.packet.AMDataReader;
 import am2.common.packet.AMDataWriter;
 import net.minecraft.block.Block;
@@ -14,20 +11,22 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.stats.Achievement;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
+import java.util.ArrayList;
+
 public class ArcaneCompendium implements IArcaneCompendium, ICapabilityProvider, ICapabilitySerializable<NBTBase> {
 	
 	@CapabilityInject(IArcaneCompendium.class)
 	public static Capability<IArcaneCompendium> INSTANCE = null;
-	
-	public static Achievement compendiumData = (new Achievement("am2_ach_data", "compendiumData", 0, 0, ItemDefs.arcaneCompendium, null));
-	public static Achievement componentUnlock = (new Achievement("am2_ach_unlock", "componentUnlock", 0, 0, ItemDefs.spellParchment, null));
+
+//	TODO:
+//	public static Advancement compendiumData = (new Advancement(new ResourceLocation("arsmagica2:am2_ach_data"), "compendiumData", 0, 0, ItemDefs.arcaneCompendium, null));
+//	public static Advancement componentUnlock = (new Advancement(new ResourceLocation("arsmagica2:am2_ach_unlock"), AdvancementState.valueOf("componentUnlock", 0, 0, ItemDefs.spellParchment, null));
 	
 	public static final int SYNC_COMPENDIUM = 0x1;
 	
@@ -110,7 +109,7 @@ public class ArcaneCompendium implements IArcaneCompendium, ICapabilityProvider,
 				unlockEntry(entry.getID());
 			else if (obj instanceof Item && crafting.getItem() == obj)
 				unlockEntry(entry.getID());
-			else if (obj instanceof Block && crafting.getItem() instanceof ItemBlock && ((ItemBlock)crafting.getItem()).block == obj)
+			else if (obj instanceof Block && crafting.getItem() instanceof ItemBlock && ((ItemBlock)crafting.getItem()).getBlock() == obj)
 				unlockEntry(entry.getID());
 		}
 	}

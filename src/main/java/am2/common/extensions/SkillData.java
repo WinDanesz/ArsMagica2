@@ -76,8 +76,8 @@ public class SkillData implements ISkillData, ICapabilityProvider, ICapabilitySe
 		Skill skill = SkillRegistry.getSkillFromName(name);
 		
 		for (CompendiumEntry entry : CompendiumCategory.getAllEntries()) {
-			if (ArsMagicaAPI.getSpellRegistry().getObject(skill.getRegistryName()) != null) {
-				AbstractSpellPart part = ArsMagicaAPI.getSpellRegistry().getObject(skill.getRegistryName());
+			if (ArsMagicaAPI.getSpellRegistry().getValue(skill.getRegistryName()) != null) {
+				AbstractSpellPart part = ArsMagicaAPI.getSpellRegistry().getValue(skill.getRegistryName());
 				for (Object obj : entry.getObjects()) {
 					if (obj == part) {
 						ArcaneCompendium.For(this.player).unlockEntry(entry.getID());
@@ -236,7 +236,7 @@ public class SkillData implements ISkillData, ICapabilityProvider, ICapabilitySe
 			this.skills.clear();
 			int size = reader.getInt();
 			for (int i = 0; i < size; i++) {
-				Skill key = ArsMagicaAPI.getSkillRegistry().getObject(new ResourceLocation(reader.getString()));
+				Skill key = ArsMagicaAPI.getSkillRegistry().getValue(new ResourceLocation(reader.getString()));
 				boolean value = reader.getBoolean();
 				if (key != null)
 					this.skills.put(key, value);

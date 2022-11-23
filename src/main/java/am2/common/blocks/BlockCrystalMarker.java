@@ -27,6 +27,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -93,16 +94,16 @@ public class BlockCrystalMarker extends BlockAMContainer{
 	}
 
 	@Override
-	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
-		par3List.add(new ItemStack(this, 1, META_IN));
-		par3List.add(new ItemStack(this, 1, META_OUT));
-		par3List.add(new ItemStack(this, 1, META_LIKE_EXPORT));
-		par3List.add(new ItemStack(this, 1, META_SET_EXPORT));
-		par3List.add(new ItemStack(this, 1, META_REGULATE_EXPORT));
-		par3List.add(new ItemStack(this, 1, META_REGULATE_MULTI));
-		par3List.add(new ItemStack(this, 1, META_SET_IMPORT));
-		par3List.add(new ItemStack(this, 1, META_FINAL_DEST));
-		par3List.add(new ItemStack(this, 1, META_SPELL_EXPORT));
+	public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
+		items.add(new ItemStack(this, 1, META_IN));
+		items.add(new ItemStack(this, 1, META_OUT));
+		items.add(new ItemStack(this, 1, META_LIKE_EXPORT));
+		items.add(new ItemStack(this, 1, META_SET_EXPORT));
+		items.add(new ItemStack(this, 1, META_REGULATE_EXPORT));
+		items.add(new ItemStack(this, 1, META_REGULATE_MULTI));
+		items.add(new ItemStack(this, 1, META_SET_IMPORT));
+		items.add(new ItemStack(this, 1, META_FINAL_DEST));
+		items.add(new ItemStack(this, 1, META_SPELL_EXPORT));
 	}
 
 	@Override
@@ -111,10 +112,10 @@ public class BlockCrystalMarker extends BlockAMContainer{
 			return new TileEntityCrystalMarkerSpellExport(i);
 		return new TileEntityCrystalMarker(i);
 	}
-	
+
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-			EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		ItemStack stack = player.getHeldItem(hand);
 		int operandType = state.getValue(TYPE);
 
 		if (player.getHeldItemMainhand() != null && player.getHeldItemMainhand().getItem() == ItemDefs.crystalWrench){
@@ -125,7 +126,7 @@ public class BlockCrystalMarker extends BlockAMContainer{
 			}
 
 			return false;
-		}else if (heldItem != null && heldItem.getItem() == ItemDefs.spellStaffMagitech){
+		}else if (stack != null && stack.getItem() == ItemDefs.spellStaffMagitech){
 			//if we're here, we are changing the crystal's priority level
 			//swing the item, first off.
 			player.swingArm(hand);
@@ -136,7 +137,7 @@ public class BlockCrystalMarker extends BlockAMContainer{
 
 			//input node?  Nothing more to do here than notify the player.
 			if (operandType == META_IN){
-				player.addChatMessage(new TextComponentString(I18n.format("am2.tooltip.noPriIn")));
+				player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.noPriIn")));
 				return false;
 			}
 
@@ -162,7 +163,7 @@ public class BlockCrystalMarker extends BlockAMContainer{
 				}
 
 				//finally, notify the player of the new priority
-				player.addChatMessage(
+				player.sendMessage(
 						new TextComponentString(String.format(
 								I18n.format("am2.tooltip.priSet"),
 								String.format("%d", crystalMarkerTE.getPriority()) //need to put this as a string, because for some reason %d doesn't work when used in a localized string, but %s does
@@ -175,11 +176,11 @@ public class BlockCrystalMarker extends BlockAMContainer{
 			return true;
 		}
 
-		return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+		return super.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
 	}
 	
 	@Override
-	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
 		return getStateFromMeta(meta).withProperty(FACING, facing.getOpposite());
 	}
 	
@@ -315,7 +316,7 @@ public class BlockCrystalMarker extends BlockAMContainer{
 			IBlockState block = world.getBlockState(pos);
 			ItemStack itemStack = new ItemStack(block.getBlock(), 1, block.getBlock().getMetaFromState(block));
 			EntityItem entityItem = new EntityItem((World) world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
-			((World) world).spawnEntityInWorld(entityItem);
+			((World) world).spawnEntity(entityItem);
 			((World) world).setBlockToAir(pos);
 		}
 	}
@@ -365,7 +366,7 @@ public class BlockCrystalMarker extends BlockAMContainer{
 	}
 	
 	@Override
-	public BlockRenderLayer getBlockLayer() {
+	public BlockRenderLayer getRenderLayer() {
 		return BlockRenderLayer.TRANSLUCENT;
 	}
 	
@@ -386,9 +387,9 @@ public class BlockCrystalMarker extends BlockAMContainer{
 	
 	@Override
 	public BlockAMContainer registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.toString());
-		GameRegistry.register(this, rl);
-		GameRegistry.register(new ItemBlockCrystalMarker(this), rl);
+		this.setTranslationKey(rl.toString());
+		// TODO: registry GameRegistry.register(this, rl);
+		// TODO: registry GameRegistry.register(new ItemBlockCrystalMarker(this), rl);
 		return this;
 	}
 }

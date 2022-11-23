@@ -36,6 +36,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class AMRecipes {
 	public static void addRecipes() {
+		/**
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack (BlockDefs.magicWall, 16), new Object[] {
 			"VSV",
 			'V', new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_VINTEUM),
@@ -878,7 +879,7 @@ public class AMRecipes {
 			Character.valueOf('W'), new ItemStack(Blocks.cloth, 1, 0),
 			Character.valueOf('P'), new ItemStack(essence, 1, 10),
 			Character.valueOf('R'), new ItemStack(ItemDefs.rune, 1, 6)
-		});*/
+		}); this was disabled * /
 
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ItemDefs.essenceBag), new Object[]{
 				"LLL", "WNW", "LLL",
@@ -1077,45 +1078,45 @@ public class AMRecipes {
 		GameRegistry.addShapelessRecipe(new ItemStack(ItemDefs.workbenchUpgrade), new ItemStack(BlockDefs.magiciansWorkbench), new ItemStack(Blocks.CHEST), new ItemStack(Blocks.CRAFTING_TABLE), new ItemStack(Blocks.CRAFTING_TABLE), new ItemStack(Items.GOLD_INGOT));
 
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ItemDefs.deficitCrystal), new ItemStack(Items.DIAMOND), "arcaneAsh", new ItemStack(Items.ENDER_EYE)));
+		**/
 	}
 
-	
 	private static void addMetaSmeltingRecipe(Block input, int meta, ItemStack output){
 		ItemStack stack = new ItemStack(input, 1, meta);
 		GameRegistry.addSmelting(stack, output, 0);
 	}
 	
 	private static void createStorageBlockRecipe(ItemStack storageBlock, ItemStack storageItem){
-		GameRegistry.addRecipe(storageBlock, new Object[]{
-				"III",
-				"III",
-				"III",
-				Character.valueOf('I'), new ItemStack(storageItem.getItem(), 1, storageItem.getItemDamage())
-		});
-
-		GameRegistry.addShapelessRecipe(new ItemStack(storageItem.getItem(), 9, storageItem.getItemDamage()), storageBlock);
+//		GameRegistry.addRecipe(storageBlock, new Object[]{
+//				"III",
+//				"III",
+//				"III",
+//				Character.valueOf('I'), new ItemStack(storageItem.getItem(), 1, storageItem.getItemDamage())
+//		});
+//
+//		GameRegistry.addShapelessRecipe(new ItemStack(storageItem.getItem(), 9, storageItem.getItemDamage()), storageBlock);
 	}
 
 	private static void createTier2GemConverstionRecipies(ItemStack stack, String dyeCode){
-		if (stack.getItemDamage() != BlockCrystalMarker.META_LIKE_EXPORT){
-			GameRegistry.addRecipe(new ShapelessOreRecipe(stack, new Object[]{
-					new ItemStack(BlockDefs.crystalMarker, 1, BlockCrystalMarker.META_LIKE_EXPORT),
-					dyeCode
-			}));
-		}
-
-		if (stack.getItemDamage() != BlockCrystalMarker.META_REGULATE_EXPORT){
-			GameRegistry.addRecipe(new ShapelessOreRecipe(stack, new Object[]{
-					new ItemStack(BlockDefs.crystalMarker, 1, BlockCrystalMarker.META_REGULATE_EXPORT),
-					dyeCode
-			}));
-		}
-
-		if (stack.getItemDamage() != BlockCrystalMarker.META_SET_EXPORT){
-			GameRegistry.addRecipe(new ShapelessOreRecipe(stack, new Object[]{
-					new ItemStack(BlockDefs.crystalMarker, 1, BlockCrystalMarker.META_SET_EXPORT),
-					dyeCode
-			}));
-		}
+//		if (stack.getItemDamage() != BlockCrystalMarker.META_LIKE_EXPORT){
+//			GameRegistry.addRecipe(new ShapelessOreRecipe(stack, new Object[]{
+//					new ItemStack(BlockDefs.crystalMarker, 1, BlockCrystalMarker.META_LIKE_EXPORT),
+//					dyeCode
+//			}));
+//		}
+//
+//		if (stack.getItemDamage() != BlockCrystalMarker.META_REGULATE_EXPORT){
+//			GameRegistry.addRecipe(new ShapelessOreRecipe(stack, new Object[]{
+//					new ItemStack(BlockDefs.crystalMarker, 1, BlockCrystalMarker.META_REGULATE_EXPORT),
+//					dyeCode
+//			}));
+//		}
+//
+//		if (stack.getItemDamage() != BlockCrystalMarker.META_SET_EXPORT){
+//			GameRegistry.addRecipe(new ShapelessOreRecipe(stack, new Object[]{
+//					new ItemStack(BlockDefs.crystalMarker, 1, BlockCrystalMarker.META_SET_EXPORT),
+//					dyeCode
+//			}));
+//		}
 	}
 }

@@ -60,7 +60,7 @@ public class ContainerRuneBag extends Container{
 
 	@Override
 	public void onContainerClosed(EntityPlayer entityplayer){
-		World world = entityplayer.worldObj;
+		World world = entityplayer.world;
 
 		if (!world.isRemote){
 			ItemStack runeBagItemStack = bagStack;
@@ -75,7 +75,7 @@ public class ContainerRuneBag extends Container{
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer){
-		return runeBagInventory.isUseableByPlayer(entityplayer);
+		return runeBagInventory.isUsableByPlayer(entityplayer);
 	}
 
 	@Override
@@ -107,12 +107,12 @@ public class ContainerRuneBag extends Container{
 			}else if (!mergeItemStack(itemstack1, mainInventoryStart, actionBarEnd, false)){
 				return null;
 			}
-			if (itemstack1.stackSize == 0){
+			if (itemstack1.getCount() == 0){
 				slot.putStack(null);
 			}else{
 				slot.onSlotChanged();
 			}
-			if (itemstack1.stackSize != itemstack.stackSize){
+			if (itemstack1.getCount() != itemstack.getCount()){
 				slot.onSlotChange(itemstack1, itemstack);
 			}else{
 				return null;
@@ -130,9 +130,9 @@ public class ContainerRuneBag extends Container{
 				ItemStack rune = new ItemStack(ItemDefs.rune, 1, itemstack1.getItemDamage());
 				runeSlot.putStack(rune);
 
-				itemstack1.stackSize--;
+				itemstack1.shrink(1);
 
-				if (itemstack1.stackSize <= 0){
+				if (itemstack1.getCount() <= 0){
 					slot.putStack(null);
 					slot.onSlotChanged();
 				}

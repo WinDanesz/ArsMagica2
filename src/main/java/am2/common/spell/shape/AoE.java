@@ -16,7 +16,7 @@ import am2.common.spell.SpellCastResult;
 import am2.common.utils.AffinityShiftUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.boss.EntityDragonPart;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -40,8 +40,8 @@ public class AoE extends SpellShape {
 
 		for (Entity e : entities) {
 			if (e == caster || e instanceof EntitySpellProjectile) continue;
-			if (e instanceof EntityDragonPart && ((EntityDragonPart) e).entityDragonObj instanceof EntityLivingBase)
-				e = (EntityLivingBase) ((EntityDragonPart) e).entityDragonObj;
+			if (e instanceof EntityDragon && ((EntityDragon) e) instanceof EntityLivingBase)
+				e = (EntityLivingBase) ((EntityDragon) e);
 			if (spell.copy().applyComponentsToEntity(world, caster, e) == SpellCastResult.SUCCESS)
 				appliedToAtLeastOneEntity = true;
 		}

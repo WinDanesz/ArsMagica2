@@ -4,7 +4,7 @@ import am2.api.ArsMagicaAPI;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class Skill extends IForgeRegistryEntry.Impl<Skill>{
 	

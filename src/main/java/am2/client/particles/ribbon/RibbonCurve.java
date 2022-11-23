@@ -62,14 +62,14 @@ public class RibbonCurve{
 		Vec3d p2 = endPt;
 
 		//-- x(t), y(t)
-		double xt = (1 - t) * (1 - t) * p0.xCoord + 2 * t * (1 - t) * p1.xCoord + t * t * p2.xCoord;
-		double yt = (1 - t) * (1 - t) * p0.yCoord + 2 * t * (1 - t) * p1.yCoord + t * t * p2.yCoord;
-		double zt = (1 - t) * (1 - t) * p0.zCoord + 2 * t * (1 - t) * p1.zCoord + t * t * p2.zCoord;
+		double xt = (1 - t) * (1 - t) * p0.x + 2 * t * (1 - t) * p1.x + t * t * p2.x;
+		double yt = (1 - t) * (1 - t) * p0.y + 2 * t * (1 - t) * p1.y + t * t * p2.y;
+		double zt = (1 - t) * (1 - t) * p0.z + 2 * t * (1 - t) * p1.z + t * t * p2.z;
 
 		//-- x'(t), y'(t)
-		double xd = t * (p0.xCoord - 2 * p1.xCoord + p2.xCoord) - p0.xCoord + p1.xCoord;
-		double yd = t * (p0.yCoord - 2 * p1.yCoord + p2.yCoord) - p0.yCoord + p1.yCoord;
-		double zd = t * (p0.zCoord - 2 * p1.zCoord + p2.zCoord) - p0.zCoord + p1.zCoord;
+		double xd = t * (p0.x - 2 * p1.x + p2.x) - p0.x + p1.x;
+		double yd = t * (p0.y - 2 * p1.y + p2.y) - p0.y + p1.y;
+		double zd = t * (p0.z - 2 * p1.z + p2.z) - p0.z + p1.z;
 		double dd = (float)Math.pow(xd * xd + yd * yd + zd * zd, 1 / 3);
 
 		return new Vec3d(xt + (k * yd) / dd, yt - (k * xd) / dd, zt - (k * xd) / dd);

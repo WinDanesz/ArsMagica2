@@ -46,13 +46,13 @@ public class SpellData {
 	{
 		@Override
 		public void write(PacketBuffer buf, Optional<SpellData> value) {
-			buf.writeNBTTagCompoundToBuffer(value.isPresent() ? value.orNull().writeToNBT(new NBTTagCompound()) : null);
+			buf.writeCompoundTag(value.isPresent() ? value.orNull().writeToNBT(new NBTTagCompound()) : null);
 		}
 
 		@Override
 		public Optional<SpellData> read(PacketBuffer buf) {
 			try {
-				NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
+				NBTTagCompound tag = buf.readCompoundTag();
 				return Optional.fromNullable(tag != null ? readFromNBT(tag) : null);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -63,6 +63,15 @@ public class SpellData {
 		@Override
 		public DataParameter<Optional<SpellData>> createKey(int id) {
 			return new DataParameter<>(id, this);
+		}
+
+		@Override
+		public Optional<SpellData> copyValue(Optional<SpellData> value) {
+			if (value.isPresent()) {
+				SpellData data = new SpellData(value.get().source, Lists.newArrayList(value.get().stages), new UUID(value.get().uuid.getMostSignificantBits(), value.get().uuid.getLeastSignificantBits()), value.get().storedData);
+				data.exec = value.get().exec;
+			}
+			return Optional.absent();
 		}
 	};
     
@@ -256,7 +265,7 @@ public class SpellData {
 		float offsetPitchSin = MathHelper.sin(-interpPitch * 0.017453292F);
 		float finalXOffset = offsetYawSin * offsetPitchCos;
 		float finalZOffset = offsetYawCos * offsetPitchCos;
-		Vec3d targetVector = vec3.addVector(finalXOffset * range, offsetPitchSin * range, finalZOffset * range);
+		Vec3d targetVector = vec3.add(finalXOffset * range, offsetPitchSin * range, finalZOffset * range);
 		RayTraceResult mop = world.rayTraceBlocks(vec3, targetVector, targetWater, !targetWater, false);
 
 		if (entityPos != null && mop != null){
@@ -343,7 +352,7 @@ public class SpellData {
 			NBTTagList parts = tmp.getTagList("Parts", Constants.NBT.TAG_STRING);
 			ArrayList<AbstractSpellPart> pts = new ArrayList<>();
 			for (int j = 0; j < parts.tagCount(); j++) {
-				AbstractSpellPart part = ArsMagicaAPI.getSpellRegistry().getObject(new ResourceLocation(parts.getStringTagAt(j)));
+				AbstractSpellPart part = ArsMagicaAPI.getSpellRegistry().getValue(new ResourceLocation(parts.getStringTagAt(j)));
 				if (part != null) {
 					pts.add(part);
 				}
@@ -352,7 +361,7 @@ public class SpellData {
 			stages.set(id, pts);
 		}
 		NBTTagCompound storedData = tag.getCompoundTag("StoredData");
-		SpellData data = new SpellData(ItemStack.loadItemStackFromNBT(tag.getCompoundTag("Stack")), stages, new UUID(tag.getLong("UUIDMost"), tag.getLong("UUIDLeast")), storedData);
+		SpellData data = new SpellData(new ItemStack(tag.getCompoundTag("Stack")), stages, new UUID(tag.getLong("UUIDMost"), tag.getLong("UUIDLeast")), storedData);
 		data.exec = tag.getInteger("ExecutionStage");
 		return data;
 	}

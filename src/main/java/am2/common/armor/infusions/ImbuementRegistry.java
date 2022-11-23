@@ -24,13 +24,13 @@ public class ImbuementRegistry implements IImbuementRegistry{
 
 	@Override
 	public void registerImbuement(ArmorImbuement imbuementInstance) {
-		GameRegistry.register(imbuementInstance, new ResourceLocation(ArsMagicaAPI.getCurrentModId(), imbuementInstance.getID()));
+		// TODO: registry GameRegistry.register(imbuementInstance, new ResourceLocation(ArsMagicaAPI.getCurrentModId(), imbuementInstance.getID()));
 		LogHelper.info(String.format("Registered imbuement: %s", imbuementInstance.getID()));
 	}
 
 	@Override
 	public ArmorImbuement getImbuementByID(ResourceLocation ID){
-		return ArsMagicaAPI.getArmorImbuementRegistry().getObject(ID);
+		return ArsMagicaAPI.getArmorImbuementRegistry().getValue(ID);
 	}
 
 	@Override

@@ -5,9 +5,8 @@ import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.ItemStack;
 
 public class CrystalPhylacteryColorizer implements IItemColor {
-
 	@Override
-	public int getColorFromItemstack(ItemStack stack, int tintIndex) {
+	public int colorMultiplier(ItemStack stack, int tintIndex) {
 		if (tintIndex == 0 && stack.getItemDamage() != ItemCrystalPhylactery.META_EMPTY) {
 			int color = 0x0000FF;
 			if (stack.hasTagCompound()){
@@ -23,5 +22,4 @@ public class CrystalPhylacteryColorizer implements IItemColor {
 		}
 		return 0xFFFFFF;
 	}
-
 }

@@ -30,7 +30,7 @@ public class EntityAIThrowRock extends EntityAIBase{
 	}
 
 	@Override
-	public boolean continueExecuting(){
+	public boolean shouldContinueExecuting(){
 		EntityLivingBase AITarget = host.getAttackTarget();
 		if (AITarget == null || AITarget.isDead || (((IArsMagicaBoss)host).getCurrentAction() == BossActions.THROWING_ROCK && ((IArsMagicaBoss)host).getTicksInCurrentAction() > ((IArsMagicaBoss)host).getCurrentAction().getMaxActionTime())){
 			((IArsMagicaBoss)host).setCurrentAction(BossActions.IDLE);
@@ -43,22 +43,22 @@ public class EntityAIThrowRock extends EntityAIBase{
 	@Override
 	public void updateTask(){
 		host.getLookHelper().setLookPositionWithEntity(target, 30, 30);
-		if (host.getDistanceSqToEntity(target) > 100){
+		if (host.getDistanceSq(target) > 100){
 			host.getNavigator().tryMoveToEntityLiving(target, moveSpeed);
 		}else{
-			host.getNavigator().clearPathEntity();
+			host.getNavigator().clearPath();
 			if (((IArsMagicaBoss)host).getCurrentAction() != BossActions.THROWING_ROCK)
 				((IArsMagicaBoss)host).setCurrentAction(BossActions.THROWING_ROCK);
 
 			if (((IArsMagicaBoss)host).getTicksInCurrentAction() == 27){
 
-				if (!host.worldObj.isRemote)
-					host.worldObj.playSound(host.posX, host.posY, host.posZ, ((IArsMagicaBoss)host).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
+				if (!host.world.isRemote)
+					host.world.playSound(host.posX, host.posY, host.posZ, ((IArsMagicaBoss)host).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
 
 				host.faceEntity(target, 180, 180);
-				if (!host.worldObj.isRemote){
-					EntityThrownRock projectile = new EntityThrownRock(host.worldObj, host, 2.0f);
-					host.worldObj.spawnEntityInWorld(projectile);
+				if (!host.world.isRemote){
+					EntityThrownRock projectile = new EntityThrownRock(host.world, host, 2.0f);
+					host.world.spawnEntity(projectile);
 				}
 			}
 		}

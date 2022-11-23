@@ -1,9 +1,5 @@
 package am2.common.blocks;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import am2.ArsMagica2;
 import am2.common.blocks.tileentity.TileEntityBlackAurem;
 import am2.common.blocks.tileentity.TileEntityCelestialPrism;
@@ -27,6 +23,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class BlockEssenceGenerator extends BlockAMPowered{
 
@@ -90,26 +91,26 @@ public class BlockEssenceGenerator extends BlockAMPowered{
 	
 	@SuppressWarnings("deprecation")
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
-		if (this == BlockDefs.blackAurem)
-			return;
-		super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn);
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes,
+			@Nullable Entity entityIn, boolean isActualState) {
+		if (this == BlockDefs.blackAurem) { return; }
+		super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn, isActualState);
 	}
-	
+
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		if (this == BlockDefs.blackAurem)
 			return null;
-		return super.getCollisionBoundingBox(blockState, worldIn, pos);
+		return super.getBoundingBox(state, source, pos);
 	}
 	
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) { ItemStack heldItem = playerIn.getHeldItem(hand);
 		if (HandleSpecialItems(worldIn, playerIn, pos))
 			return true;
 		if (worldIn.getBlockState(pos).getBlock() == BlockDefs.obelisk)
 			FMLNetworkHandler.openGui(playerIn, ArsMagica2.instance, IDDefs.GUI_OBELISK, worldIn, pos.getX(), pos.getY(), pos.getZ());
-		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
+		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
 	}
 
 	@Override
@@ -155,14 +156,14 @@ public class BlockEssenceGenerator extends BlockAMPowered{
 			float f1 = worldIn.rand.nextFloat() * 0.8F + 0.1F;
 			float f2 = worldIn.rand.nextFloat() * 0.8F + 0.1F;
 			do{
-				if (itemstack.stackSize <= 0){
+				if (itemstack.getCount() <= 0){
 					break;
 				}
 				int i1 = worldIn.rand.nextInt(21) + 10;
-				if (i1 > itemstack.stackSize){
-					i1 = itemstack.stackSize;
+				if (i1 > itemstack.getCount()){
+					i1 = itemstack.getCount();
 				}
-				itemstack.stackSize -= i1;
+				itemstack.shrink(i1);
 				ItemStack newItem = new ItemStack(itemstack.getItem(), i1, itemstack.getItemDamage());
 				newItem.setTagCompound(itemstack.getTagCompound());
 				EntityItem entityitem = new EntityItem(worldIn, pos.getX() + f, pos.getY() + f1, pos.getZ() + f2, newItem);
@@ -170,14 +171,14 @@ public class BlockEssenceGenerator extends BlockAMPowered{
 				entityitem.motionX = (float)worldIn.rand.nextGaussian() * f3;
 				entityitem.motionY = (float)worldIn.rand.nextGaussian() * f3 + 0.2F;
 				entityitem.motionZ = (float)worldIn.rand.nextGaussian() * f3;
-				worldIn.spawnEntityInWorld(entityitem);
+				worldIn.spawnEntity(entityitem);
 			}while (true);
 		}
 		super.breakBlock(worldIn, pos, state);
 	}
 	
 	@Override
-	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
 		return getStateFromMeta(meta).withProperty(FACING, placer.getHorizontalFacing());
 	}
 

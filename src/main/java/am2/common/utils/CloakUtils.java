@@ -33,7 +33,7 @@ public class CloakUtils{
 		@SuppressWarnings("unused")
 		ThreadDownloadImageData capeImg = downloadCapeTexture(capeLoc, player.getUniqueID().toString());
 
-		EntityPlayer localPlayer = Minecraft.getMinecraft().thePlayer;
+		EntityPlayer localPlayer = Minecraft.getMinecraft().player;
 
 		GL11.glPushMatrix();
 

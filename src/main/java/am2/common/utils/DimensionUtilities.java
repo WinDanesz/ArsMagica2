@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -26,31 +27,31 @@ public class DimensionUtilities{
 
 		if (entity instanceof EntityPlayerMP){
 			EntityPlayerMP player = (EntityPlayerMP)entity;
-			new AMTeleporter(player.mcServer.worldServerForDimension(dimension)).teleport(entity);
+			new AMTeleporter(player.server.getWorld(dimension)).teleport(entity);
 		}else{
-			entity.worldObj.theProfiler.startSection("changeDimension");
+			entity.world.profiler.startSection("changeDimension");
 			MinecraftServer minecraftserver = FMLCommonHandler.instance().getMinecraftServerInstance();
 			int j = entity.dimension;
-			WorldServer worldserver = minecraftserver.worldServerForDimension(j);
-			WorldServer worldserver1 = minecraftserver.worldServerForDimension(dimension);
+			WorldServer worldserver = minecraftserver.getWorld(j);
+			WorldServer worldserver1 = minecraftserver.getWorld(dimension);
 			entity.dimension = dimension;
-			entity.worldObj.removeEntity(entity);
+			entity.world.removeEntity(entity);
 			entity.isDead = false;
-			entity.worldObj.theProfiler.startSection("reposition");
+			entity.world.profiler.startSection("reposition");
 			minecraftserver.getPlayerList().transferEntityToWorld(entity, j, worldserver, worldserver1, new AMTeleporter(worldserver1));
-			entity.worldObj.theProfiler.endStartSection("reloading");
-			Entity e = EntityList.createEntityByName(EntityList.getEntityString(entity), worldserver1);
+			entity.world.profiler.endStartSection("reloading");
+			Entity e = EntityList.createEntityByIDFromName(new ResourceLocation(EntityList.getEntityString(entity)), worldserver1);
 
 			if (e != null){
 				e.readFromNBT(entity.writeToNBT(new NBTTagCompound()));
-				worldserver1.spawnEntityInWorld(e);
+				worldserver1.spawnEntity(e);
 			}
 
 			entity.isDead = true;
-			entity.worldObj.theProfiler.endSection();
+			entity.world.profiler.endSection();
 			worldserver.resetUpdateEntityTick();
 			worldserver1.resetUpdateEntityTick();
-			entity.worldObj.theProfiler.endSection();
+			entity.world.profiler.endSection();
 		}
 	}
 	
@@ -81,7 +82,7 @@ public class DimensionUtilities{
 			barriers = new ArrayList<>();
 			barrierMap.put(dimension, barriers);
 		}
-		AxisAlignedBB aabb = new AxisAlignedBB(pos).expandXyz(20.01); // .01 Because isVecInside is a strict inequality.
+		AxisAlignedBB aabb = new AxisAlignedBB(pos).expand(20.01,0,0); // .01 Because isVecInside is a strict inequality.
 		Iterator<TileEntityAstralBarrier> iter = barriers.iterator();
 		while (iter.hasNext()) {
 			TileEntityAstralBarrier barrier = iter.next();
@@ -96,7 +97,7 @@ public class DimensionUtilities{
 			if ((barrierKey != 0 && keys.contains(barrierKey)) || !barrier.IsActive())
 				continue;
 			
-			if (aabb.isVecInside(new Vec3d(barrier.getPos())))
+			if (aabb.contains(new Vec3d(barrier.getPos())))
 				return barrier;
 		}
 		//Old code

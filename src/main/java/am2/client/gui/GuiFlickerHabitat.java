@@ -53,12 +53,12 @@ public class GuiFlickerHabitat extends GuiContainer{
 
 		if (stack == null) return;
 
-		AbstractFlickerFunctionality func = ArsMagicaAPI.getFlickerFocusRegistry().getObjectById(stack.getItemDamage());
+		AbstractFlickerFunctionality func = null; // todo registry ArsMagicaAPI.getFlickerFocusRegistry().getObjectById(stack.getItemDamage());
 
 		if (func == null)
 			return;
 
-		String colorCode = Minecraft.getMinecraft().theWorld.isBlockIndirectlyGettingPowered(flickerHabitat.getPos()) > 0 ? "\2474" : "\2472";
+		String colorCode = Minecraft.getMinecraft().world.getStrongPower(flickerHabitat.getPos()) > 0 ? "\2474" : "\2472";
 
 		int yPos = 5;
 		String curLine;
@@ -70,7 +70,7 @@ public class GuiFlickerHabitat extends GuiContainer{
 		}
 
 		drawCenteredString(curLine, yPos);
-		yPos += 12 * (int)Math.ceil(this.fontRendererObj.getStringWidth(curLine) / 170.0f);
+		yPos += 12 * (int)Math.ceil(this.fontRenderer.getStringWidth(curLine) / 170.0f);
 
 		drawCenteredString(I18n.format("am2.gui.flicker_powerperop", String.format("%s%d\2470", colorCode, func.PowerPerOperation())), yPos);
 
@@ -87,12 +87,12 @@ public class GuiFlickerHabitat extends GuiContainer{
 	}
 
 	private void drawCenteredString(String s, int yCoord){
-		int w = this.fontRendererObj.getStringWidth(s);
+		int w = this.fontRenderer.getStringWidth(s);
 		int xPos = this.xSize / 2 - w / 2;
 		if (w > 170){
 			xPos = 3;
 		}
-		this.fontRendererObj.drawSplitString(s, xPos, yCoord, 170, 0);
+		this.fontRenderer.drawSplitString(s, xPos, yCoord, 170, 0);
 	}
 
 }

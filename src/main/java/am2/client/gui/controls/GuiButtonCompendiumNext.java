@@ -32,9 +32,9 @@ public class GuiButtonCompendiumNext extends GuiButton{
 	 * Draws this button to the screen.
 	 */
 	@Override
-	public void drawButton(Minecraft par1Minecraft, int par2, int par3){
+	public void drawButton(Minecraft par1Minecraft, int par2, int par3, float partialTicks) {
 		if (this.visible){
-			boolean isMousedOver = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
+			boolean isMousedOver = par2 >= this.x && par3 >= this.y && par2 < this.x + this.width && par3 < this.y + this.height;
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			par1Minecraft.renderEngine.bindTexture(buttonImage);
 
@@ -49,7 +49,7 @@ public class GuiButtonCompendiumNext extends GuiButton{
 			}
 
 			GL11.glDisable(GL11.GL_LIGHTING);
-			this.drawTexturedModalRect_Classic(this.xPosition, this.yPosition, u, v, 12, 12, 12, 14);
+			this.drawTexturedModalRect_Classic(this.x, this.y, u, v, 12, 12, 12, 14);
 			GL11.glEnable(GL11.GL_LIGHTING);
 		}
 	}

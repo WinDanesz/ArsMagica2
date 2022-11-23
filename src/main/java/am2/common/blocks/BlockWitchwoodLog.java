@@ -46,11 +46,6 @@ public class BlockWitchwoodLog extends BlockLog{
 	}
 
 	@Override
-	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
-		par3List.add(new ItemStack(this));
-	}
-	
-	@Override
 	protected BlockStateContainer createBlockState() {
 		return new BlockStateContainer(this, LOG_AXIS);
 	}
@@ -62,13 +57,13 @@ public class BlockWitchwoodLog extends BlockLog{
 	
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(LOG_AXIS, EnumAxis.values()[MathHelper.clamp_int(meta, 0, 3)]);
+		return getDefaultState().withProperty(LOG_AXIS, EnumAxis.values()[MathHelper.clamp(meta, 0, 3)]);
 	}
 	
 	public BlockWitchwoodLog registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.toString());
-		GameRegistry.register(this, rl);
-		GameRegistry.register(new ItemBlockSubtypes(this), rl);
+		this.setTranslationKey(rl.toString());
+		// TODO: registry GameRegistry.register(this, rl);
+		// TODO: registry GameRegistry.register(new ItemBlockSubtypes(this), rl);
 		return this;
 	}
 }

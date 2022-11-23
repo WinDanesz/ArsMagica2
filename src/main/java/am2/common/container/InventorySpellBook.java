@@ -28,6 +28,11 @@ public class InventorySpellBook implements IInventory{
 	}
 
 	@Override
+	public boolean isEmpty() {
+		return false;
+	}
+
+	@Override
 	public ItemStack getStackInSlot(int i){
 		if (i < 0 || i > inventoryItems.length - 1){
 			return null;
@@ -39,13 +44,13 @@ public class InventorySpellBook implements IInventory{
 	public ItemStack decrStackSize(int i, int j){
 
 		if (inventoryItems[i] != null){
-			if (inventoryItems[i].stackSize <= j){
+			if (inventoryItems[i].getCount() <= j){
 				ItemStack itemstack = inventoryItems[i];
 				inventoryItems[i] = null;
 				return itemstack;
 			}
 			ItemStack itemstack1 = inventoryItems[i].splitStack(j);
-			if (inventoryItems[i].stackSize == 0){
+			if (inventoryItems[i].getCount() == 0){
 				inventoryItems[i] = null;
 			}
 			return itemstack1;
@@ -70,7 +75,7 @@ public class InventorySpellBook implements IInventory{
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer){
+	public boolean isUsableByPlayer(EntityPlayer entityplayer){
 		return true;
 	}
 

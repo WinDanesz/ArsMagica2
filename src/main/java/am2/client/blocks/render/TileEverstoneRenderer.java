@@ -1,5 +1,6 @@
 package am2.client.blocks.render;
 
+import net.minecraft.client.renderer.BufferBuilder;
 import org.lwjgl.opengl.GL11;
 
 import am2.common.blocks.tileentity.TileEntityEverstone;
@@ -7,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -15,9 +15,8 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 public class TileEverstoneRenderer extends TileEntitySpecialRenderer<TileEntityEverstone> {
-
 	@Override
-	public void renderTileEntityAt(TileEntityEverstone te, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void render(TileEntityEverstone te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		if (te.isSolid()) {
 			if (te.getFacade() != null) {
@@ -54,7 +53,7 @@ public class TileEverstoneRenderer extends TileEntitySpecialRenderer<TileEntityE
 		RenderHelper.disableStandardItemLighting();
 		//GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer buffer = tessellator.getBuffer();
+		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
 		buffer.pos(0, 1, 0).tex(maxU, minV).endVertex();
 		buffer.pos(1, 1, 0).tex(minU, minV).endVertex();

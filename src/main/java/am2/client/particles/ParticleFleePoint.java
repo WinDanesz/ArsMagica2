@@ -25,16 +25,16 @@ public class ParticleFleePoint extends ParticleController{
 		double angle;
 
 		double distanceToTarget = new Vec3d(particle.getPosX(), particle.getPosY(), particle.getPosZ()).distanceTo(target);
-		double deltaZ = particle.getPosZ() - target.zCoord;
-		double deltaX = particle.getPosX() - target.xCoord;
+		double deltaZ = particle.getPosZ() - target.z;
+		double deltaX = particle.getPosX() - target.x;
 		angle = Math.atan2(deltaZ, deltaX);
 
 		double radians = angle;
 
 		posX = particle.getPosX() + (fleeSpeed * Math.cos(radians));
 		posZ = particle.getPosZ() + (fleeSpeed * Math.sin(radians));
-		double deltaY = target.yCoord - posY;
-		double horizontalDistance = MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ);
+		double deltaY = target.y - posY;
+		double horizontalDistance = MathHelper.sqrt(deltaX * deltaX + deltaZ * deltaZ);
 		float pitchRotation = (float)(-Math.atan2(deltaY, horizontalDistance));
 		double pitchRadians = pitchRotation;
 

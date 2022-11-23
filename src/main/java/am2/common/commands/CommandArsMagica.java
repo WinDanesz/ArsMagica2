@@ -21,18 +21,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nullable;
+
 public class CommandArsMagica extends CommandBase {
 
 	public CommandArsMagica() {
 	}
 
 	@Override
-	public String getCommandName() {
+	public String getName() {
 		return "am2";
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender sender) {
+	public String getUsage(ICommandSender sender) {
 		return "commands.am2.usage";
 	}
 	
@@ -83,14 +85,14 @@ public class CommandArsMagica extends CommandBase {
 			notifyCommandListener(sender, this, "commands.am2.levelup.successful", new Object[] {ent.getDisplayName(), level});
 		} else throw new WrongUsageException("Magic Level has too much arguments");
 	}
-	
+
 	@Override
-	public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos) {
+	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
 		if (args.length == 1) return getListOfStringsMatchingLastWord(args, Lists.newArrayList("magiclevel", "forcesync", "updatespells"));
 		else if (args.length == 2) {
 			if (args[0].equalsIgnoreCase("magiclevel")) return Collections.emptyList();
 		} else if (args.length == 3) {
-			if (args[0].equalsIgnoreCase("magiclevel")) return getListOfStringsMatchingLastWord(args, server.getAllUsernames());
+			if (args[0].equalsIgnoreCase("magiclevel")) return getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
 		}
 		return Collections.emptyList();
 	}

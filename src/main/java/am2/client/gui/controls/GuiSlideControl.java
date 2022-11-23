@@ -97,23 +97,23 @@ public class GuiSlideControl extends GuiButton{
 	}
 
 	@Override
-	public void drawButton(Minecraft par1Minecraft, int par2, int par3){
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks){
 		if (this.visible){
-			FontRenderer fontrenderer = par1Minecraft.fontRendererObj;
-			par1Minecraft.renderEngine.bindTexture(buttonImage);
+			FontRenderer fontrenderer = mc.fontRenderer;
+			mc.renderEngine.bindTexture(buttonImage);
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			//this.dragging = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
+			//this.dragging = par2 >= this.x && par3 >= this.y && par2 < this.x + this.width && par3 < this.y + this.height;
 			int k = this.getHoverState(this.dragging);
 			if (!this.buttonOnly){
 				if (this.isVertical){
-					this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 46, this.width / 2, this.height);
-					this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46, this.width / 2, this.height);
+					this.drawTexturedModalRect(this.x, this.y, 0, 46, this.width / 2, this.height);
+					this.drawTexturedModalRect(this.x + this.width / 2, this.y, 200 - this.width / 2, 46, this.width / 2, this.height);
 				}else{
-					this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 46 + k * 20, this.width / 2, this.height);
-					this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46, this.width / 2, this.height);
+					this.drawTexturedModalRect(this.x, this.y, 0, 46 + k * 20, this.width / 2, this.height);
+					this.drawTexturedModalRect(this.x + this.width / 2, this.y, 200 - this.width / 2, 46, this.width / 2, this.height);
 				}
 			}
-			this.mouseDragged(par1Minecraft, par2, par3);
+			this.mouseDragged(mc, mouseX, mouseY);
 			int l = 14737632;
 
 			if (!this.enabled){
@@ -122,7 +122,7 @@ public class GuiSlideControl extends GuiButton{
 				l = 16777120;
 			}
 
-			this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 6) / 2, l);
+			this.drawCenteredString(fontrenderer, this.displayString, this.x + this.width / 2, this.y + (this.height - 6) / 2, l);
 		}
 	}
 
@@ -161,9 +161,9 @@ public class GuiSlideControl extends GuiButton{
 		if (this.visible){
 			if (this.dragging){
 				if (this.isVertical){
-					this.sliderValue = (float)(par3 - (this.yPosition)) / (float)(this.height);
+					this.sliderValue = (float)(par3 - (this.y)) / (float)(this.height);
 				}else{
-					this.sliderValue = (float)(par2 - (this.xPosition + buttonW)) / (float)(this.width - 2 * buttonW);
+					this.sliderValue = (float)(par2 - (this.x + buttonW)) / (float)(this.width - 2 * buttonW);
 				}
 
 				if (this.sliderValue < 0.0F){
@@ -179,14 +179,14 @@ public class GuiSlideControl extends GuiButton{
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			GL11.glPushMatrix();
 			GL11.glScalef(1.0f, scale, 0.0f);
-			int yPos = (int)(this.yPosition / scale);
-			int xPos = (int)(this.xPosition / scale);
+			int yPos = (int)(this.y / scale);
+			int xPos = (int)(this.x / scale);
 			if (this.isVertical){
-				this.drawTexturedModalRect(xPos, this.yPosition + (int)(this.sliderValue / scale * (this.height - this.buttonH)), buttonUL, buttonVL, buttonW, buttonH);
-				this.drawTexturedModalRect(xPos + buttonW, this.yPosition + (int)(this.sliderValue / scale * (this.height - this.buttonH)), buttonUR, buttonVR, buttonW, buttonH);
+				this.drawTexturedModalRect(xPos, this.y + (int)(this.sliderValue / scale * (this.height - this.buttonH)), buttonUL, buttonVL, buttonW, buttonH);
+				this.drawTexturedModalRect(xPos + buttonW, this.y + (int)(this.sliderValue / scale * (this.height - this.buttonH)), buttonUR, buttonVR, buttonW, buttonH);
 			}else{
-				this.drawTexturedModalRect(this.xPosition + (int)(this.sliderValue * (this.width - buttonW * 2)), yPos, buttonUL, buttonVL, buttonW, buttonH);
-				this.drawTexturedModalRect(this.xPosition + (int)(this.sliderValue * (this.width - buttonW * 2)) + buttonW, yPos, buttonUR, buttonVR, buttonW, buttonH);
+				this.drawTexturedModalRect(this.x + (int)(this.sliderValue * (this.width - buttonW * 2)), yPos, buttonUL, buttonVL, buttonW, buttonH);
+				this.drawTexturedModalRect(this.x + (int)(this.sliderValue * (this.width - buttonW * 2)) + buttonW, yPos, buttonUR, buttonVR, buttonW, buttonH);
 			}
 			GL11.glPopMatrix();
 		}
@@ -220,9 +220,9 @@ public class GuiSlideControl extends GuiButton{
 	public boolean mousePressed(Minecraft par1Minecraft, int par2, int par3){
 		if (super.mousePressed(par1Minecraft, par2, par3)){
 			if (this.isVertical){
-				this.sliderValue = (float)(par3 - (this.yPosition + 4)) / (float)(this.height - 8);
+				this.sliderValue = (float)(par3 - (this.y + 4)) / (float)(this.height - 8);
 			}else{
-				this.sliderValue = (float)(par2 - (this.xPosition + 4)) / (float)(this.width - 8);
+				this.sliderValue = (float)(par2 - (this.x + 4)) / (float)(this.width - 8);
 			}
 
 			if (this.sliderValue < 0.0F){

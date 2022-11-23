@@ -26,9 +26,4 @@ public class BlockWitchwoodPlanks extends BlockAM{
 	public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
 		return 0;
 	}
-
-	@Override
-	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
-		par3List.add(new ItemStack(this));
-	}
 }

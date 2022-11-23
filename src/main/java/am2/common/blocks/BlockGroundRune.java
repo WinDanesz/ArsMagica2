@@ -52,9 +52,9 @@ public abstract class BlockGroundRune extends BlockAMContainer{
 	public int tickRate(World world){
 		return 20;
 	}
-	
+
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		return NULL_AABB;
 	}
 
@@ -81,9 +81,9 @@ public abstract class BlockGroundRune extends BlockAMContainer{
 		}
 		setStateIfMobInteractsWithPlate(worldIn, pos);
 	}
-	
+
 	@Override
-	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn){
+	public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn){
 		if (worldIn.isRemote){
 			return;
 		}
@@ -114,15 +114,14 @@ public abstract class BlockGroundRune extends BlockAMContainer{
 	
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state){
-		worldIn.notifyBlockOfStateChange(pos, state.getBlock());
-		worldIn.notifyBlockOfStateChange(pos, worldIn.getBlockState(pos.down()).getBlock());
+		// TODO ?
+//		worldIn.notifyBlockOfStateChange(pos, state.getBlock());
+//		worldIn.notifyBlockOfStateChange(pos, worldIn.getBlockState(pos.down()).getBlock());
 		super.breakBlock(worldIn, pos, state);
 	}
-	
+
 	@Override
-	public EnumPushReaction getMobilityFlag(IBlockState state){
-		return EnumPushReaction.DESTROY;
-	}
+	public EnumPushReaction getPushReaction(IBlockState state) { return EnumPushReaction.DESTROY; }
 
 	protected abstract boolean isPermanent(World world, BlockPos pos, IBlockState state);
 
@@ -147,8 +146,8 @@ public abstract class BlockGroundRune extends BlockAMContainer{
 	
 	@Override
 	public BlockAMContainer registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.toString());
-		GameRegistry.register(this, rl);
+		this.setTranslationKey(rl.toString());
+		// TODO: registry GameRegistry.register(this, rl);
 		return this;
 	}
 }

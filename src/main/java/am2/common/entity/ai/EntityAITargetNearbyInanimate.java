@@ -29,12 +29,12 @@ public class EntityAITargetNearbyInanimate extends EntityAITarget{
 	}
 
 	@Override
-	public boolean continueExecuting(){
+	public boolean shouldContinueExecuting(){
 		Entity inanimateTarget = EntityExtension.For(taskOwner).getInanimateTarget();
 
 		if (this.taskOwner.getAttackTarget() != null || inanimateTarget == null || inanimateTarget.isDead){
 			return false;
-		}else if (this.taskOwner.getDistanceSqToEntity(inanimateTarget) > this.targetDistance * this.targetDistance){
+		}else if (this.taskOwner.getDistanceSq(inanimateTarget) > this.targetDistance * this.targetDistance){
 			return false;
 		}else{
 			if (this.shouldCheckSight){
@@ -66,12 +66,12 @@ public class EntityAITargetNearbyInanimate extends EntityAITarget{
 	public void startExecuting(){
 		double dist = 10000;
 		for (Class<? extends Entity> c : targetTypes){
-			List<Entity> potentialTargets = taskOwner.worldObj.getEntitiesWithinAABB(c, taskOwner.getEntityBoundingBox().expand(targetDistance, 1, targetDistance));
+			List<Entity> potentialTargets = taskOwner.world.getEntitiesWithinAABB(c, taskOwner.getEntityBoundingBox().expand(targetDistance, 1, targetDistance));
 			for (Entity e : potentialTargets){
 				if (isSuitableTarget(e)){ //sanity check
 					Path pe = taskOwner.getNavigator().getPathToXYZ(e.posX, e.posY, e.posZ); //can we get to the item?
 					if (pe != null){
-						double eDist = taskOwner.getDistanceSqToEntity(e);
+						double eDist = taskOwner.getDistanceSq(e);
 						if (eDist < dist){
 							this.target = e;
 							dist = eDist;

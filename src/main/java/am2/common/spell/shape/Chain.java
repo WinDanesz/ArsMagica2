@@ -12,7 +12,7 @@ import am2.common.items.ItemOre;
 import am2.common.spell.SpellCastResult;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.boss.EntityDragonPart;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -43,8 +43,6 @@ public class Chain extends SpellShape {
 
 		if (mop != null && mop.typeOfHit == RayTraceResult.Type.ENTITY && mop.entityHit != null) {
 			Entity e = mop.entityHit;
-			if (e instanceof EntityDragonPart && ((EntityDragonPart) e).entityDragonObj instanceof EntityLivingBase)
-				e = (EntityLivingBase) ((EntityDragonPart) e).entityDragonObj;
 			if (e instanceof EntityLivingBase) {
 				do {
 					targets.add((EntityLivingBase) e);
@@ -54,7 +52,7 @@ public class Chain extends SpellShape {
 					for (EntityLivingBase near : nearby) {
 						if (targets.contains(near) || near == caster) continue;
 
-						if (closest == null || closest.getDistanceSqToEntity(e) > near.getDistanceSqToEntity(e)) {
+						if (closest == null || closest.getDistanceSq(e) > near.getDistanceSq(e)) {
 							closest = near;
 						}
 					}

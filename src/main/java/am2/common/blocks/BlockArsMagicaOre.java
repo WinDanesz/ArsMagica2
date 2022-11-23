@@ -15,6 +15,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -44,11 +45,11 @@ public class BlockArsMagicaOre extends BlockAM {
 		int drop = 1 + (isChimerite ? random.nextInt(4) : random.nextInt(1));
 		return drop + (isChimerite ? 1 : 2) * fortuneBonus;
 	}
-	
+
 	@Override
-	public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
+	public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
 		for (int i = 0; i < EnumOreType.values().length; i++) {
-			list.add(new ItemStack(this, 1, i));
+			items.add(new ItemStack(this, 1, i));
 		}
 	}
 	
@@ -80,14 +81,14 @@ public class BlockArsMagicaOre extends BlockAM {
 	
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(ORE_TYPE, EnumOreType.values()[MathHelper.clamp_int(meta, 0, EnumOreType.values().length - 1)]);
+		return getDefaultState().withProperty(ORE_TYPE, EnumOreType.values()[MathHelper.clamp(meta, 0, EnumOreType.values().length - 1)]);
 	}
 	
 	@Override
 	public BlockAM registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.getResourcePath());
-		GameRegistry.register(this, rl);
-		GameRegistry.register(new ItemBlockOre(this), rl);
+		this.setTranslationKey(rl.getPath());
+		// TODO: registry GameRegistry.register(this, rl);
+		// TODO: registry GameRegistry.register(new ItemBlockOre(this), rl);
 		return this;
 	}
 	

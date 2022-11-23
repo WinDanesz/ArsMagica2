@@ -41,7 +41,7 @@ public class EntityBoundArrow extends EntityArrow {
 		SpellData stack = dataManager.get(SPELL_STACK).orNull();
 		if (stack == null || !(shootingEntity instanceof EntityPlayer))
 			return;
-		stack.execute(worldObj, (EntityLivingBase) shootingEntity, living, living.posX, living.posY, living.posZ, null);
+		stack.execute(world, (EntityLivingBase) shootingEntity, living, living.posX, living.posY, living.posZ, null);
 	}
 	
 	@Override

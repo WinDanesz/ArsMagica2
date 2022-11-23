@@ -71,7 +71,7 @@ public class AffinityData implements IAffinityData, ICapabilityProvider, ICapabi
 	
 	@Override
 	public void setAffinityDepth (Affinity name, double value) {
-		value = MathHelper.clamp_double(value, 0, MAX_DEPTH);
+		value = MathHelper.clamp(value, 0, MAX_DEPTH);
 		if (value != this.getAffinityDepth(name)) {
 			this.syncCode |= SYNC_DEPTHS;
 			this.depths.put(name, value);
@@ -256,7 +256,7 @@ public class AffinityData implements IAffinityData, ICapabilityProvider, ICapabi
 			this.depths.clear();
 			int size = reader.getInt();
 			for (int i = 0; i < size; i++) {
-				Affinity key = ArsMagicaAPI.getAffinityRegistry().getObject(new ResourceLocation(reader.getString()));
+				Affinity key = ArsMagicaAPI.getAffinityRegistry().getValue(new ResourceLocation(reader.getString()));
 				double value = reader.getDouble();
 				if (key != null)
 					this.depths.put(key, value);

@@ -26,7 +26,7 @@ public class Quad3D{
 		this.p2 = p2;
 		this.p3 = p3;
 
-		avg = new Vec3d((p0.xCoord + p1.xCoord + p2.xCoord + p3.xCoord) / 4, (p0.yCoord + p1.yCoord + p2.yCoord + p3.yCoord) / 4D, (p0.zCoord + p1.zCoord + p2.zCoord + p3.zCoord) / 4D);
+		avg = new Vec3d((p0.x + p1.x + p2.x + p3.x) / 4, (p0.y + p1.y + p2.y + p3.y) / 4D, (p0.z + p1.z + p2.z + p3.z) / 4D);
 
 		this.icon = icon;
 
@@ -36,13 +36,13 @@ public class Quad3D{
 	void calcNormal(Vec3d v1, Vec3d v2, Vec3d v3){
 		double Qx, Qy, Qz, Px, Py, Pz;
 
-		Qx = v2.xCoord - v1.xCoord;
-		Qy = v2.yCoord - v1.yCoord;
-		Qz = v2.zCoord - v1.zCoord;
+		Qx = v2.x - v1.x;
+		Qy = v2.y - v1.y;
+		Qz = v2.z - v1.z;
 
-		Px = v3.xCoord - v1.xCoord;
-		Py = v3.yCoord - v1.yCoord;
-		Pz = v3.zCoord - v1.zCoord;
+		Px = v3.x - v1.x;
+		Py = v3.y - v1.y;
+		Pz = v3.z - v1.z;
 
 		normal = new Vec3d(Py * Qz - Pz * Qy, Pz * Qx - Px * Qz, Px * Qy - Py * Qx);
 	}
@@ -60,10 +60,10 @@ public class Quad3D{
 			t.draw();
 			t.getBuffer().begin(7, DefaultVertexFormats.POSITION_TEX);
 		}
-		t.getBuffer().pos(p0.xCoord, p0.yCoord, p0.zCoord).tex( icon.getMinU(), icon.getMinV()).endVertex();
-		t.getBuffer().pos(p1.xCoord, p1.yCoord, p1.zCoord).tex( icon.getMaxU(), icon.getMinV()).endVertex();
-		t.getBuffer().pos(p2.xCoord, p2.yCoord, p2.zCoord).tex( icon.getMaxU(), icon.getMaxV()).endVertex();
-		t.getBuffer().pos(p3.xCoord, p3.yCoord, p3.zCoord).tex( icon.getMinU(), icon.getMaxV()).endVertex();
+		t.getBuffer().pos(p0.x, p0.y, p0.z).tex( icon.getMinU(), icon.getMinV()).endVertex();
+		t.getBuffer().pos(p1.x, p1.y, p1.z).tex( icon.getMaxU(), icon.getMinV()).endVertex();
+		t.getBuffer().pos(p2.x, p2.y, p2.z).tex( icon.getMaxU(), icon.getMaxV()).endVertex();
+		t.getBuffer().pos(p3.x, p3.y, p3.z).tex( icon.getMinU(), icon.getMaxV()).endVertex();
 		t.draw();
 		if (ArsMagica2.config.FullGFX()){
 			double off = 0.005;
@@ -71,10 +71,10 @@ public class Quad3D{
 			t.getBuffer().begin(7, DefaultVertexFormats.POSITION_TEX);
 			//t.setBrightness(0xF00F0);
 			GL11.glColor4f(0, 0.5f, 1.0f, 0.6f);
-			t.getBuffer().pos(p0.xCoord + off, p0.yCoord + off, p0.zCoord + off).tex( icon.getMinU(), icon.getMinV()).endVertex();
-			t.getBuffer().pos(p1.xCoord + off, p1.yCoord + off, p1.zCoord + off).tex( icon.getMaxU(), icon.getMinV()).endVertex();
-			t.getBuffer().pos(p2.xCoord + off, p2.yCoord + off, p2.zCoord + off).tex( icon.getMaxU(), icon.getMaxV()).endVertex();
-			t.getBuffer().pos(p3.xCoord + off, p3.yCoord + off, p3.zCoord + off).tex( icon.getMinU(), icon.getMaxV()).endVertex();
+			t.getBuffer().pos(p0.x + off, p0.y + off, p0.z + off).tex( icon.getMinU(), icon.getMinV()).endVertex();
+			t.getBuffer().pos(p1.x + off, p1.y + off, p1.z + off).tex( icon.getMaxU(), icon.getMinV()).endVertex();
+			t.getBuffer().pos(p2.x + off, p2.y + off, p2.z + off).tex( icon.getMaxU(), icon.getMaxV()).endVertex();
+			t.getBuffer().pos(p3.x + off, p3.y + off, p3.z + off).tex( icon.getMinU(), icon.getMaxV()).endVertex();
 			t.draw();
 
 			GL11.glColor4f(1, 1, 1, 0.6f);

@@ -38,8 +38,10 @@ public class SpellRegistry {
 	 */
 	public static void registerSpellComponent (String id, ResourceLocation icon, SkillPoint tier, SpellComponent part, SkillTree tree, int posX, int posY, String... parents) {
 		id = id.toLowerCase();
-		GameRegistry.register(part, new ResourceLocation(ArsMagicaAPI.getCurrentModId(), id));
-		GameRegistry.register(new Skill(icon, tier, posX, posY, tree, parents), new ResourceLocation(ArsMagicaAPI.getCurrentModId(), id));
+
+		// todo registry
+		//	// TODO: registry GameRegistry.register(part, new ResourceLocation(ArsMagicaAPI.getCurrentModId(), id));
+		//	// TODO: registry GameRegistry.register(new Skill(icon, tier, posX, posY, tree, parents), new ResourceLocation(ArsMagicaAPI.getCurrentModId(), id));
 	}
 	
 	/**
@@ -56,8 +58,9 @@ public class SpellRegistry {
 	 */
 	public static void registerSpellModifier (String id, ResourceLocation icon, SkillPoint tier, SpellModifier part, SkillTree tree, int posX, int posY, String... parents) {
 		id = id.toLowerCase();
-		GameRegistry.register(part, new ResourceLocation(ArsMagicaAPI.getCurrentModId(), id));
-		GameRegistry.register(new Skill(icon, tier, posX, posY, tree, parents), new ResourceLocation(ArsMagicaAPI.getCurrentModId(), id));
+		// todo registry
+		//		// TODO: registry GameRegistry.register(part, new ResourceLocation(ArsMagicaAPI.getCurrentModId(), id));
+		//		// TODO: registry GameRegistry.register(new Skill(icon, tier, posX, posY, tree, parents), new ResourceLocation(ArsMagicaAPI.getCurrentModId(), id));
 	}
 	
 	/**
@@ -74,8 +77,9 @@ public class SpellRegistry {
 	 */
 	public static void registerSpellShape (String id, ResourceLocation icon, SkillPoint tier, SpellShape part, SkillTree tree, int posX, int posY, String... parents) {
 		id = id.toLowerCase();
-		GameRegistry.register(part, new ResourceLocation(ArsMagicaAPI.getCurrentModId(), id));
-		GameRegistry.register(new Skill(icon, tier, posX, posY, tree, parents), new ResourceLocation(ArsMagicaAPI.getCurrentModId(), id));
+		// todo registry
+		//		// TODO: registry GameRegistry.register(part, new ResourceLocation(ArsMagicaAPI.getCurrentModId(), id));
+		//		// TODO: registry GameRegistry.register(new Skill(icon, tier, posX, posY, tree, parents), new ResourceLocation(ArsMagicaAPI.getCurrentModId(), id));
 	}
 	
 	public static Skill getSkillFromPart(AbstractSpellPart part) {

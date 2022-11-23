@@ -24,7 +24,7 @@ public class EntityAISummonFollowOwner extends EntityAIBase{
 	float minDist;
 	public EntityAISummonFollowOwner(EntityCreature host, double moveSpeed, float minDist, float maxDist){
 		this.theSummon = host;
-		this.theWorld = host.worldObj;
+		this.theWorld = host.world;
 		this.moveSpeed = moveSpeed;
 		this.petPathfinder = host.getNavigator();
 		this.minDist = minDist;
@@ -40,7 +40,7 @@ public class EntityAISummonFollowOwner extends EntityAIBase{
 
 		if (entitylivingbase == null){
 			return false;
-		}else if (this.theSummon.getDistanceSqToEntity(entitylivingbase) < (double)(this.minDist * this.minDist)){
+		}else if (this.theSummon.getDistanceSq(entitylivingbase) < (double)(this.minDist * this.minDist)){
 			return false;
 		}else{
 			this.theOwner = entitylivingbase;
@@ -51,7 +51,7 @@ public class EntityAISummonFollowOwner extends EntityAIBase{
 	private EntityLivingBase getOwner(){
 		int entityID = EntityUtils.getOwner(theSummon);
 		if (entityID == -1) return null;
-		Entity e = theSummon.worldObj.getEntityByID(entityID);
+		Entity e = theSummon.world.getEntityByID(entityID);
 		if (e instanceof EntityLivingBase)
 			return (EntityLivingBase)e;
 		return null;
@@ -60,8 +60,8 @@ public class EntityAISummonFollowOwner extends EntityAIBase{
 	/**
 	 * Returns whether an in-progress EntityAIBase should continue executing
 	 */
-	public boolean continueExecuting(){
-		return !this.petPathfinder.noPath() && this.theSummon.getDistanceSqToEntity(this.theOwner) > (double)(this.maxDist * this.maxDist);
+	public boolean shouldContinueExecuting(){
+		return !this.petPathfinder.noPath() && this.theSummon.getDistanceSq(this.theOwner) > (double)(this.maxDist * this.maxDist);
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class EntityAISummonFollowOwner extends EntityAIBase{
 	 */
 	public void resetTask(){
 		this.theOwner = null;
-		this.petPathfinder.clearPathEntity();
+		this.petPathfinder.clearPath();
 //		this.theSummon.getNavigator().setAvoidsWater(this.field_75344_i);
 	}
 	
@@ -99,22 +99,22 @@ public class EntityAISummonFollowOwner extends EntityAIBase{
 
 			if (!this.petPathfinder.tryMoveToEntityLiving(this.theOwner, this.moveSpeed * 3)) {
 				if (!this.theSummon.getLeashed()) {
-					if (this.theSummon.getDistanceSqToEntity(this.theOwner) >= 144.0D) {
-						int i = MathHelper.floor_double(this.theOwner.posX) - 2;
-						int j = MathHelper.floor_double(this.theOwner.posZ) - 2;
-						int k = MathHelper.floor_double(this.theOwner.getEntityBoundingBox().minY);
+					if (this.theSummon.getDistanceSq(this.theOwner) >= 144.0D) {
+						int i = MathHelper.floor(this.theOwner.posX) - 2;
+						int j = MathHelper.floor(this.theOwner.posZ) - 2;
+						int k = MathHelper.floor(this.theOwner.getEntityBoundingBox().minY);
 
 						for (int l = 0; l <= 4; ++l) {
 							for (int i1 = 0; i1 <= 4; ++i1) {
 								if ((l < 1 || i1 < 1 || l > 3 || i1 > 3)
 										&& this.theWorld.getBlockState(new BlockPos(i + l, k - 1, j + i1))
-												.isFullyOpaque()
+												.isOpaqueCube()
 										&& this.isEmptyBlock(new BlockPos(i + l, k, j + i1))
 										&& this.isEmptyBlock(new BlockPos(i + l, k + 1, j + i1))) {
 									this.theSummon.setLocationAndAngles((double) ((float) (i + l) + 0.5F), (double) k,
 											(double) ((float) (j + i1) + 0.5F), this.theOwner.rotationYaw,
 											this.theOwner.rotationPitch);
-									this.petPathfinder.clearPathEntity();
+									this.petPathfinder.clearPath();
 									return;
 								}
 							}

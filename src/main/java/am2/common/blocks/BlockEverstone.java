@@ -6,6 +6,7 @@ import java.util.List;
 import am2.ArsMagica2;
 import am2.common.blocks.tileentity.TileEntityEverstone;
 import am2.common.defs.ItemDefs;
+import am2.common.power.PowerTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -30,6 +31,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
 
 public class BlockEverstone extends BlockAMPowered{
 	
@@ -112,7 +115,7 @@ public class BlockEverstone extends BlockAMPowered{
 	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-			EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (player.getHeldItemMainhand() != null){
 			IBlockState block = null;
 			TileEntityEverstone everstone = getTE(world, pos);
@@ -139,7 +142,7 @@ public class BlockEverstone extends BlockAMPowered{
 			}
 			if (everstone.getFacade() == null && block != null){
 				everstone.setFacade(block);
-				world.notifyBlockOfStateChange(pos, this);
+				//world.notifyBlockOfStateChange(pos, this); todo
 				return true;
 			}
 		}
@@ -158,8 +161,9 @@ public class BlockEverstone extends BlockAMPowered{
 		return EnumBlockRenderType.INVISIBLE;
 	}
 
+	@Nullable
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
 		TileEntityEverstone everstone = getTE(worldIn, pos);
 		if (everstone == null || everstone.isSolid())
 			return super.getCollisionBoundingBox(blockState, worldIn, pos);
@@ -226,8 +230,8 @@ public class BlockEverstone extends BlockAMPowered{
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, ParticleManager manager){
-		TileEntityEverstone everstone = getTE(worldObj, target.getBlockPos());
+	public boolean addHitEffects(IBlockState state, World world, RayTraceResult target, ParticleManager manager){
+		TileEntityEverstone everstone = getTE(world, target.getBlockPos());
 		IBlockState block;
 		if (everstone == null || everstone.getFacade() == null){
 			block = this.getDefaultState();
@@ -237,10 +241,10 @@ public class BlockEverstone extends BlockAMPowered{
 		}
 		
 		
-		manager.addEffect(new ParticleDigging.Factory().createParticle(0, worldObj,
-				target.getBlockPos().getX() + worldObj.rand.nextDouble(),
-				target.getBlockPos().getY() + worldObj.rand.nextDouble(),
-				target.getBlockPos().getZ() + worldObj.rand.nextDouble(), 0, 0, 0, Block.getStateId(block)));
+		manager.addEffect(new ParticleDigging.Factory().createParticle(0, world,
+				target.getBlockPos().getX() + world.rand.nextDouble(),
+				target.getBlockPos().getY() + world.rand.nextDouble(),
+				target.getBlockPos().getZ() + world.rand.nextDouble(), 0, 0, 0, Block.getStateId(block)));
 
 		return true;
 	}

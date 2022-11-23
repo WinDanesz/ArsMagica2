@@ -382,7 +382,7 @@ public class CommonProxy implements IGuiHandler{
 	
 	public void init() {
 		if (ArsMagica2.config.getEnableWitchwoodForest()){
-			BiomeDictionary.registerBiomeType(BiomeWitchwoodForest.instance, Type.FOREST, Type.MAGICAL);
+			// TODO registry BiomeDictionary.registerBiomeType(BiomeWitchwoodForest.instance, Type.FOREST, Type.MAGICAL);
 			BiomeManager.addBiome(BiomeType.COOL, new BiomeEntry(BiomeWitchwoodForest.instance, 6));
 			int id = (BiomeWitchwoodForest.getBiomeId() != -1) ? BiomeWitchwoodForest.getBiomeId() : BiomeWitchwoodForest.getNextFreeBiomeId();
 			Biome.registerBiome(id, BiomeWitchwoodForest.instance.getBiomeName(), BiomeWitchwoodForest.instance);
@@ -502,19 +502,19 @@ public class CommonProxy implements IGuiHandler{
 	}
 	
 	private void registerFlickerOperators(){
-		GameRegistry.register(FlickerOperatorItemTransport.instance, new ResourceLocation("arsmagica2", "item_transport"));
-		GameRegistry.register(FlickerOperatorButchery.instance, new ResourceLocation("arsmagica2", "butchery"));
-		GameRegistry.register(FlickerOperatorContainment.instance, new ResourceLocation("arsmagica2", "containment"));
-		GameRegistry.register(FlickerOperatorFelledOak.instance, new ResourceLocation("arsmagica2", "felled_oak"));
-		GameRegistry.register(FlickerOperatorFlatLands.instance, new ResourceLocation("arsmagica2", "flat_lands"));
-		GameRegistry.register(FlickerOperatorGentleRains.instance, new ResourceLocation("arsmagica2", "gentle_rains"));
-		GameRegistry.register(FlickerOperatorInterdiction.instance, new ResourceLocation("arsmagica2", "interdiction"));
-		GameRegistry.register(FlickerOperatorLight.instance, new ResourceLocation("arsmagica2", "light"));
-		GameRegistry.register(FlickerOperatorMoonstoneAttractor.instance, new ResourceLocation("arsmagica2", "moonstone_attractor"));
-		GameRegistry.register(FlickerOperatorNaturesBounty.instance, new ResourceLocation("arsmagica2", "natures_bounty"));
-		GameRegistry.register(FlickerOperatorPackedEarth.instance, new ResourceLocation("arsmagica2", "packed_earth"));
-		GameRegistry.register(FlickerOperatorProgeny.instance, new ResourceLocation("arsmagica2", "progeny"));
-		GameRegistry.register(FlickerOperatorFishing.instance, new ResourceLocation("arsmagica2", "fishing"));
+		// TODO: registry GameRegistry.register(FlickerOperatorItemTransport.instance, new ResourceLocation("arsmagica2", "item_transport"));
+		// TODO: registry GameRegistry.register(FlickerOperatorButchery.instance, new ResourceLocation("arsmagica2", "butchery"));
+		// TODO: registry GameRegistry.register(FlickerOperatorContainment.instance, new ResourceLocation("arsmagica2", "containment"));
+		// TODO: registry GameRegistry.register(FlickerOperatorFelledOak.instance, new ResourceLocation("arsmagica2", "felled_oak"));
+		// TODO: registry GameRegistry.register(FlickerOperatorFlatLands.instance, new ResourceLocation("arsmagica2", "flat_lands"));
+		// TODO: registry GameRegistry.register(FlickerOperatorGentleRains.instance, new ResourceLocation("arsmagica2", "gentle_rains"));
+		// TODO: registry GameRegistry.register(FlickerOperatorInterdiction.instance, new ResourceLocation("arsmagica2", "interdiction"));
+		// TODO: registry GameRegistry.register(FlickerOperatorLight.instance, new ResourceLocation("arsmagica2", "light"));
+		// TODO: registry GameRegistry.register(FlickerOperatorMoonstoneAttractor.instance, new ResourceLocation("arsmagica2", "moonstone_attractor"));
+		// TODO: registry GameRegistry.register(FlickerOperatorNaturesBounty.instance, new ResourceLocation("arsmagica2", "natures_bounty"));
+		// TODO: registry GameRegistry.register(FlickerOperatorPackedEarth.instance, new ResourceLocation("arsmagica2", "packed_earth"));
+		// TODO: registry GameRegistry.register(FlickerOperatorProgeny.instance, new ResourceLocation("arsmagica2", "progeny"));
+		// TODO: registry GameRegistry.register(FlickerOperatorFishing.instance, new ResourceLocation("arsmagica2", "fishing"));
 	}
 	
 	public AM2WorldDecorator getWorldGenerator() {

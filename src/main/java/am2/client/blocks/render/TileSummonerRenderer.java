@@ -19,7 +19,7 @@ public class TileSummonerRenderer extends TileEntitySpecialRenderer<TileEntitySu
 	}
 	
 	@Override
-	public void renderTileEntityAt(TileEntitySummoner tile, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void render(TileEntitySummoner tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		int i = 2;
 		int y2 = 0;
 

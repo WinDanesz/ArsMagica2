@@ -29,7 +29,7 @@ public class ItemBoundSword extends ItemSword implements IBoundItem {
 		ItemStack copiedStack = stack.copy();
 		ISpellCaster caster = stack.copy().getCapability(SpellCaster.INSTANCE, null);
 		if (caster != null)
-			caster.createSpellData(copiedStack).execute(attacker.worldObj, attacker, target, target.posX, target.posY, target.posZ, null);
+			caster.createSpellData(copiedStack).execute(attacker.world, attacker, target, target.posX, target.posY, target.posZ, null);
 		target.hurtResistantTime = hurtResist;
 		return true;
 	}
@@ -39,12 +39,12 @@ public class ItemBoundSword extends ItemSword implements IBoundItem {
 		return false;
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player) {
-		item.setItem(ItemDefs.spell);
-		return false;
-	}
+//	@SuppressWarnings("deprecation")
+//	@Override
+//	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player) {
+//		item.setItem(ItemDefs.spell);
+//		return false;
+//	}
 
 	@Override
 	public float maintainCost(EntityPlayer player, ItemStack stack) {
@@ -52,8 +52,8 @@ public class ItemBoundSword extends ItemSword implements IBoundItem {
 	}
 
 	public ItemSword registerAndName(String name) {
-		this.setUnlocalizedName(new ResourceLocation("arsmagica2", name).toString());
-		GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
+		this.setTranslationKey(new ResourceLocation("arsmagica2", name).toString());
+	//	// TODO: registry GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
 		return this;
 	}
 

@@ -3,6 +3,7 @@ package am2.common.blocks;
 import am2.common.blocks.tileentity.TileEntityCraftingAltar;
 import am2.common.defs.CreativeTabsDefs;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
@@ -31,9 +32,9 @@ public class BlockCraftingAltar extends BlockAMPowered {
 	}
 	
 	public BlockCraftingAltar registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.toString());
-		GameRegistry.register(this, rl);
-		GameRegistry.register(new ItemBlock(this), rl);
+		this.setTranslationKey(rl.toString());
+		// TODO: registry GameRegistry.register(this, rl);
+		// TODO: registry GameRegistry.register(new ItemBlock(this), rl);
 		return this;
 	}
 	
@@ -43,7 +44,7 @@ public class BlockCraftingAltar extends BlockAMPowered {
 	}
 	
 	@Override
-	public BlockRenderLayer getBlockLayer() {
+	public BlockRenderLayer getRenderLayer() {
 		return BlockRenderLayer.CUTOUT;
 	}
 	
@@ -61,9 +62,7 @@ public class BlockCraftingAltar extends BlockAMPowered {
     }
 	
 	@Override
-	public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
-		return true;
-	}
+	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) { return BlockFaceShape.SOLID; }
 	
 	@Override
 	public boolean isFullBlock(IBlockState state) {

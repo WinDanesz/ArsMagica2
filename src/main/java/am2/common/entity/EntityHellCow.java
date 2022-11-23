@@ -56,7 +56,7 @@ public class EntityHellCow extends EntityMob{
 	}
 
 	@Override
-	protected SoundEvent getHurtSound(){
+	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
 		return AMSounds.MOO_HIT;
 	}
 

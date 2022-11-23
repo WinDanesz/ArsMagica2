@@ -38,17 +38,17 @@ public class EnderIntervention extends SpellComponent{
 
 		if (((EntityLivingBase)target).isPotionActive(PotionEffectsDefs.ASTRAL_DISTORTION)){
 			if (target instanceof EntityPlayer)
-				((EntityPlayer)target).addChatMessage(new TextComponentString("The distortion around you prevents you from teleporting"));
+				((EntityPlayer)target).sendMessage(new TextComponentString("The distortion around you prevents you from teleporting"));
 			return true;
 		}
 
 		if (target.dimension == 1){
 			if (target instanceof EntityPlayer)
-				((EntityPlayer)target).addChatMessage(new TextComponentString("Nothing happens..."));
+				((EntityPlayer)target).sendMessage(new TextComponentString("Nothing happens..."));
 			return true;
 		}else if (target.dimension == -1){
 			if (target instanceof EntityPlayer)
-				((EntityPlayer)target).addChatMessage(new TextComponentString("You are already in the nether."));
+				((EntityPlayer)target).sendMessage(new TextComponentString("You are already in the nether."));
 			return false;
 		}else{
 			DimensionUtilities.doDimensionTransfer((EntityLivingBase)target, -1);

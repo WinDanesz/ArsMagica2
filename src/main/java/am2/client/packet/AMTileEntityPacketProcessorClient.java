@@ -27,8 +27,8 @@ public class AMTileEntityPacketProcessorClient extends AMTileEntityPacketProcess
 			}
 			//constant details all packets share:  ID, player, and remaining data
 			packetID = bbis.readByte();
-			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-			World world = player.worldObj;
+			EntityPlayer player = Minecraft.getMinecraft().player;
+			World world = player.world;
 			byte[] remaining = new byte[bbis.available()];
 			bbis.readFully(remaining);
 			AMDataReader reader = new AMDataReader(remaining, false);

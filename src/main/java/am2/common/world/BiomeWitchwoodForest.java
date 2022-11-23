@@ -20,9 +20,9 @@ public class BiomeWitchwoodForest extends Biome{
 		super(par1);
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityWolf.class, 5, 4, 4));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityDryad.class, 5, 4, 4));
-		this.theBiomeDecorator.treesPerChunk = 10;
-		this.theBiomeDecorator.grassPerChunk = 4;
-		this.theBiomeDecorator.flowersPerChunk = 10;
+		this.decorator.treesPerChunk = 10;
+		this.decorator.grassPerChunk = 4;
+		this.decorator.flowersPerChunk = 10;
 		biomeId = ArsMagica2.config.getWitchwoodForestID();
 	}
 
@@ -45,14 +45,13 @@ public class BiomeWitchwoodForest extends Biome{
 	public int getSkyColorByTemp(float par1){
 		return 0x6699ff;
 	}
-	
-	
-	
-	@Override
-	public WorldGenAbstractTree genBigTreeChance(Random p_150567_1_)
-	{
-	  return (WorldGenAbstractTree)(p_150567_1_.nextInt(10) == 0 ? hugeTree : smallTree);
-	}
+
+//  TODO ?
+//	@Override
+//	public WorldGenAbstractTree genBigTreeChance(Random p_150567_1_)
+//	{
+//	  return (WorldGenAbstractTree)(p_150567_1_.nextInt(10) == 0 ? hugeTree : smallTree);
+//	}
 
 	public static int getBiomeId()
 	{

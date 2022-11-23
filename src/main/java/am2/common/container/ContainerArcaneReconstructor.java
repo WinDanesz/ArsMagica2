@@ -69,7 +69,7 @@ public class ContainerArcaneReconstructor extends AM2Container{
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer){
-		return reconstructor.isUseableByPlayer(entityplayer);
+		return reconstructor.isUsableByPlayer(entityplayer);
 	}
 
 	@Override
@@ -104,13 +104,13 @@ public class ContainerArcaneReconstructor extends AM2Container{
 				return null;
 			}
 
-			if (itemstack1.stackSize == 0){
+			if (itemstack1.getCount() == 0){
 				slot.putStack(null);
 			}else{
 				slot.onSlotChanged();
 			}
 
-			if (itemstack1.stackSize != itemstack.stackSize){
+			if (itemstack1.getCount() != itemstack.getCount()){
 				slot.onSlotChange(itemstack1, itemstack);
 			}else{
 				return null;
@@ -127,8 +127,8 @@ public class ContainerArcaneReconstructor extends AM2Container{
 
 				focusSlot.putStack(new ItemStack(stack.getItem(), 1, stack.getItemDamage()));
 				focusSlot.onSlotChanged();
-				stack.stackSize--;
-				if (stack.stackSize == 0){
+				stack.shrink(1);
+				if (stack.getCount() == 0){
 					slot.putStack(null);
 					slot.onSlotChanged();
 				}
@@ -145,8 +145,8 @@ public class ContainerArcaneReconstructor extends AM2Container{
 				}
 				repairSlot.putStack(input);
 				repairSlot.onSlotChanged();
-				stack.stackSize--;
-				if (stack.stackSize == 0){
+				stack.shrink(1);
+				if (stack.getCount() == 0){
 					slot.putStack(null);
 					slot.onSlotChanged();
 				}

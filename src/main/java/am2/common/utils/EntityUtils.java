@@ -67,9 +67,9 @@ public class EntityUtils {
 		double d = range;
 		Vec3d vec3d = new Vec3d(entityplayer.posX, entityplayer.posY + entityplayer.getEyeHeight(), entityplayer.posZ);
 		Vec3d vec3d1 = entityplayer.getLookVec();
-		Vec3d vec3d2 = vec3d.addVector(vec3d1.xCoord * d, vec3d1.yCoord * d, vec3d1.zCoord * d);
+		Vec3d vec3d2 = vec3d.add(vec3d1.x * d, vec3d1.y * d, vec3d1.z * d);
 		double f1 = collideRadius;
-		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(entityplayer, entityplayer.getEntityBoundingBox().addCoord(vec3d1.xCoord * d, vec3d1.yCoord * d, vec3d1.zCoord * d).expand(f1, f1, f1));
+		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(entityplayer, entityplayer.getEntityBoundingBox().grow(vec3d1.x * d, vec3d1.y * d, vec3d1.z * d).expand(f1, f1, f1));
 
 		double d2 = 0.0D;
 		for (int i = 0; i < list.size(); i++){
@@ -82,7 +82,7 @@ public class EntityUtils {
 				float f2 = Math.max(0.8F, entity.getCollisionBorderSize());
 				AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand(f2, f2, f2);
 				RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(vec3d, vec3d2);
-				if (axisalignedbb.isVecInside(vec3d)){
+				if (axisalignedbb.contains(vec3d)){
 					if ((0.0D < d2) || (d2 == 0.0D)){
 						pointedEntity = entity;
 						d2 = 0.0D;
@@ -150,7 +150,7 @@ public class EntityUtils {
 			entityliving.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityGhast>(entityliving, EntityGhast.class, true));
 			entityliving.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityShulker>(entityliving, EntityShulker.class, true));
 
-			if (!entityliving.worldObj.isRemote && entityliving.getAttackTarget() != null && entityliving.getAttackTarget() instanceof EntityPlayer)
+			if (!entityliving.world.isRemote && entityliving.getAttackTarget() != null && entityliving.getAttackTarget() instanceof EntityPlayer)
 				ArsMagica2.proxy.addDeferredTargetSet(entityliving, null);
 
 			if (entityliving instanceof EntityTameable){
@@ -174,7 +174,7 @@ public class EntityUtils {
 			entityliving.targetTasks.taskEntries.clear();
 			entityliving.targetTasks.addTask(1, new EntityAIHurtByTarget(entityliving, true));
 			entityliving.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(entityliving, EntityPlayer.class, true));
-			if (!entityliving.worldObj.isRemote && entityliving.getAttackTarget() != null && entityliving.getAttackTarget() instanceof EntityMob)
+			if (!entityliving.world.isRemote && entityliving.getAttackTarget() != null && entityliving.getAttackTarget() instanceof EntityMob)
 				ArsMagica2.proxy.addDeferredTargetSet(entityliving, null);
 
 			entityliving.getEntityData().setBoolean(isSummonKey, true);
@@ -219,7 +219,7 @@ public class EntityUtils {
 	public static boolean revertAI(EntityCreature entityliving){
 
 		int ownerID = getOwner(entityliving);
-		Entity owner = entityliving.worldObj.getEntityByID(ownerID);
+		Entity owner = entityliving.world.getEntityByID(ownerID);
 		if (owner != null && owner instanceof EntityLivingBase){
 			EntityExtension.For((EntityLivingBase)owner).removeSummon();
 			if (EntityExtension.For((EntityLivingBase)owner).isManaLinkedTo(entityliving)){
@@ -249,7 +249,7 @@ public class EntityUtils {
 				entityliving.tasks.taskEntries.addAll(storedAITasks.get(entityliving.getEntityId()));
 				storedAITasks.remove(entityliving.getEntityId());
 			}
-			if (!entityliving.worldObj.isRemote && entityliving.getAttackTarget() != null)
+			if (!entityliving.world.isRemote && entityliving.getAttackTarget() != null)
 				ArsMagica2.proxy.addDeferredTargetSet(entityliving, null);
 			if (entityliving instanceof EntityTameable){
 				((EntityTameable)entityliving).setTamed(false);
@@ -267,7 +267,7 @@ public class EntityUtils {
 			if (vec3d != null) {
 				Vec3d vec3d1 = living.getLook(1.0F);
 				Vec3d vec3d2 = vec3d.subtractReverse(new Vec3d(living.posX, living.posY, living.posZ)).normalize();
-				vec3d2 = new Vec3d(vec3d2.xCoord, 0.0D, vec3d2.zCoord);
+				vec3d2 = new Vec3d(vec3d2.x, 0.0D, vec3d2.z);
 
 				if (vec3d2.dotProduct(vec3d1) < 0.0D) {
 					return true;
@@ -282,7 +282,7 @@ public class EntityUtils {
 			return;
 		if (ptrSetSize == null){
 			try{
-				ptrSetSize = ReflectionHelper.findMethod(Entity.class, entityliving, new String[]{"func_70105_a", "setSize"}, Float.TYPE, Float.TYPE);
+				// todo ptrSetSize = ReflectionHelper.findMethod(Entity.class, entityliving, new String[]{"func_70105_a", "setSize"}, Float.TYPE, Float.TYPE);
 			}catch (Throwable t){
 				t.printStackTrace();
 				return;
@@ -302,7 +302,7 @@ public class EntityUtils {
 	
 	public static Vec3d correctLook(Vec3d vecIn, Entity entityIn) {
 		if (entityIn instanceof EntityLivingBase && EntityExtension.For((EntityLivingBase) entityIn).isInverted()) {
-			return new Vec3d(-vecIn.xCoord, -vecIn.yCoord, vecIn.zCoord);
+			return new Vec3d(-vecIn.x, -vecIn.y, vecIn.z);
 		}
 		return vecIn;
 	}
@@ -323,7 +323,7 @@ public class EntityUtils {
 	        float f = strafe * strafe + forward * forward;
 	        if (f >= 1.0E-4F)
 	        {
-	            f = MathHelper.sqrt_float(f);
+	            f = MathHelper.sqrt(f);
 
 	            if (f < 1.0F)
 	            {

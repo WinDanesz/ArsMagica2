@@ -37,10 +37,10 @@ public class FlickerOperatorButchery extends AbstractFlickerFunctionality{
 	}
 
 	@Override
-	public boolean DoOperation(World worldObj, IFlickerController<?> habitat, boolean powered){
+	public boolean DoOperation(World world, IFlickerController<?> habitat, boolean powered){
 		HashMap<Class<?>, Integer> entityCount = new HashMap<>();
 		int radius = 6;
-		List<EntityAnimal> creatures = worldObj.getEntitiesWithinAABB(EntityAnimal.class, new AxisAlignedBB(((TileEntity)habitat).getPos()).expandXyz(radius));
+		List<EntityAnimal> creatures = world.getEntitiesWithinAABB(EntityAnimal.class, new AxisAlignedBB(((TileEntity)habitat).getPos()).grow(radius));
 		for (EntityAnimal creature : creatures){
 			Class<? extends EntityAnimal> clazz = creature.getClass();
 			if (!SpawnBlacklists.canButcheryAffect(clazz))
@@ -52,14 +52,14 @@ public class FlickerOperatorButchery extends AbstractFlickerFunctionality{
 				count++;
 			entityCount.put(clazz, count);
 			if (count > 2){
-				if (worldObj.isRemote){
-					AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(worldObj, "ghost", ((TileEntity)habitat).getPos().getX() + 0.5, ((TileEntity)habitat).getPos().getY() + 0.7, ((TileEntity)habitat).getPos().getZ() + 0.5);
+				if (world.isRemote){
+					AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "ghost", ((TileEntity)habitat).getPos().getX() + 0.5, ((TileEntity)habitat).getPos().getY() + 0.7, ((TileEntity)habitat).getPos().getZ() + 0.5);
 					if (particle != null){
 						particle.setMaxAge(20);
 						particle.AddParticleController(new ParticleFloatUpward(particle, 0, 0.05f, 1, false));
 					}
 				}else{
-					creature.attackEntityFrom(DamageSource.generic, 500);
+					creature.attackEntityFrom(DamageSource.GENERIC, 500);
 				}
 				return true;
 			}
@@ -68,16 +68,16 @@ public class FlickerOperatorButchery extends AbstractFlickerFunctionality{
 	}
 
 	@Override
-	public boolean DoOperation(World worldObj, IFlickerController<?> habitat, boolean powered, Affinity[] flickers){
-		return DoOperation(worldObj, habitat, powered);
+	public boolean DoOperation(World world, IFlickerController<?> habitat, boolean powered, Affinity[] flickers){
+		return DoOperation(world, habitat, powered);
 	}
 
 	@Override
-	public void RemoveOperator(World worldObj, IFlickerController<?> habitat, boolean powered){
+	public void RemoveOperator(World world, IFlickerController<?> habitat, boolean powered){
 	}
 
 	@Override
-	public void RemoveOperator(World worldObj, IFlickerController<?> habitat, boolean powered, Affinity[] flickers){
+	public void RemoveOperator(World world, IFlickerController<?> habitat, boolean powered, Affinity[] flickers){
 	}
 
 	@Override
@@ -95,9 +95,9 @@ public class FlickerOperatorButchery extends AbstractFlickerFunctionality{
 				Character.valueOf('P'), new ItemStack(Items.PORKCHOP),
 				Character.valueOf('B'), new ItemStack(Items.BEEF),
 				Character.valueOf('C'), new ItemStack(Items.CHICKEN),
-				Character.valueOf('F'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.FIRE)),
+				//todo registry Character.valueOf('F'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.FIRE)),
 				Character.valueOf('G'), new ItemStack(Items.GOLDEN_SWORD),
-				Character.valueOf('L'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.LIFE)),
+				//todo registry Character.valueOf('L'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.LIFE)),
 				Character.valueOf('R'), new ItemStack(ItemDefs.rune, 1, EnumDyeColor.RED.getDyeDamage()),
 				Character.valueOf('E'), new ItemStack(ItemDefs.evilBook)
 		};

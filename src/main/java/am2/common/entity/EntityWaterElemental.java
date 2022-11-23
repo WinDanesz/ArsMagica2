@@ -44,8 +44,8 @@ public class EntityWaterElemental extends EntityMob{
 
 	@Override
 	public void onUpdate(){
-		if (this.worldObj != null){
-			if (this.worldObj.isRemote){
+		if (this.world != null){
+			if (this.world.isRemote){
 				spawnLivingParticles();
 			}
 		}
@@ -54,13 +54,13 @@ public class EntityWaterElemental extends EntityMob{
 	
 	@Override
 	protected void dropFewItems(boolean wasRecentlyHit, int lootingModifier) {
-		this.entityDropItem(new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.WATER)), 0.0f);
+		// todo registry this.entityDropItem(new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.WATER)), 0.0f);
 	}
 
 	private void spawnLivingParticles(){
 		if (rand.nextBoolean()){
 			double yPos = this.posY + 1.1;
-			AMParticle effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(worldObj, "water_ball",
+			AMParticle effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "water_ball",
 					this.posX + ((rand.nextFloat() * 0.2) - 0.1f),
 					yPos,
 					this.posZ + ((rand.nextFloat() * 0.4) - 0.2f));
@@ -79,12 +79,12 @@ public class EntityWaterElemental extends EntityMob{
 	 */
 	@Override
 	public boolean isInWater(){
-		return this.worldObj.handleMaterialAcceleration(this.getEntityBoundingBox().expand(0.0D, -0.6000000238418579D, 0.0D), Material.WATER, this);
+		return this.world.handleMaterialAcceleration(this.getEntityBoundingBox().expand(0.0D, -0.6000000238418579D, 0.0D), Material.WATER, this);
 	}
 
 	@Override
 	public boolean getCanSpawnHere(){
-		if (!SpawnBlacklists.entityCanSpawnHere(this.getPosition(), worldObj, this))
+		if (!SpawnBlacklists.entityCanSpawnHere(this.getPosition(), world, this))
 			return false;
 		return super.getCanSpawnHere();
 	}

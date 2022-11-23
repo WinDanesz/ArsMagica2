@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -69,36 +70,35 @@ public class ItemLostJournal extends ItemWritableBook{
 	}
 	
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
 		if (worldIn.isRemote){
-			AMGuiHelper.OpenBookGUI(itemStackIn);
+			AMGuiHelper.OpenBookGUI(stack);
 		}
-		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+		return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
-
-		super.getSubItems(item, par2CreativeTabs, par3List);
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+		super.getSubItems(tab, items);
 
 		int sCount = 0;
 		for (Story s : StoryManager.INSTANCE.allStories()){
 			int meta = sCount << 16;
 			for (short i = 0; i < s.getNumParts(); ++i){
 				meta = sCount + i;
-				ItemStack stack = new ItemStack(item, 1, meta);
+				ItemStack stack = new ItemStack(this, 1, meta);
 				stack.setTagCompound(new NBTTagCompound());
 				s.WritePartToNBT(stack.getTagCompound(), i);
 				stack.getTagCompound().setString("title", s.getTitle());
-				par3List.add(stack);
+				items.add(stack);
 			}
 		}
 	}
 	
 	public ItemLostJournal registerAndName(String name) {
-		this.setUnlocalizedName(new ResourceLocation("arsmagica2", name).toString());
-		GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
+		this.setTranslationKey(new ResourceLocation("arsmagica2", name).toString());
+		//// TODO: registry GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
 		return this;
 	}
 }

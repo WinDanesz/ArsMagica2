@@ -1,16 +1,12 @@
 package am2.common.items;
 
-import java.util.List;
-
 import am2.common.buffs.BuffEffectManaRegen;
 import am2.common.defs.ItemDefs;
 import am2.common.extensions.EntityExtension;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -33,13 +29,14 @@ public class ItemManaPotion extends ItemArsMagica{
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, EnumHand hand){
-		EntityExtension props = EntityExtension.For(par3EntityPlayer);
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
+		EntityExtension props = EntityExtension.For(player);
 		if (props.getCurrentMana() < props.getMaxMana()){
-			par3EntityPlayer.setActiveHand(hand);
-			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, par1ItemStack);
+			player.setActiveHand(hand);
+			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 		}
-		return new ActionResult<ItemStack>(EnumActionResult.FAIL, par1ItemStack);
+		return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 	}
 
 
@@ -91,24 +88,24 @@ public class ItemManaPotion extends ItemArsMagica{
 	}
 
 	@Override
-	public EnumAction getItemUseAction(ItemStack par1ItemStack){
+	public EnumAction getItemUseAction(ItemStack stack){
 		return EnumAction.DRINK;
 	}
-	
+
 	@Override
-	public ItemStack onItemUseFinish(ItemStack par1ItemStack, World par2World, EntityLivingBase par3EntityPlayer){
-		par1ItemStack = new ItemStack(Items.GLASS_BOTTLE);
-		EntityExtension.For(par3EntityPlayer).setCurrentMana(EntityExtension.For(par3EntityPlayer).getCurrentMana() + getManaRestored());
+	public ItemStack onItemUseFinish(ItemStack stack, World par2World, EntityLivingBase player){
+		stack = new ItemStack(Items.GLASS_BOTTLE);
+		EntityExtension.For(player).setCurrentMana(EntityExtension.For(player).getCurrentMana() + getManaRestored());
 
 		if (!par2World.isRemote){
-			par3EntityPlayer.addPotionEffect(new BuffEffectManaRegen(getManaRegenDuration(), getManaRegenLevel()));
+			player.addPotionEffect(new BuffEffectManaRegen(getManaRegenDuration(), getManaRegenLevel()));
 		}
 
-		return par1ItemStack;
+		return stack;
 	}
 
 	@Override
-	public int getMaxItemUseDuration(ItemStack par1ItemStack){
+	public int getMaxItemUseDuration(ItemStack stack){
 		return 32;
 	}
 
@@ -116,11 +113,4 @@ public class ItemManaPotion extends ItemArsMagica{
 	public boolean getHasSubtypes(){
 		return false;
 	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
-		super.getSubItems(par1, par2CreativeTabs, par3List);
-	}
-
 }

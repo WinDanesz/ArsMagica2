@@ -89,7 +89,7 @@ public class Charm extends SpellComponent implements IRitualInteraction{
 			}
 		}else{
 			if (caster instanceof EntityPlayer){
-				((EntityPlayer)caster).addChatMessage(new TextComponentString("You cannot have any more summons."));
+				((EntityPlayer)caster).sendMessage(new TextComponentString("You cannot have any more summons."));
 			}
 			return true;
 		}

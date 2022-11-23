@@ -58,8 +58,8 @@ public class BlockWizardsChalk extends BlockAMSpecialRender{
 	}
 	
 	public BlockAM registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.toString());
-		GameRegistry.register(this, rl);
+		this.setTranslationKey(rl.toString());
+		// TODO: registry GameRegistry.register(this, rl);
 		return this;
 	}
 }

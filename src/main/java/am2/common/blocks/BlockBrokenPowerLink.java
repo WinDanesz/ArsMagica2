@@ -22,6 +22,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 public class BlockBrokenPowerLink extends BlockAMContainer{
 
 	public BlockBrokenPowerLink(){
@@ -34,9 +36,8 @@ public class BlockBrokenPowerLink extends BlockAMContainer{
 		return new TileEntityBrokenPowerLink();
 	}
 
-
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		if (ArsMagica2.proxy.getLocalPlayer() != null &&
 				ArsMagica2.proxy.getLocalPlayer().getItemStackFromSlot(EntityEquipmentSlot.HEAD) != null &&
 				(ArsMagica2.proxy.getLocalPlayer().getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemDefs.magitechGoggles)
@@ -60,11 +61,10 @@ public class BlockBrokenPowerLink extends BlockAMContainer{
 		return new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 	}
 
-	
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox,
-			List<AxisAlignedBB> collidingBoxes, Entity entityIn) {}
-	
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes,
+			@Nullable Entity entityIn, boolean isActualState) {}
+
 	@Override
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;

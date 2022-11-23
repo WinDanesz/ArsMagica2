@@ -35,7 +35,7 @@ public class RenderManaVortex extends Render<EntityManaVortex>{
 
 	@Override
 	public void doRender(EntityManaVortex var1, double var2, double var4, double var6, float var8, float var9){
-		if (var1 == null || !var1.worldObj.isRemote){
+		if (var1 == null || !var1.world.isRemote){
 			return;
 		}
 		GL11.glPushMatrix();

@@ -34,8 +34,8 @@ public class EntityAIChestDeposit extends EntityAIBase{
 	}
 
 	@Override
-	public boolean continueExecuting(){
-		return this.isDepositing || super.continueExecuting();
+	public boolean shouldContinueExecuting() {
+		return this.isDepositing || super.shouldContinueExecuting();
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class EntityAIChestDeposit extends EntityAIBase{
 		if (iLoc == null)
 			return;
 
-		TileEntity te = this.host.worldObj.getTileEntity(iLoc.toBlockPos());
+		TileEntity te = this.host.world.getTileEntity(iLoc.toBlockPos());
 		if (te == null || !(te instanceof IInventory)) return;
 
 		if (new AMVector3(this.host).distanceSqTo(iLoc) > 256){
@@ -71,7 +71,7 @@ public class EntityAIChestDeposit extends EntityAIBase{
 
 			if (this.depositCounter > 10){
 				ItemStack mergeStack = InventoryUtilities.getFirstStackInInventory(this.host.getBroomInventory()).copy();
-				int originalSize = mergeStack.stackSize;
+				int originalSize = mergeStack.getCount();
 				if (!InventoryUtilities.mergeIntoInventory(inventory, mergeStack, 1)){
 					if (te instanceof TileEntityChest){
 						TileEntityChest chest = (TileEntityChest)te;
@@ -90,7 +90,7 @@ public class EntityAIChestDeposit extends EntityAIBase{
 						}
 					}
 				}
-				InventoryUtilities.deductFromInventory(this.host.getBroomInventory(), mergeStack, originalSize - mergeStack.stackSize, null);
+				InventoryUtilities.deductFromInventory(this.host.getBroomInventory(), mergeStack, originalSize - mergeStack.getCount(), null);
 			}
 
 			if (this.depositCounter > 10 && (InventoryUtilities.isInventoryEmpty(this.host.getBroomInventory()) || !InventoryUtilities.canMergeHappen(this.host.getBroomInventory(), inventory))){

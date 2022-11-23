@@ -34,7 +34,7 @@ public class TileEntityFlickerControllerBase extends TileEntityAMPower implement
 
 	protected void setOperator(AbstractFlickerFunctionality operator){
 		if (this.operator != null){
-			this.operator.RemoveOperator(worldObj, this, PowerNodeRegistry.For(worldObj).checkPower(this, this.operator.PowerPerOperation()), nearbyList);
+			this.operator.RemoveOperator(world, this, PowerNodeRegistry.For(world).checkPower(this, this.operator.PowerPerOperation()), nearbyList);
 		}
 		this.operator = operator;
 		tickCounter = 0;
@@ -43,12 +43,12 @@ public class TileEntityFlickerControllerBase extends TileEntityAMPower implement
 	public void updateOperator(ItemStack stack){
 		if (stack == null || stack.getItem() != ItemDefs.flickerFocus)
 			return;
-		operator = ArsMagicaAPI.getFlickerFocusRegistry().getObjectById(stack.getItemDamage());
+		operator = null; // todo registry ArsMagicaAPI.getFlickerFocusRegistry().getObjectById(stack.getItemDamage());
 	}
 
 	public void scanForNearbyUpgrades(){
 		for (EnumFacing direction : EnumFacing.values()){
-			TileEntity te = worldObj.getTileEntity(pos.offset(direction));
+			TileEntity te = world.getTileEntity(pos.offset(direction));
 			if (te != null && te instanceof TileEntityFlickerHabitat){
 				nearbyList[direction.ordinal()] = ((TileEntityFlickerHabitat)te).getSelectedAffinity();
 			}
@@ -88,18 +88,18 @@ public class TileEntityFlickerControllerBase extends TileEntityAMPower implement
 
 		//if redstone powered, increment the tick counter (so that operator time still continues), but do nothing else.
 		//this allows a redstone signal to effectively turn off any flicker habitat.
-		if (worldObj.isBlockIndirectlyGettingPowered(pos) > 0){
+		if (world.getStrongPower(pos) > 0){
 			tickCounter++;
 			return;
 		}
 
 		//tick operator, if it exists
 		if (operator != null){
-			boolean powered = PowerNodeRegistry.For(worldObj).checkPower(this, operator.PowerPerOperation());
+			boolean powered = PowerNodeRegistry.For(world).checkPower(this, operator.PowerPerOperation());
 
 			//check which neighbors are not receiving power
 			//this allows individual upgrades to be turned off by providing them with a redstone signal.
-			Affinity unpoweredNeighbors[] = getUnpoweredNeighbors();
+			Affinity[] unpoweredNeighbors = getUnpoweredNeighbors();
 
 			if (tickCounter++ >= operator.TimeBetweenOperation(powered, unpoweredNeighbors)){
 				tickCounter = 0;
@@ -108,12 +108,12 @@ public class TileEntityFlickerControllerBase extends TileEntityAMPower implement
 						scanForNearbyUpgrades();
 						firstOp = false;
 					}
-					boolean success = operator.DoOperation(worldObj, this, powered, unpoweredNeighbors);
+					boolean success = operator.DoOperation(world, this, powered, unpoweredNeighbors);
 					if (success || operator.RequiresPower())
-						PowerNodeRegistry.For(worldObj).consumePower(this, PowerNodeRegistry.For(worldObj).getHighestPowerType(this), operator.PowerPerOperation());
+						PowerNodeRegistry.For(world).consumePower(this, PowerNodeRegistry.For(world).getHighestPowerType(this), operator.PowerPerOperation());
 					lastOpWasPowered = true;
 				}else if (lastOpWasPowered && operator.RequiresPower() && !powered){
-					operator.RemoveOperator(worldObj, this, powered, unpoweredNeighbors);
+					operator.RemoveOperator(world, this, powered, unpoweredNeighbors);
 					lastOpWasPowered = false;
 				}
 			}
@@ -124,7 +124,7 @@ public class TileEntityFlickerControllerBase extends TileEntityAMPower implement
 		Affinity[] aff = new Affinity[EnumFacing.values().length];
 		for (int i = 0; i < nearbyList.length; ++i){
 			EnumFacing dir = EnumFacing.values()[i];
-			if (nearbyList[i] == null || worldObj.isBlockIndirectlyGettingPowered(pos.offset(dir)) > 0){
+			if (nearbyList[i] == null || world.getStrongPower(pos.offset(dir)) > 0){
 				aff[i] = null;
 			}else{
 				aff[i] = nearbyList[i];
@@ -134,7 +134,7 @@ public class TileEntityFlickerControllerBase extends TileEntityAMPower implement
 	}
 
 	private Integer getFlagForOperator(AbstractFlickerFunctionality operator){
-		return ArsMagicaAPI.getFlickerFocusRegistry().getId(operator);
+		return null; // todo ArsMagicaAPI.getFlickerFocusRegistry().getId(operator);
 	}
 
 	public void setMetadata(AbstractFlickerFunctionality operator, byte[] meta){
@@ -174,7 +174,7 @@ public class TileEntityFlickerControllerBase extends TileEntityAMPower implement
 
 		NBTTagList sigilMetaStore = par1nbtTagCompound.getTagList("sigil_metadata_collection", Constants.NBT.TAG_COMPOUND);
 		for (int i = 0; i < sigilMetaStore.tagCount(); ++i){
-			NBTTagCompound sigilMetaEntry = (NBTTagCompound)sigilMetaStore.getCompoundTagAt(i);
+			NBTTagCompound sigilMetaEntry = sigilMetaStore.getCompoundTagAt(i);
 			Integer mask = sigilMetaEntry.getInteger("sigil_mask");
 			byte[] meta = sigilMetaEntry.getByteArray("sigil_meta");
 			sigilMetadata.put(mask, meta);

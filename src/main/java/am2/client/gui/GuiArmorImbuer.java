@@ -154,7 +154,7 @@ public class GuiArmorImbuer extends GuiContainer{
 						continue;
 					}
 					if (num == offset + 3) drawX--;
-					mc.renderEngine.bindTexture(new ResourceLocation(infusion.getRegistryName().getResourceDomain(), "textures/armorinfusions/" + infusion.getRegistryName().getResourcePath() + ".png"));
+					mc.renderEngine.bindTexture(new ResourceLocation(infusion.getRegistryName().getNamespace(), "textures/armorinfusions/" + infusion.getRegistryName().getPath() + ".png"));
 					drawInfusionIconAt(drawX, drawY, false);
 					
 					if (i >= drawX && i <= drawX + spriteWidth){
@@ -197,7 +197,7 @@ public class GuiArmorImbuer extends GuiContainer{
 						continue;
 					}
 					if (num == offset + 3) drawX--;
-					mc.renderEngine.bindTexture(new ResourceLocation(infusion.getRegistryName().getResourceDomain(), "textures/armorinfusions/" + infusion.getRegistryName().getResourcePath() + ".png"));
+					mc.renderEngine.bindTexture(new ResourceLocation(infusion.getRegistryName().getNamespace(), "textures/armorinfusions/" + infusion.getRegistryName().getPath() + ".png"));
 					if ((tierInfusion == null && infusion.getTier().ordinal() <= highestSelectedTier)){
 						if (tileEntity.isCreativeAllowed() || ArmorHelper.getArmorLevel(stack) >= ArmorHelper.getImbueCost(tier)){
 							drawInfusionIconAt(drawX, drawY, true);
@@ -208,7 +208,7 @@ public class GuiArmorImbuer extends GuiContainer{
 							}
 						}
 					}else if (tierInfusion == infusion){
-						mc.renderEngine.bindTexture(new ResourceLocation(infusion.getRegistryName().getResourceDomain(), "textures/armorinfusions/" + infusion.getRegistryName().getResourcePath() + ".png"));
+						mc.renderEngine.bindTexture(new ResourceLocation(infusion.getRegistryName().getNamespace(), "textures/armorinfusions/" + infusion.getRegistryName().getPath() + ".png"));
 						drawInfusionIconAt(drawX, drawY, true);
 						mc.renderEngine.bindTexture(new ResourceLocation("textures/misc/enchanted_item_glint.png"));
 						//SETUP
@@ -264,7 +264,7 @@ public class GuiArmorImbuer extends GuiContainer{
 		drawTexturedModalRect(l, i1, 0, 0, xSize, ySize);
 
 		if (hoverLines.size() > 0)
-			AMGuiHelper.drawHoveringText(hoverLines, i, j, fontRendererObj, width, height);
+			AMGuiHelper.drawHoveringText(hoverLines, i, j, fontRenderer, width, height);
 	}
 
 	private void drawInfusionIconAt(int x, int y, boolean active){

@@ -74,9 +74,9 @@ public class ParticleManagerClient extends ParticleManagerServer{
 		py -= 0.1000000014901161D;
 		pz -= MathHelper.sin(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
 		Vec3d vec3d = source.getLookVec().normalize();
-		px += vec3d.xCoord * 0.25D;
-		py += vec3d.yCoord * 0.25D;
-		pz += vec3d.zCoord * 0.25D;
+		px += vec3d.x * 0.25D;
+		py += vec3d.y * 0.25D;
+		pz += vec3d.z * 0.25D;
 		LightningBolt bolt = new LightningBolt(world, px, py, pz, xx, target.getEntityBoundingBox().minY + target.height / 2.0F, zz, world.rand.nextLong(), 6, 0.3F, 6);
 
 		bolt.defaultFractal();
@@ -138,9 +138,9 @@ public class ParticleManagerClient extends ParticleManagerServer{
 		py -= 0.1000000014901161D;
 		pz -= MathHelper.sin(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
 		Vec3d vec3d = source.getLookVec().normalize();
-		px += vec3d.xCoord * 0.25D;
-		py += vec3d.yCoord * 0.25D;
-		pz += vec3d.zCoord * 0.25D;
+		px += vec3d.x * 0.25D;
+		py += vec3d.y * 0.25D;
+		pz += vec3d.z * 0.25D;
 
 		AMBeam fx = new AMBeam(world, px, py, pz, xx, target.getEntityBoundingBox().minY + target.height / 2.0F, zz);
 		fx.setRGBColor(color);
@@ -173,7 +173,7 @@ public class ParticleManagerClient extends ParticleManagerServer{
 
 	@Override
 	public Object BeamFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ, int color){
-		if (!(source instanceof EntityPlayer) || source == Minecraft.getMinecraft().thePlayer){
+		if (!(source instanceof EntityPlayer) || source == Minecraft.getMinecraft().player){
 			return BeamFromPointToPoint(world, source.posX, source.posY, source.posZ, endX, endY, endZ, color);
 		}else{
 			return BeamFromPointToPoint(world, source.posX, source.posY + source.getEyeHeight() - 0.2f, source.posZ, endX, endY, endZ, color);
@@ -198,9 +198,9 @@ public class ParticleManagerClient extends ParticleManagerServer{
 		py -= 0.1000000014901161D;
 		pz -= MathHelper.sin(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
 		Vec3d vec3d = source.getLookVec().normalize();
-		px += vec3d.xCoord * 0.25D;
-		py += vec3d.yCoord * 0.25D;
-		pz += vec3d.zCoord * 0.25D;
+		px += vec3d.x * 0.25D;
+		py += vec3d.y * 0.25D;
+		pz += vec3d.z * 0.25D;
 		AMRibbon ribbon = new AMRibbon(world, 0.5f, 0.05f, px, py, pz);
 
 		Minecraft.getMinecraft().effectRenderer.addEffect(ribbon);
@@ -396,7 +396,7 @@ public class ParticleManagerClient extends ParticleManagerServer{
 
 	@Override
 	public void spawnAuraParticles(EntityLivingBase ent){
-		if (!ent.worldObj.isRemote) return;
+		if (!ent.world.isRemote) return;
 
 		int particleIndex = 15;
 		int particleBehaviour = 0;
@@ -408,7 +408,7 @@ public class ParticleManagerClient extends ParticleManagerServer{
 		int particleQuantity = 2;
 		float particleSpeed = 0.02f;
 
-		if (Minecraft.getMinecraft().thePlayer == ent){
+		if (Minecraft.getMinecraft().player == ent){
 			particleIndex = ArsMagica2.config.getAuraIndex();
 			particleBehaviour = ArsMagica2.config.getAuraBehaviour();
 			particleScale = ArsMagica2.config.getAuraScale() / 10;
@@ -434,36 +434,36 @@ public class ParticleManagerClient extends ParticleManagerServer{
 		if (particleIndex == 31) //fix radiant particle's scaling issues...
 			particleScale /= 10;
 
-		if (ent.worldObj.isRemote && ent instanceof EntityPlayer && ArsMagica2.proxy.playerTracker.hasAA((EntityPlayer)ent)){
-			if (Minecraft.getMinecraft().thePlayer != ent || Minecraft.getMinecraft().gameSettings.thirdPersonView > 0){
+		if (ent.world.isRemote && ent instanceof EntityPlayer && ArsMagica2.proxy.playerTracker.hasAA((EntityPlayer)ent)){
+			if (Minecraft.getMinecraft().player != ent || Minecraft.getMinecraft().gameSettings.thirdPersonView > 0){
 				if (AMParticle.particleTypes[particleIndex].startsWith("lightning_bolts")){
 					int type = Integer.parseInt(new String(new char[]{AMParticle.particleTypes[particleIndex].charAt(AMParticle.particleTypes[particleIndex].length() - 1)}));
-					if (ent.worldObj.rand.nextInt(100) < 90){
-						BoltFromPointToPoint(ent.worldObj,
-								ent.posX + (ent.worldObj.rand.nextFloat() - 0.5f),
-								ent.posY + ent.getEyeHeight() - ent.height + (ent.worldObj.rand.nextFloat() * ent.height),
-								ent.posZ + (ent.worldObj.rand.nextFloat() - 0.5f),
-								ent.posX + (ent.worldObj.rand.nextFloat() - 0.5f),
-								ent.posY + ent.getEyeHeight() - ent.height + (ent.worldObj.rand.nextFloat() * ent.height),
-								ent.posZ + (ent.worldObj.rand.nextFloat() - 0.5f),
+					if (ent.world.rand.nextInt(100) < 90){
+						BoltFromPointToPoint(ent.world,
+								ent.posX + (ent.world.rand.nextFloat() - 0.5f),
+								ent.posY + ent.getEyeHeight() - ent.height + (ent.world.rand.nextFloat() * ent.height),
+								ent.posZ + (ent.world.rand.nextFloat() - 0.5f),
+								ent.posX + (ent.world.rand.nextFloat() - 0.5f),
+								ent.posY + ent.getEyeHeight() - ent.height + (ent.world.rand.nextFloat() * ent.height),
+								ent.posZ + (ent.world.rand.nextFloat() - 0.5f),
 								type, -1);
 					}else{
-						BoltFromPointToPoint(ent.worldObj,
+						BoltFromPointToPoint(ent.world,
 								ent.posX,
 								ent.posY + ent.getEyeHeight() - 0.4,
 								ent.posZ,
-								ent.posX + (ent.worldObj.rand.nextFloat() * 10 - 5),
-								ent.posY + (ent.worldObj.rand.nextFloat() * 10 - 5),
-								ent.posZ + (ent.worldObj.rand.nextFloat() * 10 - 5),
+								ent.posX + (ent.world.rand.nextFloat() * 10 - 5),
+								ent.posY + (ent.world.rand.nextFloat() * 10 - 5),
+								ent.posZ + (ent.world.rand.nextFloat() * 10 - 5),
 								type, -1);
 					}
 				}else{
 					int offset = 0;
 					for (int i = 0; i < particleQuantity; ++i){
-						AMParticle effect = spawn(ent.worldObj, AMParticle.particleTypes[particleIndex],
-								ent.posX + (ent.worldObj.rand.nextFloat() - 0.5f),
-								ent.posY + ent.getEyeHeight() - 0.5f + offset - (ent.worldObj.rand.nextFloat() * 0.5),
-								ent.posZ + (ent.worldObj.rand.nextFloat() - 0.5f));
+						AMParticle effect = spawn(ent.world, AMParticle.particleTypes[particleIndex],
+								ent.posX + (ent.world.rand.nextFloat() - 0.5f),
+								ent.posY + ent.getEyeHeight() - 0.5f + offset - (ent.world.rand.nextFloat() * 0.5),
+								ent.posZ + (ent.world.rand.nextFloat() - 0.5f));
 						if (effect != null){
 							effect.setIgnoreMaxAge(false);
 							effect.setMaxAge(40);
@@ -471,7 +471,7 @@ public class ParticleManagerClient extends ParticleManagerServer{
 							effect.SetParticleAlpha(particleAlpha);
 							if (!particleDefaultColor){
 								if (particleRandomColor){
-									effect.setRGBColorF(ent.worldObj.rand.nextFloat(), ent.worldObj.rand.nextFloat(), ent.worldObj.rand.nextFloat());
+									effect.setRGBColorF(ent.world.rand.nextFloat(), ent.world.rand.nextFloat(), ent.world.rand.nextFloat());
 								}else{
 									effect.setRGBColorI(particleColor);
 								}
@@ -514,18 +514,18 @@ public class ParticleManagerClient extends ParticleManagerServer{
 
 	@Override
 	public void spawnBuffParticles(EntityLivingBase entityliving){
-		World world = entityliving.worldObj;
+		World world = entityliving.world;
 
 		if (!world.isRemote) return;
 
-		if (entityliving == Minecraft.getMinecraft().thePlayer){
+		if (entityliving == Minecraft.getMinecraft().player){
 			if (entityliving.isPotionActive(PotionEffectsDefs.TRUE_SIGHT) && entityliving.ticksExisted % 20 == 0){
 				int radius = 5;
 				for (int i = -radius; i <= radius; ++i){
 					for (int j = -radius; j <= radius; ++j){
 						for (int k = -radius; k <= radius; ++k){
-							if (entityliving.worldObj.isAirBlock(entityliving.getPosition().add(i, j, k))
-							 && entityliving.worldObj.getLightFor(EnumSkyBlock.BLOCK, entityliving.getPosition().add(i, j, k)) <= 7){
+							if (entityliving.world.isAirBlock(entityliving.getPosition().add(i, j, k))
+							 && entityliving.world.getLightFor(EnumSkyBlock.BLOCK, entityliving.getPosition().add(i, j, k)) <= 7){
 								AMParticle effect = spawn(world, "hr_sparkles_1",
 										(int)entityliving.posX - 1 + i + (world.rand.nextDouble() * 3),
 										(int)entityliving.posY - 1 + j + (world.rand.nextDouble() * 3),
@@ -560,12 +560,12 @@ public class ParticleManagerClient extends ParticleManagerServer{
 		case 2: //sink
 			return new ParticleFloatUpward(effect, 0.01f, -0.03f * modifier, 1, false);
 		case 3: //orbit
-			return new ParticleOrbitPoint(effect, location.xCoord, location.yCoord, location.zCoord, 1, false).SetOrbitSpeed(0.05f * modifier);
+			return new ParticleOrbitPoint(effect, location.x, location.y, location.z, 1, false).SetOrbitSpeed(0.05f * modifier);
 		case 4: //arc
-			return new ParticleArcToPoint(effect, 1, location.xCoord, location.yCoord, location.zCoord, false).generateControlPoints().SetSpeed(0.02f * modifier);
+			return new ParticleArcToPoint(effect, 1, location.x, location.y, location.z, false).generateControlPoints().SetSpeed(0.02f * modifier);
 		case 5: //flee
 			//return new ParticleFleePoint(effect, location.add(new AMVector3(0.5, 0.5, 0.5)), 0.02f * modifier, 1.5f, 1, false);
-			return new ParticleMoveOnHeading(effect, effect.getWorldObj().rand.nextInt(360), 0, 0.02f * modifier, 1, false);
+			return new ParticleMoveOnHeading(effect, effect.getWorld().rand.nextInt(360), 0, 0.02f * modifier, 1, false);
 		case 6: //forward
 			if ((meta & ~0x8) == 3)
 				meta &= ~0x2;

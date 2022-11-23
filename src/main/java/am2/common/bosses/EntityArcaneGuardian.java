@@ -1,7 +1,5 @@
 package am2.common.bosses;
 
-import am2.api.ArsMagicaAPI;
-import am2.api.affinity.Affinity;
 import am2.common.bosses.ai.EntityAICastSpell;
 import am2.common.bosses.ai.EntityAIDispel;
 import am2.common.bosses.ai.ISpellCastCallback;
@@ -11,6 +9,7 @@ import am2.common.packet.AMNetHandler;
 import am2.common.utils.NPCSpells;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MultiPartEntityPart;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -56,7 +55,7 @@ public class EntityArcaneGuardian extends AM2Boss{
 
 		updateRotations();
 
-		if (!worldObj.isRemote){
+		if (!world.isRemote){
 			int eid = this.dataManager.get(DW_TARGET_ID);
 			int tid = -1;
 			if (this.getAttackTarget() != null){
@@ -100,7 +99,7 @@ public class EntityArcaneGuardian extends AM2Boss{
 
 	@Override
 	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2){
-		if (par1DamageSource.getSourceOfDamage() == null){
+		if (par1DamageSource.getTrueSource() == null){
 			return super.attackEntityFrom(par1DamageSource, par2);
 		}
 
@@ -111,7 +110,7 @@ public class EntityArcaneGuardian extends AM2Boss{
 	}
 
 	private boolean checkRuneRetaliation(DamageSource damagesource){
-		Entity source = damagesource.getSourceOfDamage();
+		Entity source = damagesource.getTrueSource();
 		if (source instanceof EntityArcaneGuardian) {
 			return true;
 		}
@@ -126,7 +125,7 @@ public class EntityArcaneGuardian extends AM2Boss{
 		float targetRuneRotationY = (float)angle;
 
 		if (isWithin(runeRotationY, targetRuneRotationY, 0.5f)){
-			if (this.getDistanceSqToEntity(source) < 9){
+			if (this.getDistanceSq(source) < 9){
 				double speed = 2.5;
 				double vertSpeed = 0.325;
 
@@ -137,7 +136,7 @@ public class EntityArcaneGuardian extends AM2Boss{
 				double radians = angle;
 
 				if (source instanceof EntityPlayer){
-					AMNetHandler.INSTANCE.sendVelocityAddPacket(source.worldObj, (EntityLivingBase)source, speed * Math.cos(radians), vertSpeed, speed * Math.sin(radians));
+					AMNetHandler.INSTANCE.sendVelocityAddPacket(source.world, (EntityLivingBase)source, speed * Math.cos(radians), vertSpeed, speed * Math.sin(radians));
 				}
 				source.motionX = (speed * Math.cos(radians));
 				source.motionZ = (speed * Math.sin(radians));
@@ -162,7 +161,7 @@ public class EntityArcaneGuardian extends AM2Boss{
 	public Entity getTarget(){
 		int eid = this.dataManager.get(DW_TARGET_ID);
 		if (eid == -1) return null;
-		return this.worldObj.getEntityByID(eid);
+		return this.world.getEntityByID(eid);
 	}
 
 	public float getRuneRotationZ(){
@@ -189,7 +188,7 @@ public class EntityArcaneGuardian extends AM2Boss{
 	@Override
 	public void setCurrentAction(BossActions action){
 		super.setCurrentAction(action);
-		if (!worldObj.isRemote){
+		if (!world.isRemote){
 			AMNetHandler.INSTANCE.sendActionUpdateToAllAround(this);
 		}
 	}
@@ -207,7 +206,7 @@ public class EntityArcaneGuardian extends AM2Boss{
 		int i = rand.nextInt(4);
 
 		for (int j = 0; j < i; j++){
-			this.entityDropItem(new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ARCANE)), 0.0f);
+			// todo this.entityDropItem(new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ARCANE)), 0.0f);
 		}
 
 		i = rand.nextInt(10);
@@ -221,7 +220,7 @@ public class EntityArcaneGuardian extends AM2Boss{
 	public void fall(float distance, float damageMultiplier) {}
 
 	@Override
-	protected SoundEvent getHurtSound(){
+	protected SoundEvent getHurtSound(DamageSource damageSource) {
 		return AMSounds.ARCANE_GUARDIAN_HIT;
 	}
 
@@ -244,4 +243,5 @@ public class EntityArcaneGuardian extends AM2Boss{
 	protected Color getBarColor() {
 		return Color.GREEN;
 	}
+
 }

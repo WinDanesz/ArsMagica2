@@ -15,6 +15,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.*;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.IForgeRegistryInternal;
+import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraftforge.registries.RegistryManager;
+
+import javax.annotation.Nullable;
 
 public class ArsMagicaAPI {
 	
@@ -51,12 +58,12 @@ public class ArsMagicaAPI {
 	public static final IAttribute burnoutReductionRate = new RangedAttribute(null, "am2.burnoutReduction", 1.0f, 0.1f, 2.0f).setDescription("Burnout Reduction Rate").setShouldWatch(true);
 
 	
-	public static FMLControlledNamespacedRegistry<Affinity> getAffinityRegistry() {return (FMLControlledNamespacedRegistry<Affinity>)AFFINITY_REGISTRY;}
-	public static FMLControlledNamespacedRegistry<AbstractAffinityAbility> getAffinityAbilityRegistry() {return (FMLControlledNamespacedRegistry<AbstractAffinityAbility>)ABILITY_REGISTRY;}
-	public static FMLControlledNamespacedRegistry<ArmorImbuement> getArmorImbuementRegistry() {return (FMLControlledNamespacedRegistry<ArmorImbuement>)IMBUEMENTS_REGISTRY;}
-	public static FMLControlledNamespacedRegistry<AbstractSpellPart> getSpellRegistry() {return (FMLControlledNamespacedRegistry<AbstractSpellPart>)SPELL_REGISTRY;}
-	public static FMLControlledNamespacedRegistry<Skill> getSkillRegistry() {return (FMLControlledNamespacedRegistry<Skill>)SKILL_REGISTRY;}
-	public static FMLControlledNamespacedRegistry<AbstractFlickerFunctionality> getFlickerFocusRegistry() {return (FMLControlledNamespacedRegistry<AbstractFlickerFunctionality>)FLICKER_FOCUS_REGISTRY;}
+	public static IForgeRegistry<Affinity> getAffinityRegistry() {return (IForgeRegistry<Affinity>)AFFINITY_REGISTRY;}
+	public static IForgeRegistry<AbstractAffinityAbility> getAffinityAbilityRegistry() {return (IForgeRegistry<AbstractAffinityAbility>)ABILITY_REGISTRY;}
+	public static IForgeRegistry<ArmorImbuement> getArmorImbuementRegistry() {return (IForgeRegistry<ArmorImbuement>)IMBUEMENTS_REGISTRY;}
+	public static IForgeRegistry<AbstractSpellPart> getSpellRegistry() {return (IForgeRegistry<AbstractSpellPart>)SPELL_REGISTRY;}
+	public static IForgeRegistry<Skill> getSkillRegistry() {return (IForgeRegistry<Skill>)SKILL_REGISTRY;}
+	public static IForgeRegistry<AbstractFlickerFunctionality> getFlickerFocusRegistry() {return (IForgeRegistry<AbstractFlickerFunctionality>)FLICKER_FOCUS_REGISTRY;}
 	
 	/**
 	 * Enable Tier 4, call in static{} for change to take effect.
@@ -93,27 +100,28 @@ public class ArsMagicaAPI {
 		static final ObjectCallbacks<Skill> SKILL = new ObjectCallbacks<>();
 		static final ObjectCallbacks<AbstractFlickerFunctionality> FLICKER_FOCUS = new ObjectCallbacks<>();
 
+
 		@Override
-		public void onCreate(Map<ResourceLocation, ?> slaveset, BiMap<ResourceLocation, ? extends IForgeRegistry<?>> registries) {
+		public void onAdd(IForgeRegistryInternal<T> owner, RegistryManager stage, int id, T obj, @Nullable T oldObj) {
 
 		}
 
 		@Override
-		public void onClear(IForgeRegistry<T> is, Map<ResourceLocation, ?> slaveset) {
+		public void onClear(IForgeRegistryInternal<T> owner, RegistryManager stage) {
 
 		}
 
 		@Override
-		public void onAdd(T obj, int id, Map<ResourceLocation, ?> slaveset) {
+		public void onCreate(IForgeRegistryInternal<T> owner, RegistryManager stage) {
 
 		}
 	}
     
     public static class SpellCallbacks extends ObjectCallbacks<AbstractSpellPart> {
-
-		@Override
-		public void onAdd(AbstractSpellPart ability, int id, Map<ResourceLocation, ?> slaves) {
-		}
+//
+//		@Override
+//		public void onAdd(AbstractSpellPart ability, int id, Map<ResourceLocation, ?> slaves) {
+//		}
 		
 	}
 

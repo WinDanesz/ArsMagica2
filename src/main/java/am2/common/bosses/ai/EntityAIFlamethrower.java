@@ -22,7 +22,7 @@ public class EntityAIFlamethrower extends EntityAIBase{
 	}
 
 	@Override
-	public boolean continueExecuting(){
+	public boolean shouldContinueExecuting(){
 		if (host.getAttackTarget() == null || host.getAttackTarget().isDead || ((IArsMagicaBoss)host).getTicksInCurrentAction() > 80){
 			this.cooldownTicks = 40;
 			((IArsMagicaBoss)host).setCurrentAction(BossActions.IDLE);
@@ -33,11 +33,11 @@ public class EntityAIFlamethrower extends EntityAIBase{
 
 	@Override
 	public void updateTask(){
-		if (host.getDistanceSqToEntity(host.getAttackTarget()) < 64){
+		if (host.getDistanceSq(host.getAttackTarget()) < 64){
 			if (((IArsMagicaBoss)host).getCurrentAction() != BossActions.LONG_CASTING)
 				((IArsMagicaBoss)host).setCurrentAction(BossActions.LONG_CASTING);
 			host.getLookHelper().setLookPositionWithEntity(host.getAttackTarget(), 10, 10);
-			host.getNavigator().clearPathEntity();
+			host.getNavigator().clearPath();
 		}else{
 			double deltaZ = host.getAttackTarget().posZ - host.posZ;
 			double deltaX = host.getAttackTarget().posX - host.posX;

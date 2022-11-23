@@ -51,14 +51,14 @@ public class GuiSpellBook extends GuiContainer{
 			int maxWidth = 120;
 			int line = 1;
 			for (String s : nameParts){
-				int width = fontRendererObj.getStringWidth(s);
+				int width = fontRenderer.getStringWidth(s);
 				if (X + width > maxWidth && line == 1){
-					Y += fontRendererObj.FONT_HEIGHT;
+					Y += fontRenderer.FONT_HEIGHT;
 					line++;
 					X = 37;
 				}
-				fontRendererObj.drawString(s.replace("\247b", ""), X, Y, 0x404040);
-				X += fontRendererObj.getStringWidth(s + " ");
+				fontRenderer.drawString(s.replace("\247b", ""), X, Y, 0x404040);
+				X += fontRenderer.getStringWidth(s + " ");
 			}
 		}
 

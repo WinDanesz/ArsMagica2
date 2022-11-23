@@ -86,7 +86,7 @@ public class AffinityShiftUtils {
 			parts.sort(Comparator.naturalOrder());
 			for (AbstractSpellPart part : parts) {
 				float __multiplier = 0.1F;
-				Skill skill = ArsMagicaAPI.getSkillRegistry().getObject(part.getRegistryName());
+				Skill skill = ArsMagicaAPI.getSkillRegistry().getValue(part.getRegistryName());
 				if (skill != null) {
 					SkillPoint point = skill.getPoint();
 					if (point.getTier() > 0) {

@@ -33,6 +33,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -49,7 +50,7 @@ public class Grow extends SpellComponent{
 
 		IBlockState block = world.getBlockState(pos);
 
-		BonemealEvent event = new BonemealEvent(DummyEntityPlayer.fromEntityLiving(caster), world, pos, world.getBlockState(pos));
+		BonemealEvent event = new BonemealEvent(DummyEntityPlayer.fromEntityLiving(caster), world, pos, world.getBlockState(pos), EnumHand.MAIN_HAND, DummyEntityPlayer.fromEntityLiving(caster).getHeldItemMainhand());
 		if (MinecraftForge.EVENT_BUS.post(event)){
 			return false;
 		}

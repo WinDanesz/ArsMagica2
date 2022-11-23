@@ -80,7 +80,7 @@ public class PageMultiblock extends CompendiumPage<IMultiblock> {
 		int cy = posY + 92;
 		String label = String.format("%s: %s", I18n.format("am2.gui.layer"), curLayer == -1 ? I18n.format("am2.gui.all") : "" + curLayer);
 
-		mc.fontRendererObj.drawString(label, cx - mc.fontRendererObj.getStringWidth(label) / 2, cy - 90, 0x000000);
+		mc.fontRenderer.drawString(label, cx - mc.fontRenderer.getStringWidth(label) / 2, cy - 90, 0x000000);
 
 		GlStateManager.pushMatrix();
 		GlStateManager.pushAttrib();

@@ -20,7 +20,7 @@ import am2.common.utils.MathUtilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.boss.EntityDragonPart;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -59,8 +59,6 @@ public class Beam extends SpellShape {
 		} else if (mop.typeOfHit == RayTraceResult.Type.ENTITY) {
 			if (shouldApplyEffectEntity && !world.isRemote) {
 				Entity e = mop.entityHit;
-				if (e instanceof EntityDragonPart && ((EntityDragonPart) e).entityDragonObj instanceof EntityLivingBase)
-					e = (EntityLivingBase) ((EntityDragonPart) e).entityDragonObj;
 				result = spell.applyComponentsToEntity(world, caster, e);
 				if (result != SpellCastResult.SUCCESS) {
 					return result;
@@ -71,7 +69,7 @@ public class Beam extends SpellShape {
 			spellVec = beamHitVec;
 		} else {
 			if (shouldApplyEffectBlock && !world.isRemote) {
-				result = spell.applyComponentsToGround(world, caster, mop.getBlockPos(), mop.sideHit, mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord);
+				result = spell.applyComponentsToGround(world, caster, mop.getBlockPos(), mop.sideHit, mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
 				if (result != SpellCastResult.SUCCESS) {
 					return result;
 				}
@@ -93,13 +91,13 @@ public class Beam extends SpellShape {
 				if (!beam.isAlive() || caster.getDistanceSq(beam.getPosX(), beam.getPosY(), beam.getPosZ()) > 4) {
 					beams.remove(caster.getEntityId());
 				} else {
-					beam.setBeamLocationAndTarget(startX, startY, startZ, beamHitVec.xCoord, beamHitVec.yCoord, beamHitVec.zCoord);
+					beam.setBeamLocationAndTarget(startX, startY, startZ, beamHitVec.x, beamHitVec.y, beamHitVec.z);
 				}
 			} else {
 				if (affinity.equals(Affinity.LIGHTNING)) {
-					ArsMagica2.proxy.particleManager.BoltFromEntityToPoint(world, caster, beamHitVec.xCoord, beamHitVec.yCoord, beamHitVec.zCoord, 1, color == -1 ? affinity.getColor() : color);
+					ArsMagica2.proxy.particleManager.BoltFromEntityToPoint(world, caster, beamHitVec.x, beamHitVec.y, beamHitVec.z, 1, color == -1 ? affinity.getColor() : color);
 				} else {
-					beam = (AMBeam) ArsMagica2.proxy.particleManager.BeamFromEntityToPoint(world, caster, beamHitVec.xCoord, beamHitVec.yCoord, beamHitVec.zCoord, color == -1 ? affinity.getColor() : color);
+					beam = (AMBeam) ArsMagica2.proxy.particleManager.BeamFromEntityToPoint(world, caster, beamHitVec.x, beamHitVec.y, beamHitVec.z, color == -1 ? affinity.getColor() : color);
 					if (beam != null) {
 						if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
 							beam.setFirstPersonPlayerCast();
@@ -108,7 +106,7 @@ public class Beam extends SpellShape {
 				}
 			}
 			for (int i = 0; i < ArsMagica2.config.getGFXLevel() + 1; ++i) {
-				AMParticle particle = (AMParticle) ArsMagica2.proxy.particleManager.spawn(world, AMParticleDefs.getParticleForAffinity(affinity), beamHitVec.xCoord, beamHitVec.yCoord, beamHitVec.zCoord);
+				AMParticle particle = (AMParticle) ArsMagica2.proxy.particleManager.spawn(world, AMParticleDefs.getParticleForAffinity(affinity), beamHitVec.x, beamHitVec.y, beamHitVec.z);
 				if (particle != null) {
 					particle.setMaxAge(2);
 					particle.setParticleScale(0.1f);
@@ -121,7 +119,7 @@ public class Beam extends SpellShape {
 		}
 
 		if (result != null && spellVec != null && (mop.typeOfHit == RayTraceResult.Type.ENTITY ? shouldApplyEffectEntity : shouldApplyEffectBlock)) {
-			return spell.execute(world, caster, target, spellVec.xCoord, spellVec.yCoord, spellVec.zCoord, mop != null ? mop.sideHit : null);
+			return spell.execute(world, caster, target, spellVec.x, spellVec.y, spellVec.z, mop != null ? mop.sideHit : null);
 		} else {
 			return SpellCastResult.SUCCESS;
 		}

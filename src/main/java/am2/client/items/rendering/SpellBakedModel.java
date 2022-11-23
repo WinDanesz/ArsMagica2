@@ -1,13 +1,6 @@
 package am2.client.items.rendering;
 
-import java.util.List;
-
-import javax.vecmath.Matrix4f;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -16,17 +9,22 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import net.minecraftforge.common.model.TRSRTransformation;
+import org.apache.commons.lang3.tuple.Pair;
 
-public class SpellBakedModel implements IPerspectiveAwareModel{
+import javax.vecmath.Matrix4f;
+import java.util.List;
+
+public class SpellBakedModel extends PerspectiveMapWrapper {
 	
 	private IBakedModel parent;
 	private ImmutableMap<TransformType, TRSRTransformation> transforms;
 	
 	 public SpellBakedModel(IBakedModel parent, ImmutableMap<TransformType, TRSRTransformation> transforms) {
-		 this.parent = parent;
-		 this.transforms = transforms;
+		super(parent,transforms);
+		this.parent = parent;
+		this.transforms = transforms;
 	 }
 
 	@Override
@@ -67,7 +65,7 @@ public class SpellBakedModel implements IPerspectiveAwareModel{
 
 	@Override
 	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
-		return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, cameraTransformType);
+		return PerspectiveMapWrapper.handlePerspective(this, transforms, cameraTransformType);
 	}
 
 }

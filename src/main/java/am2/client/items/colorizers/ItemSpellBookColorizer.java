@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 public class ItemSpellBookColorizer implements IItemColor{
 
 	@Override
-	public int getColorFromItemstack(ItemStack stack, int tintIndex) {
+	public int colorMultiplier(ItemStack stack, int tintIndex) {
 		int meta = stack.getItemDamage();
 		switch (meta) {
 		case 0: // brown

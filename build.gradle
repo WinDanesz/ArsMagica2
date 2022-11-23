@@ -1,113 +1,328 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+import groovy.json.*
+
 buildscript {
     repositories {
+        maven { url = 'https://maven.minecraftforge.net' } // old url was 'https://files.minecraftforge.net/maven'
         jcenter()
+        mavenCentral()
+        maven { url = "https://ajoberstar.org/bintray-backup/" }
         maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            name = 'FancyGradle'
+            url = 'https://gitlab.com/api/v4/projects/26758973/packages/maven'
         }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-	}
+    }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
-        classpath 'com.matthewprenger:CurseGradle:1.0-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:5.+'
+        classpath 'org.ajoberstar.grgit:grgit-gradle:3.1.1'
+        classpath group: 'wtf.gofancy.fancygradle', name: 'wtf.gofancy.fancygradle.gradle.plugin', version: '1.1.2-0'
+    }
+
+    repositories.each {
+        if (it instanceof MavenArtifactRepository && it.url.toString() == "https://files.minecraftforge.net/maven") {
+            it.url = "https://maven.minecraftforge.net"
+        }
     }
 }
-repositories {
-    maven {
-        url = "http://dvs1.progwml6.com/files/maven"
-    }
-}
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'com.matthewprenger.cursegradle'
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'idea'
+apply plugin: 'maven-publish'
+apply plugin: org.ajoberstar.grgit.gradle.GrgitPlugin
+apply plugin: 'wtf.gofancy.fancygradle'
 
-ext.configFile = file('build.properties')
-ext.config = parseConfig(configFile)
+//// Project Settings ////
+// http://maven.apache.org/guides/mini/guide-naming-conventions.html
 
-version = "${config.version}-${config.build_number}"
-group= "am2" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "ArsMagica2"
+group = "${project.maven_group}" // groupId
+archivesBaseName = "${project.jar_name}" // artifactId - modid
+version = "${project.mc_version}-${project.mod_version}"
 
+//// Project Settings ////
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    version = "1.10.2-12.18.3.2185"
-    runDir = "run"
-    replace 'GRADLE:BUILD', config.build_number
-    replace 'GRADLE:VERSION', config.version
-    replaceIn 'ArsMagica2.java'
-	//replace '${version}', project.version
-    mappings = "snapshot_20161111"  //uncomment this line to use newest Forge mappings. Needs a lot of rework.
+    // The mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   Snapshot are built nightly.
+    // stable_#            Stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not always work.
+    // Simply re-run your setup task after changing the mappings to update your workspace.
+    //mappings channel: 'snapshot', version: '20171003-1.12'
+    mappings channel: project.mappings_channel, version: "${project.mappings_version}-${project.mappings_mc_version}"
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'info'
+        }
+
+        server {
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'info'
+        }
+    }
 }
 
-jar {
-	manifest {
-		attributes 'FMLCorePlugin' : 'am2.common.asm.Preloader'
-		attributes 'FMLCorePluginContainsFMLMod' : 'true'
-	}
+repositories {
+    maven {
+        name 'Curseforge Maven'
+        url 'https://minecraft.curseforge.com/api/maven/'
+    }
+    maven {
+        url 'https://maven.blamejared.com'
+    }
+    maven {
+        url "https://www.cursemaven.com"
+    }
+    maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 maven"
+        url = "http://dvs1.progwml6.com/files/maven"
+        allowInsecureProtocol = true
+    }
+    flatDir {
+        // location for sources
+        dirs 'libs'
+    }
 }
 
 dependencies {
-	deobfCompile "mezz.jei:jei_${config.mcversion}:${config.jei_version}:api"
-	runtime "mezz.jei:jei_${config.mcversion}:${config.jei_version}"
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+    //// MC version ////
+    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
+    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
+    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
+    minecraft "net.minecraftforge:forge:${project.mc_version}-${project.forge_version}"
+    //// MC version ////
 
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    // CurseForge Maven
+    // Currently unused
+    // CurseForge Maven usage: https://support.curseforge.com/en/support/solutions/articles/9000197321-curseforge-api
+    // Format: compile '{projectSlug}:{mavenArtifact}:{mavenVersion}:{projectFileNameTag}'
 
+    // CurseMaven - https://www.cursemaven.com/
+    // Format: curse.maven:<descriptor>-<projectid>:<fileid>
+    // Fields:
+    // curse.maven -> Required. Marks the dependency to be resolved by the curse maven website.
+    // <descriptor> -> Can be anything you want. This file downloaded will have this in it's name, so it's good to use this to show which files are what. A good practice would be to have this as the project slug.
+    // <projectid> -> The project id of the file you want to add as a dependency.
+    // <fileid> -> The file id of the file you want to add as a dependency.
+    // Test link: https://www.cursemaven.com/test/<projectid>/<fileid>/<Classifier?>
+
+    //// Dependencies ////
+
+    //// Dependencies ////
 }
 
-processResources
-{
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+//// Project manifest data ////
 
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
-
-task incrementBuildNumber(dependsOn: 'reobfJar') {
-	doLast {
-		config.build_number = (config.build_number.toString().toInteger()) + 1
-		configFile.withWriter {
-			config.toProperties().store(it, "")
-		}
-	}
-}
-
-def parseConfig(File config) {
-	config.withReader {
-		def prop = new Properties()
-		prop.load(it)
-		return (new ConfigSlurper().parse(prop))
-	}
-}
-
+// Example for how to get properties into the manifest for reading by the runtime..
 jar {
-	archiveName = "${baseName}-${version}.jar"
+    manifest {
+        attributes([
+                "Maven-Artifact": "${project.maven_group}:${project.archivesBaseName}:${project.version}",
+                "Specification-Title": archivesBaseName,
+                "Specification-Vendor": "WinDanesz",
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" :"WinDanesz",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "Built-On-Java": "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+                "Built-On": "${project.mc_version}-${project.forge_version}"
+        ])
+    }
 }
 
-defaultTasks 'clean', 'build', 'incrementBuildNumber'
+task sourceJar(type: Jar, dependsOn: classes) {
+    description = 'Creates a JAR containing the source code.'
+    classifier = 'sources'
+    from sourceSets.main.allSource
+    manifest {
+        attributes([
+                "Maven-Artifact": "${project.maven_group}:${project.archivesBaseName}:${project.version}",
+                "Specification-Title": archivesBaseName,
+                "Specification-Vendor": "WinDanesz",
+                "Specification-Version": "1",
+                "Implementation-Title": archivesBaseName + '-sources',
+                "Implementation-Version": "${project.mod_version}",
+                "Implementation-Vendor": "WinDanesz",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "Built-On-Java": "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+                "Built-On": "${project.mc_version}-${project.forge_version}"
+        ])
+    }
+}
+
+//// Project manifest data ////
+
+// Example configuration to allow publishing using the maven-publish task
+// This is the preferred method to reobfuscate your jar file
+jar.finalizedBy('reobfJar')
+// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
+// publish.dependsOn('reobfJar')
+
+if (System.getenv('USE_ALPHAS').equals('true')) {
+    println 'getenv'
+    task setupGithubActions() {
+        def getVersion = {
+            //TAG-offset-hash
+            def raw = grgit.describe(longDescr: true, tags: true, match: ["${project.mc_version}-[0-9].[0-9].[0-9]", "${project.mc_version}-[0-9][0-9].[0-9][0-9].[0-9][0-9]", "${project.mc_version}-[0-9].[0-9][0-9].[0-9][0-9]", "${project.mc_version}-[0-9].[0-9].[0-9][0-9]", "${project.mc_version}-[0-9].[0-9][0-9].[0-9]", "${project.mc_version}-[0-9][0-9].[0-9].[0-9]"])
+            def desc = (raw == null ? '0.0-0-unknown' : grgit.describe(longDescr: true, tags: true, match: ["${project.mc_version}-[0-9].[0-9].[0-9]", "${project.mc_version}-[0-9][0-9].[0-9][0-9].[0-9][0-9]", "${project.mc_version}-[0-9].[0-9][0-9].[0-9][0-9]", "${project.mc_version}-[0-9].[0-9].[0-9][0-9]", "${project.mc_version}-[0-9].[0-9][0-9].[0-9]", "${project.mc_version}-[0-9][0-9].[0-9].[0-9]"])).split('-') as List
+            def hash = desc.remove(desc.size() - 1)
+            def offset = desc.remove(desc.size() - 1)
+            def tag = desc.join('-')
+            return "${tag}.${offset}".toString().replace("${project.mc_version}-", "") //Bake the response instead of making it dynamic
+        }
+        project.mod_version = getVersion();
+        version = project.mc_version + '-' + getVersion();
+        def getLastTag = {
+            def raw = grgit.describe(longDescr: true, tags: true)
+            def desc = (raw == null ? 'HEAD' : grgit.describe(longDescr: true, tags: true)).split('-') as List
+            desc.remove(desc.size() - 1)
+            desc.remove(desc.size() - 1)
+            def tag = desc.join('-')
+            return tag;
+        }
+        def rawLog = grgit.log(includes: ['HEAD'], excludes: [getLastTag()]);
+        def log = "";
+        for (org.ajoberstar.grgit.Commit commit: rawLog) {
+            log = log + "[`" + commit.abbreviatedId + "`](https://github.com/${project.github}/commit/" + commit.id + ") " + commit.shortMessage + " - " + commit.author.name + "\\n";
+        }
+        doLast {
+            exec {
+                commandLine "echo", "##[set-output name=jar_name;]${project.jar_name}";
+            }
+            if(project.hasProperty('curse_project_id')) {
+                exec {
+                    commandLine "echo", "##[set-output name=curse_project_id;]${project.curse_project_id}";
+                }
+                exec {
+                    commandLine "echo", "##[set-output name=curse_versions;]${project.curse_versions}";
+                }
+                if(project.hasProperty('curse_relations')) {
+                    exec {
+                        commandLine "echo", "##[set-output name=curse_relations;]${project.curse_relations}";
+                    }
+                }
+            }
+            exec {
+                commandLine "echo", "##[set-output name=version;]${project.version}";
+            }
+            exec {
+                commandLine "echo", "##[set-output name=name;]${project.name}";
+            }
+            exec {
+                commandLine "echo", "##[set-output name=url;]${project.url}";
+            }
+            exec {
+                commandLine "echo", "##[set-output name=commitlog;]" + "{\"content\":\"" + (project.hasProperty('hook_content') ? project.hook_content : "") + "\",\"embeds\":[{\"author\":{\"name\":\"WinDanesz\",\"url\":\"https://www.curseforge.com/minecraft/mc-mods/ancient-spellcraft\",\"icon_url\":\"https://avatars.githubusercontent.com/u/31292708?s=48&v=4\"},\"title\":\"${project.mod_id}-alpha-${project.version}\",\"url\":\"https://github.com/${project.github}/releases/tag/alpha-${project.version}\",\"color\":14700288,\"description\":\"" + log + "\"}]}";
+            }
+        }
+    }
+} else {
+    task setupGithubActions() {
+        doLast {
+            exec {
+                commandLine "echo", "##[set-output name=jar_name;]${project.jar_name}";
+            }
+            if(project.hasProperty('curse_project_id')) {
+                exec {
+                    commandLine "echo", "##[set-output name=curse_project_id;]${project.curse_project_id}";
+                }
+                exec {
+                    commandLine "echo", "##[set-output name=curse_versions;]${project.curse_versions}";
+                }
+                if(project.hasProperty('curse_relations')) {
+                    exec {
+                        commandLine "echo", "##[set-output name=curse_relations;]${project.curse_relations}";
+                    }
+                }
+            }
+            exec {
+                commandLine "echo", "##[set-output name=version;]${project.version}";
+            }
+            exec {
+                commandLine "echo", "##[set-output name=name;]${project.name}";
+            }
+            exec {
+                commandLine "echo", "##[set-output name=url;]${project.url}";
+            }
+        }
+    }
+    version = "${project.mc_version}-${project.mod_version}"
+}
+
+processResources {
+    if (System.getenv('PROJECT_VERSION') != null) {
+        version = "${project.mc_version}-" + System.getenv('PROJECT_VERSION')
+        project.mod_version = System.getenv('PROJECT_VERSION')
+    }
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", version.toString()
+    inputs.property "mcversion", project.mc_version.toString()
+
+    // Get the CREDITS.md and put it into the mcmod.info credits as json
+    File file = new File("$projectDir/CREDITS.md")
+    String fileContent = file.getText("UTF-8")
+    def credits = JsonOutput.toJson(fileContent).replaceAll('\\\\r', "")
+    // remove opening and closing double quotes
+    credits = credits.getAt(1..credits.length() - 2)
+
+    // replace tokens in mcmod.info, and pack.mcmeta
+    from(sourceSets.main.resources.srcDirs) {
+        include 'pack.mcmeta'
+        include 'mcmod.info'
+        // replace tokens in mcmod.info
+        expand 'version': version.toString(),
+                'mcversion': project.mc_version.toString(),
+                'modid': project.mod_id,
+                'name': project.name,
+                'description': project.description,
+                'url': project.url,
+                'update_url': project.update_url,
+                "credits" : credits
+    }
+
+    duplicatesStrategy = 'include'
+}
+
+task replaceTokens(type: Sync) {
+    if (System.getenv('PROJECT_VERSION') != null) {
+        version = "${project.mc_version}-" + System.getenv('PROJECT_VERSION')
+        project.mod_version = System.getenv('PROJECT_VERSION')
+    }
+
+    // replace @TOKENS@ in main file
+    from sourceSets.main.java
+    inputs.property 'version', project.mc_version.toString()
+    filter(ReplaceTokens, tokens: [VERSION: version.toString()])
+    filter(ReplaceTokens, tokens: [MCVERSION: "${project.mc_version}".toString()])
+    into "$buildDir/src"
+}
+
+compileJava {
+    source = replaceTokens.outputs
+}
+
+fancyGradle {
+    patches {
+        resources
+        coremods
+        asm
+    }
+}

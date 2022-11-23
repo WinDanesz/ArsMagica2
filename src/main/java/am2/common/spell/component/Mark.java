@@ -31,9 +31,9 @@ public class Mark extends SpellComponent{
 
 	@Override
 	public boolean applyEffectBlock(SpellData spell, World world, BlockPos pos, EnumFacing blockFace, double impactX, double impactY, double impactZ, EntityLivingBase caster){
-		EntityExtension.For(caster).setMark(impactX, impactY, impactZ, caster.worldObj.provider.getDimension());
+		EntityExtension.For(caster).setMark(impactX, impactY, impactZ, caster.world.provider.getDimension());
 		if (caster instanceof EntityPlayer && world.isRemote){
-			((EntityPlayer)caster).addChatMessage(new TextComponentString("Mark Set"));
+			((EntityPlayer)caster).sendMessage(new TextComponentString("Mark Set"));
 		}
 		return true;
 	}
@@ -46,12 +46,12 @@ public class Mark extends SpellComponent{
 		if (EntityExtension.For(caster).getMarkDimensionID() != -512){
 			EntityExtension.For(caster).setMarkDimensionID(-512);;
 			if (caster instanceof EntityPlayer && world.isRemote){
-				((EntityPlayer)caster).addChatMessage(new TextComponentString("Mark Cleared"));
+				((EntityPlayer)caster).sendMessage(new TextComponentString("Mark Cleared"));
 			}
 		}else{
-			EntityExtension.For(caster).setMark(target.posX, target.posY, target.posZ, caster.worldObj.provider.getDimension());
+			EntityExtension.For(caster).setMark(target.posX, target.posY, target.posZ, caster.world.provider.getDimension());
 			if (caster instanceof EntityPlayer && world.isRemote){
-				((EntityPlayer)caster).addChatMessage(new TextComponentString("Mark Set"));
+				((EntityPlayer)caster).sendMessage(new TextComponentString("Mark Set"));
 			}
 		}
 		return true;

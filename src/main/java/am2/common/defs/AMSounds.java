@@ -82,6 +82,7 @@ public class AMSounds {
 	public static final SoundEvent MOO_HIT = register("arsmagica2:mob.moo.hit");
 	
 	private static SoundEvent register(String str) {
-		return GameRegistry.register(new SoundEvent(new ResourceLocation(str)).setRegistryName(new ResourceLocation(str)));
+		// TODO: return registry GameRegistry.register(new SoundEvent(new ResourceLocation(str)).setRegistryName(new ResourceLocation(str)));
+		return null;
 	}
 }

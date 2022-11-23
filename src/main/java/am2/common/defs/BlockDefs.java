@@ -94,9 +94,9 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.IForgeRegistry;
 
 public class BlockDefs {
 	
@@ -171,14 +171,16 @@ public class BlockDefs {
 		FluidRegistry.registerFluid(liquid_essence);
 		FluidRegistry.addBucketForFluid(liquid_essence);
 		liquid_essence = FluidRegistry.getFluid(BlockDefs.liquid_essence.getName());
-		Block blockliquid_essence = new BlockFluidClassic(liquid_essence, Material.WATER).setUnlocalizedName("arsmagica2:fluid_block_liquid_essence");
+		Block blockliquid_essence = new BlockFluidClassic(liquid_essence, Material.WATER).setTranslationKey("arsmagica2:fluid_block_liquid_essence");
 		Item itemliquid_essence = new ItemBlock(blockliquid_essence);
-		GameRegistry.register(blockliquid_essence, new ResourceLocation("arsmagica2:liquid_essence"));
-		GameRegistry.register(itemliquid_essence, new ResourceLocation("arsmagica2:liquid_essence"));
-		
-		GameRegistry.register(witchwoodSingleSlab, new ResourceLocation("arsmagica2:witchwood_slab"));
-		GameRegistry.register(witchwoodDoubleSlab, new ResourceLocation("arsmagica2:witchwood_slab_double"));
-		GameRegistry.register(new ItemSlab(witchwoodSingleSlab, witchwoodSingleSlab, witchwoodDoubleSlab), new ResourceLocation("arsmagica2:witchwood_slab"));
+
+//		TODO:
+//		// TODO: registry GameRegistry.register(blockliquid_essence, new ResourceLocation("arsmagica2:liquid_essence"));
+//		// TODO: registry GameRegistry.register(itemliquid_essence, new ResourceLocation("arsmagica2:liquid_essence"));
+//
+//		// TODO: registry GameRegistry.register(witchwoodSingleSlab, new ResourceLocation("arsmagica2:witchwood_slab"));
+//		// TODO: registry GameRegistry.register(witchwoodDoubleSlab, new ResourceLocation("arsmagica2:witchwood_slab_double"));
+//		// TODO: registry GameRegistry.register(new ItemSlab(witchwoodSingleSlab, witchwoodSingleSlab, witchwoodDoubleSlab), new ResourceLocation("arsmagica2:witchwood_slab"));
 	}
 	
 	@SideOnly(Side.CLIENT)

@@ -46,7 +46,7 @@ public class TileEssenceConduitRenderer extends TileEntitySpecialRenderer<TileEn
 				location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
 	}
 	
-	public void renderTileEntityAt(TileEntityEssenceConduit tile, double d, double d1, double d2, float f, int destroyStage){
+	public void render(TileEntityEssenceConduit tile, double d, double d1, double d2, float f, int destroyStage, float alpha){
 		if (tile.getWorld() == null) return;
 		if (tile.getWorld().getBlockState(tile.getPos()).getBlock() != BlockDefs.essenceConduit) return;
 		createModel();

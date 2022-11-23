@@ -88,7 +88,7 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 
 	@Override
 	public float particleOffset(int axis){
-		EnumFacing meta = worldObj.getBlockState(pos).getValue(BlockSeerStone.FACING);
+		EnumFacing meta = world.getBlockState(pos).getValue(BlockSeerStone.FACING);
 
 		if (axis == 0){
 			switch (meta){
@@ -133,7 +133,7 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	private SpriteRenderInfo GetWeightedRandomAnimation(){
 		currentAnimation.reset(false);
 
-		int randomNumber = worldObj.rand.nextInt(100);
+		int randomNumber = world.rand.nextInt(100);
 		int index = 0;
 
 		SpriteRenderInfo current = animations.get(0);
@@ -151,9 +151,9 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	}
 
 	public boolean isActive(){
-		if (this.worldObj == null)
+		if (this.world == null)
 			return false;
-		return PowerNodeRegistry.For(this.worldObj).checkPower(this, PowerTypes.LIGHT, this.hasSight ? 2 : 1) && GetSearchRadius() > 0;
+		return PowerNodeRegistry.For(this.world).checkPower(this, PowerTypes.LIGHT, this.hasSight ? 2 : 1) && GetSearchRadius() > 0;
 	}
 
 	@Override
@@ -173,11 +173,11 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	public void update(){
 		super.update();
 
-		if (!worldObj.isRemote && isActive()){
+		if (!world.isRemote && isActive()){
 			if (hasSight)
-				PowerNodeRegistry.For(worldObj).consumePower(this, PowerTypes.LIGHT, 0.25f);
+				PowerNodeRegistry.For(world).consumePower(this, PowerTypes.LIGHT, 0.25f);
 			else
-				PowerNodeRegistry.For(worldObj).consumePower(this, PowerTypes.LIGHT, 0.125f);
+				PowerNodeRegistry.For(world).consumePower(this, PowerTypes.LIGHT, 0.125f);
 		}
 
 		ticksToNextCheck--;
@@ -190,7 +190,7 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 			Class<? extends Entity> searchClass = GetSearchClass();
 			ArrayList<Entity> nearbyMobs = new ArrayList<Entity>();
 			if (searchClass != null){
-				nearbyMobs = (ArrayList<Entity>)this.worldObj.getEntitiesWithinAABB(searchClass, new AxisAlignedBB(pos.add(-radius, -radius, -radius), pos.add(1+radius, 1+radius, 1+radius)));
+				nearbyMobs = (ArrayList<Entity>)this.world.getEntitiesWithinAABB(searchClass, new AxisAlignedBB(pos.add(-radius, -radius, -radius), pos.add(1+radius, 1+radius, 1+radius)));
 
 				if (key > 0){
 					ArrayList<Entity> mobsToIgnore = new ArrayList<Entity>();
@@ -219,7 +219,7 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 					hasSight = true;
 					notifyNeighborsOfPowerChange();
 
-					if (worldObj.isRemote){
+					if (world.isRemote){
 						currentAnimation.reset(false);
 						currentAnimation = animations.get(0);
 						currentAnimation.reset(true);
@@ -230,7 +230,7 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 					hasSight = false;
 					notifyNeighborsOfPowerChange();
 
-					if (worldObj.isRemote){
+					if (world.isRemote){
 						currentAnimation.reset(false);
 						currentAnimation = animations.get(0);
 						currentAnimation.reset(false);
@@ -242,7 +242,7 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 				hasSight = false;
 				notifyNeighborsOfPowerChange();
 
-				if (worldObj.isRemote){
+				if (world.isRemote){
 					currentAnimation.reset(false);
 					currentAnimation = animations.get(0);
 					currentAnimation.reset(false);
@@ -251,7 +251,7 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 		}
 
 		//animations
-		if (worldObj.isRemote){
+		if (world.isRemote){
 			if (!currentAnimation.isDone){
 				tickCounter++;
 				if (tickCounter == currentAnimation.speed){
@@ -266,7 +266,7 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 
 			if (isActive() && hasSight){
 
-				EnumFacing meta = worldObj.getBlockState(pos).getValue(BlockSeerStone.FACING);
+				EnumFacing meta = world.getBlockState(pos).getValue(BlockSeerStone.FACING);
 
 				double yaw = 0;
 				double y = pos.getX() + 0.5;
@@ -298,7 +298,7 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 					break;
 				}
 
-				AMParticle effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(worldObj, "sparkle2", x, y, z);
+				AMParticle effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "sparkle2", x, y, z);
 				if (effect != null){
 					effect.setIgnoreMaxAge(false);
 					effect.setMaxAge(35);
@@ -321,10 +321,11 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	}
 
 	private void notifyNeighborsOfPowerChange(){
-		this.worldObj.notifyBlockOfStateChange(pos, BlockDefs.seerStone);
-		BlockPos otherPos = pos.offset(worldObj.getBlockState(pos).getValue(BlockSeerStone.FACING));
-		this.worldObj.notifyBlockOfStateChange(otherPos, BlockDefs.seerStone);
-		this.worldObj.markAndNotifyBlock(otherPos, worldObj.getChunkFromBlockCoords(otherPos), worldObj.getBlockState(otherPos), worldObj.getBlockState(otherPos), 3);
+		// TODO this will be a problem
+		this.world.notifyNeighborsOfStateExcept(pos, BlockDefs.seerStone, null);
+		BlockPos otherPos = pos.offset(world.getBlockState(pos).getValue(BlockSeerStone.FACING));
+		this.world.notifyNeighborsOfStateExcept(otherPos, BlockDefs.seerStone, null);
+		this.world.markAndNotifyBlock(otherPos, world.getChunk(otherPos), world.getBlockState(otherPos), world.getBlockState(otherPos), 3);
 	}
 
 	public boolean ShouldAnimate(){
@@ -366,6 +367,11 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	}
 
 	@Override
+	public boolean isEmpty() {
+		return false;
+	}
+
+	@Override
 	public ItemStack[] getRunesInKey(){
 		ItemStack[] runes = new ItemStack[3];
 		runes[0] = inventory[2];
@@ -394,13 +400,13 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	@Override
 	public ItemStack decrStackSize(int i, int j){
 		if (inventory[i] != null){
-			if (inventory[i].stackSize <= j){
+			if (inventory[i].getCount() <= j){
 				ItemStack itemstack = inventory[i];
 				inventory[i] = null;
 				return itemstack;
 			}
 			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].stackSize == 0){
+			if (inventory[i].getCount() == 0){
 				inventory[i] = null;
 			}
 			return itemstack1;
@@ -423,8 +429,8 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack){
 		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()){
-			itemstack.stackSize = getInventoryStackLimit();
+		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
+			itemstack.setCount( getInventoryStackLimit());
 		}
 	}
 
@@ -439,8 +445,8 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer){
-		if (worldObj.getTileEntity(pos) != this){
+	public boolean isUsableByPlayer(EntityPlayer entityplayer){
+		if (world.getTileEntity(pos) != this){
 			return false;
 		}
 		return entityplayer.getDistanceSqToCenter(pos) <= 64D;
@@ -465,7 +471,7 @@ public class TileEntitySeerStone extends TileEntityAMPower implements IInventory
 			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
 			byte byte0 = nbttagcompound1.getByte(tag);
 			if (byte0 >= 0 && byte0 < inventory.length){
-				inventory[byte0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+				inventory[byte0] = new ItemStack((nbttagcompound1));
 			}
 		}
 

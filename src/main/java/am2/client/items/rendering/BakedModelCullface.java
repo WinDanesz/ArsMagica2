@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.vecmath.Matrix4f;
 
+import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
@@ -18,15 +19,15 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.common.model.TRSRTransformation;
 
-public class BakedModelCullface implements IPerspectiveAwareModel{
+public class BakedModelCullface extends PerspectiveMapWrapper {
 	
 	IBakedModel parent;
 	private ImmutableMap<TransformType, TRSRTransformation> transforms;
 	
 	public BakedModelCullface(IBakedModel parent, ImmutableMap<TransformType, TRSRTransformation> transforms) {
+		super(parent,transforms);
 		this.parent = parent;
 		this.transforms = transforms;
 	}
@@ -71,7 +72,7 @@ public class BakedModelCullface implements IPerspectiveAwareModel{
 
 	@Override
 	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
-		return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, cameraTransformType);
+		return PerspectiveMapWrapper.handlePerspective(this, transforms, cameraTransformType);
 	}
 
 }

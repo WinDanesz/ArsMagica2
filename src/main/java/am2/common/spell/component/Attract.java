@@ -62,12 +62,13 @@ public class Attract extends SpellComponent{
 
 		if (!world.isRemote){
 			float factor = 0.75f;
-			double x = -(movement.xCoord * factor);
-			double y = -(movement.yCoord * factor);
-			double z = -(movement.zCoord * factor);
+			double x = -(movement.x * factor);
+			double y = -(movement.y * factor);
+			double z = -(movement.z * factor);
 
 			target.addVelocity(x, y, z);
 			if (Math.abs(target.motionX) > Math.abs(x * 2)){
+				// TODO: why?...
 				target.motionX = x * (target.motionX / target.motionX);
 			}
 			if (Math.abs(target.motionY) > Math.abs(y * 2)){

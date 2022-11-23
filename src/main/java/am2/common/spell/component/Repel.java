@@ -65,11 +65,11 @@ public class Repel extends SpellComponent{
 		Vec3d targetPos = new Vec3d(target.posX, target.posY, target.posZ);
 		double distance = casterPos.distanceTo(targetPos) + 0.1D;
 
-		Vec3d delta = new Vec3d(targetPos.xCoord - casterPos.xCoord, targetPos.yCoord - casterPos.yCoord, targetPos.zCoord - casterPos.zCoord);
+		Vec3d delta = new Vec3d(targetPos.x - casterPos.x, targetPos.y - casterPos.y, targetPos.z - casterPos.z);
 
-		double dX = delta.xCoord / 2.5D / distance;
-		double dY = delta.yCoord / 2.5D / distance;
-		double dZ = delta.zCoord / 2.5D / distance;
+		double dX = delta.x / 2.5D / distance;
+		double dY = delta.y / 2.5D / distance;
+		double dZ = delta.z / 2.5D / distance;
 		if (target instanceof EntityPlayer){
 			AMNetHandler.INSTANCE.sendVelocityAddPacket(world, (EntityPlayer)target, dX, dY, dZ);
 		}

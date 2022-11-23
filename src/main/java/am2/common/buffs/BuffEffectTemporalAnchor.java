@@ -37,8 +37,7 @@ public class BuffEffectTemporalAnchor extends BuffEffect{
 
 	@Override
 	public void stopEffect(EntityLivingBase entityliving){
-		entityliving.setPositionAndUpdate(x, y, z);
-		entityliving.setAngles(rotationYaw, rotationPitch);
+		entityliving.setLocationAndAngles(x, y, z, rotationYaw, rotationPitch);
 		entityliving.rotationYawHead = rotationYawHead;
 		entityliving.getCapability(EntityExtension.INSTANCE, null).setCurrentMana(mana);
 

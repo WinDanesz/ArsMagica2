@@ -72,7 +72,7 @@ public class PowerNodeEntry{
 	private boolean validatePath(World world, LinkedList<BlockPos> path){
 		for (BlockPos vec : path){
 			//power can't transfer through unloaded chunks!
-			Chunk chunk = world.getChunkFromBlockCoords(vec);
+			Chunk chunk = world.getChunk(vec);
 			if (!chunk.isLoaded())
 				return false;
 			TileEntity te = world.getTileEntity(vec);

@@ -90,7 +90,7 @@ public class GuiKeystone extends GuiContainer{
 		int l = (width - xSize) / 2;
 		int i1 = (height - ySize) / 2;
 
-		combinationName = new GuiTextField(0, fontRendererObj, 44, 86, 88, 16);
+		combinationName = new GuiTextField(0, fontRenderer, 44, 86, 88, 16);
 
 		int sliderMax = Math.max(0, ItemDefs.keystone.numCombinations(((ContainerKeystone)this.inventorySlots).getKeystoneStack()) - 9);
 
@@ -362,7 +362,7 @@ public class GuiKeystone extends GuiContainer{
 		combinationName.drawTextBox();
 
 		if (AMGuiHelper.instance.getSlowTicker() < displayTime){
-			fontRendererObj.drawSplitString(displayMessage, -90, 0, 90, displayColor);
+			fontRenderer.drawSplitString(displayMessage, -90, 0, 90, displayColor);
 		}else{
 			displayTime = 0;
 		}
@@ -379,7 +379,7 @@ public class GuiKeystone extends GuiContainer{
 			lines.add(combo.name);
 			lines.add("\2477\247o" + I18n.format("am2.gui.keystoneComboClick"));
 			lines.add("\2477\247o" + I18n.format("am2.gui.keystoneComboClick2") + "\247r");
-			AMGuiHelper.drawHoveringText(lines, par1 - 25, par2 + 18, Minecraft.getMinecraft().fontRendererObj, this.xSize, this.ySize);
+			AMGuiHelper.drawHoveringText(lines, par1 - 25, par2 + 18, Minecraft.getMinecraft().fontRenderer, this.xSize, this.ySize);
 		}
 	}
 

@@ -6,6 +6,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -54,16 +55,15 @@ public class ItemBindingCatalyst extends ItemArsMagica{
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
-		par3List.add(new ItemStack(par1, 1, META_PICK));
-		par3List.add(new ItemStack(par1, 1, META_AXE));
-		par3List.add(new ItemStack(par1, 1, META_SHOVEL));
-		par3List.add(new ItemStack(par1, 1, META_SWORD));
-		par3List.add(new ItemStack(par1, 1, META_HOE));
-		par3List.add(new ItemStack(par1, 1, META_BOW));
-		par3List.add(new ItemStack(par1, 1, META_SHIELD));
-		par3List.add(new ItemStack(par1, 1, 7));
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> par3List) {
+		par3List.add(new ItemStack(this, 1, META_PICK));
+		par3List.add(new ItemStack(this, 1, META_AXE));
+		par3List.add(new ItemStack(this, 1, META_SHOVEL));
+		par3List.add(new ItemStack(this, 1, META_SWORD));
+		par3List.add(new ItemStack(this, 1, META_HOE));
+		par3List.add(new ItemStack(this, 1, META_BOW));
+		par3List.add(new ItemStack(this, 1, META_SHIELD));
+		par3List.add(new ItemStack(this, 1, 7));
 	}
 
 }

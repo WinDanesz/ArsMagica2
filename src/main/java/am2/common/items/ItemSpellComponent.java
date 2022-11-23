@@ -13,10 +13,5 @@ public class ItemSpellComponent extends ItemArsMagica {
 	public ItemSpellComponent() {
 		setCreativeTab(null);
 	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
-	}
-	
+
 }

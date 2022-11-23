@@ -63,11 +63,6 @@ public class BlockWitchwoodLeaves extends BlockLeaves{
 	}
 
 	@Override
-	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List){
-		par3List.add(new ItemStack(this));
-	}
-	
-	@Override
 	public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
 		if (!ArsMagica2.config.witchwoodLeafPFX())
 			return;
@@ -93,9 +88,9 @@ public class BlockWitchwoodLeaves extends BlockLeaves{
 	}
 	
 	public BlockWitchwoodLeaves registerAndName(ResourceLocation rl) {
-		this.setUnlocalizedName(rl.toString());
-		GameRegistry.register(this, rl);
-		GameRegistry.register(new ItemBlockSubtypes(this), rl);
+		this.setTranslationKey(rl.toString());
+		// TODO: registry GameRegistry.register(this, rl);
+		// TODO: registry GameRegistry.register(new ItemBlockSubtypes(this), rl);
 		return this;
 	}
 	

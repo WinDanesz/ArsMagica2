@@ -28,7 +28,7 @@ public class EntityAIPickup extends EntityAIBase{
 		if (target == null || target.isDead)
 			return false;
 
-		return host.hasRoomInInventoryFor(((EntityItem)target).getEntityItem());
+		return host.hasRoomInInventoryFor(((EntityItem)target).getItem());
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class EntityAIPickup extends EntityAIBase{
 	}
 
 	@Override
-	public boolean continueExecuting(){
+	public boolean shouldContinueExecuting(){
 		return shouldExecute();
 	}
 
@@ -51,11 +51,11 @@ public class EntityAIPickup extends EntityAIBase{
 		if (checkStuck()){
 			EntityExtension.For(host).setInanimateTarget(null);
 
-			double x = host.posX + host.worldObj.rand.nextInt(8) - 4;
+			double x = host.posX + host.world.rand.nextInt(8) - 4;
 			double y = host.posY;
-			double z = host.posZ + host.worldObj.rand.nextInt(8) - 4;
+			double z = host.posZ + host.world.rand.nextInt(8) - 4;
 
-			while (host.worldObj.isAirBlock(new BlockPos(x, y, z)) && y > 5){
+			while (host.world.isAirBlock(new BlockPos(x, y, z)) && y > 5){
 				y--;
 			}
 
@@ -70,7 +70,7 @@ public class EntityAIPickup extends EntityAIBase{
 				resetTask();
 			}
 		}else{
-			host.addItemStackToInventory(((EntityItem)target).getEntityItem());
+			host.addItemStackToInventory(((EntityItem)target).getItem());
 			target.setDead();
 			EntityExtension.For(host).setInanimateTarget(null);
 		}

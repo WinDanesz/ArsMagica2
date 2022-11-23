@@ -60,7 +60,8 @@ public class PageSpellComponent extends CompendiumPage<AbstractSpellPart> {
 		
 		if (mouseX > cx && mouseX < cx + 16){
 			if (mouseY > cy && mouseY < cy + 16){
-				stackTip = new ItemStack(ItemDefs.spell_component, 1, ArsMagicaAPI.getSkillRegistry().getId(element.getRegistryName()));
+				// TODO
+//				stackTip = new ItemStack(ItemDefs.spell_component, 1, ArsMagicaAPI.getSkillRegistry()..getValue(element.getRegistryName()));
 				tipX = mouseX;
 				tipY = mouseY;
 			}
@@ -102,7 +103,7 @@ public class PageSpellComponent extends CompendiumPage<AbstractSpellPart> {
 		int yOffset = 10;
 		if (!modifiers.isEmpty()) {
 			String shapeName = I18n.format(element instanceof SpellModifier ? "am2.gui.modifies" :  "am2.gui.modifiedBy");
-			mc.fontRendererObj.drawString(shapeName, posX + 72 - (mc.fontRendererObj.getStringWidth(shapeName) / 2), posY, 0);
+			mc.fontRenderer.drawString(shapeName, posX + 72 - (mc.fontRenderer.getStringWidth(shapeName) / 2), posY, 0);
 			GlStateManager.color(1.0f, 1.0f, 1.0f);
 		}
 		RenderHelper.enableGUIStandardItemLighting();
@@ -112,7 +113,8 @@ public class PageSpellComponent extends CompendiumPage<AbstractSpellPart> {
 				AMGuiHelper.DrawIconAtXY(modIcon, posX + startX, posY + yOffset, zLevel, 16, 16, false);
 			if (mouseX > posX + startX && mouseX < posX + startX + 16){
 				if (mouseY > posY + yOffset && mouseY < posY + yOffset + 16){
-					stackTip = new ItemStack(ItemDefs.spell_component, 1, ArsMagicaAPI.getSkillRegistry().getId(mod.getRegistryName()));
+					// TODO
+//					stackTip = new ItemStack(ItemDefs.spell_component, 1, ArsMagicaAPI.getSkillRegistry().getId(mod.getRegistryName()));
 					tipX = mouseX;
 					tipY = mouseY;
 				}
@@ -160,7 +162,7 @@ public class PageSpellComponent extends CompendiumPage<AbstractSpellPart> {
 		List<ItemStack> alternates = new ArrayList<ItemStack>();
 		
 		if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
-			stack.getItem().getSubItems(stack.getItem(), stack.getItem().getCreativeTab(), alternates);
+			//stack.getItem().getSubItems(stack.getItem(), stack.getItem().getCreativeTab(), alternates);
 		} else {
 			alternates.add(stack);
 		}
@@ -169,7 +171,7 @@ public class PageSpellComponent extends CompendiumPage<AbstractSpellPart> {
 			stack = alternates.get(new Random(new Random(AMGuiHelper.instance.getSlowTicker()).nextLong()).nextInt(alternates.size()));
 		}
 		if (forcedMetas.containsKey(stack.getItem()))
-			stack = new ItemStack(stack.getItem(), stack.stackSize, forcedMetas.get(stack.getItem()));
+			stack = new ItemStack(stack.getItem(), stack.getCount(), forcedMetas.get(stack.getItem()));
 	
 		try{
 			AMGuiHelper.DrawItemAtXY(stack, sx, sy, this.zLevel);

@@ -35,14 +35,14 @@ public class PageRitual extends CompendiumPage<IRitualInteraction.Wrapper> {
 			ritualName = TextFormatting.UNDERLINE.toString() + TextFormatting.BOLD.toString() + I18n.format("ritual." + ((AbstractSpellPart)element.getRitualInteraction()).getRegistryName().toString() + ".name");
 		else
 			ritualName = TextFormatting.UNDERLINE.toString() + TextFormatting.BOLD.toString() + I18n.format("ritual." + element.getRitualInteraction().getClass().getSimpleName().toLowerCase() + ".name");
-		mc.fontRendererObj.drawString(ritualName, posX + 72 - (mc.fontRendererObj.getStringWidth(ritualName) / 2), posY, 0);
+		mc.fontRenderer.drawString(ritualName, posX + 72 - (mc.fontRenderer.getStringWidth(ritualName) / 2), posY, 0);
 		String categoryName = TextFormatting.UNDERLINE.toString() + I18n.format("am2.gui.ritualshape");
-		mc.fontRendererObj.drawString(categoryName, posX + 72 - (mc.fontRendererObj.getStringWidth(categoryName) / 2), posY + 20, 0);
+		mc.fontRenderer.drawString(categoryName, posX + 72 - (mc.fontRenderer.getStringWidth(categoryName) / 2), posY + 20, 0);
 //		String shapeName = I18n.translateToLocal("ritualshape." + element.getRitualInteraction().getRitualShape().getId() + ".name");
-//		mc.fontRendererObj.drawString(shapeName, posX + 72 - (mc.fontRendererObj.getStringWidth(shapeName) / 2), posY + 30, 0);
+//		mc.fontRenderer.drawString(shapeName, posX + 72 - (mc.fontRenderer.getStringWidth(shapeName) / 2), posY + 30, 0);
 		
 		String reagentsName = TextFormatting.UNDERLINE.toString() + I18n.format("am2.gui.ritualreagents");
-		mc.fontRendererObj.drawString(reagentsName, posX + 72 - (mc.fontRendererObj.getStringWidth(reagentsName) / 2), posY + 50, 0);
+		mc.fontRenderer.drawString(reagentsName, posX + 72 - (mc.fontRenderer.getStringWidth(reagentsName) / 2), posY + 50, 0);
 		Random randomizer = new Random(new Random(AMGuiHelper.instance.getSlowTicker()).nextLong());
 		
 		ItemStack[] reagents = element.getRitualInteraction().getRitualReagents();
@@ -64,7 +64,7 @@ public class PageRitual extends CompendiumPage<IRitualInteraction.Wrapper> {
 				if (stack != null) {
 					if (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
 						ArrayList<ItemStack> subItems = new ArrayList<>();
-						stack.getItem().getSubItems(stack.getItem(), stack.getItem().getCreativeTab(), subItems);
+						//stack.getItem().getSubItems(stack.getItem(), stack.getItem().getCreativeTab(), subItems);
 						stack = subItems.get(randomizer.nextInt(subItems.size()));
 					}
 					mc.getRenderItem().renderItemIntoGUI(stack, posX + xOffset, posY + yOffset + 60);
@@ -78,7 +78,7 @@ public class PageRitual extends CompendiumPage<IRitualInteraction.Wrapper> {
 		
 		if (element.getRitualInteraction().getResult() != null) {
 			String resultName = TextFormatting.UNDERLINE.toString() + I18n.format("am2.gui.ritualresult");
-			mc.fontRendererObj.drawString(resultName, posX + 72 - (mc.fontRendererObj.getStringWidth(resultName) / 2), posY + 165, 0);
+			mc.fontRenderer.drawString(resultName, posX + 72 - (mc.fontRenderer.getStringWidth(resultName) / 2), posY + 165, 0);
 			mc.getRenderItem().renderItemIntoGUI(element.getRitualInteraction().getResult(), posX + 64, posY + 180);
 			if (mouseX > posX + 64 && mouseX < posX + 80 && mouseY > posY + 180 && mouseY < posY + yOffset + 196)
 				stackTip = element.getRitualInteraction().getResult();			
@@ -106,8 +106,8 @@ public class PageRitual extends CompendiumPage<IRitualInteraction.Wrapper> {
 	public GuiButton[] getButtons(int id, int posX, int posY) {
 		String shapeName = I18n.format("ritualshape." + element.getRitualInteraction().getRitualShape().getID() + ".name");
 		shapeButton = new GuiButtonTextOnly(id++, 0, 0, shapeName);
-		((GuiButtonVariableDims)shapeButton).setDimensions(mc.fontRendererObj.getStringWidth(shapeName), 10);
-		((GuiButtonVariableDims)shapeButton).setPosition(posX + 72 - (mc.fontRendererObj.getStringWidth(shapeName) / 2), posY + 55);
+		((GuiButtonVariableDims)shapeButton).setDimensions(mc.fontRenderer.getStringWidth(shapeName), 10);
+		((GuiButtonVariableDims)shapeButton).setPosition(posX + 72 - (mc.fontRenderer.getStringWidth(shapeName) / 2), posY + 55);
 		return new GuiButton[] {shapeButton};
 	}
 	

@@ -75,13 +75,13 @@ public class ContainerRiftStorage extends Container{
 			}else if (!mergeItemStack(itemstack1, PLAYER_INVENTORY_START, PLAYER_ACTIONBAR_END, false)){
 				return null;
 			}
-			if (itemstack1.stackSize == 0){
+			if (itemstack1.getCount() == 0){
 				slot.putStack(null);
 				slot.onSlotChange(itemstack, itemstack1);
 			}else{
 				slot.onSlotChanged();
 			}
-			if (itemstack1.stackSize == itemstack.stackSize){
+			if (itemstack1.getCount() == itemstack.getCount()){
 				return null;
 			}
 		}
@@ -90,7 +90,7 @@ public class ContainerRiftStorage extends Container{
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer){
-		return inventory.isUseableByPlayer(entityplayer);
+		return inventory.isUsableByPlayer(entityplayer);
 	}
 
 }

@@ -9,7 +9,7 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 
 public class EntityAIFireballAttack extends EntityAIBase{
-	World worldObj;
+	World world;
 
 	/**
 	 * The entity the AI instance has been applied to
@@ -39,7 +39,7 @@ public class EntityAIFireballAttack extends EntityAIBase{
 		rangedAttackTime = 0;
 		field_48367_f = 0;
 		entityHost = par1EntityLiving;
-		worldObj = par1EntityLiving.worldObj;
+		world = par1EntityLiving.world;
 		field_48370_e = par2;
 		rangedAttackID = par3;
 		maxRangedAttackTime = par4;
@@ -57,7 +57,7 @@ public class EntityAIFireballAttack extends EntityAIBase{
 			return false;
 		}else{
 			attackTarget = entityliving;
-			if (this.entityHost.getDistanceSqToEntity(attackTarget) < 4) return false;
+			if (this.entityHost.getDistanceSq(attackTarget) < 4) return false;
 			return true;
 		}
 	}
@@ -66,7 +66,7 @@ public class EntityAIFireballAttack extends EntityAIBase{
 	 * Returns whether an in-progress EntityAIBase should continue executing
 	 */
 	@Override
-	public boolean continueExecuting(){
+	public boolean shouldContinueExecuting() {
 		return shouldExecute() || !entityHost.getNavigator().noPath();
 	}
 
@@ -95,11 +95,11 @@ public class EntityAIFireballAttack extends EntityAIBase{
 
 		if (d1 > d || field_48367_f > 20){
 			if (!entityHost.getNavigator().tryMoveToEntityLiving(attackTarget, field_48370_e)){
-				entityHost.getNavigator().clearPathEntity();
+				entityHost.getNavigator().clearPath();
 				entityHost.setAttackTarget(null);
 			}
 		}else{
-			entityHost.getNavigator().clearPathEntity();
+			entityHost.getNavigator().clearPath();
 		}
 
 		entityHost.getLookHelper().setLookPositionWithEntity(attackTarget, 30F, 30F);
@@ -124,7 +124,7 @@ public class EntityAIFireballAttack extends EntityAIBase{
 	private void doRangedAttack(){
 		ISpellCaster caster = NPCSpells.instance.fireBolt.getCapability(SpellCaster.INSTANCE, null);
 		if (caster != null) {
-			caster.cast(NPCSpells.instance.fireBolt, worldObj, entityHost);
+			caster.cast(NPCSpells.instance.fireBolt, world, entityHost);
 		}
 	}
 }

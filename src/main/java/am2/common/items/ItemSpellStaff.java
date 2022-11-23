@@ -144,20 +144,18 @@ public class ItemSpellStaff extends ItemArsMagica{
 	public boolean getShareTag(){
 		return true;
 	}
-	
+
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (isMagiTechStaff()){
 			return EnumActionResult.SUCCESS;
 		}
 
 		return EnumActionResult.PASS;
 	}
-	
+
 	@Override
-	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos,
-			EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand){
+	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
 		if (isMagiTechStaff()){
 			if (!world.isRemote){
 				TileEntity te = world.getTileEntity(pos);
@@ -168,7 +166,7 @@ public class ItemSpellStaff extends ItemArsMagica{
 						List<PowerTypes> types = ((IPowerNode<?>)te).getValidPowerTypes();
 						for (PowerTypes type : types){
 							float power = PowerNodeRegistry.For(world).getPower((IPowerNode<?>)te, type);
-							player.addChatMessage(
+							player.sendMessage(
 									new TextComponentString(String.format(I18n.format("am2.tooltip.det_eth"),
 											type.getChatColor(), type.name(), String.format("%.2f", power))));
 						}
@@ -246,7 +244,7 @@ public class ItemSpellStaff extends ItemArsMagica{
 //			if (isMagiTechStaff()) return;
 //			ItemStack spell = getSpellStack(stack);
 //			if (spell != null){
-//				if (SpellUtils.applyStackStageOnUsing(spell, player, player, player.posX, player.posY, player.posZ, player.worldObj, false, true, count - 1) == SpellCastResult.SUCCESS)
+//				if (SpellUtils.applyStackStageOnUsing(spell, player, player, player.posX, player.posY, player.posZ, player.world, false, true, count - 1) == SpellCastResult.SUCCESS)
 //					consumeStaffCharge(stack, (EntityPlayer)player);
 //			}
 //		}
@@ -276,7 +274,7 @@ public class ItemSpellStaff extends ItemArsMagica{
 //		staffStack.getTagCompound().setFloat(NBT_CHARGE, chargeRemaining);
 //
 //		if (chargeRemaining <= 0){
-//			if (!caster.worldObj.isRemote){
+//			if (!caster.world.isRemote){
 //				if (caster.getActiveItemStack() != null) {
 //					caster.getActiveItemStack().damageItem(9001, caster);
 //				}

@@ -56,10 +56,10 @@ public class EntityAIEnderbolt extends AIAnimation{
 			guardian.getLookHelper().setLookPositionWithEntity(guardian.getAttackTarget(), 30, 30);
 			if (guardian.getTicksInCurrentAction() == 7){
 				guardian.faceEntity(guardian.getAttackTarget(), 180, 180);
-				guardian.worldObj.playSound(guardian.posX, guardian.posY, guardian.posZ, ((IArsMagicaBoss)guardian).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
+				guardian.world.playSound(guardian.posX, guardian.posY, guardian.posZ, ((IArsMagicaBoss)guardian).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
 				ISpellCaster spell = NPCSpells.instance.enderGuardian_enderBolt.getCapability(SpellCaster.INSTANCE, null);
 				if (spell != null) {
-					spell.cast(NPCSpells.instance.enderGuardian_enderBolt, guardian.worldObj, guardian);
+					spell.cast(NPCSpells.instance.enderGuardian_enderBolt, guardian.world, guardian);
 				}
 			}else{
 				guardian.faceEntity(guardian.getAttackTarget(), 180, 180);

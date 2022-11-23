@@ -63,14 +63,14 @@ public class PowerNodeRegistry{
 		World world = te.getWorld();
 		if (powerNodes.containsKey(chunk)){
 			nodeList = powerNodes.get(chunk);
-			LogHelper.trace(String.format("Located Power Node list for chunk %d, %d", chunk.chunkXPos, chunk.chunkZPos));
+			LogHelper.trace(String.format("Located Power Node list for chunk %d, %d", chunk.x, chunk.z));
 		}else{
 			LogHelper.trace("Node list not found.  Checking cache/files for prior data");
 			NBTTagCompound compound = PowerNodeCache.instance.getNBTForChunk(world, chunk);
 			nodeList = new HashMap<BlockPos, PowerNodeEntry>();
 			if (compound == null || !compound.hasKey("AM2PowerData")){
 				powerNodes.put(chunk, nodeList);
-				LogHelper.trace("Prior node list not found.  Created Power Node list for chunk %d, %d", chunk.chunkXPos, chunk.chunkZPos);
+				LogHelper.trace("Prior node list not found.  Created Power Node list for chunk %d, %d", chunk.x, chunk.z);
 			}else{
 				LoadChunkFromNBT(chunk, compound);
 				nodeList = powerNodes.get(chunk);
@@ -79,7 +79,7 @@ public class PowerNodeRegistry{
 					nodeList = new HashMap<BlockPos, PowerNodeEntry>();
 					powerNodes.put(chunk, nodeList);
 				}
-				LogHelper.trace(String.format("Loaded power data for chunk %d, %d", chunk.chunkXPos, chunk.chunkZPos));
+				LogHelper.trace(String.format("Loaded power data for chunk %d, %d", chunk.x, chunk.z));
 			}
 		}
 
@@ -176,13 +176,13 @@ public class PowerNodeRegistry{
 			nodeList = powerNodes.get(chunk);
 			nodeList.remove(location);
 
-			LogHelper.trace("Successfully removed a node from chunk %d, %d", chunk.chunkXPos, chunk.chunkZPos);
+			LogHelper.trace("Successfully removed a node from chunk %d, %d", chunk.x, chunk.z);
 			if (nodeList.size() == 0){
 				powerNodes.remove(chunk);
 				LogHelper.trace("No more nodes exist in chunk.  Removing tracking data for chunk.");
 			}
 		}else{
-			LogHelper.error("Power Node removal requested in a non-tracked chunk (%d, %d)!", chunk.chunkXPos, chunk.chunkZPos);
+			LogHelper.error("Power Node removal requested in a non-tracked chunk (%d, %d)!", chunk.x, chunk.z);
 		}
 	}
 
@@ -330,16 +330,16 @@ public class PowerNodeRegistry{
 		ArrayList<IPowerNode<?>> nodes = new ArrayList<IPowerNode<?>>();
 		int deadNodesRemoved = 0;
 		for (BlockPos vector : nodesToSearch.keySet()){
-			if (world.getChunkFromBlockCoords(vector) == null){
+			if (world.getChunk(vector) == null){
 				continue;
 			}
-			Chunk chunk = world.getChunkFromBlockCoords(vector);
+			Chunk chunk = world.getChunk(vector);
 			if (!chunk.isLoaded())
 				continue;
 			TileEntity te = world.getTileEntity(vector);
 			if (te == null || !(te instanceof IPowerNode)){
 				//opportune time to remove dead power nodes
-				removePowerNode(chunk.getChunkCoordIntPair(), vector);
+				removePowerNode(chunk.getPos(), vector);
 				deadNodesRemoved++;
 				continue;
 			}
@@ -374,7 +374,7 @@ public class PowerNodeRegistry{
 				ChunkPos newPair = new ChunkPos(chunkX + i, chunkZ + j);
 				//offset the x/z locations by POWER_SEARCH_RADIUS * i/j respectively and calculate the chunk that would fall in.
 				//If it matches the new chunk coordinates, we add that chunk to the list of chunks to search.
-				if (((int)location.getX() + (POWER_SEARCH_RADIUS * i)) >> 4 == newPair.chunkXPos && ((int)location.getZ() + (POWER_SEARCH_RADIUS * j)) >> 4 == newPair.chunkZPos){
+				if (((int)location.getX() + (POWER_SEARCH_RADIUS * i)) >> 4 == newPair.x && ((int)location.getZ() + (POWER_SEARCH_RADIUS * j)) >> 4 == newPair.z){
 					searchChunks.add(newPair);
 				}
 			}
@@ -387,9 +387,9 @@ public class PowerNodeRegistry{
 		TileEntity te = (TileEntity)node;
 //		if (te.getWorld() == null)
 //			return null;
-//		if (te.getWorld().getChunkFromBlockCoords(te.getPos()) == null)
+//		if (te.getWorld().getChunk(te.getPos()) == null)
 		return new ChunkPos(te.getPos().getX() >> 4, te.getPos().getZ() >> 4);
-//		return te.getWorld().getChunkFromBlockCoords(te.getPos()).getChunkCoordIntPair();
+//		return te.getWorld().getChunk(te.getPos()).getChunkCoordIntPair();
 	}
 
 //	private ChunkPos getChunkFromPosition(World world, BlockPos location){
@@ -439,23 +439,23 @@ public class PowerNodeRegistry{
 	}
 
 	public void unloadChunk(Chunk chunk){
-		powerNodes.remove(chunk.getChunkCoordIntPair());
+		powerNodes.remove(chunk.getPos());
 	}
 
 	public boolean hasDataForChunk(Chunk chunk){
-		return powerNodes.containsKey(chunk.getChunkCoordIntPair());
+		return powerNodes.containsKey(chunk.getPos());
 	}
 
 	private class ChunkCoordComparator implements Comparator<ChunkPos>{
 
 		@Override
 		public int compare(ChunkPos a, ChunkPos b){
-			if (a.chunkXPos == b.chunkXPos && a.chunkZPos == b.chunkZPos)
+			if (a.x == b.x && a.z == b.z)
 				return 0;
 
-			if (a.chunkXPos > b.chunkXPos)
+			if (a.x > b.x)
 				return 1;
-			else if (a.chunkZPos > b.chunkZPos)
+			else if (a.z > b.z)
 				return 1;
 			return -1;
 		}

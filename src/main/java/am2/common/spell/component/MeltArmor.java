@@ -20,6 +20,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -44,7 +45,7 @@ public class MeltArmor extends SpellComponent{
 		return false;
 	}
 
-	private void doMeltArmor(EntityLivingBase caster, ItemStack[] armor){
+	private void doMeltArmor(EntityLivingBase caster, NonNullList<ItemStack> armor){
 		double mmpsCharge = getMMPSCharge(armor);
 		for (ItemStack stack : armor){
 			if (stack == null) continue;
@@ -60,7 +61,7 @@ public class MeltArmor extends SpellComponent{
 		}
 	}
 
-	private double getMMPSCharge(ItemStack[] armor){
+	private double getMMPSCharge(NonNullList<ItemStack> armor){
 		double total = -1;
 		for (ItemStack stack : armor){
 			if (stack != null && stack.hasTagCompound()){

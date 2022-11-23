@@ -32,7 +32,7 @@ public class CompendiumUnlockHandler{
 	@SubscribeEvent
 	public void onPlayerPickupItem(EntityItemPickupEvent event){
 		IArcaneCompendium instance = ArcaneCompendium.For(event.getEntityPlayer());
-		instance.unlockRelatedItems(event.getItem().getEntityItem());
+		instance.unlockRelatedItems(event.getItem().getItem());
 	}
 
 	/**
@@ -42,7 +42,7 @@ public class CompendiumUnlockHandler{
 	 */
 	@SubscribeEvent
 	public void onPlayerMagicLevelChange(PlayerMagicLevelChangeEvent event){
-		if (event.getEntity().worldObj.isRemote && event.getEntity() instanceof EntityPlayer){
+		if (event.getEntity().world.isRemote && event.getEntity() instanceof EntityPlayer){
 			IArcaneCompendium instance = ArcaneCompendium.For(event.getEntityPlayer());
 			if (event.getLevel() >= 5){
 				//ArcaneCompendium.instance.unlockEntry("dungeonsAndExploring");
@@ -84,14 +84,14 @@ public class CompendiumUnlockHandler{
 	 */
 	@SubscribeEvent
 	public void onEntityDeath(LivingDeathEvent event){
-		if (event.getEntityLiving().worldObj.isRemote && event.getSource().getEntity() instanceof EntityPlayer){
+		if (event.getEntityLiving().world.isRemote && event.getSource().getTrueSource() instanceof EntityPlayer){
 			if (event.getEntity() instanceof EntityEnderman){
-				ArcaneCompendium.For((EntityPlayer)event.getSource().getEntity()).unlockEntry("blockastralbarrier");
+				ArcaneCompendium.For((EntityPlayer)event.getSource().getTrueSource()).unlockEntry("blockastralbarrier");
 			}else{
 				EntityRegistration reg = EntityRegistry.instance().lookupModSpawn(event.getEntityLiving().getClass(), true);
 				if (reg != null && reg.getContainer().matches(ArsMagica2.instance)){
 					String id = reg.getEntityName();
-					ArcaneCompendium.For((EntityPlayer)event.getSource().getEntity()).unlockEntry(id);
+					ArcaneCompendium.For((EntityPlayer)event.getSource().getTrueSource()).unlockEntry(id);
 				}
 			}
 		}
@@ -137,7 +137,7 @@ public class CompendiumUnlockHandler{
 	 */
 	@SubscribeEvent
 	public void onCrafting(ItemCraftedEvent event){
-		if (event.player.worldObj.isRemote){
+		if (event.player.world.isRemote){
 			IArcaneCompendium instance = ArcaneCompendium.For(event.player);
 			instance.unlockRelatedItems(event.crafting);
 		}

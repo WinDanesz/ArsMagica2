@@ -29,7 +29,7 @@ public class EntityAISpawnWhirlwind extends EntityAIBase{
 	}
 
 	@Override
-	public boolean continueExecuting(){
+	public boolean shouldContinueExecuting(){
 		return !hasCasted && host.getAttackTarget() != null && !host.getAttackTarget().isDead;
 	}
 
@@ -44,7 +44,7 @@ public class EntityAISpawnWhirlwind extends EntityAIBase{
 	@Override
 	public void updateTask(){
 		host.getLookHelper().setLookPositionWithEntity(host.getAttackTarget(), 30, 30);
-		if (host.getDistanceSqToEntity(host.getAttackTarget()) > 64){
+		if (host.getDistanceSq(host.getAttackTarget()) > 64){
 
 			double deltaZ = host.getAttackTarget().posZ - host.posZ;
 			double deltaX = host.getAttackTarget().posX - host.posX;
@@ -62,12 +62,12 @@ public class EntityAISpawnWhirlwind extends EntityAIBase{
 				((IArsMagicaBoss)host).setCurrentAction(BossActions.CASTING);
 
 			windTicks++;
-			if (windTicks == 12 && !host.worldObj.isRemote){
-				if (!host.worldObj.isRemote)
-					host.worldObj.playSound(host.posX, host.posY, host.posZ, ((IArsMagicaBoss)host).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
-				EntityWhirlwind whirlwind = new EntityWhirlwind(host.worldObj);
+			if (windTicks == 12 && !host.world.isRemote){
+				if (!host.world.isRemote)
+					host.world.playSound(host.posX, host.posY, host.posZ, ((IArsMagicaBoss)host).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
+				EntityWhirlwind whirlwind = new EntityWhirlwind(host.world);
 				whirlwind.setPosition(host.posX, host.posY + host.getEyeHeight(), host.posZ);
-				host.worldObj.spawnEntityInWorld(whirlwind);
+				host.world.spawnEntity(whirlwind);
 			}
 		}
 		if (windTicks >= 23){

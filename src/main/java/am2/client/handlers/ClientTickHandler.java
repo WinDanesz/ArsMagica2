@@ -86,7 +86,7 @@ public class ClientTickHandler{
 		}
 
 		if (firstTick){
-			ItemDefs.crystalPhylactery.getSpawnableEntities(Minecraft.getMinecraft().theWorld);
+			// todo ItemDefs.crystalPhylactery.getSpawnableEntities(Minecraft.getMinecraft().world);
 			firstTick = false;
 		}
 		ArsMagica2.proxy.itemFrameWatcher.checkWatchedFrames();
@@ -130,15 +130,15 @@ public class ClientTickHandler{
 	}
 
 	private void spawnPowerPathVisuals(){
-		if (Minecraft.getMinecraft().thePlayer.getItemStackFromSlot(EntityEquipmentSlot.HEAD) != null &&
-				(Minecraft.getMinecraft().thePlayer.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemDefs.magitechGoggles ||
-						ArmorHelper.isInfusionPreset(Minecraft.getMinecraft().thePlayer.getItemStackFromSlot(EntityEquipmentSlot.HEAD), GenericImbuement.magitechGoggleIntegration))
+		if (Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD) != null &&
+				(Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemDefs.magitechGoggles ||
+						ArmorHelper.isInfusionPreset(Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD), GenericImbuement.magitechGoggleIntegration))
 				){
 
 			if (arcSpawnCounter++ >= arcSpawnFrequency){
 				arcSpawnCounter = 0;
 
-				AMVector3 playerPos = new AMVector3(Minecraft.getMinecraft().thePlayer);
+				AMVector3 playerPos = new AMVector3(Minecraft.getMinecraft().player);
 
 				HashMap<PowerTypes, ArrayList<LinkedList<BlockPos>>> paths = ArsMagica2.proxy.getPowerPathVisuals();
 				if (paths != null){
@@ -161,8 +161,8 @@ public class ClientTickHandler{
 								}
 
 
-								TileEntity teStart = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(start));
-								TileEntity teEnd = Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(end));
+								TileEntity teStart = Minecraft.getMinecraft().world.getTileEntity(new BlockPos(start));
+								TileEntity teEnd = Minecraft.getMinecraft().world.getTileEntity(new BlockPos(end));
 
 								if (teEnd == null || !(teEnd instanceof IPowerNode))
 									break;
@@ -176,7 +176,7 @@ public class ClientTickHandler{
 								double endZ = end.getZ() + ((IPowerNode<?>)teEnd).particleOffset(2);
 
 								AMLineArc arc = (AMLineArc)ArsMagica2.proxy.particleManager.spawn(
-										Minecraft.getMinecraft().theWorld,
+										Minecraft.getMinecraft().world,
 										texture,
 										startX,
 										startY,
@@ -209,12 +209,12 @@ public class ClientTickHandler{
 
 	private void checkMouseDWheel(){
 		if (this.mouseWheelValue != 0 && this.currentSlot > -1){
-			Minecraft.getMinecraft().thePlayer.inventory.currentItem = this.currentSlot;
+			Minecraft.getMinecraft().player.inventory.currentItem = this.currentSlot;
 
-			ItemStack stack = Minecraft.getMinecraft().thePlayer.getHeldItem(EnumHand.MAIN_HAND);
+			ItemStack stack = Minecraft.getMinecraft().player.getHeldItem(EnumHand.MAIN_HAND);
 
 			if (checkForTKMove(stack)){
-				EntityExtension props = (EntityExtension)EntityExtension.For(Minecraft.getMinecraft().thePlayer);
+				EntityExtension props = (EntityExtension)EntityExtension.For(Minecraft.getMinecraft().player);
 				if (this.mouseWheelValue > 0 && props.getTKDistance() < 10){
 					props.addToTKDistance(0.5f);
 				}else if (this.mouseWheelValue < 0 && props.getTKDistance() > 0.3){
@@ -223,15 +223,15 @@ public class ClientTickHandler{
 				LogHelper.debug("TK Distance: %.2f", props.getTKDistance());
 				props.syncTKDistance();
 			}
-				else if (stack.getItem() instanceof ItemSpellBook && Minecraft.getMinecraft().thePlayer.isSneaking()){
+				else if (stack.getItem() instanceof ItemSpellBook && Minecraft.getMinecraft().player.isSneaking()){
 				ItemSpellBook isb = (ItemSpellBook)stack.getItem();
 				if (this.mouseWheelValue != 0){
 					byte subID = 0;
 					if (this.mouseWheelValue < 0){
-						isb.SetNextSlot(Minecraft.getMinecraft().thePlayer.getHeldItem(EnumHand.MAIN_HAND));
+						isb.SetNextSlot(Minecraft.getMinecraft().player.getHeldItem(EnumHand.MAIN_HAND));
 						subID = ItemSpellBook.ID_NEXT_SPELL;
 					}else{
-						isb.SetPrevSlot(Minecraft.getMinecraft().thePlayer.getHeldItem(EnumHand.MAIN_HAND));
+						isb.SetPrevSlot(Minecraft.getMinecraft().player.getHeldItem(EnumHand.MAIN_HAND));
 						subID = ItemSpellBook.ID_PREV_SPELL;
 					}
 					//send packet to server
@@ -239,8 +239,8 @@ public class ClientTickHandler{
 							AMPacketIDs.SPELLBOOK_CHANGE_ACTIVE_SLOT,
 							new AMDataWriter()
 									.add(subID)
-									.add(Minecraft.getMinecraft().thePlayer.getEntityId())
-									.add(Minecraft.getMinecraft().thePlayer.inventory.currentItem)
+									.add(Minecraft.getMinecraft().player.getEntityId())
+									.add(Minecraft.getMinecraft().player.inventory.currentItem)
 									.generate()
 					);
 				}
@@ -296,7 +296,7 @@ public class ClientTickHandler{
 				gameTick_End();
 			}
 
-			if (Minecraft.getMinecraft().theWorld != null)
+			if (Minecraft.getMinecraft().world != null)
 				spawnPowerPathVisuals();
 		}
 	}

@@ -3,6 +3,7 @@ package am2.common.affinity.abilities;
 import am2.api.affinity.AbstractAffinityAbility;
 import am2.api.affinity.Affinity;
 import am2.common.extensions.EntityExtension;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
@@ -24,10 +25,10 @@ public class AbilityLeafLike extends AbstractAffinityAbility {
 	
 	@Override
 	public void applyTick(EntityPlayer player) {
-		if (player.isCollidedHorizontally){
+		if (player.collidedHorizontally){
 			if (!player.isSneaking()){
 				float movement = EntityExtension.For(player).getIsFlipped() ? -0.25f : 0.25f;
-				player.moveEntity(0, movement, 0);
+				player.move(MoverType.PLAYER, 0, movement, 0);
 				player.motionY = 0;
 			}else{
 				player.motionY *= 0.79999999;

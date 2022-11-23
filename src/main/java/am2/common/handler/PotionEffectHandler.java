@@ -73,7 +73,7 @@ public class PotionEffectHandler {
 	public void entityDamageEvent(LivingHurtEvent event) {
 		if (event.isCanceled()) return;
 		
-		if (event.getSource().damageType.equals(DamageSource.outOfWorld.damageType)) return;
+		if (event.getSource().damageType.equals(DamageSource.OUT_OF_WORLD.damageType)) return;
 		
 		if (event.getEntityLiving().isPotionActive(PotionEffectsDefs.MAGIC_SHIELD))
 			event.setAmount(event.getAmount() * 0.25f);
@@ -122,8 +122,8 @@ public class PotionEffectHandler {
 
 			Vec3d vec = event.getEntityLiving().getLookVec().normalize();
 			yVelocity = 0.4 + (event.getEntityLiving().getActivePotionEffect(PotionEffectsDefs.LEAP).getAmplifier() * 0.3);
-			xVelocity = velocityTarget.motionX * (Math.pow(2, event.getEntityLiving().getActivePotionEffect(PotionEffectsDefs.LEAP).getAmplifier())) * Math.abs(vec.xCoord);
-			zVelocity = velocityTarget.motionZ * (Math.pow(2, event.getEntityLiving().getActivePotionEffect(PotionEffectsDefs.LEAP).getAmplifier())) * Math.abs(vec.zCoord);
+			xVelocity = velocityTarget.motionX * (Math.pow(2, event.getEntityLiving().getActivePotionEffect(PotionEffectsDefs.LEAP).getAmplifier())) * Math.abs(vec.x);
+			zVelocity = velocityTarget.motionZ * (Math.pow(2, event.getEntityLiving().getActivePotionEffect(PotionEffectsDefs.LEAP).getAmplifier())) * Math.abs(vec.z);
 
 			float maxHorizontalVelocity = 1.45f;
 
@@ -186,7 +186,7 @@ public class PotionEffectHandler {
 	@SubscribeEvent
 	public void teleportEvent(EnderTeleportEvent e) {
 		ArrayList<Long> keystoneKeys = KeystoneUtilities.instance.GetKeysInInvenory(e.getEntityLiving());
-		TileEntityAstralBarrier blockingBarrier = DimensionUtilities.GetBlockingAstralBarrier(e.getEntityLiving().worldObj, new BlockPos(e.getTargetX(), e.getTargetY(), e.getTargetZ()), keystoneKeys);
+		TileEntityAstralBarrier blockingBarrier = DimensionUtilities.GetBlockingAstralBarrier(e.getEntityLiving().world, new BlockPos(e.getTargetX(), e.getTargetY(), e.getTargetZ()), keystoneKeys);
 
 		if (e.getEntityLiving().isPotionActive(PotionEffectsDefs.ASTRAL_DISTORTION) || blockingBarrier != null){
 			e.setCanceled(true);

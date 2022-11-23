@@ -6,6 +6,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -13,18 +14,17 @@ public class ItemRune extends ItemArsMagica {
 
 	public ItemRune() {
 	}
-	
+
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 		for (int i = 0; i < 16; i++) {
-			subItems.add(new ItemStack(itemIn, 1, i));
+			items.add(new ItemStack(this, 1, i));
 		}
 	}
-	
+
 	@Override
-	public String getUnlocalizedName(ItemStack stack) {
-		return "item.arsmagica2:rune." + EnumDyeColor.byDyeDamage(stack.getItemDamage()).getUnlocalizedName();
+	public String getUnlocalizedNameInefficiently(ItemStack stack) {
+		return "item.arsmagica2:rune." + EnumDyeColor.byDyeDamage(stack.getItemDamage());
 	}
 	
 	public int getKeyIndex(ItemStack stack) {
