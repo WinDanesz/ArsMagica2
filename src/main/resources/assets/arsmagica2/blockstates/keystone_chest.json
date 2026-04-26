@@ -1,0 +1,20 @@
+{
+    "forge_marker" : 1,
+    "defaults": {
+        "custom": {
+        },
+        "model": "arsmagica2:scaledown",
+        "textures": {
+            "particle":"arsmagica2:blocks/custom/keystone_chest"
+        }
+    },
+    "variants": {
+        "normal": [{}],
+        "facing=south": [{}],
+        "facing=west": [{}],
+        "facing=north": [{}],
+        "facing=east": [{}],
+        "inventory": [{}]
+    }
+}
+

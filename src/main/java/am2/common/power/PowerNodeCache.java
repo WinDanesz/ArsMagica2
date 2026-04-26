@@ -1,12 +1,8 @@
 package am2.common.power;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import am2.ArsMagica2;
+import am2.ArsMagica;
 import am2.common.LogHelper;
+import am2.common.utils.DimensionUtilities;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.ChunkPos;
@@ -17,187 +13,191 @@ import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class PowerNodeCache{
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
 
-	public static String extension = ".amc";
-	public static String folder = "AM2PowerData";
-	private static final String pndID = "pnd_%d_%d";
+public class PowerNodeCache {
 
-	private static HashMap<Integer, File> saveDirs = new HashMap<Integer, File>();
-	private static HashMap<String, File> saveFilesCached = new HashMap<String, File>();
-	private static HashMap<RegionCoordinates, NBTTagCompound> dataCache = new HashMap<RegionCoordinates, NBTTagCompound>();
+    public static String extension = ".amc";
+    public static String folder = "AM2PowerData";
+    private static final String pndID = "pnd_%d_%d";
 
-	public static final PowerNodeCache instance = new PowerNodeCache();
+    private static HashMap<Integer, File> saveDirs = new HashMap<Integer, File>();
+    private static HashMap<String, File> saveFilesCached = new HashMap<String, File>();
+    private static HashMap<RegionCoordinates, NBTTagCompound> dataCache = new HashMap<RegionCoordinates, NBTTagCompound>();
 
-	private File getFileFromChunk(World world, ChunkPos chunk, boolean createNew){
+    public static final PowerNodeCache instance = new PowerNodeCache();
 
-		File saveFolder = saveDirs.get(world.provider.getDimension());
-		if (saveFolder == null){
-			ISaveHandler handler = world.getSaveHandler();
-			if (handler instanceof SaveHandler){
-				saveFolder = new File(((SaveHandler)handler).getWorldDirectory(), folder);
-				saveFolder.mkdirs();
-				saveFolder = new File(saveFolder, String.format("DIM%d", world.provider.getDimension()));
-				saveFolder.mkdirs();
-				saveDirs.put(world.provider.getDimension(), saveFolder);
-			}else{
-				return null;
-			}
-		}
+    private File getFileFromChunk(World world, ChunkPos chunk, boolean createNew) {
 
-		int rX = (int)Math.floor(chunk.x / 32);
-		int rZ = (int)Math.floor(chunk.z / 32);
+        File saveFolder = saveDirs.get(world.provider.getDimension());
+        if (saveFolder == null) {
+            ISaveHandler handler = world.getSaveHandler();
+            if (handler instanceof SaveHandler) {
+                saveFolder = new File(((SaveHandler) handler).getWorldDirectory(), folder);
+                saveFolder.mkdirs();
+                saveFolder = new File(saveFolder, String.format("DIM%d", world.provider.getDimension()));
+                saveFolder.mkdirs();
+                saveDirs.put(world.provider.getDimension(), saveFolder);
+            } else {
+                return null;
+            }
+        }
 
-		String fileName = String.format("%d_%d%s", rX, rZ, extension);
+        int rX = (int) Math.floor(chunk.x / 32);
+        int rZ = (int) Math.floor(chunk.z / 32);
 
-		File file = saveFilesCached.get(fileName);
+        String fileName = String.format("%d_%d%s", rX, rZ, extension);
 
-		if (file != null)
-			return file;
+        File file = saveFilesCached.get(fileName);
+
+        if (file != null)
+            return file;
 
 
-		file = new File(saveFolder, fileName);
+        file = new File(saveFolder, fileName);
 
-		if (!file.exists()){
-			if (createNew){
-				try{
-					file.createNewFile();
-				}catch (Throwable t){
-					t.printStackTrace();
-				}
-			}else{
-				return null;
-			}
-		}
+        if (!file.exists()) {
+            if (createNew) {
+                try {
+                    file.createNewFile();
+                } catch (Throwable t) {
+                    ArsMagica.LOGGER.error("Failed to create new power data file", t);
+                }
+            } else {
+                return null;
+            }
+        }
 
-		saveFilesCached.put(fileName, file);
+        saveFilesCached.put(fileName, file);
 
-		return file;
-	}
+        return file;
+    }
 
-	public NBTTagCompound getNBTForChunk(World world, ChunkPos chunk){
-		RegionCoordinates rc = new RegionCoordinates(chunk, world.provider.getDimension());
-		if (dataCache.containsKey(rc)){
-			NBTTagCompound compound = dataCache.get(rc);
-			if (compound.hasKey("AM2PowerData"))
-				return compound;
-			dataCache.remove(rc);
-		}
-		return LoadNBTFromFile(world, chunk);
-	}
+    public NBTTagCompound getNBTForChunk(World world, ChunkPos chunk) {
+        RegionCoordinates rc = new RegionCoordinates(chunk, world.provider.getDimension());
+        if (dataCache.containsKey(rc)) {
+            NBTTagCompound compound = dataCache.get(rc);
+            if (compound.hasKey("AM2PowerData"))
+                return compound;
+            dataCache.remove(rc);
+        }
+        return LoadNBTFromFile(world, chunk);
+    }
 
-	private void SaveNBTToFile(World world, ChunkPos chunk, NBTTagCompound compound, boolean flushImmediate){
+    private void SaveNBTToFile(World world, ChunkPos chunk, NBTTagCompound compound, boolean flushImmediate) {
 
-		RegionCoordinates rc = new RegionCoordinates(chunk, world.provider.getDimension());
+        RegionCoordinates rc = new RegionCoordinates(chunk, world.provider.getDimension());
 
-		NBTTagCompound dataCompound = dataCache.get(rc);
+        NBTTagCompound dataCompound = dataCache.get(rc);
 
-		if (dataCompound == null){
-			File file = getFileFromChunk(world, chunk, true);
-			if (file == null || (!file.canWrite() && !file.setWritable(true)) || (!file.canRead() && !file.setReadable(true))){
-				LogHelper.error("Unable to obtain file handle!  The power system data for the chunk at %d, %d will NOT be saved!  To fix this, make sure you have read/write access to the Minecraft instance folder.", chunk.x, chunk.z);
-				return;
-			}
-			try{
-				//read the existing data out
-				dataCompound = CompressedStreamTools.read(file);
-			}catch (Throwable e){
-				//recover
-				dataCompound = new NBTTagCompound();
-			}
-		}
+        if (dataCompound == null) {
+            File file = getFileFromChunk(world, chunk, true);
+            if (file == null || (!file.canWrite() && !file.setWritable(true)) || (!file.canRead() && !file.setReadable(true))) {
+                LogHelper.error("Unable to obtain file handle!  The power system data for the chunk at %d, %d will NOT be saved!  To fix this, make sure you have read/write access to the Minecraft instance folder.", chunk.x, chunk.z);
+                return;
+            }
+            try {
+                //read the existing data out
+                dataCompound = CompressedStreamTools.read(file);
+            } catch (Throwable e) {
+                //recover
+                dataCompound = new NBTTagCompound();
+            }
+        }
 
-		//set the new compound in the NBT
-		dataCompound.setTag(getPNDIdentifier(chunk), compound);
+        //set the new compound in the NBT
+        dataCompound.setTag(getPNDIdentifier(chunk), compound);
 
-		if (flushImmediate){
-			File file = getFileFromChunk(world, chunk, true);
-			if (file == null || (!file.canWrite() && !file.setWritable(true)) || (!file.canRead() && !file.setReadable(true))){
-				LogHelper.error("Unable to obtain file handle!  The power system data for the chunk at %d, %d will NOT be saved!  To fix this, make sure you have read/write access to the Minecraft instance folder.", chunk.x, chunk.z);
-				return;
-			}
-			try{
-				//write the modified compound back to the file
-				CompressedStreamTools.write(dataCompound, file);
-			}catch (IOException e){
-				e.printStackTrace();
-			}
-		}
-	}
+        if (flushImmediate) {
+            File file = getFileFromChunk(world, chunk, true);
+            if (file == null || (!file.canWrite() && !file.setWritable(true)) || (!file.canRead() && !file.setReadable(true))) {
+                LogHelper.error("Unable to obtain file handle!  The power system data for the chunk at %d, %d will NOT be saved!  To fix this, make sure you have read/write access to the Minecraft instance folder.", chunk.x, chunk.z);
+                return;
+            }
+            try {
+                //write the modified compound back to the file
+                CompressedStreamTools.write(dataCompound, file);
+            } catch (IOException e) {
+                ArsMagica.LOGGER.error("Failed to write power node data to file", e);
+            }
+        }
+    }
 
-	private NBTTagCompound LoadNBTFromFile(World world, ChunkPos chunk){
+    private NBTTagCompound LoadNBTFromFile(World world, ChunkPos chunk) {
 
-		RegionCoordinates rc = new RegionCoordinates(chunk, world.provider.getDimension());
+        RegionCoordinates rc = new RegionCoordinates(chunk, world.provider.getDimension());
 
-		NBTTagCompound dataCompound = dataCache.get(rc);
+        NBTTagCompound dataCompound = dataCache.get(rc);
 
-		if (dataCompound == null){
-			File file = getFileFromChunk(world, chunk, false);
-			if (file == null){
-				return null;
-			}
-			if ((!file.canRead() && !file.setReadable(true))){
-				LogHelper.error("Unable to obtain readable file handle!  The power system data for the chunk at %d, %d will NOT be saved!  To fix this, make sure you have read access to the Minecraft instance folder.", chunk.x, chunk.z);
-				return null;
-			}
+        if (dataCompound == null) {
+            File file = getFileFromChunk(world, chunk, false);
+            if (file == null) {
+                return null;
+            }
+            if ((!file.canRead() && !file.setReadable(true))) {
+                LogHelper.error("Unable to obtain readable file handle!  The power system data for the chunk at %d, %d will NOT be saved!  To fix this, make sure you have read access to the Minecraft instance folder.", chunk.x, chunk.z);
+                return null;
+            }
 
-			try{
-				//read the existing data out
-				dataCompound = CompressedStreamTools.read(file);
-			}catch (Throwable e){
-				//recover
-				dataCompound = new NBTTagCompound();
-			}
+            try {
+                //read the existing data out
+                dataCompound = CompressedStreamTools.read(file);
+            } catch (Throwable e) {
+                //recover
+                dataCompound = new NBTTagCompound();
+            }
 
-			dataCache.put(rc, dataCompound);
-		}
+            dataCache.put(rc, dataCompound);
+        }
 
-		if (dataCompound == null){
-			dataCompound = new NBTTagCompound();
-			dataCache.put(rc, dataCompound);
-		}
+        if (dataCompound == null) {
+            dataCompound = new NBTTagCompound();
+            dataCache.put(rc, dataCompound);
+        }
 
-		NBTTagCompound innerCompound = dataCompound.getCompoundTag(getPNDIdentifier(chunk));
-		return innerCompound;
-	}
+        NBTTagCompound innerCompound = dataCompound.getCompoundTag(getPNDIdentifier(chunk));
+        return innerCompound;
+    }
 
-	@SubscribeEvent
-	public void onChunkUnload(ChunkEvent.Unload event){
-		if (!event.getWorld().isRemote && PowerNodeRegistry.For(event.getWorld()).hasDataForChunk(event.getChunk())){
-			NBTTagCompound dataCompound = new NBTTagCompound();
-			// TODO:
-//			PowerNodeRegistry.For(event.getWorld()).SaveChunkToNBT(event.getChunk().getChunkCoordIntPair(), dataCompound);
-//			PowerNodeRegistry.For(event.getWorld()).unloadChunk(event.getChunk());
-//			SaveNBTToFile(event.getWorld(), event.getChunk().getChunkCoordIntPair(), dataCompound, false);
-		}
-	}
-	
-	@SubscribeEvent
-	public void onChunkLoad(ChunkEvent.Load event) {
-		// TODO:
-//		NBTTagCompound dataCompound = LoadNBTFromFile(event.getWorld(), event.getChunk().getChunkCoordIntPair());
-//		if (dataCompound != null)
-//			PowerNodeRegistry.For(event.getWorld()).LoadChunkFromNBT(event.getChunk().getChunkCoordIntPair(), dataCompound);
-	}
+    @SubscribeEvent
+    public void onChunkUnload(ChunkEvent.Unload event) {
+        if (!event.getWorld().isRemote && PowerNodeRegistry.For(event.getWorld()).hasDataForChunk(event.getChunk())) {
+            NBTTagCompound dataCompound = new NBTTagCompound();
+            PowerNodeRegistry.For(event.getWorld()).SaveChunkToNBT(event.getChunk().getPos(), dataCompound);
+            PowerNodeRegistry.For(event.getWorld()).unloadChunk(event.getChunk());
+            SaveNBTToFile(event.getWorld(), event.getChunk().getPos(), dataCompound, false);
+        }
+    }
 
-	@SubscribeEvent
-	public void onWorldSave(WorldEvent.Save event){
-		World world = event.getWorld();
+    @SubscribeEvent
+    public void onChunkLoad(ChunkEvent.Load event) {
+        NBTTagCompound dataCompound = LoadNBTFromFile(event.getWorld(), event.getChunk().getPos());
+        if (dataCompound != null)
+            PowerNodeRegistry.For(event.getWorld()).LoadChunkFromNBT(event.getChunk().getPos(), dataCompound);
+    }
 
-		if (world.isRemote)
-			return;
+    @SubscribeEvent
+    public void onWorldSave(WorldEvent.Save event) {
+        World world = event.getWorld();
 
-		HashMap<ChunkPos, NBTTagCompound> saveData = PowerNodeRegistry.For(world).saveAll();
-		for (ChunkPos pair : saveData.keySet()){
-			SaveNBTToFile(world, pair, saveData.get(pair), ArsMagica2.config.savePowerDataOnWorldSave());
-		}
-	}
+        if (world.isRemote)
+            return;
 
-	@SubscribeEvent
-	public void onWorldUnload(WorldEvent.Unload event){
-		World world = event.getWorld();
-		saveWorldToFile(world);
-	}
+        HashMap<ChunkPos, NBTTagCompound> saveData = PowerNodeRegistry.For(world).saveAll();
+        for (ChunkPos pair : saveData.keySet()) {
+            SaveNBTToFile(world, pair, saveData.get(pair), ArsMagica.config.savePowerDataOnWorldSave());
+        }
+    }
+
+    @SubscribeEvent
+    public void onWorldUnload(WorldEvent.Unload event) {
+        World world = event.getWorld();
+        saveWorldToFile(world);
+        DimensionUtilities.cleanupDimension(world.provider.getDimension());
+    }
 
 //	private void cacheToFile(World world, RegionCoordinates coords){
 //		NBTTagCompound cachedRegion = dataCache.get(coords);
@@ -216,31 +216,36 @@ public class PowerNodeCache{
 //		}
 //	}
 
-	public void saveWorldToFile(World world){
-		if (world.isRemote)
-			return;
+    public void saveWorldToFile(World world) {
+        if (world.isRemote)
+            return;
 
-		LogHelper.trace("Saving all cached power data for DIM %d to disk", world.provider.getDimension());
+        LogHelper.trace("Saving all cached power data for DIM %d to disk", world.provider.getDimension());
 
-		//cached data to file
-		Iterator<RegionCoordinates> it = dataCache.keySet().iterator();
-		while (it.hasNext()){
-			RegionCoordinates rc = it.next();
-			if (rc.dimension == world.provider.getDimension()){
-				it.remove();
-			}
-		}
+        //cached data to file
+        Iterator<RegionCoordinates> it = dataCache.keySet().iterator();
+        while (it.hasNext()) {
+            RegionCoordinates rc = it.next();
+            if (rc.dimension == world.provider.getDimension()) {
+                it.remove();
+            }
+        }
 
-		//live data to file (may override cache, but that's what we want as live would be newer)
-		HashMap<ChunkPos, NBTTagCompound> saveData = PowerNodeRegistry.For(world).saveAll();
-		for (ChunkPos pair : saveData.keySet()){
-			SaveNBTToFile(world, pair, saveData.get(pair), true);
-		}
-		PowerNodeRegistry.For(world).unloadAll();
-		saveDirs.remove(world.provider.getDimension());
-	}
+        //live data to file (may override cache, but that's what we want as live would be newer)
+        HashMap<ChunkPos, NBTTagCompound> saveData = PowerNodeRegistry.For(world).saveAll();
+        for (ChunkPos pair : saveData.keySet()) {
+            SaveNBTToFile(world, pair, saveData.get(pair), true);
+        }
+        PowerNodeRegistry.For(world).unloadAll();
+        PowerNodeRegistry.unloadDimension(world);
+        saveDirs.remove(world.provider.getDimension());
 
-	private String getPNDIdentifier(ChunkPos chunk){
-		return String.format(pndID, chunk.x, chunk.z);
-	}
+        // Clean up cached file handles for this dimension
+        String dimPrefix = String.format("DIM%d", world.provider.getDimension());
+        saveFilesCached.entrySet().removeIf(entry -> entry.getValue().getPath().contains(dimPrefix));
+    }
+
+    private String getPNDIdentifier(ChunkPos chunk) {
+        return String.format(pndID, chunk.x, chunk.z);
+    }
 }

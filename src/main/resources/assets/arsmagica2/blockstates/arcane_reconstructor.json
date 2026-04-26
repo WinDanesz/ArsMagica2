@@ -1,0 +1,16 @@
+{
+    "forge_marker" : 1,
+    "defaults": {
+        "custom": {
+        },
+        "model": "arsmagica2:null",
+        "textures": {
+            "particle":"arsmagica2:blocks/custom/arcane_reconstructor"
+        }
+    },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{}]
+    }
+}
+

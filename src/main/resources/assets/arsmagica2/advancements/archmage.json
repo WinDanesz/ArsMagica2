@@ -1,0 +1,24 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:occulus"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.archmage.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.archmage.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "arsmagica2:specialized",
+  "criteria": {
+    "all_skills_unlocked": {
+      "trigger": "arsmagica2:all_skills_unlocked"
+    }
+  },
+  "requirements": [["all_skills_unlocked"]]
+}

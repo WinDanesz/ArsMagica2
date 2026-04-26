@@ -20,13 +20,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class MessageTEUpdate implements IMessage {
     public NBTTagCompound tag = new NBTTagCompound();
 
-    public MessageTEUpdate(){
+    public MessageTEUpdate() {
 
     }
 
-    public MessageTEUpdate(NBTTagCompound val){
+    public MessageTEUpdate(NBTTagCompound val) {
         this.tag = val;
     }
+
     @Override
     public void fromBytes(ByteBuf byteBuf) {
         this.tag = ByteBufUtils.readTag(byteBuf);
@@ -37,17 +38,18 @@ public class MessageTEUpdate implements IMessage {
         ByteBufUtils.writeTag(byteBuf, this.tag);
     }
 
-    public static class MessageHolder implements IMessageHandler<MessageTEUpdate, IMessage>{
+    public static class MessageHolder implements IMessageHandler<MessageTEUpdate, IMessage> {
 
         @SideOnly(Side.CLIENT)
         @Override
         public IMessage onMessage(MessageTEUpdate messageTEUpdate, MessageContext messageContext) {
-            Minecraft.getMinecraft().addScheduledTask(()-> {
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                if (Minecraft.getMinecraft().player == null) return;
                 NBTTagList list = messageTEUpdate.tag.getTagList("data", Constants.NBT.TAG_COMPOUND);
-                for (int i = 0; i < list.tagCount(); i++){
+                for (int i = 0; i < list.tagCount(); i++) {
                     NBTTagCompound tag = list.getCompoundTagAt(i);
                     TileEntity te = Minecraft.getMinecraft().player.getEntityWorld().getTileEntity(new BlockPos(tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z")));
-                    if( te != null) {
+                    if (te != null) {
                         te.readFromNBT(tag);
                         te.markDirty();
                     }

@@ -1,0 +1,29 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "L L",
+    "SRS",
+    "SVS"
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:dye",
+      "data": 4
+    },
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "stone"
+    },
+    "R": {
+      "type": "forge:ore_dict",
+      "ore": "dustRedstone"
+    },
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:calefactor"
+  }
+}

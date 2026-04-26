@@ -7,13 +7,13 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderBoundArrow extends RenderArrow<EntityBoundArrow> {
 
-	public RenderBoundArrow(RenderManager renderManagerIn) {
-		super(renderManagerIn);
-	}
+    public RenderBoundArrow(RenderManager renderManagerIn) {
+        super(renderManagerIn);
+    }
 
-	@Override
-	protected ResourceLocation getEntityTexture(EntityBoundArrow entity) {
-		return new ResourceLocation("textures/entity/projectiles/arrow.png");
-	}
+    @Override
+    protected ResourceLocation getEntityTexture(EntityBoundArrow entity) {
+        return new ResourceLocation("textures/entity/projectiles/arrow.png");
+    }
 
 }

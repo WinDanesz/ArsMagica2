@@ -1,16 +1,12 @@
 package am2.common.spell.component;
 
-import java.util.EnumSet;
-import java.util.Random;
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-
 import am2.api.affinity.Affinity;
 import am2.api.spell.SpellComponent;
 import am2.api.spell.SpellData;
 import am2.api.spell.SpellModifiers;
+import am2.common.registry.Affinities;
 import am2.common.utils.InventoryUtilities;
+import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -28,121 +24,115 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-public class PlaceBlock extends SpellComponent{
+import java.util.EnumSet;
+import java.util.Random;
+import java.util.Set;
 
-	private static final String KEY_STATE = "PlaceState";
+public class PlaceBlock extends SpellComponent {
 
-	@Override
-	public Object[] getRecipe(){
-		return new Object[]{
-				Items.STONE_AXE,
-				Items.STONE_PICKAXE,
-				Items.STONE_SHOVEL,
-				Blocks.CHEST
-		};
-	}
+    private static final String KEY_STATE = "PlaceState";
 
-	private IBlockState getPlaceBlock(SpellData spell){
-		if (spell.getStoredData().hasKey(KEY_STATE)){
-			return Block.getStateById(spell.getStoredData().getInteger(KEY_STATE));
-		}
-		return null;
-	}
+    @Override
+    public Object[] getRecipe() {
+        return new Object[]{
+                Items.STONE_AXE,
+                Items.STONE_PICKAXE,
+                Items.STONE_SHOVEL,
+                Blocks.CHEST
+        };
+    }
 
-	private void setPlaceBlock(SpellData spell, IBlockState state){
-		spell.getStoredData().setInteger(KEY_STATE, Block.getStateId(state));
-		
-		if (!spell.getSource().hasTagCompound())
-			spell.getSource().setTagCompound(new NBTTagCompound());
-		//set lore entry so that the stack displays the name of the block to place
-		if (!spell.getSource().getTagCompound().hasKey("Lore"))
-			spell.getSource().getTagCompound().setTag("Lore", new NBTTagList());
+    private IBlockState getPlaceBlock(SpellData spell) {
+        if (spell.getStoredData().hasKey(KEY_STATE)) {
+            return Block.getStateById(spell.getStoredData().getInteger(KEY_STATE));
+        }
+        return null;
+    }
 
-		ItemStack blockStack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
+    private void setPlaceBlock(SpellData spell, IBlockState state) {
+        spell.getStoredData().setInteger(KEY_STATE, Block.getStateId(state));
 
-		NBTTagList tagList = spell.getSource().getTagCompound().getTagList("Lore", Constants.NBT.TAG_COMPOUND);
-		for (int i = 0; i < tagList.tagCount(); ++i){
-			String str = tagList.getStringTagAt(i);
-			if (str.startsWith(String.format(I18n.format("am2.tooltip.placeBlockSpell"), ""))){
-				tagList.removeTag(i);
-			}
-		}
-		tagList.appendTag(new NBTTagString(String.format(I18n.format("am2.tooltip.placeBlockSpell"), blockStack.getDisplayName())));
+        if (!spell.getSource().hasTagCompound())
+            spell.getSource().setTagCompound(new NBTTagCompound());
+        //set lore entry so that the stack displays the name of the block to place
+        if (!spell.getSource().getTagCompound().hasKey("Lore"))
+            spell.getSource().getTagCompound().setTag("Lore", new NBTTagList());
 
-		spell.getSource().getTagCompound().setTag("Lore", tagList);
-	}
-	
-	@Override
-	public EnumSet<SpellModifiers> getModifiers() {
-		return EnumSet.noneOf(SpellModifiers.class);
-	}
-	
-	@Override
-	public boolean applyEffectBlock(SpellData spell, World world, BlockPos pos, EnumFacing blockFace, double impactX, double impactY, double impactZ, EntityLivingBase caster){
-		if (!(caster instanceof EntityPlayer))
-			return false;
+        ItemStack blockStack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
 
-		EntityPlayer player = (EntityPlayer)caster;
+        NBTTagList tagList = spell.getSource().getTagCompound().getTagList("Lore", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < tagList.tagCount(); ++i) {
+            String str = tagList.getStringTagAt(i);
+            if (str.startsWith(String.format(I18n.format("am2.tooltip.placeBlockSpell"), ""))) {
+                tagList.removeTag(i);
+            }
+        }
+        tagList.appendTag(new NBTTagString(String.format(I18n.format("am2.tooltip.placeBlockSpell"), blockStack.getDisplayName())));
 
-		IBlockState bd = getPlaceBlock(spell);
+        spell.getSource().getTagCompound().setTag("Lore", tagList);
+    }
 
-		if (bd != null && !caster.isSneaking()){
-			if (world.isAirBlock(pos) || !world.getBlockState(pos).isSideSolid(world, pos, blockFace))
-				blockFace = null;
-			if (blockFace != null){
-				pos = pos.add(blockFace.getDirectionVec());
-			}
-			if (world.isAirBlock(pos) || !world.getBlockState(pos).getMaterial().isSolid()){
-				ItemStack searchStack = new ItemStack(bd.getBlock(), 1, bd.getBlock().getMetaFromState(bd));
-				if (!world.isRemote && (player.capabilities.isCreativeMode || InventoryUtilities.inventoryHasItem(player.inventory, searchStack, 1))){
-					world.setBlockState(pos, bd);
-					if (!player.capabilities.isCreativeMode)
-						InventoryUtilities.deductFromInventory(player.inventory, searchStack, 1, null);
-				}
-				return true;
-			}
-		}else if (caster.isSneaking()){
-			if (!world.isRemote && !world.isAirBlock(pos)){
-				setPlaceBlock(spell, world.getBlockState(pos));
-			}
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public EnumSet<SpellModifiers> getModifiers() {
+        return EnumSet.noneOf(SpellModifiers.class);
+    }
 
-	@Override
-	public boolean applyEffectEntity(SpellData spell, World world, EntityLivingBase caster, Entity target){
-		return false;
-	}
+    @Override
+    public boolean applyEffectBlock(SpellData spell, World world, BlockPos pos, EnumFacing blockFace, double impactX, double impactY, double impactZ, EntityLivingBase caster) {
+        if (!(caster instanceof EntityPlayer))
+            return false;
 
-	@Override
-	public float manaCost(){
-		return 5;
-	}
+        EntityPlayer player = (EntityPlayer) caster;
 
-	@Override
-	public ItemStack[] reagents(EntityLivingBase caster){
-		return null;
-	}
+        IBlockState bd = getPlaceBlock(spell);
 
-	@Override
-	public void spawnParticles(World world, double x, double y, double z, EntityLivingBase caster, Entity target, Random rand, int colorModifier){
-	}
+        if (bd != null && !caster.isSneaking()) {
+            if (world.isAirBlock(pos) || !world.getBlockState(pos).isSideSolid(world, pos, blockFace))
+                blockFace = null;
+            if (blockFace != null) {
+                pos = pos.add(blockFace.getDirectionVec());
+            }
+            if (world.isAirBlock(pos) || !world.getBlockState(pos).getMaterial().isSolid()) {
+                ItemStack searchStack = new ItemStack(bd.getBlock(), 1, bd.getBlock().getMetaFromState(bd));
+                if (!world.isRemote && (player.capabilities.isCreativeMode || InventoryUtilities.inventoryHasItem(player.inventory, searchStack, 1))) {
+                    world.setBlockState(pos, bd);
+                    if (!player.capabilities.isCreativeMode)
+                        InventoryUtilities.deductFromInventory(player.inventory, searchStack, 1, null);
+                }
+                return true;
+            }
+        } else if (caster.isSneaking()) {
+            if (!world.isRemote && !world.isAirBlock(pos)) {
+                setPlaceBlock(spell, world.getBlockState(pos));
+            }
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	public Set<Affinity> getAffinity(){
-		return Sets.newHashSet(Affinity.EARTH, Affinity.ENDER);
-	}
+    @Override
+    public boolean applyEffectEntity(SpellData spell, World world, EntityLivingBase caster, Entity target) {
+        return false;
+    }
 
-	@Override
-	public float getAffinityShift(Affinity affinity){
-		return 0.05f;
-	}
+    @Override
+    public float manaCost() {
+        return 5;
+    }
 
-	@Override
-	public void encodeBasicData(NBTTagCompound tag, Object[] recipe) {
-		// TODO Auto-generated method stub
-		
-	}
+
+    @Override
+    public void spawnParticles(World world, double x, double y, double z, EntityLivingBase caster, Entity target, Random rand, int colorModifier) {
+    }
+
+    @Override
+    public Set<Affinity> getAffinity() {
+        return Sets.newHashSet(Affinities.earth, Affinities.ender);
+    }
+
+    @Override
+    public float getAffinityShift(Affinity affinity) {
+        return 0.05f;
+    }
 
 }

@@ -14,32 +14,32 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import java.util.Collection;
 
 public class ModelCullface implements IModel {
-	
-	IModel parent;
-	
-	public ModelCullface(IModel parent) {
-		this.parent = parent;
-	}
 
-	@Override
-	public Collection<ResourceLocation> getDependencies() {
-		return parent.getDependencies();
-	}
+    IModel parent;
 
-	@Override
-	public Collection<ResourceLocation> getTextures() {
-		return parent.getTextures();
-	}
+    public ModelCullface(IModel parent) {
+        this.parent = parent;
+    }
 
-	@Override
-	public IBakedModel bake(IModelState state, VertexFormat format, java.util.function.Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-		ImmutableMap<TransformType, TRSRTransformation> map = PerspectiveMapWrapper.getTransforms(state);
-		return new BakedModelCullface(parent.bake(state, format, bakedTextureGetter), map);
-	}
+    @Override
+    public Collection<ResourceLocation> getDependencies() {
+        return parent.getDependencies();
+    }
 
-	@Override
-	public IModelState getDefaultState() {
-		return parent.getDefaultState();
-	}
+    @Override
+    public Collection<ResourceLocation> getTextures() {
+        return parent.getTextures();
+    }
+
+    @Override
+    public IBakedModel bake(IModelState state, VertexFormat format, java.util.function.Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+        ImmutableMap<TransformType, TRSRTransformation> map = PerspectiveMapWrapper.getTransforms(state);
+        return new BakedModelCullface(parent.bake(state, format, bakedTextureGetter), map);
+    }
+
+    @Override
+    public IModelState getDefaultState() {
+        return parent.getDefaultState();
+    }
 
 }

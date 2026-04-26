@@ -21,94 +21,94 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
-public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLectern>{
-	RenderEntityItem renderItem = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem());
-	private final ModelBook enchantmentBook = new ModelBook();
-	private final ModelArchmagePodium podium = new ModelArchmagePodium();
-	private static int curDye = 1;
-	private static int curTick = 0;
-	public TileLecternRenderer() {
-		
-	}
+public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLectern> {
 
-	public void renderTileEntityArchmagePodiumAt(TileEntityLectern podium, double x, double y, double z, float f1) throws Exception{
-		Minecraft.getMinecraft().profiler.startSection("Lectern-Render");
-		Minecraft.getMinecraft().profiler.startSection("model");
-		RenderHelper.disableStandardItemLighting();
-		EnumFacing facing = EnumFacing.NORTH;
-		if (podium.hasWorld()) {
-			facing = podium.getWorld().getBlockState(podium.getPos()).getValue(BlockLectern.FACING);
-		}
-		Minecraft.getMinecraft().profiler.startSection("rendering");
-		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("arsmagica2", "textures/blocks/custom/archmagePodium.png"));
-		GlStateManager.pushMatrix();
-		GlStateManager.translate((float)x + 0.5F, (float)y + 0.9F, (float)z + 0.5F);
-		GlStateManager.rotate(180 - facing.getHorizontalAngle(), 0, 1, 0);
-		GlStateManager.scale(1.0F, -1F, -1F);
-		GlStateManager.scale(1.0F, 0.6F, 1.0F);
-		this.podium.renderModel(0.0625F);
-		GlStateManager.popMatrix();
-		Minecraft.getMinecraft().profiler.endSection();
-		Minecraft.getMinecraft().profiler.endStartSection("book-model");
-		if (podium.hasStack()){
-			if (podium.getOverpowered())
-				GlStateManager.color(0.7f, 0.2f, 0.2f, 1.0f);
-			else
-				GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-			RenderBook(podium, x, y, z, f1, 0);
-		}else if (podium.getNeedsBook()){
-			GlStateManager.color(0.7f, 0.2f, 0.2f, 0.2f);
-			GlStateManager.enableBlend();
-			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-			RenderBook(podium, x, y, z, f1, 0);
-			GlStateManager.disableBlend();
-		}
-		renderHelperIcon(podium, x, y, z, f1);
-		GlStateManager.disableBlend();
-		Minecraft.getMinecraft().profiler.endSection();
-		Minecraft.getMinecraft().profiler.endSection();
-	}
+    public static final ResourceLocation TEXTURE = new ResourceLocation("arsmagica2", "textures/blocks/custom/lectern.png");
 
-	private void renderHelperIcon(TileEntityLectern podium, double x, double y, double z, float f){
-		if (podium.getTooltipStack() == null){
-			podium.resetParticleAge();
-			return;
-		}
+    RenderEntityItem renderItem = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem());
+    private final ModelBook enchantmentBook = new ModelBook();
+    private final ModelArchmagePodium podium = new ModelArchmagePodium();
+    private static int curDye = 1;
+    private static int curTick = 0;
+    private static int dyeTickCounter = 0;
 
-		float deg = (curTick / 0.25f % 360F);
+    public TileLecternRenderer() {
+
+    }
+
+    public void renderTileEntityArchmagePodiumAt(TileEntityLectern podium, double x, double y, double z, float f1) throws Exception {
+        Minecraft.getMinecraft().profiler.startSection("Lectern-Render");
+        // Old podium model rendering removed - now using JSON block model
+        // Only render the book on top via TESR
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+
+        Minecraft.getMinecraft().profiler.startSection("book-model");
+        if (podium.hasStack()) {
+            if (podium.getOverpowered())
+                GlStateManager.color(0.7f, 0.2f, 0.2f, 1.0f);
+            else
+                GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+            RenderBook(podium, x, y, z, f1, 0);
+        } else if (podium.getNeedsBook()) {
+            GlStateManager.color(0.7f, 0.2f, 0.2f, 0.2f);
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+            RenderBook(podium, x, y, z, f1, 0);
+            GlStateManager.disableBlend();
+        }
+        renderHelperIcon(podium, x, y, z, f1);
+        GlStateManager.disableBlend();
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderHelper.enableStandardItemLighting();
+        Minecraft.getMinecraft().profiler.endSection();
+        Minecraft.getMinecraft().profiler.endSection();
+    }
+
+    private void renderHelperIcon(TileEntityLectern podium, double x, double y, double z, float f) {
+        if (podium.getTooltipStack() == null) {
+            podium.resetParticleAge();
+            return;
+        }
+
+        float deg = (curTick / 0.25f);
 
 
+        ItemStack stack = podium.getTooltipStack().copy();
+        stack.setCount(1);
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        GlStateManager.translate(x + 0.5f, y + 1.4f, z + 0.5f);
+        GlStateManager.rotate(deg, 0, f, 0);
+        curTick++;
+        if (curTick >= 3600) { // Reset every 3600 render calls (=40 full rotations, since one rotation = 90 render calls), ensures smooth wrap at 0°/14400°
+            curTick = 0;
+        }
+        dyeTickCounter++;
+        if (dyeTickCounter >= 100) {
+            dyeTickCounter = 0;
+            curDye++;
+            if (curDye >= 16)
+                curDye = 1;
 
-		ItemStack stack = podium.getTooltipStack().copy();
-		stack.setCount(1);
-		Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-		GlStateManager.translate(x +0.5f, y+1.4f, z+0.5f);
-		GlStateManager.rotate(deg, 0, f, 0);
-		if (curTick++ >= 100) {
-			curTick = 0;
-			curDye++;
-			if (curDye >= 16)
-				curDye = 1;
+        }
+        if (stack.getItem() == Items.DYE) {
+            stack = new ItemStack(Items.DYE, 1, curDye);
+        }
+        Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.GROUND);
+        //try {
+        //renderItem.doRender(AMGuiHelper.instance.dummyItem, x + 0.5f, y + 1.4f, z + 0.5f, AMGuiHelper.instance.dummyItem.rotationYaw, f);
+        //} catch (NullPointerException e) {
+        //	renderItem = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem());
+        //}
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x + 0.5f, y + 1f, z + 0.5f);
+        float scale = 0.2f;
+        GlStateManager.scale(scale, scale, scale);
+        renderRadiant(Tessellator.getInstance(), f, podium);
+        GlStateManager.popMatrix();
+    }
 
-		}
-		if(stack.getItem() == Items.DYE){
-			stack = new ItemStack(Items.DYE, 1, curDye);
-		}
-		Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.GROUND);
-		//try {
-		//renderItem.doRender(AMGuiHelper.instance.dummyItem, x + 0.5f, y + 1.4f, z + 0.5f, AMGuiHelper.instance.dummyItem.rotationYaw, f);
-		//} catch (NullPointerException e) {
-		//	renderItem = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem());
-		//}
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(x + 0.5f, y + 1f, z + 0.5f);
-		float scale = 0.2f;
-		GlStateManager.scale(scale, scale, scale);
-		renderRadiant(Tessellator.getInstance(), f, podium);
-		GlStateManager.popMatrix();
-	}
-
-	private void renderRadiant(Tessellator tessellator, float partialFrame, TileEntityLectern podium){
+    private void renderRadiant(Tessellator tessellator, float partialFrame, TileEntityLectern podium) {
 //		RenderHelper.disableStandardItemLighting();
 //		float var4 = (podium.particleAge + partialFrame) / podium.particleMaxAge;
 //		float var5 = 0.0F;
@@ -163,63 +163,63 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
 //		GL11.glEnable(GL11.GL_TEXTURE_2D);
 //		GL11.glEnable(GL11.GL_ALPHA_TEST);
 //		RenderHelper.enableStandardItemLighting();
-	}
+    }
 
-	private void RenderBook(TileEntityLectern podium, double x, double y, double z, float partialTicks, int meta){
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(x + 0.5F, y + 0.75F, z + 0.5F);
-		float var9 = (float)podium.tickCount + partialTicks;
-		GlStateManager.translate(0.0F, 0.1F + MathHelper.sin(var9 * 0.01F) * 0.01F, 0.0F);
-		float f2;
+    private void RenderBook(TileEntityLectern podium, double x, double y, double z, float partialTicks, int meta) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x + 0.5F, y + 1.15F, z + 0.5F);
+        float var9 = (float) podium.tickCount + partialTicks;
+        GlStateManager.translate(0.0F, 0.1F + MathHelper.sin(var9 * 0.01F) * 0.01F, 0.0F);
+        float f2;
 
-		for (f2 = podium.tRot - podium.bookRotation; f2 >= (float)Math.PI; f2 -= ((float)Math.PI * 2F));
+        for (f2 = podium.tRot - podium.bookRotation; f2 >= (float) Math.PI; f2 -= ((float) Math.PI * 2F)) ;
 
-		while (f2 < -(float)Math.PI){
-			f2 += ((float)Math.PI * 2F);
-		}
+        while (f2 < -(float) Math.PI) {
+            f2 += ((float) Math.PI * 2F);
+        }
 
 //		float var11 = podium.bookRotationPrev + f2 * partialTicks;
-		EnumFacing facing = EnumFacing.NORTH;
-		if (podium.hasWorld())
-			facing = podium.getWorld().getBlockState(podium.getPos()).getValue(BlockLectern.FACING);
-		GlStateManager.rotate(270 - facing.getHorizontalAngle(), 0, 1, 0);
+        EnumFacing facing = EnumFacing.NORTH;
+        if (podium.hasWorld())
+            facing = podium.getWorld().getBlockState(podium.getPos()).getValue(BlockLectern.FACING);
+        GlStateManager.rotate(270 - facing.getHorizontalAngle(), 0, 1, 0);
 //		if (facing == EnumFacing.EAST || facing == EnumFacing.SOUTH)
 //			GlStateManager.translate(0, 0, -1);
 //		if (facing == EnumFacing.WEST || facing == EnumFacing.SOUTH)
 //			GlStateManager.translate(-1, 0, 0);
-		GlStateManager.rotate(80.0F, 0.0F, 0.0F, 1.0F);
-		bindTexture(new ResourceLocation("textures/entity/enchanting_table_book.png"));
-		float var12 = podium.pageFlipPrev + (podium.pageFlip - podium.pageFlipPrev) * partialTicks + 0.25F;
-		float var13 = podium.pageFlipPrev + (podium.pageFlip - podium.pageFlipPrev) * partialTicks + 0.75F;
-		var12 = (var12 - MathHelper.floor(var12)) * 1.6F - 0.3F;
-		var13 = (var13 - MathHelper.floor(var13)) * 1.6F - 0.3F;
-		
-		var12 = MathHelper.clamp(var12, 0, 1);
-		var13 = MathHelper.clamp(var13, 0, 1);
+        GlStateManager.rotate(70.0F, 0.0F, 0.0F, 1.0F);
+        bindTexture(new ResourceLocation("textures/entity/enchanting_table_book.png"));
+        float var12 = podium.pageFlipPrev + (podium.pageFlip - podium.pageFlipPrev) * partialTicks + 0.25F;
+        float var13 = podium.pageFlipPrev + (podium.pageFlip - podium.pageFlipPrev) * partialTicks + 0.75F;
+        var12 = (var12 - MathHelper.floor(var12)) * 1.6F - 0.3F;
+        var13 = (var13 - MathHelper.floor(var13)) * 1.6F - 0.3F;
+
+        var12 = MathHelper.clamp(var12, 0, 1);
+        var13 = MathHelper.clamp(var13, 0, 1);
 
 //		float var14 = podium.bookSpreadPrev + (podium.bookSpread - podium.bookSpreadPrev) * partialTicks;
-		this.enchantmentBook.setRotationAngles(var9, var12, var13, 1f, 0.0F, 0.0625F, (Entity)null);
-		this.enchantmentBook.coverRight.render(0.0625F);
-		this.enchantmentBook.coverLeft.render(0.0625F);
-		this.enchantmentBook.bookSpine.render(0.0625F);
-		this.enchantmentBook.pagesRight.render(0.0625F);
-		this.enchantmentBook.pagesLeft.render(0.0625F);
-		this.enchantmentBook.flippingPageRight.render(0.0625F);
-		this.enchantmentBook.flippingPageLeft.render(0.0625F);
-		GlStateManager.popMatrix();
-	}
+        this.enchantmentBook.setRotationAngles(var9, var12, var13, 1f, 0.0F, 0.0625F, (Entity) null);
+        this.enchantmentBook.coverRight.render(0.0625F);
+        this.enchantmentBook.coverLeft.render(0.0625F);
+        this.enchantmentBook.bookSpine.render(0.0625F);
+        this.enchantmentBook.pagesRight.render(0.0625F);
+        this.enchantmentBook.pagesLeft.render(0.0625F);
+        this.enchantmentBook.flippingPageRight.render(0.0625F);
+        this.enchantmentBook.flippingPageLeft.render(0.0625F);
+        GlStateManager.popMatrix();
+    }
 
-	@Override
-	public void render(TileEntityLectern te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-		GlStateManager.pushMatrix();
-		try {
-			renderTileEntityArchmagePodiumAt(te, x, y, z, partialTicks);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-		GlStateManager.popMatrix();
-	}
+    @Override
+    public void render(TileEntityLectern te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        GlStateManager.pushMatrix();
+        try {
+            renderTileEntityArchmagePodiumAt(te, x, y, z, partialTicks);
+        } catch (Exception e) {
+            am2.ArsMagica.LOGGER.error("LecternRenderer.render exception caught: ", e);
+            return;
+        }
+        GlStateManager.popMatrix();
+    }
 
 	/*
 	 * GL11.glPushMatrix();

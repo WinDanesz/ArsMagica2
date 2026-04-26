@@ -4,198 +4,185 @@ import am2.api.blocks.IKeystoneLockable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 
-public class TileEntityKeystoneDoor extends TileEntity implements IInventory, IKeystoneLockable<TileEntityKeystoneDoor>{
+import javax.annotation.Nullable;
 
-	private ItemStack[] inventory;
+public class TileEntityKeystoneDoor extends TileEntity implements IInventory, IKeystoneLockable<TileEntityKeystoneDoor> {
 
-	public TileEntityKeystoneDoor(){
-		inventory = new ItemStack[getSizeInventory()];
-	}
+    private NonNullList<ItemStack> inventory;
 
-	@Override
-	public ItemStack[] getRunesInKey(){
-		ItemStack[] runes = new ItemStack[3];
-		runes[0] = inventory[0];
-		runes[1] = inventory[1];
-		runes[2] = inventory[2];
-		return runes;
-	}
+    public TileEntityKeystoneDoor() {
+        inventory = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+    }
 
-	@Override
-	public boolean keystoneMustBeHeld(){
-		return false;
-	}
+    @Override
+    public ItemStack[] getRunesInKey() {
+        ItemStack[] runes = new ItemStack[3];
+        runes[0] = inventory.get(0);
+        runes[1] = inventory.get(1);
+        runes[2] = inventory.get(2);
+        return runes;
+    }
 
-	@Override
-	public boolean keystoneMustBeInActionBar(){
-		return false;
-	}
+    @Override
+    public boolean keystoneMustBeHeld() {
+        return false;
+    }
 
-	@Override
-	public int getSizeInventory(){
-		return 3;
-	}
+    @Override
+    public boolean keystoneMustBeInActionBar() {
+        return false;
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
+    @Override
+    public int getSizeInventory() {
+        return 3;
+    }
 
-	@Override
-	public ItemStack getStackInSlot(int slot){
-		if (slot >= inventory.length)
-			return null;
-		return inventory[slot];
-	}
+    @Override
+    public boolean isEmpty() {
+        for (ItemStack itemstack : this.inventory) {
+            if (!itemstack.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public ItemStack decrStackSize(int i, int j){
-		if (inventory[i] != null){
-			if (inventory[i].getCount() <= j){
-				ItemStack itemstack = inventory[i];
-				inventory[i] = null;
-				return itemstack;
-			}
-			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].getCount() == 0){
-				inventory[i] = null;
-			}
-			return itemstack1;
-		}else{
-			return null;
-		}
-	}
+    /**
+     * Returns the stack in the given slot.
+     */
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        return inventory.get(slot);
+    }
 
-	@Override
-	public ItemStack removeStackFromSlot(int i){
-		if (inventory[i] != null){
-			ItemStack itemstack = inventory[i];
-			inventory[i] = null;
-			return itemstack;
-		}else{
-			return null;
-		}
-	}
+    /**
+     * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
+     */
+    @Override
+    public ItemStack decrStackSize(int slot, int amount) {
+        ItemStack itemstack = ItemStackHelper.getAndSplit(this.inventory, slot, amount);
+        if (!itemstack.isEmpty()) {
+            this.markDirty();
+        }
+        return itemstack;
+    }
 
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
-			itemstack.setCount( getInventoryStackLimit());
-		}
-	}
+    @Override
+    public ItemStack removeStackFromSlot(int slot) {
 
-	@Override
-	public String getName(){
-		return "Keystone Recepticle";
-	}
+        ItemStack stack = getStackInSlot(slot);
 
-	@Override
-	public int getInventoryStackLimit(){
-		return 1;
-	}
+        if (!stack.isEmpty()) {
+            setInventorySlotContents(slot, ItemStack.EMPTY);
+        }
 
-	@Override
-	public boolean isUsableByPlayer(EntityPlayer entityplayer){
-		if (world.getTileEntity(pos) != this){
-			return false;
-		}
+        return stack;
+    }
 
-		return entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
-	}
+    public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
+        if (stack.isEmpty()) {
+            stack = ItemStack.EMPTY;
+        }
+        this.inventory.set(index, stack);
+        if (stack.getCount() > this.getInventoryStackLimit()) {
+            stack.setCount(this.getInventoryStackLimit());
+        }
 
-	@Override
-	public boolean hasCustomName(){
-		return false;
-	}
+        this.markDirty();
+    }
 
-	@Override
-	public void openInventory(EntityPlayer player){
-	}
+    @Override
+    public String getName() {
+        return "Keystone Receptacle";
+    }
 
-	@Override
-	public void closeInventory(EntityPlayer player){
-	}
+    @Override
+    public int getInventoryStackLimit() {
+        return 1;
+    }
 
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack){
-		return false;
-	}
-	
-	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-		return oldState.getBlock() != newState.getBlock();
-	}
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+        if (world.getTileEntity(pos) != this) {
+            return false;
+        }
 
-	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound){
-		super.readFromNBT(nbttagcompound);
-		NBTTagList nbttaglist = nbttagcompound.getTagList("KeystoneDoorInventory", Constants.NBT.TAG_COMPOUND);
-		inventory = new ItemStack[getSizeInventory()];
-		for (int i = 0; i < nbttaglist.tagCount(); i++){
-			String tag = String.format("ArrayIndex", i);
-			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
-			byte byte0 = nbttagcompound1.getByte(tag);
-			if (byte0 >= 0 && byte0 < inventory.length){
-				inventory[byte0] = new ItemStack((nbttagcompound1));
-			}
-		}
-	}
+        return entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
+    }
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound){
-		super.writeToNBT(nbttagcompound);
-		NBTTagList nbttaglist = new NBTTagList();
-		for (int i = 0; i < inventory.length; i++){
-			if (inventory[i] != null){
-				String tag = String.format("ArrayIndex", i);
-				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-				nbttagcompound1.setByte(tag, (byte)i);
-				inventory[i].writeToNBT(nbttagcompound1);
-				nbttaglist.appendTag(nbttagcompound1);
-			}
-		}
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
 
-		nbttagcompound.setTag("KeystoneDoorInventory", nbttaglist);
-		return nbttagcompound;
-	}
+    @Override
+    public void openInventory(EntityPlayer player) {
+    }
 
-	@Override
-	public ITextComponent getDisplayName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public void closeInventory(EntityPlayer player) {
+    }
 
-	@Override
-	public int getField(int id) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+        return false;
+    }
 
-	@Override
-	public void setField(int id, int value) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
+        return oldState.getBlock() != newState.getBlock();
+    }
 
-	@Override
-	public int getFieldCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound nbttagcompound) {
+        super.readFromNBT(nbttagcompound);
+        ItemStackHelper.loadAllItems(nbttagcompound, this.inventory);
+    }
 
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
+        super.writeToNBT(nbttagcompound);
+        ItemStackHelper.saveAllItems(nbttagcompound, this.inventory);
+        return nbttagcompound;
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int getField(int id) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+        // TODO Auto-generated method stub
+
+    }
 }

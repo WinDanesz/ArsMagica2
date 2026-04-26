@@ -1,10 +1,10 @@
 package am2.client.particles;
 
-import am2.ArsMagica2;
+import am2.ArsMagica;
 import am2.client.particles.codechicken.LightningBolt;
 import am2.client.particles.ribbon.AMRibbon;
-import am2.common.defs.PotionEffectsDefs;
 import am2.common.packet.AMDataReader;
+import am2.common.registry.AMPotions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,585 +15,479 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
-public class ParticleManagerClient extends ParticleManagerServer{
+public class ParticleManagerClient extends ParticleManagerServer {
 
-	public static final byte PKT_BOLT_ENT_ENT = 64;
-	public static final byte PKT_BOLT_PT_PT = 63;
-	public static final byte PKT_BEAM_ENT_ENT = 62;
-	public static final byte PKT_BEAM_PT_PT = 61;
-	private final ParticleRenderer particleRenderer;
+    public static final byte PKT_BOLT_ENT_ENT = 64;
+    public static final byte PKT_BOLT_PT_PT = 63;
+    public static final byte PKT_BEAM_ENT_ENT = 62;
+    public static final byte PKT_BEAM_PT_PT = 61;
+    private final ParticleRenderer particleRenderer;
 
-	public ParticleManagerClient(){
-		particleRenderer = new ParticleRenderer();
-	}
+    public ParticleManagerClient() {
+        particleRenderer = new ParticleRenderer();
+    }
 
-	@Override
-	public AMParticle spawn(World world, String name, double x, double y, double z){
-		AMParticle particle = new AMParticle(world, x, y, z);
-		particle.SetParticleTextureByName(name);
+    @Override
+    public AMParticle spawn(World world, String name, double x, double y, double z) {
+        AMParticle particle = new AMParticle(world, x, y, z);
+        particle.SetParticleTextureByName(name);
 
-		particleRenderer.addAMParticle(particle);
+        particleRenderer.addAMParticle(particle);
 
-		return particle;
-	}
+        return particle;
+    }
 
-	@Override
-	public AMLineArc spawn(World world, String name, double x, double y, double z, double targetX, double targetY, double targetZ){
-		AMLineArc arc = new AMLineArc(world, x, y, z, targetX, targetY, targetZ, name);
-		particleRenderer.addArcEffect(arc);
-		return arc;
-	}
+    @Override
+    public AMLineArc spawn(World world, String name, double x, double y, double z, double targetX, double targetY, double targetZ) {
+        AMLineArc arc = new AMLineArc(world, x, y, z, targetX, targetY, targetZ, name);
+        particleRenderer.addArcEffect(arc);
+        return arc;
+    }
 
-	@Override
-	public AMLineArc spawn(World world, String name, double x, double y, double z, Entity target){
-		AMLineArc arc = new AMLineArc(world, x, y, z, target, name);
-		particleRenderer.addArcEffect(arc);
-		return arc;
-	}
+    @Override
+    public AMLineArc spawn(World world, String name, double x, double y, double z, Entity target) {
+        AMLineArc arc = new AMLineArc(world, x, y, z, target, name);
+        particleRenderer.addArcEffect(arc);
+        return arc;
+    }
 
-	@Override
-	public AMLineArc spawn(World world, String name, Entity source, Entity target){
-		AMLineArc arc = new AMLineArc(world, source, target, name);
-		particleRenderer.addArcEffect(arc);
-		return arc;
-	}
+    @Override
+    public AMLineArc spawn(World world, String name, Entity source, Entity target) {
+        AMLineArc arc = new AMLineArc(world, source, target, name);
+        particleRenderer.addArcEffect(arc);
+        return arc;
+    }
 
-	public void registerEventHandlers(){
-		MinecraftForge.EVENT_BUS.register(particleRenderer);
-	}
+    public void registerEventHandlers() {
+        MinecraftForge.EVENT_BUS.register(particleRenderer);
+    }
 
-	@Override
-	public void BoltFromEntityToEntity(World world, Entity caster, Entity source, Entity target, int damage, int type, int color){
-		double xx = target.posX;
-		double zz = target.posZ;
+    @Override
+    public void BoltFromEntityToEntity(World world, Entity caster, Entity source, Entity target, int damage, int type, int color) {
+        double xx = target.posX;
+        double zz = target.posZ;
 
-		double px = source.posX;
-		double py = source.posY + source.getEyeHeight();
-		double pz = source.posZ;
-		px -= MathHelper.cos(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
-		py -= 0.1000000014901161D;
-		pz -= MathHelper.sin(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
-		Vec3d vec3d = source.getLookVec().normalize();
-		px += vec3d.x * 0.25D;
-		py += vec3d.y * 0.25D;
-		pz += vec3d.z * 0.25D;
-		LightningBolt bolt = new LightningBolt(world, px, py, pz, xx, target.getEntityBoundingBox().minY + target.height / 2.0F, zz, world.rand.nextLong(), 6, 0.3F, 6);
+        double px = source.posX;
+        double py = source.posY + source.getEyeHeight();
+        double pz = source.posZ;
+        px -= MathHelper.cos(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
+        py -= 0.1000000014901161D;
+        pz -= MathHelper.sin(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
+        Vec3d vec3d = source.getLookVec().normalize();
+        px += vec3d.x * 0.25D;
+        py += vec3d.y * 0.25D;
+        pz += vec3d.z * 0.25D;
+        LightningBolt bolt = new LightningBolt(world, px, py, pz, xx, target.getEntityBoundingBox().minY + target.height / 2.0F, zz, world.rand.nextLong(), 6, 0.3F, 6);
 
-		bolt.defaultFractal();
-		bolt.setSourceEntity(caster);
-		bolt.setType(type);
-		bolt.setDamage(0);
-		bolt.setOverrideColor(color);
-		bolt.finalizeBolt();
-	}
+        bolt.defaultFractal();
+        bolt.setSourceEntity(caster);
+        bolt.setType(type);
+        bolt.setDamage(0);
+        bolt.setOverrideColor(color);
+        bolt.finalizeBolt();
+    }
 
-	@Override
-	public void BoltFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ){
-		BoltFromPointToPoint(world, startX, startY, startZ, endX, endY, endZ, 1, -1);
-	}
+    @Override
+    public void BoltFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ) {
+        BoltFromPointToPoint(world, startX, startY, startZ, endX, endY, endZ, 1, -1);
+    }
 
-	@Override
-	public void BoltFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ){
-		BoltFromEntityToPoint(world, source, endX, endY, endZ, 0, -1);
-	}
+    @Override
+    public void BoltFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ) {
+        BoltFromEntityToPoint(world, source, endX, endY, endZ, 0, -1);
+    }
 
-	@Override
-	public void BoltFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ, int type, int color){
-		BoltFromPointToPoint(world, source.posX, source.posY + source.getEyeHeight(), source.posZ, endX, endY, endZ, type, color);
-	}
+    @Override
+    public void BoltFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ, int type, int color) {
+        BoltFromPointToPoint(world, source.posX, source.posY + source.getEyeHeight(), source.posZ, endX, endY, endZ, type, color);
+    }
 
-	@Override
-	public void BoltFromEntityToEntity(World world, Entity caster, Entity source, Entity target, int damage){
-		BoltFromEntityToEntity(world, caster, source, target, damage, 1, -1);
-	}
+    @Override
+    public void BoltFromEntityToEntity(World world, Entity caster, Entity source, Entity target, int damage) {
+        BoltFromEntityToEntity(world, caster, source, target, damage, 1, -1);
+    }
 
-	@Override
-	public void BoltFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ, int type, int color){
+    @Override
+    public void BoltFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ, int type, int color, int duration) {
+        if (ArsMagica.config.NoGFX()) {
+            return;
+        }
+        LightningBolt bolt = new LightningBolt(world, startX, startY, startZ, endX, endY, endZ, world.rand.nextLong(), duration, 0.3F, 6);
+        bolt.defaultFractal();
+        bolt.setSourceEntity(null);
+        bolt.setType(type);
+        bolt.setDamage(0);
+        bolt.finalizeBolt();
+    }
 
-		if (ArsMagica2.config.NoGFX()){
-			return;
-		}
-		LightningBolt bolt = new LightningBolt(world, startX, startY, startZ, endX, endY, endZ, world.rand.nextLong(), 6, 0.3F, 6);
+    public void BoltFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ, int type, int color) {
 
-		bolt.defaultFractal();
-		bolt.setSourceEntity(null);
-		bolt.setType(type);
-		bolt.setDamage(0);
-		bolt.finalizeBolt();
-	}
+        if (ArsMagica.config.NoGFX()) {
+            return;
+        }
+        LightningBolt bolt = new LightningBolt(world, startX, startY, startZ, endX, endY, endZ, world.rand.nextLong(), 6, 0.3F, 6);
 
-	@Override
-	public Object BeamFromEntityToEntity(World world, Entity caster, Entity source, Entity target, int damage, int color){
+        bolt.defaultFractal();
+        bolt.setSourceEntity(null);
+        bolt.setType(type);
+        bolt.setDamage(0);
+        bolt.finalizeBolt();
+    }
+
+    @Override
+    public Object BeamFromEntityToEntity(World world, Entity caster, Entity source, Entity target, int damage, int color) {
 //		if (AMCore.config.NoGFX()){
 //			return null;
 //		}
-		double xx = target.posX;
+        double xx = target.posX;
 //		double yy = target.posY + target.getEyeHeight();
-		double zz = target.posZ;
+        double zz = target.posZ;
 
-		double px = source.posX;
-		double py = source.posY + source.getEyeHeight();
-		double pz = source.posZ;
-		px -= MathHelper.cos(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
-		py -= 0.1000000014901161D;
-		pz -= MathHelper.sin(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
-		Vec3d vec3d = source.getLookVec().normalize();
-		px += vec3d.x * 0.25D;
-		py += vec3d.y * 0.25D;
-		pz += vec3d.z * 0.25D;
+        double px = source.posX;
+        double py = source.posY + source.getEyeHeight();
+        double pz = source.posZ;
+        px -= MathHelper.cos(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
+        py -= 0.1000000014901161D;
+        pz -= MathHelper.sin(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
+        Vec3d vec3d = source.getLookVec().normalize();
+        px += vec3d.x * 0.25D;
+        py += vec3d.y * 0.25D;
+        pz += vec3d.z * 0.25D;
 
-		AMBeam fx = new AMBeam(world, px, py, pz, xx, target.getEntityBoundingBox().minY + target.height / 2.0F, zz);
-		fx.setRGBColor(color);
-		Minecraft.getMinecraft().effectRenderer.addEffect(fx);
+        AMBeam fx = new AMBeam(world, px, py, pz, xx, target.getEntityBoundingBox().minY + target.height / 2.0F, zz);
+        fx.setRGBColor(color);
+        particleRenderer.addBeamEffect(fx);
 
-		return fx;
-	}
+        return fx;
+    }
 
-	@Override
-	public Object BeamFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ, int color){
-		if (ArsMagica2.config.NoGFX()){
-			return null;
-		}
-		AMBeam fx = new AMBeam(world, startX, startY, startZ, endX, endY, endZ);
-		fx.setRGBColor(color);
-		Minecraft.getMinecraft().effectRenderer.addEffect(fx);
+    @Override
+    public Object BeamFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ, int color) {
+        if (ArsMagica.config.NoGFX()) {
+            return null;
+        }
+        AMBeam fx = new AMBeam(world, startX, startY, startZ, endX, endY, endZ);
+        fx.setRGBColor(color);
+        particleRenderer.addBeamEffect(fx);
 
-		return fx;
-	}
+        return fx;
+    }
 
-	@Override
-	public Object BeamFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ){
-		return BeamFromPointToPoint(world, startX, startY, startZ, endX, endY, endZ, 0xFFFFFF);
-	}
+    @Override
+    public Object BeamFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ) {
+        return BeamFromPointToPoint(world, startX, startY, startZ, endX, endY, endZ, 0xFFFFFF);
+    }
 
-	@Override
-	public Object BeamFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ){
-		return BeamFromEntityToPoint(world, source, endX, endY, endZ, 0xFFFFFF);
-	}
+    @Override
+    public Object BeamFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ) {
+        return BeamFromEntityToPoint(world, source, endX, endY, endZ, 0xFFFFFF);
+    }
 
-	@Override
-	public Object BeamFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ, int color){
-		if (!(source instanceof EntityPlayer) || source == Minecraft.getMinecraft().player){
-			return BeamFromPointToPoint(world, source.posX, source.posY, source.posZ, endX, endY, endZ, color);
-		}else{
-			return BeamFromPointToPoint(world, source.posX, source.posY + source.getEyeHeight() - 0.2f, source.posZ, endX, endY, endZ, color);
-		}
-	}
+    @Override
+    public Object BeamFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ, int color) {
+        if (!(source instanceof EntityPlayer) || source == Minecraft.getMinecraft().player) {
+            return BeamFromPointToPoint(world, source.posX, source.posY, source.posZ, endX, endY, endZ, color);
+        } else {
+            return BeamFromPointToPoint(world, source.posX, source.posY + source.getEyeHeight() - 0.2f, source.posZ, endX, endY, endZ, color);
+        }
+    }
 
-	@Override
-	public Object BeamFromEntityToEntity(World world, Entity caster, Entity source, Entity target, int damage){
-		return BeamFromEntityToEntity(world, caster, source, target, damage, 0xFFFFFF);
-	}
+    @Override
+    public Object BeamFromEntityToEntity(World world, Entity caster, Entity source, Entity target, int damage) {
+        return BeamFromEntityToEntity(world, caster, source, target, damage, 0xFFFFFF);
+    }
 
-	@Override
-	public void RibbonFromEntityToEntity(World world, Entity caster, Entity source, Entity target, int damage, int type){
+    @Override
+    public void RibbonFromEntityToEntity(World world, Entity caster, Entity source, Entity target, int damage, int type) {
 //		double xx = target.posX;
 //		double yy = target.posY + target.getEyeHeight();
 //		double zz = target.posZ;
 
-		double px = source.posX;
-		double py = source.posY + source.getEyeHeight();
-		double pz = source.posZ;
-		px -= MathHelper.cos(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
-		py -= 0.1000000014901161D;
-		pz -= MathHelper.sin(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
-		Vec3d vec3d = source.getLookVec().normalize();
-		px += vec3d.x * 0.25D;
-		py += vec3d.y * 0.25D;
-		pz += vec3d.z * 0.25D;
-		AMRibbon ribbon = new AMRibbon(world, 0.5f, 0.05f, px, py, pz);
+        double px = source.posX;
+        double py = source.posY + source.getEyeHeight();
+        double pz = source.posZ;
+        px -= MathHelper.cos(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
+        py -= 0.1000000014901161D;
+        pz -= MathHelper.sin(source.rotationYaw / 180.0F * 3.141593F) * 0.16F;
+        Vec3d vec3d = source.getLookVec().normalize();
+        px += vec3d.x * 0.25D;
+        py += vec3d.y * 0.25D;
+        pz += vec3d.z * 0.25D;
+        AMRibbon ribbon = new AMRibbon(world, 0.5f, 0.05f, px, py, pz);
 
-		Minecraft.getMinecraft().effectRenderer.addEffect(ribbon);
-	}
+        Minecraft.getMinecraft().effectRenderer.addEffect(ribbon);
+    }
 
-	@Override
-	public void RibbonFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ){
-		RibbonFromPointToPoint(world, startX, startY, startZ, endX, endY, endZ, 1);
-	}
+    @Override
+    public void RibbonFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ) {
+        RibbonFromPointToPoint(world, startX, startY, startZ, endX, endY, endZ, 1);
+    }
 
-	@Override
-	public void RibbonFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ){
-		RibbonFromEntityToPoint(world, source, endX, endY, endZ, 0);
-	}
+    @Override
+    public void RibbonFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ) {
+        RibbonFromEntityToPoint(world, source, endX, endY, endZ, 0);
+    }
 
-	@Override
-	public void RibbonFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ, int type){
-		RibbonFromPointToPoint(world, source.posX, source.posY, source.posZ, endX, endY, endZ, 0);
-	}
+    @Override
+    public void RibbonFromEntityToPoint(World world, Entity source, double endX, double endY, double endZ, int type) {
+        RibbonFromPointToPoint(world, source.posX, source.posY, source.posZ, endX, endY, endZ, 0);
+    }
 
-	@Override
-	public void RibbonFromEntityToEntity(World world, Entity caster, Entity source, Entity target, int damage){
-		RibbonFromEntityToEntity(world, caster, source, target, damage, 1);
-	}
+    @Override
+    public void RibbonFromEntityToEntity(World world, Entity caster, Entity source, Entity target, int damage) {
+        RibbonFromEntityToEntity(world, caster, source, target, damage, 1);
+    }
 
-	@Override
-	public void RibbonFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ, int type){
+    @Override
+    public void RibbonFromPointToPoint(World world, double startX, double startY, double startZ, double endX, double endY, double endZ, int type) {
 
-		if (ArsMagica2.config.NoGFX()){
-			return;
-		}
-		AMRibbon ribbon = new AMRibbon(world, 0.5f, 0.05f, startX, startY, startZ);
-		Minecraft.getMinecraft().effectRenderer.addEffect(ribbon);
-	}
+        if (ArsMagica.config.NoGFX()) {
+            return;
+        }
+        AMRibbon ribbon = new AMRibbon(world, 0.5f, 0.05f, startX, startY, startZ);
+        Minecraft.getMinecraft().effectRenderer.addEffect(ribbon);
+    }
 
-	@Override
-	public void handleClientPacketData(World world, byte[] data){
-		AMDataReader rdr = new AMDataReader(data);
+    @Override
+    public void handleClientPacketData(World world, byte[] data) {
+        AMDataReader rdr = new AMDataReader(data);
 
-		byte sub_id = rdr.getByte();
-		int type = 1;
+        byte sub_id = rdr.getByte();
+        int type = 1;
 
-		String name;
+        String name;
 
-		int casterID;
-		int sourceID;
-		int targetID;
-		int damage;
+        int casterID;
+        int sourceID;
+        int targetID;
+        int damage;
 
-		int color;
+        int color;
 
-		Entity caster;
-		Entity source;
-		Entity target;
+        Entity caster;
+        Entity source;
+        Entity target;
 
-		double startX;
-		double startY;
-		double startZ;
-		double endX;
-		double endY;
-		double endZ;
+        double startX;
+        double startY;
+        double startZ;
+        double endX;
+        double endY;
+        double endZ;
 
-		switch (sub_id){
-		case PKT_BOLT_ENT_ENT:
-			casterID = rdr.getInt();
-			sourceID = rdr.getInt();
-			targetID = rdr.getInt();
-			damage = rdr.getInt();
-			type = rdr.getInt();
-			color = rdr.getInt();
+        switch (sub_id) {
+            case PKT_BOLT_ENT_ENT:
+                casterID = rdr.getInt();
+                sourceID = rdr.getInt();
+                targetID = rdr.getInt();
+                damage = rdr.getInt();
+                type = rdr.getInt();
+                color = rdr.getInt();
 
-			caster = world.getEntityByID(casterID);
-			source = world.getEntityByID(sourceID);
-			target = world.getEntityByID(targetID);
+                caster = world.getEntityByID(casterID);
+                source = world.getEntityByID(sourceID);
+                target = world.getEntityByID(targetID);
 
-			if (caster == null || source == null || target == null){
-				return;
-			}
-			BoltFromEntityToEntity(world, caster, source, target, damage, type, color);
+                if (caster == null || source == null || target == null) {
+                    return;
+                }
+                BoltFromEntityToEntity(world, caster, source, target, damage, type, color);
 
-			break;
-		case PKT_BOLT_PT_PT:
-			startX = rdr.getDouble();
-			startY = rdr.getDouble();
-			startZ = rdr.getDouble();
-			endX = rdr.getDouble();
-			endY = rdr.getDouble();
-			endZ = rdr.getDouble();
-			type = rdr.getInt();
-			color = rdr.getInt();
+                break;
+            case PKT_BOLT_PT_PT:
+                startX = rdr.getDouble();
+                startY = rdr.getDouble();
+                startZ = rdr.getDouble();
+                endX = rdr.getDouble();
+                endY = rdr.getDouble();
+                endZ = rdr.getDouble();
+                type = rdr.getInt();
+                color = rdr.getInt();
 
-			BoltFromPointToPoint(world, startX, startY, startZ, endX, endY, endZ, type, color);
+                BoltFromPointToPoint(world, startX, startY, startZ, endX, endY, endZ, type, color);
 
-			break;
-		case PKT_BEAM_ENT_ENT:
-			casterID = rdr.getInt();
-			sourceID = rdr.getInt();
-			targetID = rdr.getInt();
-			damage = rdr.getInt();
-			type = rdr.getInt();
+                break;
+            case PKT_BEAM_ENT_ENT:
+                casterID = rdr.getInt();
+                sourceID = rdr.getInt();
+                targetID = rdr.getInt();
+                damage = rdr.getInt();
+                type = rdr.getInt();
 
-			caster = world.getEntityByID(casterID);
-			source = world.getEntityByID(sourceID);
-			target = world.getEntityByID(targetID);
+                caster = world.getEntityByID(casterID);
+                source = world.getEntityByID(sourceID);
+                target = world.getEntityByID(targetID);
 
-			if (caster == null || source == null || target == null){
-				return;
-			}
-			BeamFromEntityToEntity(world, caster, source, target, damage, type);
+                if (caster == null || source == null || target == null) {
+                    return;
+                }
+                BeamFromEntityToEntity(world, caster, source, target, damage, type);
 
-			break;
-		case PKT_BEAM_PT_PT:
-			startX = rdr.getDouble();
-			startY = rdr.getDouble();
-			startZ = rdr.getDouble();
-			endX = rdr.getDouble();
-			endY = rdr.getDouble();
-			endZ = rdr.getDouble();
-			type = rdr.getInt();
+                break;
+            case PKT_BEAM_PT_PT:
+                startX = rdr.getDouble();
+                startY = rdr.getDouble();
+                startZ = rdr.getDouble();
+                endX = rdr.getDouble();
+                endY = rdr.getDouble();
+                endZ = rdr.getDouble();
+                type = rdr.getInt();
 
-			BeamFromPointToPoint(world, startX, startY, startZ, endX, endY, endZ, type);
+                BeamFromPointToPoint(world, startX, startY, startZ, endX, endY, endZ, type);
 
-			break;
-		case PKT_RIBBON_PT_PT:
-			startX = rdr.getDouble();
-			startY = rdr.getDouble();
-			startZ = rdr.getDouble();
-			endX = rdr.getDouble();
-			endY = rdr.getDouble();
-			endZ = rdr.getDouble();
-			type = rdr.getInt();
+                break;
+            case PKT_RIBBON_PT_PT:
+                startX = rdr.getDouble();
+                startY = rdr.getDouble();
+                startZ = rdr.getDouble();
+                endX = rdr.getDouble();
+                endY = rdr.getDouble();
+                endZ = rdr.getDouble();
+                type = rdr.getInt();
 
-			RibbonFromPointToPoint(world, startX, startY, startZ, endX, endY, endZ, type);
+                RibbonFromPointToPoint(world, startX, startY, startZ, endX, endY, endZ, type);
 
-			break;
-		case PKT_RIBBON_ENT_ENT:
-			casterID = rdr.getInt();
-			sourceID = rdr.getInt();
-			targetID = rdr.getInt();
-			damage = rdr.getInt();
-			type = rdr.getInt();
+                break;
+            case PKT_RIBBON_ENT_ENT:
+                casterID = rdr.getInt();
+                sourceID = rdr.getInt();
+                targetID = rdr.getInt();
+                damage = rdr.getInt();
+                type = rdr.getInt();
 
-			caster = world.getEntityByID(casterID);
-			source = world.getEntityByID(sourceID);
-			target = world.getEntityByID(targetID);
+                caster = world.getEntityByID(casterID);
+                source = world.getEntityByID(sourceID);
+                target = world.getEntityByID(targetID);
 
-			if (caster == null || source == null || target == null){
-				return;
-			}
-			RibbonFromEntityToEntity(world, caster, source, target, damage, type);
+                if (caster == null || source == null || target == null) {
+                    return;
+                }
+                RibbonFromEntityToEntity(world, caster, source, target, damage, type);
 
-			break;
-		case PKT_ARC_PT_PT:
-			name = rdr.getString();
-			startX = rdr.getDouble();
-			startY = rdr.getDouble();
-			startZ = rdr.getDouble();
-			endX = rdr.getDouble();
-			endY = rdr.getDouble();
-			endZ = rdr.getDouble();
+                break;
+            case PKT_ARC_PT_PT:
+                name = rdr.getString();
+                startX = rdr.getDouble();
+                startY = rdr.getDouble();
+                startZ = rdr.getDouble();
+                endX = rdr.getDouble();
+                endY = rdr.getDouble();
+                endZ = rdr.getDouble();
 
-			spawn(world, name, startX, startY, startZ, endX, endY, endZ);
-			break;
-		case PKT_ARC_PT_ENT:
-			name = rdr.getString();
-			startX = rdr.getDouble();
-			startY = rdr.getDouble();
-			startZ = rdr.getDouble();
-			targetID = rdr.getInt();
+                spawn(world, name, startX, startY, startZ, endX, endY, endZ);
+                break;
+            case PKT_ARC_PT_ENT:
+                name = rdr.getString();
+                startX = rdr.getDouble();
+                startY = rdr.getDouble();
+                startZ = rdr.getDouble();
+                targetID = rdr.getInt();
 
-			target = world.getEntityByID(targetID);
-			if (target == null){
-				return;
-			}
-			spawn(world, name, startX, startY, startZ, target);
+                target = world.getEntityByID(targetID);
+                if (target == null) {
+                    return;
+                }
+                spawn(world, name, startX, startY, startZ, target);
 
-			break;
-		case PKT_ARC_ENT_ENT:
-			name = rdr.getString();
-			sourceID = rdr.getInt();
-			targetID = rdr.getInt();
+                break;
+            case PKT_ARC_ENT_ENT:
+                name = rdr.getString();
+                sourceID = rdr.getInt();
+                targetID = rdr.getInt();
 
-			source = world.getEntityByID(sourceID);
-			target = world.getEntityByID(targetID);
+                source = world.getEntityByID(sourceID);
+                target = world.getEntityByID(targetID);
 
-			if (source == null || target == null){
-				return;
-			}
-			spawn(world, name, source, target);
-			break;
-		}
-	}
+                if (source == null || target == null) {
+                    return;
+                }
+                spawn(world, name, source, target);
+                break;
+        }
+    }
 
-	@Override
-	public void spawnAuraParticles(EntityLivingBase ent){
-		if (!ent.world.isRemote) return;
+    @Override
+    public void spawnBuffParticles(EntityLivingBase entityliving) {
+        World world = entityliving.world;
 
-		int particleIndex = 15;
-		int particleBehaviour = 0;
-		float particleScale = 0;
-		float particleAlpha = 0;
-		boolean particleDefaultColor = true;
-		boolean particleRandomColor = true;
-		int particleColor = 0xFFFFFF;
-		int particleQuantity = 2;
-		float particleSpeed = 0.02f;
+        if (!world.isRemote) return;
 
-		if (Minecraft.getMinecraft().player == ent){
-			particleIndex = ArsMagica2.config.getAuraIndex();
-			particleBehaviour = ArsMagica2.config.getAuraBehaviour();
-			particleScale = ArsMagica2.config.getAuraScale() / 10;
-			particleAlpha = ArsMagica2.config.getAuraAlpha();
-			particleDefaultColor = ArsMagica2.config.getAuraColorDefault();
-			particleRandomColor = ArsMagica2.config.getAuraColorRandom();
-			particleColor = ArsMagica2.config.getAuraColor();
-			particleQuantity = ArsMagica2.config.getAuraQuantity();
-			particleSpeed = ArsMagica2.config.getAuraSpeed() / 10;
-//		}else{
-//			EntityExtension entProperties = EntityExtension.For(ent);
-//			particleIndex        = entProperties.getAuraIndex();
-//			particleBehaviour    = entProperties.getAuraBehaviour();
-//			particleScale        = entProperties.getAuraScale() / 10;
-//			particleAlpha        = entProperties.getAuraAlpha();
-//			particleDefaultColor = entProperties.getAuraColorDefault();
-//			particleRandomColor  = entProperties.getAuraColorRandomize();
-//			particleColor        = entProperties.getAuraColor();
-//			particleQuantity     = entProperties.getAuraQuantity();
-//			particleSpeed        = entProperties.getAuraSpeed() / 10;
-		}
+        if (entityliving == Minecraft.getMinecraft().player) {
+            if (entityliving.isPotionActive(AMPotions.true_sight) && entityliving.ticksExisted % 20 == 0) {
+                int radius = 5;
+                for (int i = -radius; i <= radius; ++i) {
+                    for (int j = -radius; j <= radius; ++j) {
+                        for (int k = -radius; k <= radius; ++k) {
+                            if (entityliving.world.isAirBlock(entityliving.getPosition().add(i, j, k))
+                                    && entityliving.world.getLightFor(EnumSkyBlock.BLOCK, entityliving.getPosition().add(i, j, k)) <= 7) {
+                                AMParticle effect = spawn(world, "hr_sparkles_1",
+                                        (int) entityliving.posX - 1 + i + (world.rand.nextDouble() * 3),
+                                        (int) entityliving.posY - 1 + j + (world.rand.nextDouble() * 3),
+                                        (int) entityliving.posZ - 1 + k + (world.rand.nextDouble() * 3));
+                                if (effect != null) {
+                                    effect.setRGBColorF(world.rand.nextFloat() * 0.4f + 0.3f, 0.6f, world.rand.nextFloat() * 0.4f + 0.6f);
+                                    effect.setIgnoreMaxAge(false);
+                                    effect.setMaxAge(40);
+                                    effect.AddParticleController(new ParticleFloatUpward(effect, 0.01f, 0.01f, 1, false));
+                                    effect.AddParticleController(new ParticleFadeOut(effect, 2, false).setFadeSpeed(0.01f));
+                                }
+                            }
+                        }
+                    }
+                }
 
-		if (particleIndex == 31) //fix radiant particle's scaling issues...
-			particleScale /= 10;
+            }
+            if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
+                return;
+        }
+    }
 
-		if (ent.world.isRemote && ent instanceof EntityPlayer && ArsMagica2.proxy.playerTracker.hasAA((EntityPlayer)ent)){
-			if (Minecraft.getMinecraft().player != ent || Minecraft.getMinecraft().gameSettings.thirdPersonView > 0){
-				if (AMParticle.particleTypes[particleIndex].startsWith("lightning_bolts")){
-					int type = Integer.parseInt(new String(new char[]{AMParticle.particleTypes[particleIndex].charAt(AMParticle.particleTypes[particleIndex].length() - 1)}));
-					if (ent.world.rand.nextInt(100) < 90){
-						BoltFromPointToPoint(ent.world,
-								ent.posX + (ent.world.rand.nextFloat() - 0.5f),
-								ent.posY + ent.getEyeHeight() - ent.height + (ent.world.rand.nextFloat() * ent.height),
-								ent.posZ + (ent.world.rand.nextFloat() - 0.5f),
-								ent.posX + (ent.world.rand.nextFloat() - 0.5f),
-								ent.posY + ent.getEyeHeight() - ent.height + (ent.world.rand.nextFloat() * ent.height),
-								ent.posZ + (ent.world.rand.nextFloat() - 0.5f),
-								type, -1);
-					}else{
-						BoltFromPointToPoint(ent.world,
-								ent.posX,
-								ent.posY + ent.getEyeHeight() - 0.4,
-								ent.posZ,
-								ent.posX + (ent.world.rand.nextFloat() * 10 - 5),
-								ent.posY + (ent.world.rand.nextFloat() * 10 - 5),
-								ent.posZ + (ent.world.rand.nextFloat() * 10 - 5),
-								type, -1);
-					}
-				}else{
-					int offset = 0;
-					for (int i = 0; i < particleQuantity; ++i){
-						AMParticle effect = spawn(ent.world, AMParticle.particleTypes[particleIndex],
-								ent.posX + (ent.world.rand.nextFloat() - 0.5f),
-								ent.posY + ent.getEyeHeight() - 0.5f + offset - (ent.world.rand.nextFloat() * 0.5),
-								ent.posZ + (ent.world.rand.nextFloat() - 0.5f));
-						if (effect != null){
-							effect.setIgnoreMaxAge(false);
-							effect.setMaxAge(40);
-							effect.setParticleScale(particleScale);
-							effect.SetParticleAlpha(particleAlpha);
-							if (!particleDefaultColor){
-								if (particleRandomColor){
-									effect.setRGBColorF(ent.world.rand.nextFloat(), ent.world.rand.nextFloat(), ent.world.rand.nextFloat());
-								}else{
-									effect.setRGBColorI(particleColor);
-								}
-							}
-							switch (particleBehaviour){
-							case 0: //fade
-								effect.AddParticleController(new ParticleFadeOut(effect, 1, false).setFadeSpeed(particleSpeed));
-								break;
-							case 1: //float
-								effect.AddParticleController(new ParticleFloatUpward(effect, 0.2f, particleSpeed, 1, false));
-								break;
-							case 2: //sink
-								effect.AddParticleController(new ParticleFloatUpward(effect, 0.2f, -particleSpeed, 1, false));
-								break;
-							case 3: //orbit
-								effect.AddParticleController(new ParticleOrbitEntity(effect, ent, particleSpeed, 1, false));
-								break;
-							case 4: //arc
-								effect.AddParticleController(new ParticleArcToEntity(effect, 1, ent, false).generateControlPoints().SetSpeed(particleSpeed));
-								break;
-							case 5: //flee
-								effect.AddParticleController(new ParticleFleeEntity(effect, ent, particleSpeed, 2D, 1, false));
-								break;
-							case 6: //forward
-								effect.AddParticleController(new ParticleMoveOnHeading(effect, ent.rotationYaw + 90, ent.rotationPitch, particleSpeed, 1, false));
-								break;
-							case 7: //pendulum
-								effect.AddParticleController(new ParticlePendulum(effect, 0.2f, particleSpeed, 1, false));
-								break;
-							case 8: //grow
-								effect.AddParticleController(new ParticleGrow(effect, particleSpeed, 1, false));
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+    @Override
+    public ParticleController createDefaultParticleController(int type, Object eff, Vec3d location, float modifier, int meta) {
+        AMParticle effect = (AMParticle) eff;
+        switch (type) {
+            default:
+            case 0: //fade
+                return new ParticleFadeOut(effect, 1, false).setFadeSpeed(0.02f * modifier);
+            case 1: //float
+                return new ParticleFloatUpward(effect, 0.01f, 0.03f * modifier, 1, false);
+            case 2: //sink
+                return new ParticleFloatUpward(effect, 0.01f, -0.03f * modifier, 1, false);
+            case 3: //orbit
+                return new ParticleOrbitPoint(effect, location.x, location.y, location.z, 1, false).SetOrbitSpeed(0.05f * modifier);
+            case 4: //arc
+                return new ParticleArcToPoint(effect, 1, location.x, location.y, location.z, false).generateControlPoints().SetSpeed(0.02f * modifier);
+            case 5: //flee
+                //return new ParticleFleePoint(effect, location.add(new AMVector3(0.5, 0.5, 0.5)), 0.02f * modifier, 1.5f, 1, false);
+                return new ParticleMoveOnHeading(effect, effect.getWorld().rand.nextInt(360), 0, 0.02f * modifier, 1, false);
+            case 6: //forward
+                if ((meta & ~0x8) == 3)
+                    meta &= ~0x2;
+                else if ((meta & ~0x8) == 1)
+                    meta |= 0x2;
+                return new ParticleMoveOnHeading(effect, (meta & ~0x8) * 90, 0, 0.02f * modifier, 1, false);
+        }
+    }
 
-	@Override
-	public void spawnBuffParticles(EntityLivingBase entityliving){
-		World world = entityliving.world;
-
-		if (!world.isRemote) return;
-
-		if (entityliving == Minecraft.getMinecraft().player){
-			if (entityliving.isPotionActive(PotionEffectsDefs.TRUE_SIGHT) && entityliving.ticksExisted % 20 == 0){
-				int radius = 5;
-				for (int i = -radius; i <= radius; ++i){
-					for (int j = -radius; j <= radius; ++j){
-						for (int k = -radius; k <= radius; ++k){
-							if (entityliving.world.isAirBlock(entityliving.getPosition().add(i, j, k))
-							 && entityliving.world.getLightFor(EnumSkyBlock.BLOCK, entityliving.getPosition().add(i, j, k)) <= 7){
-								AMParticle effect = spawn(world, "hr_sparkles_1",
-										(int)entityliving.posX - 1 + i + (world.rand.nextDouble() * 3),
-										(int)entityliving.posY - 1 + j + (world.rand.nextDouble() * 3),
-										(int)entityliving.posZ - 1 + k + (world.rand.nextDouble() * 3));
-								if (effect != null){
-									effect.setRGBColorF(world.rand.nextFloat() * 0.4f + 0.3f, 0.6f, world.rand.nextFloat() * 0.4f + 0.6f);
-									effect.setIgnoreMaxAge(false);
-									effect.setMaxAge(40);
-									effect.AddParticleController(new ParticleFloatUpward(effect, 0.01f, 0.01f, 1, false));
-									effect.AddParticleController(new ParticleFadeOut(effect, 2, false).setFadeSpeed(0.01f));
-								}
-							}
-						}
-					}
-				}
-
-			}
-			if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
-				return;
-		}
-	}
-
-	@Override
-	public ParticleController createDefaultParticleController(int type, Object eff, Vec3d location, float modifier, int meta){
-		AMParticle effect = (AMParticle)eff;
-		switch (type){
-		default:
-		case 0: //fade
-			return new ParticleFadeOut(effect, 1, false).setFadeSpeed(0.02f * modifier);
-		case 1: //float
-			return new ParticleFloatUpward(effect, 0.01f, 0.03f * modifier, 1, false);
-		case 2: //sink
-			return new ParticleFloatUpward(effect, 0.01f, -0.03f * modifier, 1, false);
-		case 3: //orbit
-			return new ParticleOrbitPoint(effect, location.x, location.y, location.z, 1, false).SetOrbitSpeed(0.05f * modifier);
-		case 4: //arc
-			return new ParticleArcToPoint(effect, 1, location.x, location.y, location.z, false).generateControlPoints().SetSpeed(0.02f * modifier);
-		case 5: //flee
-			//return new ParticleFleePoint(effect, location.add(new AMVector3(0.5, 0.5, 0.5)), 0.02f * modifier, 1.5f, 1, false);
-			return new ParticleMoveOnHeading(effect, effect.getWorld().rand.nextInt(360), 0, 0.02f * modifier, 1, false);
-		case 6: //forward
-			if ((meta & ~0x8) == 3)
-				meta &= ~0x2;
-			else if ((meta & ~0x8) == 1)
-				meta |= 0x2;
-			return new ParticleMoveOnHeading(effect, (meta & ~0x8) * 90, 0, 0.02f * modifier, 1, false);
-		}
-	}
-
-	@Override
-	public ParticleController createDefaultParticleController(int type, Object eff, EntityLivingBase ent){
-		AMParticle effect = (AMParticle)eff;
-		switch (type){
-		default:
-		case 0: //fade
-			return new ParticleFadeOut(effect, 1, false).setFadeSpeed(0.02f);
-		case 1: //float
-			return new ParticleFloatUpward(effect, 0.2f, 0.03f, 1, false);
-		case 2: //sink
-			return new ParticleFloatUpward(effect, 0.2f, -0.03f, 1, false);
-		case 3: //orbit
-			return new ParticleOrbitEntity(effect, ent, 0.05f, 1, false);
-		case 4: //arc
-			return new ParticleArcToEntity(effect, 1, ent, false).generateControlPoints();
-		case 5: //flee
-			return new ParticleFleeEntity(effect, ent, 0.05f, 2D, 1, false);
-		case 6: //forward
-			return new ParticleMoveOnHeading(effect, ent.rotationYaw + 90, ent.rotationPitch, 0.05f, 1, false);
-		}
-	}
+    @Override
+    public ParticleController createDefaultParticleController(int type, Object eff, EntityLivingBase ent) {
+        AMParticle effect = (AMParticle) eff;
+        switch (type) {
+            default:
+            case 0: //fade
+                return new ParticleFadeOut(effect, 1, false).setFadeSpeed(0.02f);
+            case 1: //float
+                return new ParticleFloatUpward(effect, 0.2f, 0.03f, 1, false);
+            case 2: //sink
+                return new ParticleFloatUpward(effect, 0.2f, -0.03f, 1, false);
+            case 3: //orbit
+                return new ParticleOrbitEntity(effect, ent, 0.05f, 1, false);
+            case 4: //arc
+                return new ParticleArcToEntity(effect, 1, ent, false).generateControlPoints();
+            case 5: //flee
+                return new ParticleFleeEntity(effect, ent, 0.05f, 2D, 1, false);
+            case 6: //forward
+                return new ParticleMoveOnHeading(effect, ent.rotationYaw + 90, ent.rotationPitch, 0.05f, 1, false);
+        }
+    }
 }

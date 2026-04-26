@@ -1,0 +1,16 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "dyeLime"
+    },
+    {
+      "item": "arsmagica2:blank_rune"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:rune",
+    "data": 5
+  }
+}

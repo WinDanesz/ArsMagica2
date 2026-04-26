@@ -1,13 +1,6 @@
 package am2.common.spell.component;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Random;
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-
-import am2.ArsMagica2;
+import am2.ArsMagica;
 import am2.api.affinity.Affinity;
 import am2.api.spell.Operation;
 import am2.api.spell.SpellComponent;
@@ -17,11 +10,13 @@ import am2.client.particles.AMParticle;
 import am2.client.particles.ParticleFadeOut;
 import am2.client.particles.ParticleMoveOnHeading;
 import am2.common.blocks.tileentity.TileEntityAstralBarrier;
-import am2.common.defs.ItemDefs;
-import am2.common.defs.PotionEffectsDefs;
 import am2.common.extensions.EntityExtension;
+import am2.common.registry.AMItems;
+import am2.common.registry.AMPotions;
+import am2.common.registry.Affinities;
 import am2.common.utils.DimensionUtilities;
 import am2.common.utils.KeystoneUtilities;
+import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -29,319 +24,305 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
-public class Blink extends SpellComponent{
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Random;
+import java.util.Set;
 
-	@Override
-	public boolean applyEffectEntity(SpellData spell, World world, EntityLivingBase caster, Entity target){
-		if (!(target instanceof EntityLivingBase)) return false;
+public class Blink extends SpellComponent {
 
-		if (world.isRemote){
-			EntityExtension.For((EntityLivingBase)target).astralBarrierBlocked = false;
-		}
+    @Override
+    public boolean applyEffectEntity(SpellData spell, World world, EntityLivingBase caster, Entity target) {
+        if (!(target instanceof EntityLivingBase)) return false;
 
-		double distance = GetTeleportDistance(spell, caster, target);
+        if (world.isRemote) {
+            EntityExtension.For((EntityLivingBase) target).astralBarrierBlocked = false;
+        }
 
-		double motionX = -MathHelper.sin((target.rotationYaw / 180F) * 3.141593F) * MathHelper.cos((target.rotationPitch / 180F) * 3.141593F) * distance;
-		double motionZ = MathHelper.cos((target.rotationYaw / 180F) * 3.141593F) * MathHelper.cos((target.rotationPitch / 180F) * 3.141593F) * distance;
-		double motionY = -MathHelper.sin((target.rotationPitch / 180F) * 3.141593F) * distance;
+        double distance = GetTeleportDistance(spell, caster, target);
 
-		double d = motionX, d1 = motionY, d2 = motionZ;
+        double motionX = -MathHelper.sin((target.rotationYaw / 180F) * 3.141593F) * MathHelper.cos((target.rotationPitch / 180F) * 3.141593F) * distance;
+        double motionZ = MathHelper.cos((target.rotationYaw / 180F) * 3.141593F) * MathHelper.cos((target.rotationPitch / 180F) * 3.141593F) * distance;
+        double motionY = -MathHelper.sin((target.rotationPitch / 180F) * 3.141593F) * distance;
 
-		float f2 = MathHelper.sqrt(d * d + d1 * d1 + d2 * d2);
-		d /= f2;
-		d1 /= f2;
-		d2 /= f2;
-		d *= distance;
-		d1 *= distance;
-		d2 *= distance;
-		motionX = d;
-		motionY = d1;
-		motionZ = d2;
-		ArrayList<Long> keystoneKeys = KeystoneUtilities.instance.GetKeysInInvenory((EntityLivingBase)target);
+        double d = motionX, d1 = motionY, d2 = motionZ;
 
-		double newX = target.posX + motionX;
-		double newZ = target.posZ + motionZ;
-		double newY = target.posY + motionY;
+        float f2 = MathHelper.sqrt(d * d + d1 * d1 + d2 * d2);
+        d /= f2;
+        d1 /= f2;
+        d2 /= f2;
+        d *= distance;
+        d1 *= distance;
+        d2 *= distance;
+        motionX = d;
+        motionY = d1;
+        motionZ = d2;
+        ArrayList<Long> keystoneKeys = KeystoneUtilities.instance.GetKeysInInvenory((EntityLivingBase) target);
 
-		boolean coordsValid = false;
-		boolean astralBarrierBlocked = false;
+        double newX = target.posX + motionX;
+        double newZ = target.posZ + motionZ;
+        double newY = target.posY + motionY;
 
-		TileEntityAstralBarrier finalBlocker = null;
+        boolean coordsValid = false;
+        boolean astralBarrierBlocked = false;
 
-		while (!coordsValid && distance > 0){
+        TileEntityAstralBarrier finalBlocker = null;
 
-			if (caster.isPotionActive(PotionEffectsDefs.ASTRAL_DISTORTION)){
-				coordsValid = true;
-				newX = caster.posX;
-				newY = caster.posY;
-				newZ = caster.posZ;
-			}
+        while (!coordsValid && distance > 0) {
 
-			TileEntityAstralBarrier blocker = DimensionUtilities.GetBlockingAstralBarrier(world, new BlockPos(newX, newY, newZ), keystoneKeys);
-			while (blocker != null){
-				finalBlocker = blocker;
-				astralBarrierBlocked = true;
+            if (caster.isPotionActive(AMPotions.astral_distortion)) {
+                coordsValid = true;
+                newX = caster.posX;
+                newY = caster.posY;
+                newZ = caster.posZ;
+            }
 
-				int dx = (int)newX - blocker.getPos().getX();
-				int dy = (int)newY - blocker.getPos().getY();
-				int dz = (int)newZ - blocker.getPos().getZ();
+            TileEntityAstralBarrier blocker = DimensionUtilities.GetBlockingAstralBarrier(world, new BlockPos(newX, newY, newZ), keystoneKeys);
+            while (blocker != null) {
+                finalBlocker = blocker;
+                astralBarrierBlocked = true;
 
-				int sqDist = (dx * dx + dy * dy + dz * dz);
-				int delta = blocker.getRadius() - (int)Math.floor(Math.sqrt(sqDist));
-				distance -= delta;
-				if (distance < 0) break;
+                int dx = (int) newX - blocker.getPos().getX();
+                int dy = (int) newY - blocker.getPos().getY();
+                int dz = (int) newZ - blocker.getPos().getZ();
 
-				motionX = -MathHelper.sin((target.rotationYaw / 180F) * 3.141593F) * MathHelper.cos((target.rotationPitch / 180F) * 3.141593F) * distance;
-				motionZ = MathHelper.cos((target.rotationYaw / 180F) * 3.141593F) * MathHelper.cos((target.rotationPitch / 180F) * 3.141593F) * distance;
-				motionY = -MathHelper.sin((target.rotationPitch / 180F) * 3.141593F) * distance;
+                int sqDist = (dx * dx + dy * dy + dz * dz);
+                int delta = blocker.getRadius() - (int) Math.floor(Math.sqrt(sqDist));
+                distance -= delta;
+                if (distance < 0) break;
 
-				d = motionX;
-				d1 = motionY;
-				d2 = motionZ;
+                motionX = -MathHelper.sin((target.rotationYaw / 180F) * 3.141593F) * MathHelper.cos((target.rotationPitch / 180F) * 3.141593F) * distance;
+                motionZ = MathHelper.cos((target.rotationYaw / 180F) * 3.141593F) * MathHelper.cos((target.rotationPitch / 180F) * 3.141593F) * distance;
+                motionY = -MathHelper.sin((target.rotationPitch / 180F) * 3.141593F) * distance;
 
-				f2 = MathHelper.sqrt(d * d + d1 * d1 + d2 * d2);
-				d /= f2;
-				d1 /= f2;
-				d2 /= f2;
-				d *= distance;
-				d1 *= distance;
-				d2 *= distance;
-				motionX = d;
-				motionY = d1;
-				motionZ = d2;
-				newX = target.posX + motionX;
-				newZ = target.posZ + motionZ;
-				newY = target.posY + motionY;
+                d = motionX;
+                d1 = motionY;
+                d2 = motionZ;
 
-				blocker = DimensionUtilities.GetBlockingAstralBarrier(world, new BlockPos(newX, newY, newZ), keystoneKeys);
-			}
-			if (distance < 0){
-				coordsValid = false;
-				break;
-			}
+                f2 = MathHelper.sqrt(d * d + d1 * d1 + d2 * d2);
+                d /= f2;
+                d1 /= f2;
+                d2 /= f2;
+                d *= distance;
+                d1 *= distance;
+                d2 *= distance;
+                motionX = d;
+                motionY = d1;
+                motionZ = d2;
+                newX = target.posX + motionX;
+                newZ = target.posZ + motionZ;
+                newY = target.posY + motionY;
 
-			//rounding combinations, normal y
-			if (CheckCoords(world, (int)Math.floor(newX), (int)newY, (int)Math.floor(newZ))){
-				newX = Math.floor(newX) + 0.5;
-				newZ = Math.floor(newZ) + 0.5;
-				coordsValid = true;
-				break;
-			}else if (CheckCoords(world, (int)Math.floor(newX), (int)newY, (int)Math.ceil(newZ))){
-				newX = Math.floor(newX) + 0.5;
-				newZ = Math.ceil(newZ) + 0.5;
-				coordsValid = true;
-				break;
-			}else if (CheckCoords(world, (int)Math.ceil(newX), (int)newY, (int)Math.floor(newZ))){
-				newX = Math.ceil(newX) + 0.5;
-				newZ = Math.floor(newZ) + 0.5;
-				coordsValid = true;
-				break;
-			}else if (CheckCoords(world, (int)Math.ceil(newX), (int)newY, (int)Math.ceil(newZ))){
-				newX = Math.ceil(newX) + 0.5;
-				newZ = Math.ceil(newZ) + 0.5;
-				coordsValid = true;
-				break;
-			}
-			//rounding combinations, y-1
-			if (CheckCoords(world, (int)Math.floor(newX), (int)newY - 1, (int)Math.floor(newZ))){
-				newX = Math.floor(newX) + 0.5;
-				newZ = Math.floor(newZ) + 0.5;
-				newY--;
-				coordsValid = true;
-				break;
-			}else if (CheckCoords(world, (int)Math.floor(newX), (int)newY - 1, (int)Math.ceil(newZ))){
-				newX = Math.floor(newX) + 0.5;
-				newZ = Math.ceil(newZ) + 0.5;
-				newY--;
-				coordsValid = true;
-				break;
-			}else if (CheckCoords(world, (int)Math.ceil(newX), (int)newY - 1, (int)Math.floor(newZ))){
-				newX = Math.ceil(newX) + 0.5;
-				newZ = Math.floor(newZ) + 0.5;
-				newY--;
-				coordsValid = true;
-				break;
-			}else if (CheckCoords(world, (int)Math.ceil(newX), (int)newY - 1, (int)Math.ceil(newZ))){
-				newX = Math.ceil(newX) + 0.5;
-				newZ = Math.ceil(newZ) + 0.5;
-				newY--;
-				coordsValid = true;
-				break;
-			}
-			//rounding combinations, y+1
-			if (CheckCoords(world, (int)Math.floor(newX), (int)newY + 1, (int)Math.floor(newZ))){
-				newX = Math.floor(newX) + 0.5;
-				newZ = Math.floor(newZ) + 0.5;
-				newY++;
-				coordsValid = true;
-				break;
-			}else if (CheckCoords(world, (int)Math.floor(newX), (int)newY + 1, (int)Math.ceil(newZ))){
-				newX = Math.floor(newX) + 0.5;
-				newZ = Math.ceil(newZ) + 0.5;
-				newY++;
-				coordsValid = true;
-				break;
-			}else if (CheckCoords(world, (int)Math.ceil(newX), (int)newY + 1, (int)Math.floor(newZ))){
-				newX = Math.ceil(newX) + 0.5;
-				newZ = Math.floor(newZ) + 0.5;
-				newY++;
-				coordsValid = true;
-				break;
-			}else if (CheckCoords(world, (int)Math.ceil(newX), (int)newY + 1, (int)Math.ceil(newZ))){
-				newX = Math.ceil(newX) + 0.5;
-				newZ = Math.ceil(newZ) + 0.5;
-				newY++;
-				coordsValid = true;
-				break;
-			}
+                blocker = DimensionUtilities.GetBlockingAstralBarrier(world, new BlockPos(newX, newY, newZ), keystoneKeys);
+            }
+            if (distance < 0) {
+                coordsValid = false;
+                break;
+            }
 
-			distance--;
+            //rounding combinations, normal y
+            if (CheckCoords(world, (int) Math.floor(newX), (int) newY, (int) Math.floor(newZ))) {
+                newX = Math.floor(newX) + 0.5;
+                newZ = Math.floor(newZ) + 0.5;
+                coordsValid = true;
+                break;
+            } else if (CheckCoords(world, (int) Math.floor(newX), (int) newY, (int) Math.ceil(newZ))) {
+                newX = Math.floor(newX) + 0.5;
+                newZ = Math.ceil(newZ) + 0.5;
+                coordsValid = true;
+                break;
+            } else if (CheckCoords(world, (int) Math.ceil(newX), (int) newY, (int) Math.floor(newZ))) {
+                newX = Math.ceil(newX) + 0.5;
+                newZ = Math.floor(newZ) + 0.5;
+                coordsValid = true;
+                break;
+            } else if (CheckCoords(world, (int) Math.ceil(newX), (int) newY, (int) Math.ceil(newZ))) {
+                newX = Math.ceil(newX) + 0.5;
+                newZ = Math.ceil(newZ) + 0.5;
+                coordsValid = true;
+                break;
+            }
+            //rounding combinations, y-1
+            if (CheckCoords(world, (int) Math.floor(newX), (int) newY - 1, (int) Math.floor(newZ))) {
+                newX = Math.floor(newX) + 0.5;
+                newZ = Math.floor(newZ) + 0.5;
+                newY--;
+                coordsValid = true;
+                break;
+            } else if (CheckCoords(world, (int) Math.floor(newX), (int) newY - 1, (int) Math.ceil(newZ))) {
+                newX = Math.floor(newX) + 0.5;
+                newZ = Math.ceil(newZ) + 0.5;
+                newY--;
+                coordsValid = true;
+                break;
+            } else if (CheckCoords(world, (int) Math.ceil(newX), (int) newY - 1, (int) Math.floor(newZ))) {
+                newX = Math.ceil(newX) + 0.5;
+                newZ = Math.floor(newZ) + 0.5;
+                newY--;
+                coordsValid = true;
+                break;
+            } else if (CheckCoords(world, (int) Math.ceil(newX), (int) newY - 1, (int) Math.ceil(newZ))) {
+                newX = Math.ceil(newX) + 0.5;
+                newZ = Math.ceil(newZ) + 0.5;
+                newY--;
+                coordsValid = true;
+                break;
+            }
+            //rounding combinations, y+1
+            if (CheckCoords(world, (int) Math.floor(newX), (int) newY + 1, (int) Math.floor(newZ))) {
+                newX = Math.floor(newX) + 0.5;
+                newZ = Math.floor(newZ) + 0.5;
+                newY++;
+                coordsValid = true;
+                break;
+            } else if (CheckCoords(world, (int) Math.floor(newX), (int) newY + 1, (int) Math.ceil(newZ))) {
+                newX = Math.floor(newX) + 0.5;
+                newZ = Math.ceil(newZ) + 0.5;
+                newY++;
+                coordsValid = true;
+                break;
+            } else if (CheckCoords(world, (int) Math.ceil(newX), (int) newY + 1, (int) Math.floor(newZ))) {
+                newX = Math.ceil(newX) + 0.5;
+                newZ = Math.floor(newZ) + 0.5;
+                newY++;
+                coordsValid = true;
+                break;
+            } else if (CheckCoords(world, (int) Math.ceil(newX), (int) newY + 1, (int) Math.ceil(newZ))) {
+                newX = Math.ceil(newX) + 0.5;
+                newZ = Math.ceil(newZ) + 0.5;
+                newY++;
+                coordsValid = true;
+                break;
+            }
 
-			motionX = -MathHelper.sin((target.rotationYaw / 180F) * 3.141593F) * MathHelper.cos((target.rotationPitch / 180F) * 3.141593F) * distance;
-			motionZ = MathHelper.cos((target.rotationYaw / 180F) * 3.141593F) * MathHelper.cos((target.rotationPitch / 180F) * 3.141593F) * distance;
-			motionY = -MathHelper.sin((target.rotationPitch / 180F) * 3.141593F) * distance;
+            distance--;
 
-			d = motionX;
-			d1 = motionY;
-			d2 = motionZ;
+            motionX = -MathHelper.sin((target.rotationYaw / 180F) * 3.141593F) * MathHelper.cos((target.rotationPitch / 180F) * 3.141593F) * distance;
+            motionZ = MathHelper.cos((target.rotationYaw / 180F) * 3.141593F) * MathHelper.cos((target.rotationPitch / 180F) * 3.141593F) * distance;
+            motionY = -MathHelper.sin((target.rotationPitch / 180F) * 3.141593F) * distance;
 
-			f2 = MathHelper.sqrt(d * d + d1 * d1 + d2 * d2);
-			d /= f2;
-			d1 /= f2;
-			d2 /= f2;
-			d *= distance;
-			d1 *= distance;
-			d2 *= distance;
-			motionX = d;
-			motionY = d1;
-			motionZ = d2;
+            d = motionX;
+            d1 = motionY;
+            d2 = motionZ;
+
+            f2 = MathHelper.sqrt(d * d + d1 * d1 + d2 * d2);
+            d /= f2;
+            d1 /= f2;
+            d2 /= f2;
+            d *= distance;
+            d1 *= distance;
+            d2 *= distance;
+            motionX = d;
+            motionY = d1;
+            motionZ = d2;
 //			f3 = MathHelper.sqrt(d * d + d2 * d2);
 
-			newX = target.posX + motionX;
-			newZ = target.posZ + motionZ;
-			newY = target.posY + motionY;
+            newX = target.posX + motionX;
+            newZ = target.posZ + motionZ;
+            newY = target.posY + motionY;
 
-		}
+        }
 
-		if (world.isRemote && astralBarrierBlocked && coordsValid){
-			EntityExtension.For((EntityLivingBase)target).astralBarrierBlocked = true;
-			if (finalBlocker != null){
-				finalBlocker.onEntityBlocked((EntityLivingBase)target);
-			}
-		}
+        if (world.isRemote && astralBarrierBlocked && coordsValid) {
+            EntityExtension.For((EntityLivingBase) target).astralBarrierBlocked = true;
+            if (finalBlocker != null) {
+                finalBlocker.onEntityBlocked((EntityLivingBase) target);
+            }
+        }
 
-		if (!world.isRemote){
-			if (!coordsValid && target instanceof EntityPlayer){
-				target.sendMessage(new TextComponentString("Can't find a place to blink forward to."));
-				return false;
-			}
-		}
+        if (!world.isRemote) {
+            if (!coordsValid && target instanceof EntityPlayer) {
+                target.sendMessage(new TextComponentString("Can't find a place to blink forward to."));
+                return false;
+            }
+        }
 
-		if (!world.isRemote){
-			target.setPositionAndUpdate(newX, newY, newZ);
-		}
+        if (!world.isRemote) {
+            target.setPositionAndUpdate(newX, newY, newZ);
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public float manaCost(){
-		return 160;
-	}
+    @Override
+    public float manaCost() {
+        return 160;
+    }
 
-	@Override
-	public ItemStack[] reagents(EntityLivingBase caster){
-		return null;
-	}
 
-	@Override
-	public void spawnParticles(World world, double x, double y, double z, EntityLivingBase caster, Entity target, Random rand, int colorModifier){
-		for (int i = 0; i < 25; ++i){
-			AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "sparkle", x, y, z);
-			if (particle != null){
-				particle.addRandomOffset(1, 2, 1);
-				particle.AddParticleController(new ParticleMoveOnHeading(particle, MathHelper.wrapDegrees((target instanceof EntityLivingBase ? ((EntityLivingBase)target).rotationYawHead : target.rotationYaw) + 90), MathHelper.wrapDegrees(target.rotationPitch), 0.1 + rand.nextDouble() * 0.5, 1, false));
-				particle.AddParticleController(new ParticleFadeOut(particle, 1, false).setFadeSpeed(0.05f));
-				particle.setMaxAge(20);
-				if (colorModifier > -1){
-					particle.setRGBColorF(((colorModifier >> 16) & 0xFF) / 255.0f, ((colorModifier >> 8) & 0xFF) / 255.0f, (colorModifier & 0xFF) / 255.0f);
-				}
-			}
-		}
-	}
+    @Override
+    public void spawnParticles(World world, double x, double y, double z, EntityLivingBase caster, Entity target, Random rand, int colorModifier) {
+        for (int i = 0; i < 25; ++i) {
+            AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "sparkle", x, y, z);
+            if (particle != null) {
+                particle.addRandomOffset(1, 2, 1);
+                particle.AddParticleController(new ParticleMoveOnHeading(particle, MathHelper.wrapDegrees((target instanceof EntityLivingBase ? ((EntityLivingBase) target).rotationYawHead : target.rotationYaw) + 90), MathHelper.wrapDegrees(target.rotationPitch), 0.1 + rand.nextDouble() * 0.5, 1, false));
+                particle.AddParticleController(new ParticleFadeOut(particle, 1, false).setFadeSpeed(0.05f));
+                particle.setMaxAge(20);
+                if (colorModifier > -1) {
+                    particle.setRGBColorF(((colorModifier >> 16) & 0xFF) / 255.0f, ((colorModifier >> 8) & 0xFF) / 255.0f, (colorModifier & 0xFF) / 255.0f);
+                }
+            }
+        }
+    }
 
-	@Override
-	public Set<Affinity> getAffinity(){
-		return Sets.newHashSet(Affinity.ENDER);
-	}
+    @Override
+    public Set<Affinity> getAffinity() {
+        return Sets.newHashSet(Affinities.ender);
+    }
 
-	@SuppressWarnings("deprecation")
-	private boolean CheckCoords(World world, int x, int y, int z){
+    @SuppressWarnings("deprecation")
+    private boolean CheckCoords(World world, int x, int y, int z) {
 
-		if (y < 0){
-			return false;
-		}
+        if (y < 0) {
+            return false;
+        }
 
-		IBlockState firstBlock = world.getBlockState(new BlockPos(x, y, z));
-		IBlockState secondBlock = world.getBlockState(new BlockPos(x, y + 1, z));
+        IBlockState firstBlock = world.getBlockState(new BlockPos(x, y, z));
+        IBlockState secondBlock = world.getBlockState(new BlockPos(x, y + 1, z));
 
-		AxisAlignedBB firstBlockBB = null;
-		AxisAlignedBB secondBlockBB = null;
+        AxisAlignedBB firstBlockBB = null;
+        AxisAlignedBB secondBlockBB = null;
 
-		if (firstBlock != null){
-			firstBlockBB = firstBlock.getBlock().getCollisionBoundingBox(firstBlock, world, new BlockPos(x, y, z));
-		}
-		if (secondBlock != null){
-			secondBlockBB = secondBlock.getBlock().getCollisionBoundingBox(secondBlock, world, new BlockPos(x, y + 1, z));
-		}
+        if (firstBlock != null) {
+            firstBlockBB = firstBlock.getBlock().getCollisionBoundingBox(firstBlock, world, new BlockPos(x, y, z));
+        }
+        if (secondBlock != null) {
+            secondBlockBB = secondBlock.getBlock().getCollisionBoundingBox(secondBlock, world, new BlockPos(x, y + 1, z));
+        }
 
-		if ((firstBlockBB == null && secondBlockBB == null)){
-			return true;
-		}
-		return false;
-	}
+        if ((firstBlockBB == null && secondBlockBB == null)) {
+            return true;
+        }
+        return false;
+    }
 
-	protected double GetTeleportDistance(SpellData spell, EntityLivingBase caster, Entity target){
-		return spell.getModifiedValue(12, SpellModifiers.RANGE, Operation.ADD, caster.getEntityWorld(), caster, target);
-	}
-	
-	@Override
-	public EnumSet<SpellModifiers> getModifiers() {
-		return EnumSet.of(SpellModifiers.RANGE);
-	}
+    protected double GetTeleportDistance(SpellData spell, EntityLivingBase caster, Entity target) {
+        return spell.getModifiedValue(12, SpellModifiers.RANGE, Operation.ADD, caster.getEntityWorld(), caster, target);
+    }
 
-	@Override
-	public Object[] getRecipe(){
-		return new Object[]{
-				new ItemStack(ItemDefs.rune, 1, EnumDyeColor.PURPLE.getDyeDamage()),
-				Items.ENDER_PEARL
-		};
-	}
+    @Override
+    public EnumSet<SpellModifiers> getModifiers() {
+        return EnumSet.of(SpellModifiers.RANGE);
+    }
 
-	@Override
-	public float getAffinityShift(Affinity affinity){
-		return 0.05f;
-	}
+    @Override
+    public Object[] getRecipe() {
+        return new Object[]{
+                new ItemStack(AMItems.rune, 1, EnumDyeColor.PURPLE.getDyeDamage()),
+                Items.ENDER_PEARL
+        };
+    }
 
-	@Override
-	public void encodeBasicData(NBTTagCompound tag, Object[] recipe) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public float getAffinityShift(Affinity affinity) {
+        return 0.05f;
+    }
 
-	@Override
-	public boolean applyEffectBlock(SpellData spell, World world,
-			BlockPos blockPos, EnumFacing blockFace, double impactX,
-			double impactY, double impactZ, EntityLivingBase caster) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

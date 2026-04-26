@@ -1,103 +1,104 @@
 package am2.common.blocks.tileentity;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import am2.ArsMagica2;
+import am2.ArsMagica;
 import am2.api.math.AMVector3;
 import am2.client.particles.AMParticle;
 import am2.client.particles.ParticleFadeOut;
 import am2.client.particles.ParticleFloatUpward;
-import am2.common.defs.BlockDefs;
+import am2.common.registry.AMBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
-public class TileEntityCrystalMarkerSpellExport extends TileEntityCrystalMarker{
-	static final int RESCAN_INTERVAL = 600;
-	static final int UPDATE_INTERVAL = 100;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-	ArrayList<AMVector3> craftingAltarCache;
-	int updateCounter = 0;
+public class TileEntityCrystalMarkerSpellExport extends TileEntityCrystalMarker {
+    static final int RESCAN_INTERVAL = 600;
+    static final int UPDATE_INTERVAL = 100;
 
-	public TileEntityCrystalMarkerSpellExport(){
-		this(0);
-	}
+    ArrayList<AMVector3> craftingAltarCache;
+    int updateCounter = 0;
 
-	public TileEntityCrystalMarkerSpellExport(int type){
-		super(type);
-		craftingAltarCache = new ArrayList<AMVector3>();
-	}
-	@Override
-	public void update(){
-		super.update();
-		if (this.updateCounter % RESCAN_INTERVAL == 0){
-			scanForCraftingAltars();
-		}
+    public TileEntityCrystalMarkerSpellExport() {
+        this(0);
+    }
 
-		if (this.updateCounter % UPDATE_INTERVAL == 0){
-			if (updateFilter() && world.isRemote){
-				spawnParticles();
-			}
-		}
-		this.updateCounter++;
-	}
+    public TileEntityCrystalMarkerSpellExport(int type) {
+        super(type);
+        craftingAltarCache = new ArrayList<AMVector3>();
+    }
 
-	private void spawnParticles(){
-		for (int i = 0; i < 15; ++i){
-			AMParticle effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "sparkle2", pos.getX(), pos.getY(), pos.getZ());
-			if (effect != null){
-				effect.AddParticleController(new ParticleFloatUpward(effect, 0, world.rand.nextFloat() * 0.1f, 1, false));
-				effect.AddParticleController(new ParticleFadeOut(effect, 2, false).setFadeSpeed(0.035f).setKillParticleOnFinish(true));
-				effect.addRandomOffset(0.2, 0.2, 0.2);
-				effect.setRGBColorF(0, 0.5f, 1.0f);
-				effect.setIgnoreMaxAge(true);
-			}
-		}
-	}
+    @Override
+    public void update() {
+        super.update();
+        if (this.updateCounter % RESCAN_INTERVAL == 0) {
+            scanForCraftingAltars();
+        }
 
-	private void scanForCraftingAltars(){
-		craftingAltarCache.clear();
-		for (int i = -10; i <= 10; ++i){
-			for (int j = -10; j <= 10; ++j){
-				for (int k = -10; k <= 10; ++k){
-					if (i == 0 && j == 0 && k == 0)
-						continue;
+        if (this.updateCounter % UPDATE_INTERVAL == 0) {
+            if (updateFilter() && world.isRemote) {
+                spawnParticles();
+            }
+        }
+        this.updateCounter++;
+    }
 
-					Block block = this.world.getBlockState(pos.add(i, j, k)).getBlock();
-					if (block == BlockDefs.craftingAltar){
-						craftingAltarCache.add(new AMVector3(pos.add(i, j, k)));
-					}
-				}
-			}
-		}
-	}
+    private void spawnParticles() {
+        for (int i = 0; i < 15; ++i) {
+            AMParticle effect = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "sparkle2", pos.getX(), pos.getY(), pos.getZ());
+            if (effect != null) {
+                effect.AddParticleController(new ParticleFloatUpward(effect, 0, world.rand.nextFloat() * 0.1f, 1, false));
+                effect.AddParticleController(new ParticleFadeOut(effect, 2, false).setFadeSpeed(0.035f).setKillParticleOnFinish(true));
+                effect.addRandomOffset(0.2, 0.2, 0.2);
+                effect.setRGBColorF(0, 0.5f, 1.0f);
+                effect.setIgnoreMaxAge(true);
+            }
+        }
+    }
 
-	private boolean updateFilter(){
-		ArrayList<ItemStack> filter = new ArrayList<ItemStack>();
-		Iterator<AMVector3> it = this.craftingAltarCache.iterator();
-		boolean changed = false;
-		while (it.hasNext()){
-			TileEntityCraftingAltar altar = getCATE((AMVector3)it.next());
-			if (altar == null){
-				it.remove();
-				continue;
-			}
-			if (altar.isCrafting()){
-				filter.add(altar.getNextPlannedItem());
-				changed = true;
-			}
-		}
+    private void scanForCraftingAltars() {
+        craftingAltarCache.clear();
+        for (int i = -10; i <= 10; ++i) {
+            for (int j = -10; j <= 10; ++j) {
+                for (int k = -10; k <= 10; ++k) {
+                    if (i == 0 && j == 0 && k == 0)
+                        continue;
 
-		this.filterItems = filter.toArray(new ItemStack[filter.size()]);
-		return changed;
-	}
+                    Block block = this.world.getBlockState(pos.add(i, j, k)).getBlock();
+                    if (block == AMBlocks.crafting_altar) {
+                        craftingAltarCache.add(new AMVector3(pos.add(i, j, k)));
+                    }
+                }
+            }
+        }
+    }
 
-	private TileEntityCraftingAltar getCATE(AMVector3 vec){
-		TileEntity te = this.world.getTileEntity(vec.toBlockPos());
-		if (te != null && te instanceof TileEntityCraftingAltar)
-			return (TileEntityCraftingAltar)te;
+    private boolean updateFilter() {
+        ArrayList<ItemStack> filter = new ArrayList<ItemStack>();
+        Iterator<AMVector3> it = this.craftingAltarCache.iterator();
+        boolean changed = false;
+        while (it.hasNext()) {
+            TileEntityCraftingAltar altar = getCATE((AMVector3) it.next());
+            if (altar == null) {
+                it.remove();
+                continue;
+            }
+            if (altar.isCrafting()) {
+                filter.add(altar.getNextPlannedItem());
+                changed = true;
+            }
+        }
 
-		return null;
-	}
+        this.filterItems = filter.toArray(new ItemStack[filter.size()]);
+        return changed;
+    }
+
+    private TileEntityCraftingAltar getCATE(AMVector3 vec) {
+        TileEntity te = this.world.getTileEntity(vec.toBlockPos());
+        if (te != null && te instanceof TileEntityCraftingAltar)
+            return (TileEntityCraftingAltar) te;
+
+        return null;
+    }
 }

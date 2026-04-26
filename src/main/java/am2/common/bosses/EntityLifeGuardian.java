@@ -1,21 +1,16 @@
 package am2.common.bosses;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import am2.ArsMagica2;
-import am2.api.ArsMagicaAPI;
-import am2.api.affinity.Affinity;
+import am2.ArsMagica;
 import am2.common.bosses.ai.EntityAICastSpell;
 import am2.common.bosses.ai.EntityAIDispel;
 import am2.common.bosses.ai.EntityAISummonAllies;
 import am2.common.bosses.ai.ISpellCastCallback;
-import am2.common.defs.AMSounds;
-import am2.common.defs.ItemDefs;
 import am2.common.entity.EntityDarkling;
 import am2.common.entity.EntityEarthElemental;
 import am2.common.entity.EntityFireElemental;
 import am2.common.entity.EntityManaElemental;
+import am2.common.registry.AMLoot;
+import am2.common.registry.AMSounds;
 import am2.common.utils.NPCSpells;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,148 +20,145 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.BossInfo.Color;
 import net.minecraft.world.World;
 
-public class EntityLifeGuardian extends AM2Boss{
+import java.util.ArrayList;
+import java.util.Iterator;
 
-	private ArrayList<EntityLiving> minions;
-	public ArrayList<EntityLiving> queued_minions;
+public class EntityLifeGuardian extends AM2Boss {
 
-	private static final DataParameter<Integer> DATA_MINION_COUNT = EntityDataManager.createKey(EntityLifeGuardian.class, DataSerializers.VARINT);
+    private ArrayList<EntityLiving> minions;
+    public ArrayList<EntityLiving> queued_minions;
 
-	public EntityLifeGuardian(World par1World){
-		super(par1World);
-		this.setSize(1, 2);
-		minions = new ArrayList<EntityLiving>();
-		queued_minions = new ArrayList<EntityLiving>();
-	}
+    private static final DataParameter<Integer> DATA_MINION_COUNT = EntityDataManager.createKey(EntityLifeGuardian.class, DataSerializers.VARINT);
 
-	@Override
-	protected void entityInit(){
-		super.entityInit();
-		this.dataManager.register(DATA_MINION_COUNT, 0);
-	}
+    public EntityLifeGuardian(World par1World) {
+        super(par1World);
+        this.setSize(1, 2);
+        minions = new ArrayList<EntityLiving>();
+        queued_minions = new ArrayList<EntityLiving>();
+    }
 
-	@Override
-	protected void initSpecificAI(){
-		this.tasks.addTask(1, new EntityAIDispel(this));
-		this.tasks.addTask(1, new EntityAICastSpell<EntityLifeGuardian>(this, NPCSpells.instance.healSelf, 16, 23, 100, BossActions.CASTING, new ISpellCastCallback<EntityLifeGuardian>(){
-			@Override
-			public boolean shouldCast(EntityLifeGuardian host, ItemStack spell){
-				return host.getHealth() < host.getMaxHealth();
-			}
-		}));
-		this.tasks.addTask(2, new EntityAICastSpell<EntityLifeGuardian>(this, NPCSpells.instance.nauseate, 16, 23, 20, BossActions.CASTING, new ISpellCastCallback<EntityLifeGuardian>(){
-			@Override
-			public boolean shouldCast(EntityLifeGuardian host, ItemStack spell){
-				return minions.size() == 0;
-			}
-		}));
-		this.tasks.addTask(3, new EntityAISummonAllies(this, EntityEarthElemental.class, EntityFireElemental.class, EntityManaElemental.class, EntityDarkling.class));
-	}
+    @Override
+    protected void entityInit() {
+        super.entityInit();
+        this.dataManager.register(DATA_MINION_COUNT, 0);
+    }
 
-	@Override
-	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2){
-		if (par1DamageSource.getTrueSource() != null && par1DamageSource.getTrueSource() instanceof EntityLivingBase){
-			for (EntityLivingBase minion : minions.toArray(new EntityLivingBase[minions.size()])){
-				((EntityLiving)minion).setAttackTarget((EntityLivingBase)par1DamageSource.getTrueSource());
-			}
-		}
-		return super.attackEntityFrom(par1DamageSource, par2);
-	}
+    @Override
+    protected void initSpecificAI() {
+        this.tasks.addTask(1, new EntityAIDispel(this));
+        this.tasks.addTask(1, new EntityAICastSpell<EntityLifeGuardian>(this, NPCSpells.getInstance().healSelf, 16, 23, 100, BossActions.CASTING, new ISpellCastCallback<EntityLifeGuardian>() {
+            @Override
+            public boolean shouldCast(EntityLifeGuardian host, ItemStack spell) {
+                return host.getHealth() < host.getMaxHealth();
+            }
+        }));
+        this.tasks.addTask(2, new EntityAICastSpell<EntityLifeGuardian>(this, NPCSpells.getInstance().nauseate, 16, 23, 20, BossActions.CASTING, new ISpellCastCallback<EntityLifeGuardian>() {
+            @Override
+            public boolean shouldCast(EntityLifeGuardian host, ItemStack spell) {
+                return minions.isEmpty();
+            }
+        }));
+        this.tasks.addTask(3, new EntityAISummonAllies(this, EntityEarthElemental.class, EntityFireElemental.class, EntityManaElemental.class, EntityDarkling.class));
+    }
 
-	@Override
-	protected float modifyDamageAmount(DamageSource source, float damageAmt){
-		if (minions.size() > 0){
-			damageAmt = 0;
-			minions.get(getRNG().nextInt(minions.size())).attackEntityFrom(source, damageAmt);
-		}
-		return damageAmt;
-	}
+    @Override
+    public boolean attackEntityFrom(DamageSource par1DamageSource, float par2) {
+        if (par1DamageSource.getTrueSource() != null && par1DamageSource.getTrueSource() instanceof EntityLivingBase) {
+            for (EntityLivingBase minion : minions.toArray(new EntityLivingBase[minions.size()])) {
+                ((EntityLiving) minion).setAttackTarget((EntityLivingBase) par1DamageSource.getTrueSource());
+            }
+        }
+        return super.attackEntityFrom(par1DamageSource, par2);
+    }
 
-	public int getNumMinions(){
-		return this.dataManager.get(DATA_MINION_COUNT);
-	}
+    @Override
+    protected float modifyDamageAmount(DamageSource source, float damageAmt) {
+        if (!minions.isEmpty()) {
+            damageAmt = 0;
+            minions.get(getRNG().nextInt(minions.size())).attackEntityFrom(source, damageAmt);
+        }
+        return damageAmt;
+    }
 
-	@Override
-	protected void applyEntityAttributes(){
-		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(200D);
-	}
+    public int getNumMinions() {
+        return this.dataManager.get(DATA_MINION_COUNT);
+    }
 
-	@Override
-	public void onUpdate(){
-		//Minion management - add any queued minions to the minion list and prune out any fallen or nonexistant ones
-		if (!world.isRemote){
-			minions.addAll(queued_minions);
-			queued_minions.clear();
-			Iterator<EntityLiving> it = minions.iterator();
-			while (it.hasNext()){
-				EntityLiving minion = it.next();
-				if (minion == null || minion.isDead)
-					it.remove();
-			}
+    @Override
+    protected void applyEntityAttributes() {
+        super.applyEntityAttributes();
+        this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(ArsMagica.config.getLifeGuardianMaxHealth());
+    }
 
-			this.dataManager.set(DATA_MINION_COUNT, minions.size());
+    @Override
+    public int getTotalArmorValue() {
+        return (int) ArsMagica.config.getLifeGuardianArmor();
+    }
 
-			if (this.ticksExisted % 100 == 0){
-				for (EntityLivingBase e : minions)
-					ArsMagica2.proxy.particleManager.spawn(world, "textures/blocks/oreblocksunstone.png", this, e);
-			}
-		}
+    @Override
+    public void onUpdate() {
+        //Minion management - add any queued minions to the minion list and prune out any fallen or nonexistant ones
+        if (!world.isRemote) {
+            minions.addAll(queued_minions);
+            queued_minions.clear();
+            Iterator<EntityLiving> it = minions.iterator();
+            while (it.hasNext()) {
+                EntityLiving minion = it.next();
+                if (minion == null || minion.isDead)
+                    it.remove();
+            }
 
-		if (this.ticksExisted % 40 == 0)
-			this.heal(2f);
+            this.dataManager.set(DATA_MINION_COUNT, minions.size());
 
-		super.onUpdate();
-	}
+            if (this.ticksExisted % 100 == 0) {
+                for (EntityLivingBase e : minions)
+                    ArsMagica.proxy.particleManager.spawn(world, ArsMagica.MODID + ":textures/blocks/sunstone_ore.png", this, e);
+            }
+        }
 
-	@Override
-	protected SoundEvent getHurtSound(DamageSource damageSource) {
-		return AMSounds.LIFE_GUARDIAN_HIT;
-	}
+        if (this.ticksExisted % 40 == 0)
+            this.heal(2f);
 
-	@Override
-	protected SoundEvent getDeathSound(){
-		return AMSounds.LIFE_GUARDIAN_DEATH;
-	}
+        super.onUpdate();
+    }
 
-	@Override
-	protected SoundEvent getAmbientSound(){
-		return AMSounds.LIFE_GUARDIAN_IDLE;
-	}
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        return AMSounds.LIFE_GUARDIAN_HIT;
+    }
 
-	@Override
-	public SoundEvent getAttackSound(){
-		return AMSounds.LIFE_GUARDIAN_HEAL;
-	}
+    @Override
+    protected SoundEvent getDeathSound() {
+        return AMSounds.LIFE_GUARDIAN_DEATH;
+    }
 
-	@Override
-	protected void dropFewItems(boolean par1, int par2){
-		if (par1)
-			this.entityDropItem(new ItemStack(ItemDefs.infinityOrb, 1, 1), 0.0f);
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return AMSounds.LIFE_GUARDIAN_IDLE;
+    }
 
-		int i = rand.nextInt(4);
+    @Override
+    public SoundEvent getAttackSound() {
+        return AMSounds.LIFE_GUARDIAN_HEAL;
+    }
 
-		for (int j = 0; j < i; j++){
-			// todo this.entityDropItem(new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.LIFE)), 0.0f);
-		}
-		i = rand.nextInt(10);
+    @Override
+    protected ResourceLocation getLootTable() {
+        return AMLoot.LIFE_GUARDIAN_LOOT;
+    }
 
-		if (i < 3 && par1){
-			this.entityDropItem(ItemDefs.lifeWardEnchanted.copy(), 0.0f);
-		}
-	}
+    @Override
+    public float getEyeHeight() {
+        return 1.5f;
+    }
 
-	@Override
-	public float getEyeHeight(){
-		return 1.5f;
-	}
-
-	@Override
-	protected Color getBarColor() {
-		return Color.GREEN;
-	}
+    @Override
+    protected Color getBarColor() {
+        return Color.PURPLE;
+    }
 }

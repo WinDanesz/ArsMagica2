@@ -1,0 +1,7 @@
+{
+    "parent": "arsmagica2:block/warding_candle",
+    "overrides": [
+        { "predicate": { "arsmagica2:proximity": 0.5 }, "model": "arsmagica2:item/warding_candle_blue" },
+        { "predicate": { "arsmagica2:proximity": 1.0 }, "model": "arsmagica2:item/warding_candle_red" }
+    ]
+}

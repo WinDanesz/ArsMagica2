@@ -1,13 +1,10 @@
 package am2.common.blocks.tileentity;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import am2.ArsMagica2;
+import am2.ArsMagica;
 import am2.client.particles.AMParticle;
 import am2.common.blocks.BlockEverstone;
-import am2.common.defs.BlockDefs;
+import am2.common.registry.AMBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -20,148 +17,151 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class TileEntityEverstone extends TileEntity implements ITickable{
+import java.util.ArrayList;
+import java.util.List;
 
-	private int reconstructTimer = 0;
-	private IBlockState facade = null;
-	private static final int reconstructMax = ArsMagica2.config.getEverstoneRepairRate();
+public class TileEntityEverstone extends TileEntity implements ITickable {
 
-	private boolean poweredFromEverstone = false;
-	private boolean poweredFromRedstone = false;
+    private int reconstructTimer = 0;
+    private IBlockState facade = null;
+    private static final int reconstructMax = ArsMagica.config.getEverstoneRepairRate();
 
-	public void setFacade(IBlockState facade){
-		this.facade = facade;
-	
-		if (!world.isRemote){
-			List<EntityPlayerMP> players = world.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(pos).expand(64, 64, 64));
-			for (EntityPlayerMP player : players){
-				player.connection.sendPacket(getUpdatePacket());
-			}
-		}
-		world.markAndNotifyBlock(pos, world.getChunk(pos), world.getBlockState(pos), world.getBlockState(pos), 3);
-	}
+    private boolean poweredFromEverstone = false;
+    private boolean poweredFromRedstone = false;
 
-	private void propagatePoweredByEverstone(boolean powered, ArrayList<BlockPos> completedUpdates){
-		BlockPos myPosition = pos;
-		if (completedUpdates.contains(myPosition)){
-			return;
-		}
+    public void setFacade(IBlockState facade) {
+        this.facade = facade;
 
-		completedUpdates.add(myPosition);
-		poweredFromEverstone = powered;
-		onBreak();
+        if (!world.isRemote) {
+            List<EntityPlayerMP> players = world.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(pos).expand(64, 64, 64));
+            for (EntityPlayerMP player : players) {
+                player.connection.sendPacket(getUpdatePacket());
+            }
+        }
+        world.markAndNotifyBlock(pos, world.getChunk(pos), world.getBlockState(pos), world.getBlockState(pos), 3);
+    }
 
-		if (world.isRemote){
-			AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "radiant", pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
-			if (particle != null){
-				particle.setMaxAge(20);
-				particle.setDontRequireControllers();
-				particle.setIgnoreMaxAge(false);
-			}
-		}
+    private void propagatePoweredByEverstone(boolean powered, ArrayList<BlockPos> completedUpdates) {
+        BlockPos myPosition = pos;
+        if (completedUpdates.contains(myPosition)) {
+            return;
+        }
 
-		for (int i = -1; i <= 1; i++){
-			for (int j = -1; j <= 1; j++){
-				for (int k = -1; k <= 1; k++){
-					BlockPos targetPosition = pos.add(i, j, k);
-					Block blockID = world.getBlockState(targetPosition).getBlock();
-					if (blockID == BlockDefs.everstone && !completedUpdates.contains(targetPosition)){
-						TileEntityEverstone everstone = ((TileEntityEverstone)world.getTileEntity(targetPosition));
-						if (everstone != null)
-							everstone.propagatePoweredByEverstone(powered, completedUpdates);
-					}
-				}
-			}
-		}
-	}
+        completedUpdates.add(myPosition);
+        poweredFromEverstone = powered;
+        onBreak();
 
-	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
-		return oldState.getBlock() != newSate.getBlock();
-	}
-	
-	@Override
-	public void update(){
-		if (reconstructTimer <= 0 && world.getStrongPower(pos) > 0){
-			propagatePoweredByEverstone(true, new ArrayList<BlockPos>());
-			poweredFromRedstone = true;
-		}else if (poweredFromRedstone && world.getStrongPower(pos) == 0){
-			poweredFromRedstone = false;
-			propagatePoweredByEverstone(false, new ArrayList<BlockPos>());
-		}
+        if (world.isRemote) {
+            AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "radiant", pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
+            if (particle != null) {
+                particle.setMaxAge(20);
+                particle.setDontRequireControllers();
+                particle.setIgnoreMaxAge(false);
+            }
+        }
 
-		world.markAndNotifyBlock(pos, world.getChunk(pos), world.getBlockState(pos), world.getBlockState(pos), 3);
-		world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockEverstone.HAS_FACADE, getFacade() != null).withProperty(BlockEverstone.IS_SOLID, isSolid()), 2);
-		if (reconstructTimer <= 0)
-			return;
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                for (int k = -1; k <= 1; k++) {
+                    BlockPos targetPosition = pos.add(i, j, k);
+                    Block blockID = world.getBlockState(targetPosition).getBlock();
+                    if (blockID == AMBlocks.everstone && !completedUpdates.contains(targetPosition)) {
+                        TileEntityEverstone everstone = ((TileEntityEverstone) world.getTileEntity(targetPosition));
+                        if (everstone != null)
+                            everstone.propagatePoweredByEverstone(powered, completedUpdates);
+                    }
+                }
+            }
+        }
+    }
 
-		if (world.getStrongPower(pos) == 0 && !poweredFromEverstone){
-			reconstructTimer--;
-			if (world.isRemote){ //
-				//world.scheduleBlockUpdateWithPriority(xCoord, yCoord, zCoord, BlocksCommonProxy.everstone.blockID, 0, 0);
-				world.markAndNotifyBlock(pos, world.getChunk(pos), world.getBlockState(pos), world.getBlockState(pos), 3);
-				if (reconstructTimer < reconstructMax - 20 && reconstructTimer > 20 && world.rand.nextInt(10) < 8){
-					//TODO ArsMagica2.proxy.addDigParticle(world, pos, getFacade() == null ? BlockDefs.everstone : getFacade(), getFacadeMeta());
-				}
-			}
-		}
-		
-	}
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
+        return oldState.getBlock() != newSate.getBlock();
+    }
 
-	public int getFadeStrength(){
-		if (reconstructTimer > reconstructMax / 2)
-			return 0;
-		return (int)(128 * ((float)(reconstructMax - reconstructTimer) / reconstructMax));
-	}
+    @Override
+    public void update() {
+        if (reconstructTimer <= 0 && world.getStrongPower(pos) > 0) {
+            propagatePoweredByEverstone(true, new ArrayList<BlockPos>());
+            poweredFromRedstone = true;
+        } else if (poweredFromRedstone && world.getStrongPower(pos) == 0) {
+            poweredFromRedstone = false;
+            propagatePoweredByEverstone(false, new ArrayList<BlockPos>());
+        }
 
-	public IBlockState getFacade(){
-		return facade;
-	}
+        world.markAndNotifyBlock(pos, world.getChunk(pos), world.getBlockState(pos), world.getBlockState(pos), 3);
+        world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockEverstone.HAS_FACADE, getFacade() != null).withProperty(BlockEverstone.IS_SOLID, isSolid()), 2);
+        if (reconstructTimer <= 0)
+            return;
 
-	public boolean isSolid(){
-		return reconstructTimer == 0;
-	}
+        if (world.getStrongPower(pos) == 0 && !poweredFromEverstone) {
+            reconstructTimer--;
+            if (world.isRemote) { //
+                //world.scheduleBlockUpdateWithPriority(xCoord, yCoord, zCoord, BlocksCommonProxy.everstone.blockID, 0, 0);
+                world.markAndNotifyBlock(pos, world.getChunk(pos), world.getBlockState(pos), world.getBlockState(pos), 3);
+                if (reconstructTimer < reconstructMax - 20 && reconstructTimer > 20 && world.rand.nextInt(10) < 8) {
+                    ArsMagica.proxy.addDigParticle(world, pos, getFacade() == null ? AMBlocks.everstone.getDefaultState() : getFacade());
+                }
+            }
+        }
 
-	public void onBreak(){
-		reconstructTimer = reconstructMax;
-		if (!world.isRemote){
-			List<EntityPlayerMP> players = world.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(pos).expand(64, 64, 64));
-			for (EntityPlayerMP player : players){
-				player.connection.sendPacket(getUpdatePacket());
-			}
-		}
-	}
+    }
 
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket(){
-		return new SPacketUpdateTileEntity(pos, 0, this.writeToNBT(new NBTTagCompound()));
-	}
+    public int getFadeStrength() {
+        if (reconstructTimer > reconstructMax / 2)
+            return 0;
+        return (int) (128 * ((float) (reconstructMax - reconstructTimer) / reconstructMax));
+    }
 
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
-		this.readFromNBT(pkt.getNbtCompound());
-	}
+    public IBlockState getFacade() {
+        return facade;
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound par1nbtTagCompound){
-		super.readFromNBT(par1nbtTagCompound);
-		if (par1nbtTagCompound.hasKey("facade")){
-			this.facade = Block.getStateById(par1nbtTagCompound.getInteger("facade"));
-		}
-		this.poweredFromEverstone = par1nbtTagCompound.getBoolean("poweredFromEverstone");
-		this.poweredFromRedstone = par1nbtTagCompound.getBoolean("poweredFromRedstone");
-		this.reconstructTimer = par1nbtTagCompound.getInteger("reconstructTimer");
-	}
+    public boolean isSolid() {
+        return reconstructTimer == 0;
+    }
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound par1nbtTagCompound){
-		super.writeToNBT(par1nbtTagCompound);
-		if (facade != null){
-			par1nbtTagCompound.setInteger("facade", Block.getStateId(facade));
-		}
-		par1nbtTagCompound.setBoolean("poweredFromEverstone", poweredFromEverstone);
-		par1nbtTagCompound.setBoolean("poweredFromRedstone", poweredFromRedstone);
-		par1nbtTagCompound.setInteger("reconstructTimer", reconstructTimer);
-		return par1nbtTagCompound;
-	}
+    public void onBreak() {
+        reconstructTimer = reconstructMax;
+        if (!world.isRemote) {
+            List<EntityPlayerMP> players = world.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(pos).expand(64, 64, 64));
+            for (EntityPlayerMP player : players) {
+                player.connection.sendPacket(getUpdatePacket());
+            }
+        }
+    }
+
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        return new SPacketUpdateTileEntity(pos, 0, this.writeToNBT(new NBTTagCompound()));
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+        this.readFromNBT(pkt.getNbtCompound());
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound par1nbtTagCompound) {
+        super.readFromNBT(par1nbtTagCompound);
+        if (par1nbtTagCompound.hasKey("facade")) {
+            this.facade = Block.getStateById(par1nbtTagCompound.getInteger("facade"));
+        }
+        this.poweredFromEverstone = par1nbtTagCompound.getBoolean("poweredFromEverstone");
+        this.poweredFromRedstone = par1nbtTagCompound.getBoolean("poweredFromRedstone");
+        this.reconstructTimer = par1nbtTagCompound.getInteger("reconstructTimer");
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound par1nbtTagCompound) {
+        super.writeToNBT(par1nbtTagCompound);
+        if (facade != null) {
+            par1nbtTagCompound.setInteger("facade", Block.getStateId(facade));
+        }
+        par1nbtTagCompound.setBoolean("poweredFromEverstone", poweredFromEverstone);
+        par1nbtTagCompound.setBoolean("poweredFromRedstone", poweredFromRedstone);
+        par1nbtTagCompound.setInteger("reconstructTimer", reconstructTimer);
+        return par1nbtTagCompound;
+    }
 }

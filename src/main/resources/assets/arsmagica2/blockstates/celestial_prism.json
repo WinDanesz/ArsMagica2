@@ -1,13 +1,23 @@
 {
 	"forge_marker": 1,
 	"defaults": {
-		"custom": {
-		},
-		"model": "arsmagica2:scaleup"
+		"model": "arsmagica2:scaledown",
+		"textures": {
+			"particle": "arsmagica2:blocks/custom/celestial_prism"
+		}
 	},
 	"variants": {
 		"normal": [{}],
-		"inventory": [{"submodel":"arsmagica2:celestial_prism_flipped.obj"}],
-		"facing": {"south":{}, "east":{}, "north":{}, "west":{}}
+		"inventory": [{}],
+		"active": {
+			"false": {},
+			"true": {}
+		},
+		"facing": {
+			"north": {},
+			"south": {},
+			"east": {},
+			"west": {}
+		}
 	}
 }

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PWP",
+    "RRR",
+    "PWP"
+  ],
+  "key": {
+    "P": {
+      "item": "arsmagica2:witchwood_planks"
+    },
+    "R": {
+      "item": "arsmagica2:blank_rune"
+    },
+    "W": {
+      "item": "arsmagica2:magic_wall"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:keystone_door",
+    "data": 0
+  }
+}

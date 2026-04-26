@@ -1,59 +1,59 @@
 package am2.client.particles;
 
-public class ParticlePendulum extends ParticleController{
+public class ParticlePendulum extends ParticleController {
 
-	private double angle = 0;
-	private float amplitude = 0;
-	private float speed = 0.1f;
+    private double angle = 0;
+    private float amplitude = 0;
+    private float speed = 0.1f;
 
-	private double lastDeltaX;
-	private double lastDeltaZ;
+    private double lastDeltaX;
+    private double lastDeltaZ;
 //	private double lastDeltaY;
 
-	private boolean stopOnCollide = true;
+    private boolean stopOnCollide = true;
 
-	public ParticlePendulum(AMParticle particleEffect, float amplitude, float speed, int priority, boolean exclusive){
-		super(particleEffect, priority, exclusive);
-		this.amplitude = amplitude;
-		lastDeltaX = 0;
-		lastDeltaZ = 0;
-		generateNewAngle();
-		this.speed = speed;
-	}
+    public ParticlePendulum(AMParticle particleEffect, float amplitude, float speed, int priority, boolean exclusive) {
+        super(particleEffect, priority, exclusive);
+        this.amplitude = amplitude;
+        lastDeltaX = 0;
+        lastDeltaZ = 0;
+        generateNewAngle();
+        this.speed = speed;
+    }
 
-	public ParticlePendulum setStopOnCollide(boolean stop){
-		this.stopOnCollide = stop;
-		return this;
-	}
+    public ParticlePendulum setStopOnCollide(boolean stop) {
+        this.stopOnCollide = stop;
+        return this;
+    }
 
-	private void generateNewAngle(){
-		angle = Math.toRadians(particle.getWorld().rand.nextInt(360));
-	}
+    private void generateNewAngle() {
+        angle = Math.toRadians(particle.getWorld().rand.nextInt(360));
+    }
 
-	@Override
-	public void doUpdate(){
+    @Override
+    public void doUpdate() {
 
-		if (stopOnCollide && (particle.isCollided())){
-			this.finish();
-			return;
-		}
+        if (stopOnCollide && (particle.isCollided())) {
+            this.finish();
+            return;
+        }
 
-		double deltaX = Math.sin(angle) * amplitude * Math.sin(particle.GetParticleAge() * speed);
-		double deltaZ = Math.cos(angle) * amplitude * Math.sin(particle.GetParticleAge() * speed);
+        double deltaX = Math.sin(angle) * amplitude * Math.sin(particle.GetParticleAge() * speed);
+        double deltaZ = Math.cos(angle) * amplitude * Math.sin(particle.GetParticleAge() * speed);
 
-		double posX = deltaX - lastDeltaX;
-		double posY = Math.sin(System.currentTimeMillis() / Float.MAX_VALUE);
-		double posZ = deltaZ - lastDeltaZ;
+        double posX = deltaX - lastDeltaX;
+        double posY = Math.sin(System.currentTimeMillis() / Float.MAX_VALUE);
+        double posZ = deltaZ - lastDeltaZ;
 
-		lastDeltaX = deltaX;
-		lastDeltaZ = deltaZ;
+        lastDeltaX = deltaX;
+        lastDeltaZ = deltaZ;
 
-		particle.move(posX, posY, posZ);
-	}
+        particle.move(posX, posY, posZ);
+    }
 
-	@Override
-	public ParticleController clone(){
-		return new ParticlePendulum(particle, amplitude, speed, priority, exclusive).setStopOnCollide(stopOnCollide);
-	}
+    @Override
+    public ParticleController clone() {
+        return new ParticlePendulum(particle, amplitude, speed, priority, exclusive).setStopOnCollide(stopOnCollide);
+    }
 
 }

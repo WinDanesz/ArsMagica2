@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "A A",
+    "PFP",
+    "A A"
+  ],
+  "key": {
+    "A": {
+      "item": "arsmagica2:arcane_ash"
+    },
+    "F": {
+      "item": "arsmagica2:standard_focus"
+    },
+    "P": {
+      "item": "arsmagica2:purified_vinteum_dust"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:greater_focus"
+  }
+}

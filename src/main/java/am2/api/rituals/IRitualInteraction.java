@@ -6,24 +6,31 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface IRitualInteraction {
-	
-	public ItemStack[] getRitualReagents();
-	public int getRitualReagentSearchRadius();
-	public IMultiblock getRitualShape();
-	@SideOnly(Side.CLIENT)
-	public ItemStack getResult();
-	
-	public static class Wrapper {
-		
-		private final IRitualInteraction interaction;
-		
-		public Wrapper(IRitualInteraction interaction) {
-			this.interaction = interaction;
-		}
-		
-		public IRitualInteraction getRitualInteraction() {
-			return interaction;
-		}
-		
-	}
+
+    public ItemStack[] getRitualReagents();
+
+    default int getRitualReagentSearchRadius() {
+        return 3;
+    }
+
+    public IMultiblock getRitualShape();
+
+    @SideOnly(Side.CLIENT)
+    default ItemStack getResult() {
+        return null;
+    }
+
+    public static class Wrapper {
+
+        private final IRitualInteraction interaction;
+
+        public Wrapper(IRitualInteraction interaction) {
+            this.interaction = interaction;
+        }
+
+        public IRitualInteraction getRitualInteraction() {
+            return interaction;
+        }
+
+    }
 }

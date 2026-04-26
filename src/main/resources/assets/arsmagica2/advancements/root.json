@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:arcane_compendium"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.root.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.root.description"
+    },
+    "background": "arsmagica2:textures/blocks/witchwood_planks.png",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_vinteum": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "arsmagica2:vinteum_dust"
+          }
+        ]
+      }
+    }
+  }
+}

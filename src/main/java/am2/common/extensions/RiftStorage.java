@@ -14,164 +14,178 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 public class RiftStorage implements IRiftStorage, ICapabilityProvider, ICapabilitySerializable<NBTBase> {
-	
-	private ItemStack[] stacks = new ItemStack[54];
 
-	private int accessLevel;
-	
-	@CapabilityInject(IRiftStorage.class)
-	public static Capability<IRiftStorage> INSTANCE = null;
-	
-	@Override
-	public int getSizeInventory(){
-		return 54;
-	}
+    private ItemStack[] stacks = new ItemStack[54];
 
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
+    private int accessLevel;
 
-	@Override
-	public ItemStack getStackInSlot(int i){
-		return this.stacks[i];
-	}
+    @CapabilityInject(IRiftStorage.class)
+    public static Capability<IRiftStorage> INSTANCE = null;
 
-	@Override
-	public ItemStack decrStackSize(int i, int j){
-		if (this.stacks[i] != null){
-			if (this.stacks[i].getCount() <= j){
-				ItemStack itemstack = this.stacks[i];
-				this.stacks[i] = null;
-				return itemstack;
-			}
+    public RiftStorage() {
+        // Initialize all slots with EMPTY instead of null
+        for (int i = 0; i < stacks.length; i++) {
+            stacks[i] = ItemStack.EMPTY;
+        }
+    }
 
-			ItemStack itemstack1 = this.stacks[i].splitStack(j);
+    @Override
+    public int getSizeInventory() {
+        return 54;
+    }
 
-			if (this.stacks[i].getCount() == 0){
-				this.stacks[i] = null;
-			}
+    @Override
+    public boolean isEmpty() {
+        for (ItemStack stack : stacks) {
+            if (!stack.isEmpty()) return false;
+        }
+        return true;
+    }
 
-			return itemstack1;
-		}else{
-			return null;
-		}
-	}
+    @Override
+    public ItemStack getStackInSlot(int i) {
+        if (i < 0 || i >= stacks.length) return ItemStack.EMPTY;
+        return this.stacks[i];
+    }
 
-	@Override
-	public ItemStack removeStackFromSlot(int i){
-		if (this.stacks[i] != null){
-			ItemStack itemstack = this.stacks[i];
-			this.stacks[i] = null;
-			return itemstack;
-		}else{
-			return null;
-		}
-	}
+    @Override
+    public ItemStack decrStackSize(int i, int j) {
+        if (!this.stacks[i].isEmpty()) {
+            if (this.stacks[i].getCount() <= j) {
+                ItemStack itemstack = this.stacks[i];
+                this.stacks[i] = ItemStack.EMPTY;
+                return itemstack;
+            }
 
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack){
-		this.stacks[i] = itemstack;
-		if (itemstack != null && itemstack.getCount() > this.getInventoryStackLimit()){
-			itemstack.setCount( this.getInventoryStackLimit());
-		}
-	}
+            ItemStack itemstack1 = this.stacks[i].splitStack(j);
 
-	@Override
-	public String getName(){
-		return "Void Storage";
-	}
+            if (this.stacks[i].getCount() == 0) {
+                this.stacks[i] = ItemStack.EMPTY;
+            }
 
-	@Override
-	public boolean hasCustomName(){
-		return false;
-	}
+            return itemstack1;
+        } else {
+            return ItemStack.EMPTY;
+        }
+    }
 
-	@Override
-	public int getInventoryStackLimit(){
-		return 64;
-	}
+    @Override
+    public ItemStack removeStackFromSlot(int i) {
+        if (!this.stacks[i].isEmpty()) {
+            ItemStack itemstack = this.stacks[i];
+            this.stacks[i] = ItemStack.EMPTY;
+            return itemstack;
+        } else {
+            return ItemStack.EMPTY;
+        }
+    }
 
-	@Override
-	public boolean isUsableByPlayer(EntityPlayer entityplayer){
-		//if (accessEntity == null || accessEntity.isDead) return false;
-		return true;//entityplayer.getDistanceSq(accessEntity) < 64;
-	}
+    @Override
+    public void setInventorySlotContents(int i, ItemStack itemstack) {
+        this.stacks[i] = itemstack;
+        if (!itemstack.isEmpty() && itemstack.getCount() > this.getInventoryStackLimit()) {
+            itemstack.setCount(this.getInventoryStackLimit());
+        }
+    }
 
-	@Override
-	public void openInventory(EntityPlayer player){
-	}
+    @Override
+    public String getName() {
+        return "Void Storage";
+    }
 
-	@Override
-	public void closeInventory(EntityPlayer player){
-	}
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
 
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack){
-		return true;
-	}
+    @Override
+    public int getInventoryStackLimit() {
+        return 64;
+    }
 
-	@Override
-	public void markDirty(){
-	}
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+        //if (accessEntity == null || accessEntity.isDead) return false;
+        return true;//entityplayer.getDistanceSq(accessEntity) < 64;
+    }
 
-	@Override
-	public int getField(int id) {
-		return 0;
-	}
+    @Override
+    public void openInventory(EntityPlayer player) {
+    }
 
-	@Override
-	public void setField(int id, int value) {}
+    @Override
+    public void closeInventory(EntityPlayer player) {
+    }
 
-	@Override
-	public int getFieldCount() {
-		return 0;
-	}
+    @Override
+    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+        return true;
+    }
 
-	@Override
-	public void clear() {
-		//this.stacks = new ItemStack[54];
-	}
+    @Override
+    public void markDirty() {
+    }
 
-	@Override
-	public ITextComponent getDisplayName() {
-		return new TextComponentString(this.getName());
-	}
+    @Override
+    public int getField(int id) {
+        return 0;
+    }
 
-	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		return capability == INSTANCE;
-	}
+    @Override
+    public void setField(int id, int value) {
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if (capability == INSTANCE)
-			return (T) this;
-		return null;
-	}
-	
-	public static IRiftStorage For(EntityLivingBase thePlayer) {
-		return thePlayer.getCapability(INSTANCE, null);
-	}
-	
-	@Override
-	public NBTBase serializeNBT() {
-		return new IRiftStorage.Storage().writeNBT(INSTANCE, this, null);
-	}
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
 
-	@Override
-	public void deserializeNBT(NBTBase nbt) {
-		new IRiftStorage.Storage().readNBT(INSTANCE, this, null, nbt);
-	}
-	
-	@Override
-	public int getAccessLevel() {
-		return this.accessLevel;
-	}
-	
-	@Override
-	public void setAccessLevel(int accessLevel) {
-		this.accessLevel = accessLevel;
-	}
+    @Override
+    public void clear() {
+        for (int i = 0; i < stacks.length; i++) {
+            stacks[i] = ItemStack.EMPTY;
+        }
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TextComponentString(this.getName());
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        return capability == INSTANCE;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == INSTANCE)
+            return (T) this;
+        return null;
+    }
+
+    public static IRiftStorage For(EntityLivingBase thePlayer) {
+        return thePlayer.getCapability(INSTANCE, null);
+    }
+
+    @Override
+    public NBTBase serializeNBT() {
+        return new IRiftStorage.Storage().writeNBT(INSTANCE, this, null);
+    }
+
+    @Override
+    public void deserializeNBT(NBTBase nbt) {
+        new IRiftStorage.Storage().readNBT(INSTANCE, this, null, nbt);
+    }
+
+    @Override
+    public int getAccessLevel() {
+        return this.accessLevel;
+    }
+
+    @Override
+    public void setAccessLevel(int accessLevel) {
+        this.accessLevel = accessLevel;
+    }
 }

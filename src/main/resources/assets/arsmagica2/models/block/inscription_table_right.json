@@ -1,0 +1,55 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "arsmagica2:blocks/inscription_table_no_cloth",
+		"particle": "minecraft:blocks/planks_big_oak"
+	},
+	"elements": [
+		{
+			"from": [0, 11, 0],
+			"to": [16, 15, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 13, 8]},
+			"faces": {
+				"north": {"uv": [4, 2, 6, 2.5], "texture": "#0"},
+				"east": {"uv": [2, 5, 4, 5.5], "texture": "#0"},
+				"south": {"uv": [2, 4.5, 4, 5], "texture": "#0"},
+				"up": {"uv": [2, 2, 0, 0], "rotation": 270, "texture": "#0"},
+				"down": {"uv": [7.125, 0, 9.125, 2], "rotation": 90, "texture": "#0"}
+			}
+		},
+		{
+			"from": [10, 0, 1],
+			"to": [15, 11, 6],
+			"rotation": {"angle": 0, "axis": "y", "origin": [26, 0, 1]},
+			"faces": {
+				"north": {"uv": [0, 6, 0.625, 7.5], "texture": "#0"},
+				"east": {"uv": [0, 6, 0.625, 7.5], "texture": "#0", "cullface": "east"},
+				"south": {"uv": [0, 6, 0.625, 7.5], "texture": "#0"},
+				"west": {"uv": [0, 6, 0.625, 7.5], "texture": "#0"},
+				"down": {"uv": [7.375, 4, 8, 4.625], "texture": "#0"}
+			}
+		},
+		{
+			"from": [10, 0, 10],
+			"to": [15, 11, 15],
+			"rotation": {"angle": 0, "axis": "y", "origin": [26, 0, -1]},
+			"faces": {
+				"north": {"uv": [0, 6, 0.625, 7.5], "texture": "#0"},
+				"east": {"uv": [0, 6, 0.625, 7.5], "texture": "#0", "cullface": "east"},
+				"south": {"uv": [0, 6, 0.625, 7.5], "texture": "#0"},
+				"west": {"uv": [0, 6, 0.625, 7.5], "texture": "#0"},
+				"down": {"uv": [7.375, 4, 8, 4.625], "texture": "#0"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "right",
+			"origin": [17.1963, 16.39259, 11.6582],
+			"scope": 0,
+			"color": 0,
+			"children": [0, 1, 2]
+		}
+	]
+}

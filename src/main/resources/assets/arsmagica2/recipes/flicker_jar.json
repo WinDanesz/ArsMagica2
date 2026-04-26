@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "NWN",
+    "G G",
+    " G "
+  ],
+  "key": {
+    "W": {
+      "item": "arsmagica2:magic_wall"
+    },
+    "N": {
+      "type": "forge:ore_dict",
+      "ore": "nuggetGold"
+    },
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "paneGlassColorless"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:flicker_jar",
+    "data":0  
+  }
+}

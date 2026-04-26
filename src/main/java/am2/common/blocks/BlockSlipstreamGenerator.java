@@ -7,25 +7,25 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.world.World;
 
-public class BlockSlipstreamGenerator extends BlockAMPowered{
+public class BlockSlipstreamGenerator extends BlockAMPowered {
 
-	public BlockSlipstreamGenerator(){
-		super(Material.WOOD);
-		defaultRender = true;
-	}
+    public BlockSlipstreamGenerator() {
+        super(Material.WOOD);
+        defaultRender = true;
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int i){
-		return new TileEntitySlipstreamGenerator();
-	}
-	
-	@Override
+    @Override
+    public TileEntity createNewTileEntity(World world, int i) {
+        return new TileEntitySlipstreamGenerator();
+    }
+
+    @Override
     public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
-	
-	@Override
-	public BlockRenderLayer getRenderLayer() {
-		return BlockRenderLayer.TRANSLUCENT;
-	}
+
+    @Override
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.TRANSLUCENT;
+    }
 }

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CFC"
+  ],
+  "key": {
+    "F": {
+      "item": "arsmagica2:standard_focus"
+    },
+    "C": {
+      "item": "minecraft:glass"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:charge_focus"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "GGG",
+    "GVG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "ingotGold"
+    },
+    "V": {
+      "item": "arsmagica2:purified_vinteum_dust"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:gold_inlay",
+    "count": 4
+  }
+}

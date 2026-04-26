@@ -1,0 +1,23 @@
+{
+    "pools": [
+        {
+            "name": "arsmagica2_evil_wizard_orb",
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "arsmagica2:infinity_orb",
+                    "weight": 1,
+                    "functions": [
+                        { "function": "set_data", "data": 0 },
+                        { "function": "set_count", "count": { "min": 1, "max": 1 } }
+                    ]
+                },
+                {
+                    "type": "empty",
+                    "weight": 15
+                }
+            ]
+        }
+    ]
+}

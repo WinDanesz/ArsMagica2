@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:essence_lightning"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.boss_lightning_guardian.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.boss_lightning_guardian.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "arsmagica2:mage_armor",
+  "criteria": {
+    "killed_lightning_guardian": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "arsmagica2:lightning_guardian"
+        }
+      }
+    }
+  },
+  "requirements": [["killed_lightning_guardian"]]
+}

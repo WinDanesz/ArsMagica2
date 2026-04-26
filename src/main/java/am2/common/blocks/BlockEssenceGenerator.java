@@ -1,185 +1,107 @@
 package am2.common.blocks;
 
-import am2.ArsMagica2;
-import am2.common.blocks.tileentity.TileEntityBlackAurem;
-import am2.common.blocks.tileentity.TileEntityCelestialPrism;
 import am2.common.blocks.tileentity.TileEntityObelisk;
-import am2.common.defs.BlockDefs;
-import am2.common.defs.IDDefs;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-public class BlockEssenceGenerator extends BlockAMPowered{
+/**
+ * Abstract base for essence generator blocks (Obelisk, Celestial Prism, Black Aurem).
+ */
+public abstract class BlockEssenceGenerator extends BlockAMPowered {
+    public static final PropertyBool ACTIVE = PropertyBool.create("active");
+    public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.HORIZONTALS);
 
-	private int NexusType;
+    public BlockEssenceGenerator(Material material) {
+        super(material);
+        setTickRandomly(true);
+        setHardness(2f);
+        setResistance(2f);
+        setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(ACTIVE, false));
+    }
 
-	public static final int NEXUS_STANDARD = 0;
-	public static final int NEXUS_DARK = 1;
-	public static final int NEXUS_LIGHT = 2;
-	
-	public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.HORIZONTALS);
+    @Override
+    public boolean canProvidePower(IBlockState state) {
+        return true;
+    }
 
-	public BlockEssenceGenerator(int nexusType){
-		super(Material.CLOTH);
-		setLightLevel(0.73f);
-		setTickRandomly(true);
-		setHardness(2f);
-		setResistance(2f);
-		this.NexusType = nexusType;
-		switch (this.NexusType){
-		case NEXUS_STANDARD:
-			setBlockBounds(0f, 0.0f, 0f, 1f, 2f, 1f);
-			break;
-		case NEXUS_LIGHT:
-			setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 2f, 1.0f);
-			break;
-		case NEXUS_DARK:
-			setBlockBounds(0.0f, 0.5f, 0.0f, 1.0f, 2f, 1.0f);
-			break;
-		}
-	}
+    @Override
+    public int quantityDropped(Random random) {
+        return 1;
+    }
 
-	private TileEntityObelisk getTileEntity(IBlockAccess blockAccess, BlockPos pos){
-		TileEntity te = blockAccess.getTileEntity(pos);
-		if (te != null && te instanceof TileEntityObelisk){
-			return (TileEntityObelisk)te;
-		}
-		return null;
-	}
-	
-	@Override
-	public boolean canProvidePower(IBlockState state) {
-		return true;
-	}
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING, ACTIVE);
+    }
 
-	@Override
-	public int quantityDropped(Random random){
-		return 1;
-	}
-	
-	@Override
-	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-		ArrayList<ItemStack> drops = new ArrayList<ItemStack>();
-		if (this == BlockDefs.obelisk)
-			drops.add(new ItemStack(BlockDefs.obelisk));
-		else if (this == BlockDefs.blackAurem)
-			drops.add(new ItemStack(BlockDefs.blackAurem));
-		else if (this == BlockDefs.celestialPrism)
-			drops.add(new ItemStack(BlockDefs.celestialPrism));
-		return drops;
-	}
-	
-	@SuppressWarnings("deprecation")
-	@Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes,
-			@Nullable Entity entityIn, boolean isActualState) {
-		if (this == BlockDefs.blackAurem) { return; }
-		super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn, isActualState);
-	}
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        TileEntity te = worldIn.getTileEntity(pos);
+        boolean active = false;
+        if (te instanceof TileEntityObelisk) {
+            TileEntityObelisk obelisk = (TileEntityObelisk) te;
+            active = obelisk.burnTimeRemaining > 0 || obelisk.fullyCharged;
+        }
+        return state.withProperty(ACTIVE, active);
+    }
 
-	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		if (this == BlockDefs.blackAurem)
-			return null;
-		return super.getBoundingBox(state, source, pos);
-	}
-	
-	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) { ItemStack heldItem = playerIn.getHeldItem(hand);
-		if (HandleSpecialItems(worldIn, playerIn, pos))
-			return true;
-		if (worldIn.getBlockState(pos).getBlock() == BlockDefs.obelisk)
-			FMLNetworkHandler.openGui(playerIn, ArsMagica2.instance, IDDefs.GUI_OBELISK, worldIn, pos.getX(), pos.getY(), pos.getZ());
-		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
-	}
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(FACING).ordinal() - 2;
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World par1World, int i){
-		if (this.NexusType == NEXUS_DARK)
-			return new TileEntityBlackAurem();
-		else if (this.NexusType == NEXUS_LIGHT)
-			return new TileEntityCelestialPrism();
-		else
-			return new TileEntityObelisk();
-	}
-	
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, FACING);
-	}
-	
-	@Override
-	public int getMetaFromState(IBlockState state) {
-		return state.getValue(FACING).ordinal() - 2;
-	}
-	
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(FACING, EnumFacing.HORIZONTALS[meta]);
-	}
-	
-	@Override
-	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState()
+            .withProperty(FACING, EnumFacing.HORIZONTALS[meta & 0x3]);
+    }
 
-		if (worldIn.isRemote){
-			super.breakBlock(worldIn, pos, state);
-			return;
-		}
-		TileEntityObelisk obelisk = getTileEntity(worldIn, pos);
-		if (obelisk == null) return;
-		for (int l = 0; l < obelisk.getSizeInventory(); l++){
-			ItemStack itemstack = obelisk.getStackInSlot(l);
-			if (itemstack == null){
-				continue;
-			}
-			float f = worldIn.rand.nextFloat() * 0.8F + 0.1F;
-			float f1 = worldIn.rand.nextFloat() * 0.8F + 0.1F;
-			float f2 = worldIn.rand.nextFloat() * 0.8F + 0.1F;
-			do{
-				if (itemstack.getCount() <= 0){
-					break;
-				}
-				int i1 = worldIn.rand.nextInt(21) + 10;
-				if (i1 > itemstack.getCount()){
-					i1 = itemstack.getCount();
-				}
-				itemstack.shrink(i1);
-				ItemStack newItem = new ItemStack(itemstack.getItem(), i1, itemstack.getItemDamage());
-				newItem.setTagCompound(itemstack.getTagCompound());
-				EntityItem entityitem = new EntityItem(worldIn, pos.getX() + f, pos.getY() + f1, pos.getZ() + f2, newItem);
-				float f3 = 0.05F;
-				entityitem.motionX = (float)worldIn.rand.nextGaussian() * f3;
-				entityitem.motionY = (float)worldIn.rand.nextGaussian() * f3 + 0.2F;
-				entityitem.motionZ = (float)worldIn.rand.nextGaussian() * f3;
-				worldIn.spawnEntity(entityitem);
-			}while (true);
-		}
-		super.breakBlock(worldIn, pos, state);
-	}
-	
-	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-		return getStateFromMeta(meta).withProperty(FACING, placer.getHorizontalFacing());
-	}
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        return getStateFromMeta(meta).withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+    }
 
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (HandleSpecialItems(worldIn, playerIn, pos))
+            return true;
+        return super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
+    }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        TileEntity te = worldIn.getTileEntity(pos);
+        if (te instanceof TileEntityObelisk) {
+            InventoryHelper.dropInventoryItems(worldIn, pos, (TileEntityObelisk) te);
+        }
+        super.breakBlock(worldIn, pos, state);
+    }
+
+    @Override
+    @Nullable
+    public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start, Vec3d end) {
+        return this.rayTrace(pos, start, end, this.getBoundingBox(blockState, worldIn, pos));
+    }
+
+    @Override
+    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return true;
+    }
 }

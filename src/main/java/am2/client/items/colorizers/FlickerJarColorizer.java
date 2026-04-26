@@ -1,19 +1,18 @@
 package am2.client.items.colorizers;
 
-import am2.api.ArsMagicaAPI;
-import am2.api.affinity.Affinity;
+import am2.common.utils.SpellUtils;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.ItemStack;
 
-public class FlickerJarColorizer implements IItemColor{
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
-	@Override
-	public int colorMultiplier(ItemStack stack, int tintIndex) {
-		if (tintIndex == 0)
-			return 0xffffff;
-		int meta = stack.getItemDamage();
-		Affinity aff = null; // todo registryArsMagicaAPI.getAffinityRegistry().getObjectById(meta);
-		return aff.getColor();
-	}
+public class FlickerJarColorizer implements IItemColor {
+
+    @Override
+    public int colorMultiplier(@Nonnull ItemStack stack, int tintIndex) {
+        if (tintIndex == 0) return 0xffffff;
+        return Objects.requireNonNull(SpellUtils.GetAffinityFromID(stack.getItemDamage())).getColor();
+    }
 
 }

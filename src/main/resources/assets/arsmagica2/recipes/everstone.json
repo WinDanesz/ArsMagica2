@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    " B ",
+    "CSC",
+    " B "
+  ],
+  "key": {
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "gemChimerite"
+    },
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "stone"
+    },
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "gemBlueTopaz"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:everstone"
+  }
+}

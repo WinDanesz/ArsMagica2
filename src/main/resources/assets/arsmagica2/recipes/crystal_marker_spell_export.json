@@ -1,0 +1,30 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "C C",
+    "RPI",
+    "C C"
+  ],
+  "key": {
+    "P": {
+      "item": "arsmagica2:core",
+      "data": 0
+    },
+    "I": {
+      "item": "arsmagica2:crystal_marker",
+      "data": 7
+    },
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "dyeCyan"
+    },
+    "R": {
+      "item": "arsmagica2:crystal_marker",
+      "data": 6
+    }
+  },
+  "result": {
+    "item": "arsmagica2:crystal_marker",
+    "data": 8
+  }
+}

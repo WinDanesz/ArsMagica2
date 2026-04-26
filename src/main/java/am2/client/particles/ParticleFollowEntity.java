@@ -2,26 +2,26 @@ package am2.client.particles;
 
 import net.minecraft.entity.Entity;
 
-public class ParticleFollowEntity extends ParticleController{
+public class ParticleFollowEntity extends ParticleController {
 
-	private Entity followTarget;
+    private Entity followTarget;
 
-	public ParticleFollowEntity(AMParticle particleEffect, int priority, Entity followTarget, boolean exclusive){
-		super(particleEffect, priority, exclusive);
+    public ParticleFollowEntity(AMParticle particleEffect, int priority, Entity followTarget, boolean exclusive) {
+        super(particleEffect, priority, exclusive);
 
-		this.followTarget = followTarget;
-	}
+        this.followTarget = followTarget;
+    }
 
-	@Override
-	public void doUpdate(){
-		particle.pushPos();
+    @Override
+    public void doUpdate() {
+        particle.pushPos();
 
-		this.particle.setPosition(followTarget);
-	}
+        this.particle.setPosition(followTarget);
+    }
 
-	@Override
-	public ParticleController clone(){
-		return new ParticleFollowEntity(particle, priority, followTarget, exclusive);
-	}
+    @Override
+    public ParticleController clone() {
+        return new ParticleFollowEntity(particle, priority, followTarget, exclusive);
+    }
 
 }

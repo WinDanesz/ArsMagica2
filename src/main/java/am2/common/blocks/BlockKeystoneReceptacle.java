@@ -1,9 +1,9 @@
 package am2.common.blocks;
 
-import am2.ArsMagica2;
+import am2.ArsMagica;
 import am2.api.blocks.IKeystoneLockable;
 import am2.api.items.KeystoneAccessType;
-import am2.common.blocks.tileentity.TileEntityKeystoneRecepticle;
+import am2.common.blocks.tileentity.TileEntityKeystoneReceptacle;
 import am2.common.defs.IDDefs;
 import am2.common.items.ItemKeystone;
 import am2.common.utils.KeystoneUtilities;
@@ -21,108 +21,108 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 
-public class BlockKeystoneReceptacle extends BlockAMPowered{
-	
-	public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.HORIZONTALS);
-	
-	public BlockKeystoneReceptacle(){
-		super(Material.ROCK);
-		setHardness(4.5f);
-		setResistance(10f);
-		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-	}
-	
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, FACING);
-	}
-	
-	@Override
-	public int getMetaFromState(IBlockState state) {
-		return state.getValue(FACING).getHorizontalIndex();
-	}
-	
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta));
-	}
-	
-	@Override
-	public TileEntity createNewTileEntity(World var1, int i){
-		return new TileEntityKeystoneRecepticle();
-	}
-	
-	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-		super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
+public class BlockKeystoneReceptacle extends BlockAMPowered {
 
-		if (HandleSpecialItems(worldIn, playerIn, pos)){
-			return true;
-		}
+    public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.HORIZONTALS);
 
+    public BlockKeystoneReceptacle() {
+        super(Material.ROCK);
+        setHardness(4.5f);
+        setResistance(10f);
+        setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.defaultRender = true;
+    }
 
-		TileEntity myTE = worldIn.getTileEntity(pos);
-		if (myTE == null || !(myTE instanceof TileEntityKeystoneRecepticle)){
-			return true;
-		}
-		TileEntityKeystoneRecepticle receptacle = (TileEntityKeystoneRecepticle)myTE;
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING);
+    }
 
-		if (KeystoneUtilities.HandleKeystoneRecovery(playerIn, receptacle)){
-			return true;
-		}
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(FACING).getHorizontalIndex();
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta));
+    }
+
+    @Override
+    public TileEntity createNewTileEntity(World var1, int i) {
+        return new TileEntityKeystoneReceptacle();
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+                                    EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
+
+        if (HandleSpecialItems(worldIn, playerIn, pos)) {
+            return true;
+        }
 
 
-		if (playerIn.isSneaking()){
-			if (!worldIn.isRemote && KeystoneUtilities.instance.canPlayerAccess(receptacle, playerIn, KeystoneAccessType.USE)){
-				FMLNetworkHandler.openGui(playerIn, ArsMagica2.instance, IDDefs.GUI_KEYSTONE_LOCKABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
-			}
-		}else{
-			if (receptacle.canActivate()){
-				long key = 0;
-				ItemStack rightClickItem = playerIn.getHeldItemMainhand();
-				if (rightClickItem != null && rightClickItem.getItem() instanceof ItemKeystone){
-					key = ((ItemKeystone)rightClickItem.getItem()).getKey(rightClickItem);
-				}
-				receptacle.setActive(key);
-			}else if (receptacle.isActive()){
-				receptacle.deactivate();
-			}
-		}
+        TileEntity myTE = worldIn.getTileEntity(pos);
+        if (myTE == null || !(myTE instanceof TileEntityKeystoneReceptacle)) {
+            return true;
+        }
+        TileEntityKeystoneReceptacle receptacle = (TileEntityKeystoneReceptacle) myTE;
 
-		return true;
-	}
-	
-	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer,
-			ItemStack stack){
-
-		ArsMagica2.proxy.blocks.registerKeystonePortal(pos, worldIn.provider.getDimension());
+        if (KeystoneUtilities.HandleKeystoneRecovery(playerIn, receptacle)) {
+            return true;
+        }
 
 
-		TileEntityKeystoneRecepticle receptacle = (TileEntityKeystoneRecepticle)worldIn.getTileEntity(pos);
-		receptacle.onPlaced();
+        if (playerIn.isSneaking()) {
+            if (!worldIn.isRemote && KeystoneUtilities.instance.canPlayerAccess(receptacle, playerIn, KeystoneAccessType.USE)) {
+                playerIn.openGui(ArsMagica.instance, IDDefs.GUI_KEYSTONE_LOCKABLE, worldIn, pos.getX(), pos.getY(), pos.getZ());
+            }
+        } else {
+            if (receptacle.canActivate()) {
+                long key = 0;
+                ItemStack rightClickItem = playerIn.getHeldItemMainhand();
+                if (!rightClickItem.isEmpty() && rightClickItem.getItem() instanceof ItemKeystone) {
+                    key = ((ItemKeystone) rightClickItem.getItem()).getKey(rightClickItem);
+                }
+                receptacle.setActive(key);
+            } else if (receptacle.isActive()) {
+                receptacle.deactivate();
+            }
+        }
 
-		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-	}
-	
-	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-		return getStateFromMeta(meta).withProperty(FACING, placer.getHorizontalFacing().getOpposite());
-	}
-	
-	@Override
-	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
-			boolean willHarvest){
-		IKeystoneLockable<?> lockable = (IKeystoneLockable<?>)world.getTileEntity(pos);
-		if (KeystoneUtilities.instance.getKeyFromRunes(lockable.getRunesInKey()) != 0){
-			if (!world.isRemote)
-				player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.clearKey")));
-			return false;
-		}
+        return true;
+    }
 
-		return super.removedByPlayer(state, world, pos, player, willHarvest);
-	}
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer,
+                                ItemStack stack) {
+
+        ArsMagica.proxy.blocks.registerKeystonePortal(pos, worldIn.provider.getDimension());
+
+
+        TileEntityKeystoneReceptacle receptacle = (TileEntityKeystoneReceptacle) worldIn.getTileEntity(pos);
+        receptacle.onPlaced();
+
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        return getStateFromMeta(meta).withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+    }
+
+    @Override
+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
+                                   boolean willHarvest) {
+        IKeystoneLockable<?> lockable = (IKeystoneLockable<?>) world.getTileEntity(pos);
+        if (KeystoneUtilities.instance.getKeyFromRunes(lockable.getRunesInKey()) != 0) {
+            if (!world.isRemote)
+                player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.clearKey")));
+            return false;
+        }
+
+        return super.removedByPlayer(state, world, pos, player, willHarvest);
+    }
 }

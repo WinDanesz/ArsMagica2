@@ -1,121 +1,121 @@
-/**
- *
- */
 package am2.client.blocks.render;
-
-import org.lwjgl.opengl.GL11;
 
 import am2.common.blocks.tileentity.TileEntityFlickerHabitat;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.common.model.TRSRTransformation;
+import org.lwjgl.opengl.GL11;
 
-/**
- * @author Zero
- */
-public class TileFlickerHabitatRenderer extends TileEntitySpecialRenderer<TileEntityFlickerHabitat>{
+public class TileFlickerHabitatRenderer extends TileEntitySpecialRenderer<TileEntityFlickerHabitat> {
 
-	private IModel modelFrame;
-	private IBakedModel bakedModelFrame;
-	private IModel modelCrystal;
-	private IBakedModel bakedModelCrystal;
-	
-	private void createModels() {
-		try {
-			modelFrame = ModelLoaderRegistry.getModel(new ResourceLocation("arsmagica2", "block/flicker_habitat_frame.obj"));
-			modelCrystal = ModelLoaderRegistry.getModel(new ResourceLocation("arsmagica2", "block/flicker_habitat_crystal.obj"));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		bakedModelFrame = modelFrame.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
-		bakedModelCrystal = modelCrystal.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
-	}
+    private static final ResourceLocation ORB_TEXTURE =
+            new ResourceLocation("arsmagica2", "textures/items/particles/ember.png");
 
-	public void render(TileEntityFlickerHabitat tileentity, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
-		createModels();
-		GL11.glPushMatrix();
-		GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT);
-		GL11.glDisable(GL11.GL_CULL_FACE);
-		Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-		RenderHelper.disableStandardItemLighting();
-		GL11.glTranslated(x + 0.5, y, z + 0.5);
-		try{
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(-tileentity.getPos().getX(), -tileentity.getPos().getY(), -tileentity.getPos().getZ());
-			Tessellator tesselator = Tessellator.getInstance();
-			tesselator.getBuffer().begin(7, DefaultVertexFormats.BLOCK);
-			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(getWorld(), bakedModelFrame, getWorld().getBlockState(tileentity.getPos()), tileentity.getPos(), tesselator.getBuffer(), false);
-			tesselator.draw();
-			GlStateManager.popMatrix();
-		}catch (Throwable t){
-		}
+    /** Full orbit period in milliseconds */
+    private static final float ORBIT_PERIOD_MS = 3000f;
+    /** Orbit radius in block units from center (0.5, 0.5) */
+    private static final float ORBIT_RADIUS = 0.22f;
+    /** Vertical bob amplitude */
+    private static final float BOB_AMPLITUDE = 0.05f;
+    /** Y center of orbit */
+    private static final float ORBIT_Y = 0.52f;
 
-		if (tileentity.hasFlicker()){
+    private static final float GLOW_RADIUS = 0.32f;
+    private static final float MID_RADIUS   = 0.20f;
+    private static final float CORE_RADIUS  = 0.10f;
 
-			if (tileentity.isUpgrade()){
-				switch (tileentity.getMainHabitatDirection()){
-				case DOWN:
-					GL11.glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
-					GL11.glTranslatef(0.0f, -0.9f, 0.0f);
-					break;
-				case EAST:
-					GL11.glRotatef(-90.0f, 0.0f, 0.0f, 1.0f);
-					GL11.glTranslatef(-0.5f, -0.45f, 0.0f);
-					break;
-				case NORTH:
-					GL11.glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-					GL11.glTranslatef(0.0f, -0.45f, 0.5f);
-					break;
-				case SOUTH:
-					GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-					GL11.glTranslatef(0.0f, -0.45f, -0.5f);
-					break;
-				case UP:
-					break;
-				case WEST:
-					GL11.glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
-					GL11.glTranslatef(0.5f, -0.45f, 0.0f);
-					break;
-				default:
-					break;
-				}
+    @Override
+    public void render(TileEntityFlickerHabitat te, double x, double y, double z,
+                       float partialTicks, int destroyStage, float alpha) {
+        if (!te.hasFlicker()) return;
 
-				GL11.glScalef(0.85f, 0.85f, 0.85f);
-			}
+        int[] colors = te.getHabitatColors();
+        if (colors.length == 0) return;
 
-			GL11.glRotatef(tileentity.getRotateOffset(), 0.0f, 1.0f, 0.0f);
-			GL11.glTranslatef(0.0f, tileentity.getFloatOffset(), 0.0f);
-			try{
-				int color = tileentity.getCrystalColor();
-				GL11.glColor3f(
-						((color >> 16) & 0xFF) / 255.0f, //isolate red  & convert to normalized float
-						((color >> 8) & 0xFF) / 255.0f, //isolate green & convert to normalized float
-						(color & 0xFF) / 255.0f //isolate blue & convert to normalized float
-				);
-				GlStateManager.pushMatrix();
-				GlStateManager.translate(-tileentity.getPos().getX(), -tileentity.getPos().getY(), -tileentity.getPos().getZ());
-				Tessellator tesselator = Tessellator.getInstance();
-				tesselator.getBuffer().begin(7, DefaultVertexFormats.BLOCK);
-				Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(getWorld(), bakedModelCrystal, getWorld().getBlockState(tileentity.getPos()), tileentity.getPos(), tesselator.getBuffer(), false);
-				tesselator.draw();
-				GlStateManager.popMatrix();
-			}catch (Throwable t){
-			}
-		}
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GlStateManager.disableAlpha();
-		RenderHelper.enableStandardItemLighting();
-		GL11.glPopAttrib();
-		GL11.glPopMatrix();
-	}
+        Entity viewer = Minecraft.getMinecraft().getRenderViewEntity();
+        if (viewer == null) return;
 
+        // Compute orbit angle from wall clock — smooth, independent of tick rate
+        float t = (System.currentTimeMillis() % (long) ORBIT_PERIOD_MS) / ORBIT_PERIOD_MS;
+        float angle = (float) (t * 2.0 * Math.PI);
+
+        int count = colors.length;
+        // Camera angles for billboard facing
+        float yaw   = viewer.prevRotationYaw   + (viewer.rotationYaw   - viewer.prevRotationYaw)   * partialTicks;
+        float pitch = viewer.prevRotationPitch + (viewer.rotationPitch - viewer.prevRotationPitch) * partialTicks;
+
+        Minecraft.getMinecraft().renderEngine.bindTexture(ORB_TEXTURE);
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, z);
+
+        GlStateManager.disableLighting();
+        // Force full-brightness lightmap so the orbs are not dimmed by world light level
+        float savedLightX = OpenGlHelper.lastBrightnessX;
+        float savedLightY = OpenGlHelper.lastBrightnessY;
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.depthMask(false);
+        GlStateManager.disableCull();
+        GlStateManager.color(1f, 1f, 1f, 1f); // clear any inherited tint
+
+        Tessellator tess = Tessellator.getInstance();
+
+        for (int i = 0; i < count; ++i) {
+            float phase = angle + (float) (2.0 * Math.PI * i / count);
+            float ox = 0.5f + ORBIT_RADIUS * (float) Math.cos(phase);
+            float oz = 0.5f + ORBIT_RADIUS * (float) Math.sin(phase);
+            float oy = ORBIT_Y + BOB_AMPLITUDE * (float) Math.sin(angle * 2 + phase);
+
+            int color = colors[i];
+            float r = ((color >> 16) & 0xFF) / 255.0f;
+            float g = ((color >> 8)  & 0xFF) / 255.0f;
+            float b = (color         & 0xFF) / 255.0f;
+
+            renderOrb(tess, ox, oy, oz, yaw, pitch, r, g, b);
+        }
+
+        // Restore GL state
+        GlStateManager.enableCull();
+        GlStateManager.depthMask(true);
+        GlStateManager.disableBlend();
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,
+                savedLightX, savedLightY);
+        GlStateManager.enableLighting();
+
+        GlStateManager.popMatrix();
+    }
+
+    private void renderOrb(Tessellator tess, float bx, float by, float bz,
+                           float yaw, float pitch, float r, float g, float b) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(bx, by, bz);
+
+        GL11.glRotatef(-yaw,  0f, 1f, 0f);
+        GL11.glRotatef(pitch, 1f, 0f, 0f);
+
+        // Three layers: soft outer glow, mid glow, bright core — additive so they stack
+        drawQuad(tess, GLOW_RADIUS, r, g, b, 0.55f);
+        drawQuad(tess, MID_RADIUS,  r, g, b, 0.80f);
+        drawQuad(tess, CORE_RADIUS, r, g, b, 1.00f);
+
+        GlStateManager.popMatrix();
+    }
+
+    private void drawQuad(Tessellator tess, float size, float r, float g, float b, float a) {
+        BufferBuilder bb = tess.getBuffer();
+        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
+        bb.pos(-size, -size, 0).tex(0, 1).lightmap(240, 240).color(r, g, b, a).endVertex();
+        bb.pos( size, -size, 0).tex(1, 1).lightmap(240, 240).color(r, g, b, a).endVertex();
+        bb.pos( size,  size, 0).tex(1, 0).lightmap(240, 240).color(r, g, b, a).endVertex();
+        bb.pos(-size,  size, 0).tex(0, 0).lightmap(240, 240).color(r, g, b, a).endVertex();
+        tess.draw();
+    }
 }

@@ -3,53 +3,53 @@ package am2.client.particles;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
-public class ParticleFleePoint extends ParticleController{
+public class ParticleFleePoint extends ParticleController {
 
-	private Vec3d target;
-	private double fleeSpeed;
-	private double targetDistance;
+    private Vec3d target;
+    private double fleeSpeed;
+    private double targetDistance;
 
-	public ParticleFleePoint(AMParticle particleEffect, Vec3d fleePoint, double fleeSpeed, double targetDistance, int priority, boolean exclusive){
-		super(particleEffect, priority, exclusive);
-		this.target = fleePoint;
-		this.fleeSpeed = fleeSpeed;
-		this.targetDistance = targetDistance;
-	}
+    public ParticleFleePoint(AMParticle particleEffect, Vec3d fleePoint, double fleeSpeed, double targetDistance, int priority, boolean exclusive) {
+        super(particleEffect, priority, exclusive);
+        this.target = fleePoint;
+        this.fleeSpeed = fleeSpeed;
+        this.targetDistance = targetDistance;
+    }
 
-	@Override
-	public void doUpdate(){
+    @Override
+    public void doUpdate() {
 
-		double posX;
-		double posZ;
-		double posY = particle.getPosY();
-		double angle;
+        double posX;
+        double posZ;
+        double posY = particle.getPosY();
+        double angle;
 
-		double distanceToTarget = new Vec3d(particle.getPosX(), particle.getPosY(), particle.getPosZ()).distanceTo(target);
-		double deltaZ = particle.getPosZ() - target.z;
-		double deltaX = particle.getPosX() - target.x;
-		angle = Math.atan2(deltaZ, deltaX);
+        double distanceToTarget = new Vec3d(particle.getPosX(), particle.getPosY(), particle.getPosZ()).distanceTo(target);
+        double deltaZ = particle.getPosZ() - target.z;
+        double deltaX = particle.getPosX() - target.x;
+        angle = Math.atan2(deltaZ, deltaX);
 
-		double radians = angle;
+        double radians = angle;
 
-		posX = particle.getPosX() + (fleeSpeed * Math.cos(radians));
-		posZ = particle.getPosZ() + (fleeSpeed * Math.sin(radians));
-		double deltaY = target.y - posY;
-		double horizontalDistance = MathHelper.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-		float pitchRotation = (float)(-Math.atan2(deltaY, horizontalDistance));
-		double pitchRadians = pitchRotation;
+        posX = particle.getPosX() + (fleeSpeed * Math.cos(radians));
+        posZ = particle.getPosZ() + (fleeSpeed * Math.sin(radians));
+        double deltaY = target.y - posY;
+        double horizontalDistance = MathHelper.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+        float pitchRotation = (float) (-Math.atan2(deltaY, horizontalDistance));
+        double pitchRadians = pitchRotation;
 
-		posY = particle.getPosY() + (fleeSpeed * Math.sin(pitchRadians));
+        posY = particle.getPosY() + (fleeSpeed * Math.sin(pitchRadians));
 
-		if (distanceToTarget > targetDistance){
-			this.finish();
-		}else{
-			particle.setPosition(posX, posY, posZ);
-		}
-	}
+        if (distanceToTarget > targetDistance) {
+            this.finish();
+        } else {
+            particle.setPosition(posX, posY, posZ);
+        }
+    }
 
-	@Override
-	public ParticleController clone(){
-		return new ParticleFleePoint(particle, target, fleeSpeed, targetDistance, priority, exclusive);
-	}
+    @Override
+    public ParticleController clone() {
+        return new ParticleFleePoint(particle, target, fleeSpeed, targetDistance, priority, exclusive);
+    }
 
 }

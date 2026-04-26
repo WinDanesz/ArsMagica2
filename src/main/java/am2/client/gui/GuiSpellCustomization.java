@@ -1,15 +1,10 @@
 package am2.client.gui;
 
-import java.io.IOException;
-
-import org.lwjgl.opengl.GL11;
-
-import am2.ArsMagica2;
+import am2.ArsMagica;
 import am2.client.gui.controls.GuiButtonVariableDims;
 import am2.client.gui.controls.GuiSpellImageButton;
 import am2.client.models.ArsMagicaModelLoader;
 import am2.common.container.ContainerSpellCustomization;
-import am2.common.network.SeventhSanctum;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -18,157 +13,146 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
-public class GuiSpellCustomization extends GuiContainer{
+import java.io.IOException;
 
-	private int page = 0;
-	private int numPages = 0;
-	private int curIndex = 0;
-	private String curName = "";
+public class GuiSpellCustomization extends GuiContainer {
 
-	private GuiButtonVariableDims btnNext;
-	private GuiButtonVariableDims btnPrev;
-	private GuiButtonVariableDims btnRandomName;
-	private GuiTextField spellName;
+    private int page = 0;
+    private int numPages = 0;
+    private int curIndex = 0;
+    private String curName = "";
 
-	private static final ResourceLocation background = new ResourceLocation("arsmagica2", "textures/gui/SpellCustomization.png");
+    private GuiButtonVariableDims btnNext;
+    private GuiButtonVariableDims btnPrev;
+    private GuiTextField spellName;
 
-	public GuiSpellCustomization(EntityPlayer player){
-		super(new ContainerSpellCustomization(player));
-		this.xSize = 176;
-		this.ySize = 255;
-	}
+    private static final ResourceLocation background = new ResourceLocation(ArsMagica.MODID, "textures/gui/spell_customization.png");
 
-	@Override
-	protected void keyTyped(char par1, int par2) throws IOException{
-		if (spellName.isFocused()){
-			if (spellName.textboxKeyTyped(par1, par2)){
-				this.curName = spellName.getText();
-				((ContainerSpellCustomization)this.inventorySlots).setNameAndIndex(curName, curIndex);
-			}
-		}else{
-			super.keyTyped(par1, par2);
-		}
-	}
+    public GuiSpellCustomization(EntityPlayer player) {
+        super(new ContainerSpellCustomization(player));
+        this.xSize = 176;
+        this.ySize = 255;
+    }
 
-	@Override
-	protected void actionPerformed(GuiButton par1GuiButton) throws IOException{
-		super.actionPerformed(par1GuiButton);
+    @Override
+    protected void keyTyped(char par1, int par2) throws IOException {
+        if (spellName.isFocused()) {
+            if (spellName.textboxKeyTyped(par1, par2)) {
+                this.curName = spellName.getText();
+                ((ContainerSpellCustomization) this.inventorySlots).setNameAndIndex(curName, curIndex);
+            }
+        } else {
+            super.keyTyped(par1, par2);
+        }
+    }
 
-		if (par1GuiButton.id == btnPrev.id){
-			if (page > 0){
-				page--;
-				for (Object btn : this.buttonList){
-					if (btn instanceof GuiSpellImageButton){
-						if (((GuiSpellImageButton)btn).getPage() == page) ((GuiSpellImageButton)btn).visible = true;
-						else ((GuiSpellImageButton)btn).visible = false;
-					}
-				}
-			}
-		}else if (par1GuiButton.id == btnNext.id){
-			if (page < numPages){
-				page++;
-				for (Object btn : this.buttonList){
-					if (btn instanceof GuiSpellImageButton){
-						if (((GuiSpellImageButton)btn).getPage() == page) ((GuiSpellImageButton)btn).visible = true;
-						else ((GuiSpellImageButton)btn).visible = false;
-					}
-				}
-			}
-		}else if (par1GuiButton.id == btnRandomName.id){
-			spellName.setText(SeventhSanctum.instance.getNextSuggestion());
-			curName = spellName.getText();
-			((ContainerSpellCustomization)this.inventorySlots).setNameAndIndex(curName, curIndex);
-		}
+    @Override
+    protected void actionPerformed(GuiButton par1GuiButton) throws IOException {
+        super.actionPerformed(par1GuiButton);
 
-		if (par1GuiButton instanceof GuiSpellImageButton){
-			this.curIndex = ((GuiSpellImageButton)par1GuiButton).getIndex();
-			((ContainerSpellCustomization)this.inventorySlots).setNameAndIndex(curName, curIndex);
-			for (Object btn : this.buttonList){
-				if (btn instanceof GuiSpellImageButton){
-					((GuiSpellImageButton)btn).setSelected(false);
-				}
-			}
-			((GuiSpellImageButton)par1GuiButton).setSelected(true);
-		}
-	}
+        if (par1GuiButton.id == btnPrev.id) {
+            if (page > 0) {
+                page--;
+                for (Object btn : this.buttonList) {
+                    if (btn instanceof GuiSpellImageButton) {
+                        if (((GuiSpellImageButton) btn).getPage() == page) ((GuiSpellImageButton) btn).visible = true;
+                        else ((GuiSpellImageButton) btn).visible = false;
+                    }
+                }
+            }
+        } else if (par1GuiButton.id == btnNext.id) {
+            if (page < numPages) {
+                page++;
+                for (Object btn : this.buttonList) {
+                    if (btn instanceof GuiSpellImageButton) {
+                        if (((GuiSpellImageButton) btn).getPage() == page) ((GuiSpellImageButton) btn).visible = true;
+                        else ((GuiSpellImageButton) btn).visible = false;
+                    }
+                }
+            }
+        }
 
-	@Override
-	public void initGui(){
-		super.initGui();
+        if (par1GuiButton instanceof GuiSpellImageButton) {
+            this.curIndex = ((GuiSpellImageButton) par1GuiButton).getIndex();
+            ((ContainerSpellCustomization) this.inventorySlots).setNameAndIndex(curName, curIndex);
+            for (Object btn : this.buttonList) {
+                if (btn instanceof GuiSpellImageButton) {
+                    ((GuiSpellImageButton) btn).setSelected(false);
+                }
+            }
+            ((GuiSpellImageButton) par1GuiButton).setSelected(true);
+        }
+    }
 
-		int l = (width - xSize) / 2;
-		int i1 = (height - ySize) / 2;
+    @Override
+    public void initGui() {
+        super.initGui();
 
-		if (ArsMagica2.config.suggestSpellNames())
-			spellName = new GuiTextField(0, fontRenderer, l + 8, i1 + 8, xSize - 36, 16);
-		else
-			spellName = new GuiTextField(0, fontRenderer, l + 8, i1 + 8, xSize - 16, 16);
+        int l = (width - xSize) / 2;
+        int i1 = (height - ySize) / 2;
 
-		String suggestion = ((ContainerSpellCustomization)this.inventorySlots).getInitialSuggestedName();
-		spellName.setText(suggestion);
-		if (!suggestion.equals("")){
-			curName = suggestion;
-			((ContainerSpellCustomization)this.inventorySlots).setNameAndIndex(curName, curIndex);
-		}
+        spellName = new GuiTextField(0, fontRenderer, l + 8, i1 + 8, xSize - 16, 16);
+
+        String suggestion = ((ContainerSpellCustomization) this.inventorySlots).getInitialSuggestedName();
+        spellName.setText(suggestion);
+        if (!suggestion.equals("")) {
+            curName = suggestion;
+            ((ContainerSpellCustomization) this.inventorySlots).setNameAndIndex(curName, curIndex);
+        }
 
 
-		btnPrev = new GuiButtonVariableDims(0, l + 8, i1 + 26, I18n.format("am2.gui.prev")).setDimensions(48, 20);
-		btnNext = new GuiButtonVariableDims(1, l + xSize - 56, i1 + 26, I18n.format("am2.gui.next")).setDimensions(48, 20);
+        btnPrev = new GuiButtonVariableDims(0, l + 8, i1 + 26, I18n.format("am2.gui.prev")).setDimensions(48, 20);
+        btnNext = new GuiButtonVariableDims(1, l + xSize - 56, i1 + 26, I18n.format("am2.gui.next")).setDimensions(48, 20);
 
-		btnRandomName = new GuiButtonVariableDims(2, l + xSize - 24, i1 + 5, "???");
-		btnRandomName.setDimensions(20, 20);
+        this.buttonList.add(btnPrev);
+        this.buttonList.add(btnNext);
 
-		this.buttonList.add(btnPrev);
-		this.buttonList.add(btnNext);
+        int IIcon_start_x = l + 12;
+        int IIcon_start_y = i1 + 50;
 
-		if (ArsMagica2.config.suggestSpellNames())
-			this.buttonList.add(btnRandomName);
+        int btnX = IIcon_start_x;
+        int btnY = IIcon_start_y;
+        int id = 3;
+        int IIconCount = 0;
+        int curPage = 0;
 
-		int IIcon_start_x = l + 12;
-		int IIcon_start_y = i1 + 50;
+        for (ResourceLocation location : ArsMagicaModelLoader.spellIcons) {
+            TextureAtlasSprite icon = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+            GuiSpellImageButton spellButton = new GuiSpellImageButton(id++, btnX, btnY, icon, IIconCount++, curPage);
+            if (curPage != 0) {
+                spellButton.visible = false;
+            }
+            this.buttonList.add(spellButton);
+            btnX += 14;
+            if (btnX > (l + xSize) - 15) {
+                btnX = IIcon_start_x;
+                btnY += 14;
+                if (btnY > (i1 + ySize - 10)) {
+                    btnY = IIcon_start_y;
+                    curPage++;
+                }
+            }
+        }
 
-		int btnX = IIcon_start_x;
-		int btnY = IIcon_start_y;
-		int id = 3;
-		int IIconCount = 0;
-		int curPage = 0;
+        this.numPages = curPage;
+    }
 
-		for (ResourceLocation location : ArsMagicaModelLoader.spellIcons){
-			TextureAtlasSprite icon = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-			GuiSpellImageButton spellButton = new GuiSpellImageButton(id++, btnX, btnY, icon, IIconCount++, curPage);
-			if (curPage != 0){
-				spellButton.visible = false;
-			}
-			this.buttonList.add(spellButton);
-			btnX += 14;
-			if (btnX > (l + xSize) - 15){
-				btnX = IIcon_start_x;
-				btnY += 14;
-				if (btnY > (i1 + ySize - 10)){
-					btnY = IIcon_start_y;
-					curPage++;
-					}
-			}
-		}
+    @Override
+    protected void mouseClicked(int x, int y, int par3) throws IOException {
+        super.mouseClicked(x, y, par3);
+        spellName.mouseClicked(x, y, par3);
+    }
 
-		this.numPages = curPage;
-	}
-
-	@Override
-	protected void mouseClicked(int x, int y, int par3) throws IOException{
-		super.mouseClicked(x, y, par3);
-		spellName.mouseClicked(x, y, par3);
-	}
-
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int i, int j){
-		mc.renderEngine.bindTexture(background);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		int l = (width - xSize) / 2;
-		int i1 = (height - ySize) / 2;
-		drawTexturedModalRect(l, i1, 0, 0, xSize, ySize);
-		spellName.drawTextBox();
-	}
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
+        mc.renderEngine.bindTexture(background);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        int l = (width - xSize) / 2;
+        int i1 = (height - ySize) / 2;
+        drawTexturedModalRect(l, i1, 0, 0, xSize, ySize);
+        spellName.drawTextBox();
+    }
 
 }

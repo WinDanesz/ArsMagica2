@@ -2,149 +2,147 @@ package am2.common.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 
-public class InventorySpellBook implements IInventory{
-	public static int inventorySize = 40;
-	public static int activeInventorySize = 8;
-	private ItemStack[] inventoryItems;
+public class InventorySpellBook implements IInventory {
+    public static int inventorySize = 40;
+    public static int activeInventorySize = 8;
+    private final NonNullList<ItemStack> inventoryContents;
 
-	public InventorySpellBook(){
-		inventoryItems = new ItemStack[inventorySize];
-	}
+    public InventorySpellBook() {
+        inventoryContents = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+    }
 
-	public void SetInventoryContents(ItemStack[] inventoryContents){
-		int loops = (int)Math.min(inventorySize, inventoryContents.length);
-		for (int i = 0; i < loops; ++i){
-			inventoryItems[i] = inventoryContents[i];
-		}
-	}
+    @Override
+    public int getSizeInventory() {
+        return inventorySize;
+    }
 
-	@Override
-	public int getSizeInventory(){
-		return inventorySize;
-	}
+    @Override
+    public boolean isEmpty() {
+        for (ItemStack itemstack : this.inventoryContents) {
+            if (!itemstack.isEmpty()) {
+                return false;
+            }
+        }
 
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
+        return true;
+    }
 
-	@Override
-	public ItemStack getStackInSlot(int i){
-		if (i < 0 || i > inventoryItems.length - 1){
-			return null;
-		}
-		return inventoryItems[i];
-	}
+    public void SetInventoryContents(ItemStack[] inventoryContents) {
+        int loops = Math.min(inventorySize, inventoryContents.length);
+        for (int i = 0; i < loops; ++i) {
+            this.inventoryContents.set(i, inventoryContents[i]);
+        }
+    }
 
-	@Override
-	public ItemStack decrStackSize(int i, int j){
+    @Override
+    public ItemStack getStackInSlot(int index) {
+        return index >= 0 && index < this.inventoryContents.size() ? (ItemStack) this.inventoryContents.get(index) : ItemStack.EMPTY;
+    }
 
-		if (inventoryItems[i] != null){
-			if (inventoryItems[i].getCount() <= j){
-				ItemStack itemstack = inventoryItems[i];
-				inventoryItems[i] = null;
-				return itemstack;
-			}
-			ItemStack itemstack1 = inventoryItems[i].splitStack(j);
-			if (inventoryItems[i].getCount() == 0){
-				inventoryItems[i] = null;
-			}
-			return itemstack1;
-		}else{
-			return null;
-		}
-	}
+    @Override
+    public ItemStack decrStackSize(int index, int count) {
+        ItemStack itemstack = ItemStackHelper.getAndSplit(this.inventoryContents, index, count);
 
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inventoryItems[i] = itemstack;
-	}
+        if (!itemstack.isEmpty()) {
+            this.markDirty();
+        }
 
-	@Override
-	public String getName(){
-		return "Spell Book";
-	}
+        return itemstack;
+    }
 
-	@Override
-	public int getInventoryStackLimit(){
-		return 1;
-	}
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        this.inventoryContents.set(index, stack);
 
-	@Override
-	public boolean isUsableByPlayer(EntityPlayer entityplayer){
-		return true;
-	}
+        if (!stack.isEmpty() && stack.getCount() > this.getInventoryStackLimit()) {
+            stack.setCount(this.getInventoryStackLimit());
+        }
 
-	@Override
-	public void openInventory(EntityPlayer player){
-	}
+        this.markDirty();
+    }
 
-	@Override
-	public void closeInventory(EntityPlayer player){
-	}
+    @Override
+    public ItemStack removeStackFromSlot(int index) {
+        ItemStack itemstack = this.inventoryContents.get(index);
 
-	public ItemStack[] GetInventoryContents(){
-		return inventoryItems;
-	}
+        if (itemstack.isEmpty()) {
+            return ItemStack.EMPTY;
+        } else {
+            this.inventoryContents.set(index, ItemStack.EMPTY);
+            return itemstack;
+        }
+    }
 
-	@Override
-	public ItemStack removeStackFromSlot(int i){
-		if (inventoryItems[i] != null){
-			ItemStack itemstack = inventoryItems[i];
-			inventoryItems[i] = null;
-			return itemstack;
-		}else{
-			return null;
-		}
-	}
+    @Override
+    public String getName() {
+        return "Spell Book";
+    }
 
-	@Override
-	public boolean hasCustomName(){
-		return false;
-	}
+    @Override
+    public int getInventoryStackLimit() {
+        return 1;
+    }
 
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack){
-		return false;
-	}
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+        return true;
+    }
 
-	@Override
-	public void markDirty(){
-	}
+    @Override
+    public void openInventory(EntityPlayer player) {
+    }
 
-	@Override
-	public ITextComponent getDisplayName() {
-		return new TextComponentString(getName());
-	}
+    @Override
+    public void closeInventory(EntityPlayer player) {
+    }
 
-	@Override
-	public int getField(int id) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
 
-	@Override
-	public void setField(int id, int value) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+        return false;
+    }
 
-	@Override
-	public int getFieldCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public void markDirty() {
+    }
 
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TextComponentString(getName());
+    }
 
+    @Override
+    public int getField(int id) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+        // TODO Auto-generated method stub
+
+    }
 
 }
 

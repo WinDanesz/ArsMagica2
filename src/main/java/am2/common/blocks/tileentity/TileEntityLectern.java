@@ -1,237 +1,201 @@
 package am2.common.blocks.tileentity;
 
-import java.util.ArrayList;
-
-import am2.ArsMagica2;
+import am2.ArsMagica;
 import am2.client.particles.AMParticle;
 import am2.client.particles.ParticleFadeOut;
 import am2.client.particles.ParticleMoveOnHeading;
-import am2.common.defs.ItemDefs;
-import am2.common.packet.AMDataWriter;
-import am2.common.packet.AMNetHandler;
-import am2.common.packet.AMPacketIDs;
+import am2.network.AMNetworkHandler;
+import am2.network.packets.PacketLecternSync;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityEnchantmentTable;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 
-public class TileEntityLectern extends TileEntityEnchantmentTable implements ITickable{
-	private ItemStack stack;
-	private ItemStack tooltipStack;
-	private boolean needsBook;
-	private boolean overPowered;
-	public int particleAge;
-	public int particleMaxAge = 150;
-	private boolean increasing = true;
-	
-	public TileEntityLectern(){
-		
-	}
+public class TileEntityLectern extends TileEntityEnchantmentTable implements ITickable {
+    private ItemStack stack = ItemStack.EMPTY;
+    private ItemStack tooltipStack = ItemStack.EMPTY;
+    private boolean needsBook;
+    private boolean overPowered;
+    public int particleAge;
+    public int particleMaxAge = 150;
+    private boolean increasing = true;
 
-	public void resetParticleAge(){
-		particleAge = 0;
-		increasing = true;
-	}
+    public TileEntityLectern() {
 
-	public ItemStack getTooltipStack(){
-		return tooltipStack;
-	}
+    }
 
-	public void setTooltipStack(ItemStack stack){
-		this.tooltipStack = stack;
-	}
+    public void resetParticleAge() {
+        particleAge = 0;
+        increasing = true;
+    }
 
-	@Override
-	public void update(){
-		if (world.isRemote){
-			updateBookRender();
-			if (tooltipStack != null && tickCount % 2 == 0){
-				AMParticle particle = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "sparkle", pos.getX() + 0.5 + ((world.rand.nextDouble() * 0.2) - 0.1), pos.getY() + 1, pos.getZ() + 0.5 + ((world.rand.nextDouble() * 0.2) - 0.1));
-				if (particle != null){
-					particle.AddParticleController(new ParticleMoveOnHeading(particle, world.rand.nextDouble() * 360, -45 - world.rand.nextInt(90), 0.05f, 1, false));
-					particle.AddParticleController(new ParticleFadeOut(particle, 2, false).setFadeSpeed(0.05f).setKillParticleOnFinish(true));
-					particle.setIgnoreMaxAge(true);
-					if (getOverpowered()){
-						particle.setRGBColorF(1.0f, 0.2f, 0.2f);
-					}
-				}
-			}
-		} else if (tickCount % 20 == 0){
-			IBlockState state = this.world.getBlockState(this.pos);
-			//This is probably the fastest I can get it to go.
-			//If you know of any better way, please feel free to suggest it.
-			this.world.notifyBlockUpdate(this.pos, state, state, 2);
-		}
-	}
+    public ItemStack getTooltipStack() {
+        return tooltipStack;
+    }
 
-	private void updateBookRender() {
-		particleAge++;
-		if (increasing){
-			particleMaxAge += 2;
-			if (particleMaxAge - particleAge > 120)
-				increasing = false;
-		}else{
-			if (particleMaxAge - particleAge < 5)
-				increasing = true;
-		}
-		this.bookSpreadPrev = this.bookSpread;
-		this.bookRotationPrev = this.bookRotation;
+    public void setTooltipStack(ItemStack stack) {
+        this.tooltipStack = stack;
+    }
 
-		this.bookSpread += 0.1F;
+    @Override
+    public void update() {
+        if (world.isRemote) {
+            updateBookRender();
+            if (!tooltipStack.isEmpty() && tickCount % 2 == 0) {
+                AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "sparkle", pos.getX() + 0.5 + ((world.rand.nextDouble() * 0.2) - 0.1), pos.getY() + 1, pos.getZ() + 0.5 + ((world.rand.nextDouble() * 0.2) - 0.1));
+                if (particle != null) {
+                    particle.AddParticleController(new ParticleMoveOnHeading(particle, world.rand.nextDouble() * 360, -45 - world.rand.nextInt(90), 0.05f, 1, false));
+                    particle.AddParticleController(new ParticleFadeOut(particle, 2, false).setFadeSpeed(0.05f).setKillParticleOnFinish(true));
+                    particle.setIgnoreMaxAge(true);
+                    if (getOverpowered()) {
+                        particle.setRGBColorF(1.0f, 0.2f, 0.2f);
+                    }
+                }
+            }
+        } else if (tickCount % 20 == 0) {
+            IBlockState state = this.world.getBlockState(this.pos);
+            //This is probably the fastest I can get it to go.
+            //If you know of any better way, please feel free to suggest it.
+            this.world.notifyBlockUpdate(this.pos, state, state, 2);
+        }
+    }
 
-		if (this.bookSpread < 0.5F || world.rand.nextInt(40) == 0){
-			float f1 = this.flipT;
+    private void updateBookRender() {
+        particleAge++;
+        if (increasing) {
+            particleMaxAge += 2;
+            if (particleMaxAge - particleAge > 120)
+                increasing = false;
+        } else {
+            if (particleMaxAge - particleAge < 5)
+                increasing = true;
+        }
+        this.bookSpreadPrev = this.bookSpread;
+        this.bookRotationPrev = this.bookRotation;
 
-			do{
-				this.flipT += (float)(world.rand.nextInt(4) - world.rand.nextInt(4));
-			}
-			while (f1 == this.flipT);
-		}
+        this.bookSpread += 0.1F;
 
-		while (this.bookRotation >= (float)Math.PI){
-			this.bookRotation -= ((float)Math.PI * 2F);
-		}
+        if (this.bookSpread < 0.5F || world.rand.nextInt(40) == 0) {
+            float f1 = this.flipT;
 
-		while (this.bookRotation < -(float)Math.PI){
-			this.bookRotation += ((float)Math.PI * 2F);
-		}
+            do {
+                this.flipT += (float) (world.rand.nextInt(4) - world.rand.nextInt(4));
+            }
+            while (f1 == this.flipT);
+        }
 
-		while (this.tRot >= (float)Math.PI){
-			this.tRot -= ((float)Math.PI * 2F);
-		}
+        while (this.bookRotation >= (float) Math.PI) {
+            this.bookRotation -= ((float) Math.PI * 2F);
+        }
 
-		while (this.tRot < -(float)Math.PI){
-			this.tRot += ((float)Math.PI * 2F);
-		}
+        while (this.bookRotation < -(float) Math.PI) {
+            this.bookRotation += ((float) Math.PI * 2F);
+        }
 
-		float f2;
+        while (this.tRot >= (float) Math.PI) {
+            this.tRot -= ((float) Math.PI * 2F);
+        }
 
-		for (f2 = this.tRot - this.bookRotation; f2 >= (float)Math.PI; f2 -= ((float)Math.PI * 2F));
+        while (this.tRot < -(float) Math.PI) {
+            this.tRot += ((float) Math.PI * 2F);
+        }
 
-		while (f2 < -(float)Math.PI){
-			f2 += ((float)Math.PI * 2F);
-		}
+        float f2;
 
-		this.bookRotation += f2 * 0.4F;
+        for (f2 = this.tRot - this.bookRotation; f2 >= (float) Math.PI; f2 -= ((float) Math.PI * 2F)) ;
 
-		if (this.bookSpread < 0.0F){
-			this.bookSpread = 0.0F;
-		}
+        while (f2 < -(float) Math.PI) {
+            f2 += ((float) Math.PI * 2F);
+        }
 
-		if (this.bookSpread > 1.0F){
-			this.bookSpread = 1.0F;
-		}
+        this.bookRotation += f2 * 0.4F;
 
-		++this.tickCount;
+        if (this.bookSpread < 0.0F) {
+            this.bookSpread = 0.0F;
+        }
+
+        if (this.bookSpread > 1.0F) {
+            this.bookSpread = 1.0F;
+        }
+
+        ++this.tickCount;
         this.pageFlipPrev = this.pageFlip;
         float f = (this.flipT - this.pageFlip) * 0.4F;
-		float f3 = 0.2F;
-		f = MathHelper.clamp(f, -f3, f3);
+        float f3 = 0.2F;
+        f = MathHelper.clamp(f, -f3, f3);
         this.flipA += (f - this.flipA) * 0.9F;
         this.pageFlip += this.flipA;
-	}
-	
-	public ItemStack getStack(){
-		return stack;
-	}
+    }
 
-	public boolean setStack(ItemStack stack){
-		if (stack == null || getValidItems().contains(stack.getItem())){
-			if (stack != null)
-				stack.setCount(1);
-			this.stack = stack;
-			if (!this.world.isRemote){
-				AMDataWriter writer = new AMDataWriter();
-				writer.add(pos.getX());
-				writer.add(pos.getY());
-				writer.add(pos.getZ());
-				if (stack == null){
-					writer.add(false);
-				}else{
-					writer.add(true);
-					writer.add(stack);
-				}
-				AMNetHandler.INSTANCE.sendPacketToAllClientsNear(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 32, AMPacketIDs.LECTERN_DATA, writer.generate());
-			}
-			return true;
-		}
-		return false;
-	}
+    public ItemStack getStack() {
+        return stack;
+    }
 
-	public boolean hasStack(){
-		return stack != null;
-	}
+    public boolean setStack(ItemStack stack) {
+        if (!stack.isEmpty()) {
+            stack.setCount(1);
+        }
+        this.stack = stack;
+        if (!this.world.isRemote) {
+            AMNetworkHandler.getNetwork().sendToAllAround(new PacketLecternSync(pos, stack), new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 32));
+        }
+        return true;
+    }
 
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket(){
-		NBTTagCompound compound = new NBTTagCompound();
-		writeToNBT(compound);
-		SPacketUpdateTileEntity packet = new SPacketUpdateTileEntity(pos, getBlockMetadata(), compound);
-		return packet;
-	}
+    public boolean hasStack() {
+        return !stack.isEmpty();
+    }
 
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
-		this.readFromNBT(pkt.getNbtCompound());
-	}
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound compound = new NBTTagCompound();
+        writeToNBT(compound);
+        SPacketUpdateTileEntity packet = new SPacketUpdateTileEntity(pos, getBlockMetadata(), compound);
+        return packet;
+    }
 
-	private ArrayList<Item> getValidItems(){
-		ArrayList<Item> validItems = new ArrayList<Item>();
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+        this.readFromNBT(pkt.getNbtCompound());
+    }
 
-		validItems.add(Items.WRITTEN_BOOK);
-		validItems.add(ItemDefs.arcaneCompendium);
+    @Override
+    public void readFromNBT(NBTTagCompound comp) {
+        super.readFromNBT(comp);
+        if (comp.hasKey("placedBook")) {
+            NBTTagCompound bewk = comp.getCompoundTag("placedBook");
+            stack = new ItemStack((bewk));
+        }
+    }
 
-//		if (Loader.isModLoaded("Thaumcraft")){
-//			ItemStack item = thaumcraft.api.ItemApi.getItem("itemThaumonomicon", 0);
-//			if (item != null){
-//				validItems.add(item.getItem());
-//			}
-//		}
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound comp) {
+        super.writeToNBT(comp);
+        if (!stack.isEmpty()) {
+            NBTTagCompound bewk = new NBTTagCompound();
+            stack.writeToNBT(bewk);
+            comp.setTag("placedBook", bewk);
+        }
+        return comp;
+    }
 
-		return validItems;
-	}
+    public void setNeedsBook(boolean b) {
+        this.needsBook = b;
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound comp){
-		super.readFromNBT(comp);
-		if (comp.hasKey("placedBook")){
-			NBTTagCompound bewk = comp.getCompoundTag("placedBook");
-			stack = new ItemStack((bewk));
-		}
-	}
+    public boolean getNeedsBook() {
+        return this.needsBook;
+    }
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound comp){
-		super.writeToNBT(comp);
-		if (stack != null){
-			NBTTagCompound bewk = new NBTTagCompound();
-			stack.writeToNBT(bewk);
-			comp.setTag("placedBook", bewk);
-		}
-		return comp;
-	}
+    public void setOverpowered(boolean b) {
+        this.overPowered = b;
+    }
 
-	public void setNeedsBook(boolean b){
-		this.needsBook = b;
-	}
-
-	public boolean getNeedsBook(){
-		return this.needsBook;
-	}
-
-	public void setOverpowered(boolean b){
-		this.overPowered = b;
-	}
-
-	public boolean getOverpowered(){
-		return this.overPowered;
-	}
+    public boolean getOverpowered() {
+        return this.overPowered;
+    }
 }

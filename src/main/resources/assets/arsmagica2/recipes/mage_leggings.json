@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WRW",
+    "WGW",
+    "L L"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:wool",
+      "data": 12
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "R": {
+      "item": "arsmagica2:rune",
+      "data": 4
+    },
+    "G": {
+      "item": "minecraft:gunpowder"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:mage_leggings"
+  }
+}

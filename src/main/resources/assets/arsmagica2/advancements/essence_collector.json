@@ -1,0 +1,61 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:essence_arcane"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.essence_collector.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.essence_collector.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "arsmagica2:gem_collector",
+  "criteria": {
+    "has_fire": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:essence_fire" }] }
+    },
+    "has_water": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:essence_water" }] }
+    },
+    "has_earth": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:essence_earth" }] }
+    },
+    "has_air": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:essence_air" }] }
+    },
+    "has_ice": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:essence_ice" }] }
+    },
+    "has_lightning": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:essence_lightning" }] }
+    },
+    "has_life": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:essence_life" }] }
+    },
+    "has_nature": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:essence_nature" }] }
+    },
+    "has_ender": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:essence_ender" }] }
+    },
+    "has_arcane": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:essence_arcane" }] }
+    }
+  },
+  "requirements": [["has_fire", "has_water", "has_earth", "has_air", "has_ice", "has_lightning", "has_life", "has_nature", "has_ender", "has_arcane"]]
+}

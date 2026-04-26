@@ -1,0 +1,89 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:affinity_tome_arcane"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.specialized.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.specialized.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "arsmagica2:root",
+  "criteria": {
+    "has_affinity_tome_none": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "item": "arsmagica2:affinity_tome_none" }]
+      }
+    },
+    "has_affinity_tome_arcane": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "item": "arsmagica2:affinity_tome_arcane" }]
+      }
+    },
+    "has_affinity_tome_water": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "item": "arsmagica2:affinity_tome_water" }]
+      }
+    },
+    "has_affinity_tome_fire": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "item": "arsmagica2:affinity_tome_fire" }]
+      }
+    },
+    "has_affinity_tome_earth": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "item": "arsmagica2:affinity_tome_earth" }]
+      }
+    },
+    "has_affinity_tome_air": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "item": "arsmagica2:affinity_tome_air" }]
+      }
+    },
+    "has_affinity_tome_lightning": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "item": "arsmagica2:affinity_tome_lightning" }]
+      }
+    },
+    "has_affinity_tome_ice": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "item": "arsmagica2:affinity_tome_ice" }]
+      }
+    },
+    "has_affinity_tome_nature": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "item": "arsmagica2:affinity_tome_nature" }]
+      }
+    },
+    "has_affinity_tome_life": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "item": "arsmagica2:affinity_tome_life" }]
+      }
+    },
+    "has_affinity_tome_ender": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "item": "arsmagica2:affinity_tome_ender" }]
+      }
+    }
+  },
+  "requirements": [
+    ["has_affinity_tome_none", "has_affinity_tome_arcane", "has_affinity_tome_water", "has_affinity_tome_fire", "has_affinity_tome_earth", "has_affinity_tome_air", "has_affinity_tome_lightning", "has_affinity_tome_ice", "has_affinity_tome_nature", "has_affinity_tome_life", "has_affinity_tome_ender"]
+  ]
+}

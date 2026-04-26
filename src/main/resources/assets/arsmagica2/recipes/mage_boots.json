@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "R R",
+    "L L",
+    "WFW"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:wool",
+      "data": 12
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "R": {
+      "item": "arsmagica2:rune",
+      "data": 15
+    },
+    "F": {
+      "item": "minecraft:feather"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:mage_boots"
+  }
+}

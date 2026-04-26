@@ -1,0 +1,30 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "IGR",
+    "WDW",
+    "WWW"
+  ],
+  "key": {
+    "I": {
+      "item": "arsmagica2:item_focus"
+    },
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "blockGlassColorless"
+    },
+    "R": {
+      "item": "arsmagica2:core",
+      "data": 0
+    },
+    "W": {
+      "item": "arsmagica2:witchwood_planks"
+    },
+    "D": {
+      "item": "arsmagica2:deficit_crystal"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:arcane_deconstructor"
+  }
+}

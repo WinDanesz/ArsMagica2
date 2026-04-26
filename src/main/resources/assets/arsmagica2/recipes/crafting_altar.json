@@ -1,0 +1,20 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "V",
+    "S"
+  ],
+  "key": {
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    },
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "stone"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:crafting_altar"
+  }
+}

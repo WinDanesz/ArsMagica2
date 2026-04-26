@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "P",
+    "F",
+    "P"
+  ],
+  "key": {
+    "P": {
+      "item": "arsmagica2:vinteum_dust"
+    },
+    "F": {
+      "item": "arsmagica2:standard_focus"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:mana_focus"
+  }
+}

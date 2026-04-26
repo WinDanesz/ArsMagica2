@@ -1,0 +1,29 @@
+{
+  "type": "forge:ore_shapeless",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ebwizardry"
+    }
+  ],
+  "ingredients": [
+    {
+      "item": "minecraft:flint_and_steel"
+    },
+    {
+      "item": "minecraft:glass_bottle"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "dyeBlack"
+    },
+    {
+      "item": "ebwizardry:arcane_tome",
+      "data": 3
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:inscription_upgrade",
+    "data": 2
+  }
+}

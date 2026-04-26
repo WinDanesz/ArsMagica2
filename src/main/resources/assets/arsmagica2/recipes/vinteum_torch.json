@@ -1,0 +1,21 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "V",
+    "S"
+  ],
+  "key": {
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    },
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "stickWood"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:vinteum_torch",
+    "count": 4
+  }
+}

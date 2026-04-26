@@ -1,5 +1,6 @@
 package am2.common.container;
 
+import am2.common.compat.electroblob.EBWizardryCompatHandler;
 import am2.common.container.slot.SlotOneItemClassOnly;
 import am2.common.items.ItemSpellBase;
 import am2.common.items.ItemSpellBook;
@@ -10,156 +11,179 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class ContainerSpellBook extends Container{
-	private ItemStack bookStack;
-	private InventorySpellBook spellBookStack;
-//	private int bookSlot;
-	public int specialSlotIndex;
+public class ContainerSpellBook extends Container {
+    private ItemStack bookStack;
+    private InventorySpellBook spellBookStack;
+    //	private int bookSlot;
+    public int specialSlotIndex = -1;
+    private boolean fromBaubles;
 
-	public ContainerSpellBook(InventoryPlayer inventoryplayer, ItemStack bookStack, InventorySpellBook inventoryspellbook){
-		//addSlot(new Slot(spellBook,0, 21, 36)); //inventory, index, x, y
-		this.spellBookStack = inventoryspellbook;
-		this.bookStack = bookStack;
+    /** Spell-book slot that also accepts EBWiz spell books (auto-converted on placement). */
+    private static final class SpellBookSlot extends SlotOneItemClassOnly {
+        SpellBookSlot(InventorySpellBook inv, int index, int x, int y) {
+            super(inv, index, x, y, ItemSpellBase.class, 1);
+        }
+
+        @Override
+        public boolean isItemValid(ItemStack stack) {
+            return super.isItemValid(stack) || EBWizardryCompatHandler.isEBWizSpellBookItem(stack);
+        }
+
+        @Override
+        public void putStack(ItemStack stack) {
+            super.putStack(EBWizardryCompatHandler.convertEBWizSpellBook(stack));
+        }
+    }
+
+    public ContainerSpellBook(InventoryPlayer inventoryplayer, ItemStack bookStack, InventorySpellBook inventoryspellbook, boolean fromBaubles) {
+        //addSlot(new Slot(spellBook,0, 21, 36)); //inventory, index, x, y
+        this.spellBookStack = inventoryspellbook;
+        this.bookStack = bookStack;
+        this.fromBaubles = fromBaubles;
 //		this.bookSlot = inventoryplayer.currentItem;
 
-		int slotIndex = 0;
-		//Spell Book Pages - active spells
-		for (int i = 0; i < 8; ++i){
-			addSlotToContainer(new SlotOneItemClassOnly(spellBookStack, slotIndex++, 18, 5 + (i * 18), ItemSpellBase.class, 1));
-		}
+        int slotIndex = 0;
+        //Spell Book Pages - active spells
+        for (int i = 0; i < 8; ++i) {
+            addSlotToContainer(new SpellBookSlot(spellBookStack, slotIndex++, 18, 5 + (i * 18)));
+        }
 
-		//Spell Book Pages - reserve spells
-		for (int i = 0; i < 4; ++i){
-			for (int k = 0; k < 8; k++){
-				addSlotToContainer(new SlotOneItemClassOnly(spellBookStack, slotIndex++, 138 + (i * 26), 5 + (k * 18), ItemSpellBase.class, 1));
-			}
-		}
+        //Spell Book Pages - reserve spells
+        for (int i = 0; i < 4; ++i) {
+            for (int k = 0; k < 8; k++) {
+                addSlotToContainer(new SpellBookSlot(spellBookStack, slotIndex++, 138 + (i * 26), 5 + (k * 18)));
+            }
+        }
 
-		//display player inventory
-		for (int i = 0; i < 3; i++){
-			for (int k = 0; k < 9; k++){
-				addSlotToContainer(new Slot(inventoryplayer, k + i * 9 + 9, 48 + k * 18, 171 + i * 18));
-			}
-		}
+        //display player inventory
+        for (int i = 0; i < 3; i++) {
+            for (int k = 0; k < 9; k++) {
+                addSlotToContainer(new Slot(inventoryplayer, k + i * 9 + 9, 48 + k * 18, 171 + i * 18));
+            }
+        }
 
-		//display player action bar
-		for (int j1 = 0; j1 < 9; j1++){
-			if (inventoryplayer.getStackInSlot(j1) == bookStack){
-				specialSlotIndex = j1 + 67;
-				continue;
-			}
-			addSlotToContainer(new Slot(inventoryplayer, j1, 48 + j1 * 18, 229));
-		}
+        //display player action bar
+        for (int j1 = 0; j1 < 9; j1++) {
+            if (inventoryplayer.getStackInSlot(j1) == bookStack) {
+                specialSlotIndex = j1 + 67;
+                continue;
+            }
+            addSlotToContainer(new Slot(inventoryplayer, j1, 48 + j1 * 18, 229));
+        }
 
-	}
+    }
 
-	public ItemStack[] GetActiveSpells(){
-		ItemStack[] itemStack = new ItemStack[7];
-		for (int i = 0; i < 7; ++i){
-			itemStack[i] = spellBookStack.getStackInSlot(i);
-		}
-		return itemStack;
-	}
+    public ItemStack[] GetActiveSpells() {
+        ItemStack[] itemStack = new ItemStack[7];
+        for (int i = 0; i < 7; ++i) {
+            itemStack[i] = spellBookStack.getStackInSlot(i);
+        }
+        return itemStack;
+    }
 
-	public ItemStack[] GetFullInventory(){
-		ItemStack[] stack = new ItemStack[40];
-		for (int i = 0; i < 40; ++i){
-			stack[i] = ((Slot)inventorySlots.get(i)).getStack();
-		}
-		return stack;
-	}
+    public ItemStack[] GetFullInventory() {
+        ItemStack[] stack = new ItemStack[40];
+        for (int i = 0; i < 40; ++i) {
+            stack[i] = ((Slot) inventorySlots.get(i)).getStack();
+        }
+        return stack;
+    }
 
-	@Override
-	public void onContainerClosed(EntityPlayer entityplayer){
-		World world = entityplayer.world;
+    @Override
+    public void onContainerClosed(EntityPlayer entityplayer) {
+        World world = entityplayer.world;
 
-		if (!world.isRemote){
-			ItemStack spellBookItemStack = bookStack;
-			ItemSpellBook spellBook = (ItemSpellBook)spellBookItemStack.getItem();
-			ItemStack[] items = GetFullInventory();
-			spellBook.UpdateStackTagCompound(spellBookItemStack, items);
-			entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, spellBookItemStack);
-		}
+        if (!world.isRemote) {
+            ItemStack spellBookItemStack = bookStack;
+            ItemSpellBook spellBook = (ItemSpellBook) spellBookItemStack.getItem();
+            ItemStack[] items = GetFullInventory();
+            spellBook.updateStackTagCompound(spellBookItemStack, items);
+            if (fromBaubles) {
+                ItemSpellBook.writeSpellBookToBaubles(entityplayer, spellBookItemStack);
+            } else {
+                entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, spellBookItemStack);
+            }
+        }
 
-		super.onContainerClosed(entityplayer);
-	}
+        super.onContainerClosed(entityplayer);
+    }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer){
-		return spellBookStack.isUsableByPlayer(entityplayer);
-	}
+    @Override
+    public boolean canInteractWith(EntityPlayer entityplayer) {
+        return spellBookStack.isUsableByPlayer(entityplayer);
+    }
 
-	@Override
-	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int i){
-		ItemStack itemstack = null;
-		Slot slot = (Slot)inventorySlots.get(i);
-		if (slot != null && slot.getHasStack()){
-			ItemStack itemstack1 = slot.getStack();
-			itemstack = itemstack1.copy();
-			if (i < 40){
-				if (!mergeItemStack(itemstack1, 40, 75, true)){
-					return null;
-				}
-			}else if (i >= 40 && i < 67) //range 27 - player inventory
-			{
-				if (itemstack.getItem() instanceof ItemSpellBase){
-					for (int n = 0; n < 40; n++){
-						Slot scrollSlot = (Slot)inventorySlots.get(n);
-						if (scrollSlot.getHasStack()) continue;
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int i) {
+        ItemStack itemstack = ItemStack.EMPTY;
+        Slot slot = (Slot) inventorySlots.get(i);
+        if (slot != null && slot.getHasStack()) {
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
+            if (i < 40) {
+                if (!mergeItemStack(itemstack1, 40, 75, true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (i >= 40 && i < 67) //range 27 - player inventory
+            {
+                if (itemstack.getItem() instanceof ItemSpellBase || EBWizardryCompatHandler.isEBWizSpellBookItem(itemstack)) {
+                    for (int n = 0; n < 40; n++) {
+                        Slot scrollSlot = (Slot) inventorySlots.get(n);
+                        if (scrollSlot.getHasStack()) continue;
 
-						ItemStack newStack = itemstack1.copy();
+                        ItemStack newStack = itemstack1.copy();
 
-						scrollSlot.putStack(newStack);
-						scrollSlot.onSlotChanged();
-						itemstack1.shrink(1);
-						if (itemstack1.getCount() == 0){
-							slot.putStack(null);
-							slot.onSlotChanged();
-						}
-						return null;
-					}
-				}
-				if (!mergeItemStack(itemstack1, 67, 75, false)){
-					return null;
-				}
-			}else if (i >= 67 && i < 76) //range 9 - player action bar
-			{
-				if (itemstack.getItem() instanceof ItemSpellBase){
-					for (int n = 0; n < 40; n++){
-						Slot scrollSlot = (Slot)inventorySlots.get(n);
-						if (scrollSlot.getHasStack()) continue;
+                        scrollSlot.putStack(newStack);
+                        scrollSlot.onSlotChanged();
+                        itemstack1.shrink(1);
+                        if (itemstack1.getCount() == 0) {
+                            slot.putStack(ItemStack.EMPTY);
+                            slot.onSlotChanged();
+                        }
+                        return ItemStack.EMPTY;
+                    }
+                }
+                if (!mergeItemStack(itemstack1, 67, 75, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (i >= 67 && i < 76) //range 9 - player action bar
+            {
+                if (itemstack.getItem() instanceof ItemSpellBase || EBWizardryCompatHandler.isEBWizSpellBookItem(itemstack)) {
+                    for (int n = 0; n < 40; n++) {
+                        Slot scrollSlot = (Slot) inventorySlots.get(n);
+                        if (scrollSlot.getHasStack()) continue;
 
-						ItemStack newStack = itemstack1.copy();
+                        ItemStack newStack = itemstack1.copy();
 
-						scrollSlot.putStack(newStack);
-						scrollSlot.onSlotChanged();
-						itemstack1.shrink(1);
-						if (itemstack1.getCount() == 0){
-							slot.putStack(null);
-							slot.onSlotChanged();
-						}
-						return null;
-					}
-				}
-				if (!mergeItemStack(itemstack1, 40, 67, false)){
-					return null;
-				}
-			}else if (!mergeItemStack(itemstack1, 40, 75, false)){
-				return null;
-			}
-			if (itemstack1.getCount() == 0){
-				slot.putStack(null);
-			}else{
-				slot.onSlotChanged();
-			}
-			if (itemstack1.getCount() != itemstack.getCount()){
-				slot.onSlotChange(itemstack1, itemstack);
-			}else{
-				return null;
-			}
-		}
-		return itemstack;
-	}
+                        scrollSlot.putStack(newStack);
+                        scrollSlot.onSlotChanged();
+                        itemstack1.shrink(1);
+                        if (itemstack1.getCount() == 0) {
+                            slot.putStack(ItemStack.EMPTY);
+                            slot.onSlotChanged();
+                        }
+                        return ItemStack.EMPTY;
+                    }
+                }
+                if (!mergeItemStack(itemstack1, 40, 67, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!mergeItemStack(itemstack1, 40, 75, false)) {
+                return ItemStack.EMPTY;
+            }
+            if (itemstack1.getCount() == 0) {
+                slot.putStack(ItemStack.EMPTY);
+            } else {
+                slot.onSlotChanged();
+            }
+            if (itemstack1.getCount() != itemstack.getCount()) {
+                slot.onSlotChange(itemstack1, itemstack);
+            } else {
+                return ItemStack.EMPTY;
+            }
+        }
+        return itemstack;
+    }
 
 	/*@Override
 	protected boolean mergeItemStack(ItemStack par1ItemStack, int par2, int par3, boolean par4)

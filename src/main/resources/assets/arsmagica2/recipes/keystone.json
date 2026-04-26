@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "GIG",
+    "IVI",
+    "GIG"
+  ],
+  "key": {
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "ingotGold"
+    },
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:keystone"
+  }
+}

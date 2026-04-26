@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:gunpowder"
+    },
+    {
+      "item": "arsmagica2:lesser_mana_potion"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:standard_mana_potion"
+  }
+}

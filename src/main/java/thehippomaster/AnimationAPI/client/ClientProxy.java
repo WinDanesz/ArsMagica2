@@ -12,21 +12,21 @@ import thehippomaster.AnimationAPI.CommonProxy;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
-	
-	@Override
-	public void initTimer() {
-		mcTimer = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), AnimationAPI.fTimer);
-	}
-	
-	@Override
-	public float getPartialTick() {
-		return mcTimer.renderPartialTicks;
-	}
-	
-	@Override
-	public World getWorldClient() {
-		return FMLClientHandler.instance().getWorldClient();
-	}
-	
-	private Timer mcTimer;
+
+    @Override
+    public void initTimer() {
+        mcTimer = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), AnimationAPI.fTimer);
+    }
+
+    @Override
+    public float getPartialTick() {
+        return mcTimer.renderPartialTicks;
+    }
+
+    @Override
+    public World getWorldClient() {
+        return FMLClientHandler.instance().getWorldClient();
+    }
+
+    private Timer mcTimer;
 }

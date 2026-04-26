@@ -1,0 +1,28 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "LLL",
+    "CGC",
+    "TLT"
+  ],
+  "key": {
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "gemChimerite"
+    },
+    "T": {
+      "type": "forge:ore_dict",
+      "ore": "gemBlueTopaz"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "nuggetGold"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:magitech_goggles"
+  }
+}

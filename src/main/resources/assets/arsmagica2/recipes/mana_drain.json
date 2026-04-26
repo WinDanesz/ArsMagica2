@@ -1,0 +1,31 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "WPW",
+    "VAV",
+    "WBW"
+  ],
+  "key": {
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "gemBlueTopaz"
+    },
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    },
+    "A": {
+      "item": "arsmagica2:essence_arcane"
+    },
+    "W": {
+      "item": "arsmagica2:magic_wall"
+    },
+    "P": {
+      "item": "arsmagica2:core",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "arsmagica2:mana_drain"
+  }
+}

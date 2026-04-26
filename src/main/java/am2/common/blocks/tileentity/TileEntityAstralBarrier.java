@@ -1,6 +1,6 @@
 package am2.common.blocks.tileentity;
 
-import am2.ArsMagica2;
+import am2.ArsMagica;
 import am2.api.blocks.IKeystoneLockable;
 import am2.api.items.ISpellFocus;
 import am2.client.particles.AMParticle;
@@ -13,240 +13,227 @@ import am2.common.utils.DimensionUtilities;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 
-public class TileEntityAstralBarrier extends TileEntityAMPower implements IInventory, IKeystoneLockable<TileEntityAstralBarrier>{
+import javax.annotation.Nullable;
 
-	private ItemStack[] inventory;
-	private boolean displayAura;
-	private int particleTickCounter;
+public class TileEntityAstralBarrier extends TileEntityAMPower implements IInventory, IKeystoneLockable<TileEntityAstralBarrier> {
 
-	public static int keystoneSlot = 0;
+    private NonNullList<ItemStack> inventory;
+    private boolean displayAura;
+    private int particleTickCounter;
 
-	public TileEntityAstralBarrier(){
-		super(250);
-		inventory = new ItemStack[getSizeInventory()];
-		displayAura = false;
-		particleTickCounter = 0;
-	}
+    public static int keystoneSlot = 0;
 
-	public void ToggleAuraDisplay(){
-		this.displayAura = !this.displayAura;
-	}
+    public TileEntityAstralBarrier() {
+        super(ArsMagica.config.getCapacityAstralBarrier());
+        inventory = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+        displayAura = false;
+        particleTickCounter = 0;
+    }
 
-	public int getRadius(){
-		if (this.inventory[0] != null && this.inventory[0].getItem() instanceof ISpellFocus){
-			ISpellFocus focus = (ISpellFocus)this.inventory[0].getItem();
-			return (focus.getFocusLevel() + 1) * 5;
-		}
-		return 0;
-	}
+    public void ToggleAuraDisplay() {
+        this.displayAura = !this.displayAura;
+    }
 
-	public boolean IsActive(){
-		return PowerNodeRegistry.For(this.world).checkPower(this, 0.35f * getRadius()) && world.getStrongPower(pos) > 0 && getRadius() > 0;
-	}
+    public int getRadius() {
+        if (!this.inventory.get(0).isEmpty() && this.inventory.get(0).getItem() instanceof ISpellFocus) {
+            ISpellFocus focus = (ISpellFocus) this.inventory.get(0).getItem();
+            return (focus.getFocusLevel() + 1) * 5;
+        }
+        return 0;
+    }
 
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket(){
-		NBTTagCompound compound = new NBTTagCompound();
-		writeToNBT(compound);
-		SPacketUpdateTileEntity packet = new SPacketUpdateTileEntity(pos, 0, compound);
-		return packet;
-	}
+    public boolean IsActive() {
+        return PowerNodeRegistry.For(this.world).checkPower(this, ArsMagica.config.getAstralBarrierCostPerRadius() * getRadius()) && world.getStrongPower(pos) > 0 && getRadius() > 0;
+    }
 
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
-		this.readFromNBT(pkt.getNbtCompound());
-	}
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound compound = new NBTTagCompound();
+        writeToNBT(compound);
+        SPacketUpdateTileEntity packet = new SPacketUpdateTileEntity(pos, 0, compound);
+        return packet;
+    }
 
-	@Override
-	public void setWorld(World worldIn) {
-		super.setWorld(worldIn);
-		DimensionUtilities.registerAstralBarrier(this);
-	}
-	
-	@Override
-	public void invalidate() {
-		DimensionUtilities.invalidateAstralBarrier(this);
-		super.invalidate();
-	}
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+        this.readFromNBT(pkt.getNbtCompound());
+    }
 
-	@Override
-	public void update(){
-		super.update();
+    @Override
+    public void setWorld(World worldIn) {
+        super.setWorld(worldIn);
+        DimensionUtilities.registerAstralBarrier(this);
+    }
 
-		int radius = getRadius();
+    @Override
+    public void invalidate() {
+        DimensionUtilities.invalidateAstralBarrier(this);
+        super.invalidate();
+    }
 
-		if (IsActive()){
-			PowerNodeRegistry.For(this.world).consumePower(this, PowerNodeRegistry.For(world).getHighestPowerType(this), 0.35f * radius);
-		}
+    @Override
+    public void update() {
+        super.update();
 
-		if (world.isRemote){
-			if (IsActive()){
-				if (displayAura){
-					AMParticle effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "symbols", pos.getX(), pos.getY() + 0.5, pos.getZ());
-					if (effect != null){
-						effect.setIgnoreMaxAge(false);
-						effect.setMaxAge(100);
-						effect.setParticleScale(0.5f);
-						effect.AddParticleController(new ParticleOrbitPoint(effect, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1, false).SetOrbitSpeed(0.03).SetTargetDistance(radius));
-					}
-				}
+        int radius = getRadius();
 
-				particleTickCounter++;
+        if (IsActive()) {
+            PowerNodeRegistry.For(this.world).consumePower(this, PowerNodeRegistry.For(world).getHighestPowerType(this), ArsMagica.config.getAstralBarrierCostPerRadius() * radius);
+        }
 
-				if (particleTickCounter >= 15){
+        if (world.isRemote) {
+            if (IsActive()) {
+                if (displayAura) {
+                    AMParticle effect = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "symbols", pos.getX(), pos.getY() + 0.5, pos.getZ());
+                    if (effect != null) {
+                        effect.setIgnoreMaxAge(false);
+                        effect.setMaxAge(100);
+                        effect.setParticleScale(0.5f);
+                        effect.AddParticleController(new ParticleOrbitPoint(effect, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1, false).SetOrbitSpeed(0.03).SetTargetDistance(radius));
+                    }
+                }
 
-					particleTickCounter = 0;
+                particleTickCounter++;
 
-					AMParticle effect = (AMParticle)ArsMagica2.proxy.particleManager.spawn(world, "sparkle", pos.getX() + 0.5, pos.getY() + 0.1 + world.rand.nextDouble() * 0.5, pos.getZ() + 0.5);
-					if (effect != null){
-						effect.setIgnoreMaxAge(false);
-						effect.setMaxAge(100);
-						effect.setParticleScale(0.5f);
-						effect.AddParticleController(new ParticleOrbitPoint(effect, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1, false).SetOrbitSpeed(0.005).SetTargetDistance(world.rand.nextDouble() * 0.6 - 0.3));
-						effect.AddParticleController(new ParticleHoldPosition(effect, 80, 2, true));
-						effect.AddParticleController(new ParticleFadeOut(effect, 3, false).setFadeSpeed(0.05f));
-					}
-				}
-			}
-		}
-	}
+                if (particleTickCounter >= 15) {
 
-	public void onEntityBlocked(EntityLivingBase entity){
-		if (this.world.isRemote){
-			if (PowerNodeRegistry.For(world).checkPower(this, PowerTypes.DARK, 50)){
-				entity.attackEntityFrom(DamageSource.MAGIC, 5);
-				PowerNodeRegistry.For(world).consumePower(this, PowerTypes.DARK, 50);
-			}
-		}
-	}
+                    particleTickCounter = 0;
 
-	@Override
-	public int getSizeInventory(){
-		return 4;
-	}
+                    AMParticle effect = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "sparkle", pos.getX() + 0.5, pos.getY() + 0.1 + world.rand.nextDouble() * 0.5, pos.getZ() + 0.5);
+                    if (effect != null) {
+                        effect.setIgnoreMaxAge(false);
+                        effect.setMaxAge(100);
+                        effect.setParticleScale(0.5f);
+                        effect.AddParticleController(new ParticleOrbitPoint(effect, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1, false).SetOrbitSpeed(0.005).SetTargetDistance(world.rand.nextDouble() * 0.6 - 0.3));
+                        effect.AddParticleController(new ParticleHoldPosition(effect, 80, 2, true));
+                        effect.AddParticleController(new ParticleFadeOut(effect, 3, false).setFadeSpeed(0.05f));
+                    }
+                }
+            }
+        }
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
+    public void onEntityBlocked(EntityLivingBase entity) {
+        if (this.world.isRemote) {
+            if (PowerNodeRegistry.For(world).checkPower(this, PowerTypes.DARK, ArsMagica.config.getAstralBarrierDarkCost())) {
+                entity.attackEntityFrom(DamageSource.MAGIC, 5);
+                PowerNodeRegistry.For(world).consumePower(this, PowerTypes.DARK, ArsMagica.config.getAstralBarrierDarkCost());
+            }
+        }
+    }
 
-	@Override
-	public ItemStack getStackInSlot(int slot){
-		if (slot >= inventory.length)
-			return null;
-		return inventory[slot];
-	}
+    @Override
+    public int getSizeInventory() {
+        return 4;
+    }
 
-	@Override
-	public ItemStack decrStackSize(int i, int j){
-		if (inventory[i] != null){
-			if (inventory[i].getCount() <= j){
-				ItemStack itemstack = inventory[i];
-				inventory[i] = null;
-				return itemstack;
-			}
-			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].getCount() == 0){
-				inventory[i] = null;
-			}
-			return itemstack1;
-		}else{
-			return null;
-		}
-	}
+    @Override
+    public boolean isEmpty() {
+        for (ItemStack itemstack : this.inventory) {
+            if (!itemstack.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public ItemStack removeStackFromSlot(int i){
-		if (inventory[i] != null){
-			ItemStack itemstack = inventory[i];
-			inventory[i] = null;
-			return itemstack;
-		}else{
-			return null;
-		}
-	}
+    /**
+     * Returns the stack in the given slot.
+     */
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        return inventory.get(slot);
+    }
 
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
-			itemstack.setCount(getInventoryStackLimit());
-		}
-	}
+    /**
+     * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
+     */
+    @Override
+    public ItemStack decrStackSize(int slot, int amount) {
+        ItemStack itemstack = ItemStackHelper.getAndSplit(this.inventory, slot, amount);
+        if (!itemstack.isEmpty()) {
+            this.markDirty();
+        }
+        return itemstack;
+    }
 
-	@Override
-	public String getName(){
-		return "Astral Barrier";
-	}
+    @Override
+    public ItemStack removeStackFromSlot(int slot) {
 
-	@Override
-	public int getInventoryStackLimit(){
-		return 1;
-	}
+        ItemStack stack = getStackInSlot(slot);
 
-	@Override
-	public boolean isUsableByPlayer(EntityPlayer entityplayer){
-		if (world.getTileEntity(pos) != this){
-			return false;
-		}
-		return entityplayer.getDistanceSqToCenter(pos) <= 64D;
-	}
+        if (!stack.isEmpty()) {
+            setInventorySlotContents(slot, ItemStack.EMPTY);
+        }
 
-	@Override
-	public void openInventory(EntityPlayer player){
-	}
+        return stack;
+    }
 
-	@Override
-	public void closeInventory(EntityPlayer player){
-	}
+    public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
+        if (stack.isEmpty()) {
+            stack = ItemStack.EMPTY;
+        }
+        this.inventory.set(index, stack);
+        if (stack.getCount() > this.getInventoryStackLimit()) {
+            stack.setCount(this.getInventoryStackLimit());
+        }
 
-	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound){
-		super.readFromNBT(nbttagcompound);
-		NBTTagList nbttaglist = nbttagcompound.getTagList("AstralBarrierInventory", Constants.NBT.TAG_COMPOUND);
-		inventory = new ItemStack[getSizeInventory()];
-		for (int i = 0; i < nbttaglist.tagCount(); i++){
-			String tag = String.format("ArrayIndex", i);
-			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
-			byte byte0 = nbttagcompound1.getByte(tag);
-			if (byte0 >= 0 && byte0 < inventory.length){
-				inventory[byte0] = new ItemStack((nbttagcompound1));
-			}
-		}
-	}
+        this.markDirty();
+    }
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound){
-		super.writeToNBT(nbttagcompound);
-		NBTTagList nbttaglist = new NBTTagList();
-		for (int i = 0; i < inventory.length; i++){
-			if (inventory[i] != null){
-				String tag = String.format("ArrayIndex", i);
-				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-				nbttagcompound1.setByte(tag, (byte)i);
-				inventory[i].writeToNBT(nbttagcompound1);
-				nbttaglist.appendTag(nbttagcompound1);
-			}
-		}
+    @Override
+    public String getName() {
+        return "Astral Barrier";
+    }
 
-		nbttagcompound.setTag("AstralBarrierInventory", nbttaglist);
-		return nbttagcompound;
-	}
+    @Override
+    public int getInventoryStackLimit() {
+        return 1;
+    }
 
-	@Override
-	public boolean canProvidePower(PowerTypes type){
-		return false;
-	}
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+        if (world.getTileEntity(pos) != this) {
+            return false;
+        }
+        return entityplayer.getDistanceSqToCenter(pos) <= 64D;
+    }
+
+    @Override
+    public void openInventory(EntityPlayer player) {
+    }
+
+    @Override
+    public void closeInventory(EntityPlayer player) {
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbttagcompound) {
+        super.readFromNBT(nbttagcompound);
+        ItemStackHelper.loadAllItems(nbttagcompound, this.inventory);
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
+        super.writeToNBT(nbttagcompound);
+        ItemStackHelper.saveAllItems(nbttagcompound, this.inventory);
+        return nbttagcompound;
+    }
+
+    @Override
+    public boolean canProvidePower(PowerTypes type) {
+        return false;
+    }
 
 //	private void writeInventory(AMDataWriter writer){
 //		for (ItemStack stack : inventory){
@@ -260,72 +247,72 @@ public class TileEntityAstralBarrier extends TileEntityAMPower implements IInven
 //		}
 //	}
 
-	@Override
-	public boolean hasCustomName(){
-		return false;
-	}
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
 
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack){
-		return false;
-	}
+    @Override
+    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+        return false;
+    }
 
-	@Override
-	public int getChargeRate(){
-		return 50;
-	}
+    @Override
+    public int getChargeRate() {
+        return 50;
+    }
 
-	@Override
-	public boolean canRelayPower(PowerTypes type){
-		return false;
-	}
+    @Override
+    public boolean canRelayPower(PowerTypes type) {
+        return false;
+    }
 
-	@Override
-	public ItemStack[] getRunesInKey(){
-		ItemStack[] runes = new ItemStack[3];
-		runes[0] = inventory[1];
-		runes[1] = inventory[2];
-		runes[2] = inventory[3];
-		return runes;
-	}
+    @Override
+    public ItemStack[] getRunesInKey() {
+        ItemStack[] runes = new ItemStack[3];
+        runes[0] = inventory.get(1);
+        runes[1] = inventory.get(2);
+        runes[2] = inventory.get(3);
+        return runes;
+    }
 
-	@Override
-	public boolean keystoneMustBeHeld(){
-		return false;
-	}
+    @Override
+    public boolean keystoneMustBeHeld() {
+        return false;
+    }
 
-	@Override
-	public boolean keystoneMustBeInActionBar(){
-		return false;
-	}
+    @Override
+    public boolean keystoneMustBeInActionBar() {
+        return false;
+    }
 
-	@Override
-	public ITextComponent getDisplayName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public ITextComponent getDisplayName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public int getField(int id) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getField(int id) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	@Override
-	public void setField(int id, int value) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void setField(int id, int value) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public int getFieldCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    }
 
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public int getFieldCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+        // TODO Auto-generated method stub
+
+    }
 }

@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    "LFT",
+    " W "
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:porkchop"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "F": {
+      "item": "arsmagica2:standard_focus"
+    },
+    "T": {
+      "item": "minecraft:feather"
+    },
+    "W": {
+      "item": "minecraft:wool",
+      "data": 15
+    }
+  },
+  "result": {
+    "item": "arsmagica2:mob_focus"
+  }
+}

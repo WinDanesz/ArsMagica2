@@ -1,0 +1,12 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "arsmagica2:scaledown",
+		"textures": {
+			"particle": "arsmagica2:blocks/runes/rune_arcane"
+		}
+	},
+	"variants": {
+		"normal": [{}]
+	}
+}

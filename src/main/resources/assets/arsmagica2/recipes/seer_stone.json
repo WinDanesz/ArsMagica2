@@ -1,0 +1,31 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "LEL",
+    "RCR",
+    "GLG"
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:dye",
+      "data": 4
+    },
+    "C": {
+      "item": "minecraft:stone",
+      "data": 3
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "R": {
+      "type": "forge:ore_dict",
+      "ore": "dustRedstone"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:seer_stone"
+  }
+}

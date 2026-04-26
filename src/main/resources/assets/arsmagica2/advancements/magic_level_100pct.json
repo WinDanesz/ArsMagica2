@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:arcane_compendium"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.magic_level_100pct.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.magic_level_100pct.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "arsmagica2:magic_level_75pct",
+  "criteria": {
+    "reach_level_100pct": {
+      "trigger": "arsmagica2:magic_level_reached",
+      "conditions": {
+        "level_percent": 100
+      }
+    }
+  },
+  "requirements": [["reach_level_100pct"]]
+}

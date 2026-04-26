@@ -1,0 +1,27 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "SVS",
+    "EPE",
+    "SVS"
+  ],
+  "key": {
+    "P": {
+      "item": "arsmagica2:essence_life"
+    },
+    "S": {
+      "item": "minecraft:stonebrick",
+      "data": 0
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:keystone_receptacle"
+  }
+}

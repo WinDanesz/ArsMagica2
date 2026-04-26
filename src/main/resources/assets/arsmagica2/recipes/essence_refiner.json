@@ -1,0 +1,28 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "PDP",
+    "OAO",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "A": {
+      "type": "forge:ore_dict",
+      "ore": "arcaneAsh"
+    },
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "gemDiamond"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:essence_refiner"
+  }
+}

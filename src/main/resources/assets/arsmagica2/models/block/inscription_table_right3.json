@@ -1,0 +1,49 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "arsmagica2:blocks/inscription_table"
+	},
+	"elements": [
+		{
+			"name": "feather",
+			"from": [3, 16.7314, 13],
+			"to": [8, 21.7314, 13],
+			"rotation": {"angle": 22.5, "axis": "z", "origin": [4.47871, 17.51494, 13]},
+			"faces": {
+				"north": {"uv": [1.75, 14.25, 0, 12.5], "rotation": 90, "texture": "#0"},
+				"south": {"uv": [0, 14.25, 1.75, 12.5], "rotation": 270, "texture": "#0"}
+			}
+		},
+		{
+			"from": [3, 15, 12],
+			"to": [5, 17, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4.47871, 17.51494, 13]},
+			"faces": {
+				"north": {"uv": [0.25, 12, 0.5, 12.25], "texture": "#0"},
+				"east": {"uv": [0.25, 12, 0.5, 12.25], "texture": "#0"},
+				"south": {"uv": [0, 12, 0.25, 12.25], "texture": "#0"},
+				"west": {"uv": [0, 12, 0.25, 12.25], "texture": "#0"},
+				"up": {"uv": [0.25, 12.5, 0, 12.25], "texture": "#0"},
+				"down": {"uv": [0.25, 12.25, 0, 12], "texture": "#0"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "right",
+			"origin": [17.1963, 16.39259, 11.6582],
+			"scope": 0,
+			"color": 0,
+			"children": [
+				{
+					"name": "ink",
+					"origin": [17.1963, 16.39259, 11.6582],
+					"scope": 0,
+					"color": 0,
+					"children": [0, 1]
+				}
+			]
+		}
+	]
+}

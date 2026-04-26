@@ -1,83 +1,79 @@
 package am2.common.container;
 
 import am2.common.container.slot.SlotSpellCustomization;
-import am2.common.packet.AMDataWriter;
-import am2.common.packet.AMNetHandler;
-import am2.common.packet.AMPacketIDs;
+import am2.network.AMNetworkHandler;
+import am2.network.packets.PacketSpellCustomize;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class ContainerSpellCustomization extends Container{
+public class ContainerSpellCustomization extends Container {
 
-	private final InventoryPlayer inventoryPlayer;
-	private int iconIndex = -1;
-	private String name = "";
+    private final InventoryPlayer inventoryPlayer;
+    private int iconIndex = -1;
+    private String name = "";
 
-	public ContainerSpellCustomization(EntityPlayer player){
-		this.inventoryPlayer = player.inventory;
-		iconIndex = -1;
+    public ContainerSpellCustomization(EntityPlayer player) {
+        this.inventoryPlayer = player.inventory;
+        iconIndex = -1;
 
-		//edit item
-		addSlotToContainer(new SlotSpellCustomization(inventoryPlayer, inventoryPlayer.currentItem, 80, 30));
+        //edit item
+        addSlotToContainer(new SlotSpellCustomization(inventoryPlayer, inventoryPlayer.currentItem, 80, 30));
 
-	}
+    }
 
-	public void setNameAndIndex(String name, int index){
-		this.name = name;
-		this.iconIndex = index;
+    public void setNameAndIndex(String name, int index) {
+        this.name = name;
+        this.iconIndex = index;
 
-		((Slot)this.inventorySlots.get(0)).getStack().setItemDamage(this.iconIndex);
-		((Slot)this.inventorySlots.get(0)).getStack().setStackDisplayName("\247b" + this.name);
+        ((Slot) this.inventorySlots.get(0)).getStack().setItemDamage(this.iconIndex);
+        ((Slot) this.inventorySlots.get(0)).getStack().setStackDisplayName("\247b" + this.name);
 
-		if (inventoryPlayer.player.world.isRemote){
-			sendPacketToServer();
-		}
-	}
+        if (inventoryPlayer.player.world.isRemote) {
+            sendPacketToServer();
+        }
+    }
 
-	@Override
-	public void onContainerClosed(EntityPlayer par1EntityPlayer){
-		//SpellUtils.changeEnchantmentsForShapeGroup(inventoryPlayer.getCurrentItem());
-		super.onContainerClosed(par1EntityPlayer);
-	}
+    @Override
+    public void onContainerClosed(EntityPlayer par1EntityPlayer) {
+        //SpellUtils.changeEnchantmentsForShapeGroup(inventoryPlayer.getCurrentItem());
+        super.onContainerClosed(par1EntityPlayer);
+    }
 
-	public boolean sendPacketToServer(){
-		if (!name.equals("") && iconIndex > -1){
-			AMDataWriter writer = new AMDataWriter();
-			writer.add(iconIndex);
-			writer.add(name);
-			AMNetHandler.INSTANCE.sendPacketToServer(AMPacketIDs.SPELL_CUSTOMIZE, writer.generate());
-			return true;
-		}
-		return false;
-	}
+    public boolean sendPacketToServer() {
+        if (!name.equals("") && iconIndex > -1) {
+            AMNetworkHandler.getNetwork().sendToServer(new PacketSpellCustomize(iconIndex, name));
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer){
-		return true;
-	}
+    @Override
+    public boolean canInteractWith(EntityPlayer entityplayer) {
+        return true;
+    }
 
-	@Override
-	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2){
-		Slot slot = (Slot)this.inventorySlots.get(par2);
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2) {
+        Slot slot = (Slot) this.inventorySlots.get(par2);
 
-		if (slot != null && slot.getHasStack()){
-			ItemStack itemstack = slot.getStack();
-			return itemstack;
-		}
-		return null;
-	}
+        if (slot != null && slot.getHasStack()) {
+            ItemStack itemstack = slot.getStack();
+            return itemstack;
+        }
+        return null;
+    }
 
-	public String getInitialSuggestedName(){
-		Slot slot = (Slot)this.inventorySlots.get(0);
-		if (slot == null || !slot.getHasStack()) return "";
-		ItemStack stack = slot.getStack();
-		if (!stack.hasTagCompound()) return "";
-		if (!stack.getTagCompound().hasKey("suggestedName")) return "";
-		return stack.getTagCompound().getString("suggestedName");
+    public String getInitialSuggestedName() {
+        Slot slot = (Slot) this.inventorySlots.get(0);
+        if (slot == null || !slot.getHasStack()) return "";
+        ItemStack stack = slot.getStack();
+        if (!stack.hasTagCompound()) return "";
+        if (!stack.getTagCompound().hasKey("suggestedName")) return "";
+        return stack.getTagCompound().getString("suggestedName");
 
-	}
+    }
 
 }

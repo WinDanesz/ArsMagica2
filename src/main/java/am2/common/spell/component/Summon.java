@@ -6,20 +6,16 @@ import am2.api.spell.Operation;
 import am2.api.spell.SpellComponent;
 import am2.api.spell.SpellData;
 import am2.api.spell.SpellModifiers;
-import am2.common.defs.BlockDefs;
-import am2.common.defs.ItemDefs;
 import am2.common.extensions.EntityExtension;
 import am2.common.items.ItemCrystalPhylactery;
-import am2.common.items.ItemOre;
 import am2.common.power.PowerTypes;
+import am2.common.registry.AMBlocks;
+import am2.common.registry.AMItems;
+import am2.common.registry.Affinities;
 import am2.common.utils.EntityUtils;
 import com.google.common.collect.Sets;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,104 +32,104 @@ import java.util.EnumSet;
 import java.util.Random;
 import java.util.Set;
 
-public class Summon extends SpellComponent{
-	
+public class Summon extends SpellComponent {
 
-	public EntityLiving summonCreature(SpellData spell, EntityLivingBase caster, EntityLivingBase target, World world, double x, double y, double z){
-		Class<? extends Entity> clazz = getSummonType(spell);
-		EntityLiving entity = null;
-		try{
-			entity = (EntityLiving)clazz.getConstructor(World.class).newInstance(world);
-		}catch (Throwable t){
-			t.printStackTrace();
-			return null;
-		}
 
-		if (entity == null){
-			return null;
-		}
-		if (entity instanceof EntitySkeleton){
+    public EntityLiving summonCreature(SpellData spell, EntityLivingBase caster, EntityLivingBase target, World world, double x, double y, double z) {
+        Class<? extends Entity> clazz = getSummonType(spell);
+        EntityLiving entity = null;
+        try {
+            entity = (EntityLiving) clazz.getConstructor(World.class).newInstance(world);
+        } catch (Throwable t) {
+            am2.ArsMagica.LOGGER.error("Exception caught: ", t);
+            return null;
+        }
+
+        if (entity == null) {
+            return null;
+        }
+        if (entity instanceof EntitySkeleton) {
 //			((EntitySkeleton)entity).(SkeletonType.NORMAL);
-			((EntitySkeleton)entity).setHeldItem(EnumHand.MAIN_HAND, new ItemStack(Items.BOW));
-		}else if (entity instanceof EntityHorse && caster instanceof EntityPlayer){
-			((EntityHorse)entity).setTamedBy(((EntityPlayer)caster));
-		}
-		entity.setPosition(x, y, z);
-		world.spawnEntity(entity);
-		if (caster instanceof EntityPlayer){
-			EntityUtils.makeSummon_PlayerFaction((EntityCreature)entity, (EntityPlayer)caster, false);
-		}else{
-			EntityUtils.makeSummon_MonsterFaction((EntityCreature)entity, false);
-		}
-		EntityUtils.setOwner(entity, caster);
+            ((EntitySkeleton) entity).setHeldItem(EnumHand.MAIN_HAND, new ItemStack(Items.BOW));
+        } else if (entity instanceof EntityHorse && caster instanceof EntityPlayer) {
+            ((EntityHorse) entity).setTamedBy(((EntityPlayer) caster));
+        }
+        entity.setPosition(x, y, z);
+        world.spawnEntity(entity);
+        if (caster instanceof EntityPlayer) {
+            EntityUtils.makeSummon_PlayerFaction((EntityCreature) entity, (EntityPlayer) caster, false);
+        } else {
+            EntityUtils.makeSummon_MonsterFaction((EntityCreature) entity, false);
+        }
+        EntityUtils.setOwner(entity, caster);
 
-		int duration = (int) spell.getModifiedValue(4800, SpellModifiers.DURATION, Operation.MULTIPLY, world, caster, target);
+        int duration = (int) spell.getModifiedValue(4800, SpellModifiers.DURATION, Operation.MULTIPLY, world, caster, target);
 
-		EntityUtils.setSummonDuration(entity, duration);
+        EntityUtils.setSummonDuration(entity, duration);
 
-		spell.applyComponentsToEntity(world, caster, entity);
+        spell.applyComponentsToEntity(world, caster, entity);
 
-		return entity;
-	}
-	
-	@Override
-	public EnumSet<SpellModifiers> getModifiers() {
-		return EnumSet.of(SpellModifiers.DURATION);
-	}
+        return entity;
+    }
 
-	@Override
-	public Object[] getRecipe(){
-		//Chimerite, purified vinteum, blue orchid, monster focus, any filled crystal phylactery, 1500 dark power
-		return new Object[]{
-				new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_CHIMERITE),
-				new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_PURIFIED_VINTEUM),
-				BlockDefs.cerublossom,
-				ItemDefs.mobFocus,
-				new ItemStack(ItemDefs.crystalPhylactery, 1, ItemCrystalPhylactery.META_FULL),
-				"E:" + PowerTypes.DARK.ID(), 1500
-		};
-	}
+    @Override
+    public EnumSet<SpellModifiers> getModifiers() {
+        return EnumSet.of(SpellModifiers.DURATION);
+    }
 
-	public void setSummonType(NBTTagCompound stack, ItemStack phylacteryStack){
-		if (phylacteryStack.getItemDamage() == ItemCrystalPhylactery.META_FULL && phylacteryStack.getItem() instanceof ItemCrystalPhylactery){
-			setSummonType(stack, ItemDefs.crystalPhylactery.getSpawnClass(phylacteryStack));
-		}
-	}
+    @Override
+    public Object[] getRecipe() {
+        //Chimerite, purified vinteum, blue orchid, monster focus, any filled crystal phylactery, 1500 dark power
+        return new Object[]{
+                new ItemStack(AMItems.chimerite),
+                new ItemStack(AMItems.purified_vinteum_dust),
+                AMBlocks.cerublossom,
+                AMItems.mob_focus,
+                new ItemStack(AMItems.crystal_phylactery, 1, ItemCrystalPhylactery.META_FULL),
+                "E:" + PowerTypes.DARK.ID(), 1500
+        };
+    }
 
-	public Class<? extends Entity> getSummonType(SpellData spell){
-		String s = spell.getStoredData().getString("SummonType");
-		if (s == null || s == "")
-			s = "Skeleton"; //default!  default!  default!
-		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.getClassFromName(s);
-		return clazz;
-	}
-	
-	public Class<? extends Entity> getSummonType(ISpellCaster spell){
-		String s = spell.getCommonStoredData().getString("SummonType");
-		if (s == null || s == "")
-			s = "Skeleton"; //default!  default!  default!
-		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.getClassFromName(s);
-		return clazz;
-	}
+    public void setSummonType(NBTTagCompound stack, ItemStack phylacteryStack) {
+        if (phylacteryStack.getItemDamage() == ItemCrystalPhylactery.META_FULL && phylacteryStack.getItem() instanceof ItemCrystalPhylactery) {
+            setSummonType(stack, ((ItemCrystalPhylactery) AMItems.crystal_phylactery).getSpawnClass(phylacteryStack));
+        }
+    }
+
+    public Class<? extends Entity> getSummonType(SpellData spell) {
+        String s = spell.getStoredData().getString("SummonType");
+        if (s == null || s.equals(""))
+            s = "Skeleton"; //default!  default!  default!
+        Class<? extends Entity> clazz = (Class<? extends Entity>) EntityList.getClassFromName(s);
+        return clazz;
+    }
+
+    public Class<? extends Entity> getSummonType(ISpellCaster spell) {
+        String s = spell.getCommonStoredData().getString("SummonType");
+        if (s == null || s.equals(""))
+            s = "Skeleton"; //default!  default!  default!
+        Class<? extends Entity> clazz = (Class<? extends Entity>) EntityList.getClassFromName(s);
+        return clazz;
+    }
 
 
-	public void setSummonType(NBTTagCompound stack, String s){
-		Class<? extends Entity> clazz = (Class<? extends Entity>)EntityList.getClassFromName(s);
-		setSummonType(stack, clazz);
-	}
+    public void setSummonType(NBTTagCompound stack, String s) {
+        Class<? extends Entity> clazz = (Class<? extends Entity>) EntityList.getClassFromName(s);
+        setSummonType(stack, clazz);
+    }
 
-	public void setSummonType(NBTTagCompound stack, Class<? extends Entity> clazz){
-		clazz = checkForSpecialSpawns(stack, clazz);
+    public void setSummonType(NBTTagCompound stack, Class<? extends Entity> clazz) {
+        clazz = checkForSpecialSpawns(stack, clazz);
 
-		String s = (String)EntityList.getKey(clazz).toString();
-		if (s == null)
-			s = "";
+        String s = (String) EntityList.getKey(clazz).toString();
+        if (s == null)
+            s = "";
 
-		stack.setString("SpawnClassName", s);
-		stack.setString("SummonType", s);
-	}
+        stack.setString("SpawnClassName", s);
+        stack.setString("SummonType", s);
+    }
 
-	private Class<? extends Entity> checkForSpecialSpawns(NBTTagCompound tag, Class<? extends Entity> clazz){
+    private Class<? extends Entity> checkForSpecialSpawns(NBTTagCompound tag, Class<? extends Entity> clazz) {
 //		if (clazz == EntityChicken.class){
 //			if (SpellUtils.modifierIsPresent(SpellModifiers.DAMAGE, stack) && SpellUtils.componentIsPresent(stack, Haste.class)){
 //				return EntityBattleChicken.class;
@@ -143,80 +139,76 @@ public class Summon extends SpellComponent{
 //				return EntityHellCow.class;
 //			}
 //		}
-		return clazz;
-	}
+        return clazz;
+    }
 
-	@Override
-	public boolean applyEffectBlock(SpellData spell, World world, BlockPos blockPos, EnumFacing blockFace, double impactX, double impactY, double impactZ, EntityLivingBase caster){
-		if (!world.isRemote){
-			if (EntityExtension.For(caster).getCanHaveMoreSummons()){
-				if (summonCreature(spell, caster, caster, world, impactX, impactY, impactZ) == null){
-					return false;
-				}
-			}else{
-				if (caster instanceof EntityPlayer){
-					((EntityPlayer)caster).sendStatusMessage(new TextComponentString(I18n.format("am2.tooltip.noMoreSummons")), false);
-				}
-			}
-		}
+    @Override
+    public boolean applyEffectBlock(SpellData spell, World world, BlockPos blockPos, EnumFacing blockFace, double impactX, double impactY, double impactZ, EntityLivingBase caster) {
+        if (!world.isRemote) {
+            if (EntityExtension.For(caster).getCanHaveMoreSummons()) {
+                if (summonCreature(spell, caster, caster, world, impactX, impactY, impactZ) == null) {
+                    return false;
+                }
+            } else {
+                if (caster instanceof EntityPlayer) {
+                    ((EntityPlayer) caster).sendStatusMessage(new TextComponentString(I18n.format("am2.tooltip.noMoreSummons")), false);
+                }
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public boolean applyEffectEntity(SpellData spell, World world, EntityLivingBase caster, Entity target){
+    @Override
+    public boolean applyEffectEntity(SpellData spell, World world, EntityLivingBase caster, Entity target) {
 
-		if (target instanceof EntityLivingBase && EntityUtils.isSummon((EntityLivingBase)target))
-			return false;
+        if (target instanceof EntityLivingBase && EntityUtils.isSummon((EntityLivingBase) target))
+            return false;
 
-		if (!world.isRemote){
-			if (EntityExtension.For(caster).getCanHaveMoreSummons()){
-				if (summonCreature(spell, caster, caster, world, target.posX, target.posY, target.posZ) == null){
-					return false;
-				}
-			}else{
-				if (caster instanceof EntityPlayer){
-					((EntityPlayer)caster).sendStatusMessage(new TextComponentString(I18n.format("am2.tooltip.noMoreSummons")), false);
-				}
-			}
-		}
+        if (!world.isRemote) {
+            if (EntityExtension.For(caster).getCanHaveMoreSummons()) {
+                if (summonCreature(spell, caster, caster, world, target.posX, target.posY, target.posZ) == null) {
+                    return false;
+                }
+            } else {
+                if (caster instanceof EntityPlayer) {
+                    ((EntityPlayer) caster).sendStatusMessage(new TextComponentString(I18n.format("am2.tooltip.noMoreSummons")), false);
+                }
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public float manaCost(){
-		return 400;
-	}
+    @Override
+    public float manaCost() {
+        return 400;
+    }
 
-	@Override
-	public ItemStack[] reagents(EntityLivingBase caster){
-		return null;
-	}
 
-	@Override
-	public void spawnParticles(World world, double x, double y, double z, EntityLivingBase caster, Entity target, Random rand, int colorModifier){
+    @Override
+    public void spawnParticles(World world, double x, double y, double z, EntityLivingBase caster, Entity target, Random rand, int colorModifier) {
 
-	}
+    }
 
-	@Override
-	public Set<Affinity> getAffinity(){
-		return Sets.newHashSet(Affinity.ENDER, Affinity.LIFE);
-	}
+    @Override
+    public Set<Affinity> getAffinity() {
+        return Sets.newHashSet(Affinities.ender, Affinities.life);
+    }
 
-	@Override
-	public float getAffinityShift(Affinity affinity){
-		return 0.01f;
-	}
+    @Override
+    public float getAffinityShift(Affinity affinity) {
+        return 0.01f;
+    }
 
-	@Override
-	public void encodeBasicData(NBTTagCompound tag, Object[] recipe) {
-		for (Object obj : recipe) {
-			if (obj instanceof ItemStack) {
-				ItemStack is = (ItemStack) obj;
-				if (is.getItem().equals(ItemDefs.crystalPhylactery))
-					setSummonType(tag, is);
-			}
-		}
-	}
+    @Override
+    public void encodeBasicData(NBTTagCompound tag, Object[] recipe) {
+        for (Object obj : recipe) {
+            if (obj instanceof ItemStack) {
+                ItemStack is = (ItemStack) obj;
+                if (is.getItem().equals(AMItems.crystal_phylactery))
+                    setSummonType(tag, is);
+            }
+        }
+    }
 }

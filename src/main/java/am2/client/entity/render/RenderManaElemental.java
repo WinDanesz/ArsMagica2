@@ -6,17 +6,17 @@ import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 
-public class RenderManaElemental extends RenderBiped<EntityManaElemental>{
+public class RenderManaElemental extends RenderBiped<EntityManaElemental> {
 
-	private static final ResourceLocation rLoc = new ResourceLocation("arsmagica2", "textures/mobs/ManaElemental.png");
+    private static final ResourceLocation rLoc = new ResourceLocation("arsmagica2", "textures/entities/mana_elemental.png");
 
-	public RenderManaElemental(RenderManager renderManager){
-		super(renderManager, new ModelManaElemental(), 0.5f);
-	}
+    public RenderManaElemental(RenderManager renderManager) {
+        super(renderManager, new ModelManaElemental(), 0.5f);
+    }
 
-	@Override
-	protected ResourceLocation getEntityTexture(EntityManaElemental par1Entity){
-		return rLoc;
-	}
+    @Override
+    protected ResourceLocation getEntityTexture(EntityManaElemental par1Entity) {
+        return rLoc;
+    }
 
 }

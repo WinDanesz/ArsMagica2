@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:lesser_mana_potion"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.mana_potion.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.mana_potion.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "parent": "arsmagica2:gem_collector",
+  "criteria": {
+    "has_mana_potion": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "arsmagica2:lesser_mana_potion"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "arsmagica2:items/mana_potion_greater"
+        "layer0": "arsmagica2:items/greater_mana_potion"
     }
 }

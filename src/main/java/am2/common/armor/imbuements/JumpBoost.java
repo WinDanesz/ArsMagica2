@@ -1,0 +1,72 @@
+package am2.common.armor.imbuements;
+
+import am2.ArsMagica;
+import am2.api.items.armor.ArmorImbuement;
+import am2.api.items.armor.ImbuementApplicationTypes;
+import am2.api.items.armor.ImbuementTiers;
+import am2.common.extensions.EntityExtension;
+import am2.common.registry.ImbuementRegistry;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+
+import java.util.EnumSet;
+
+public class JumpBoost extends ArmorImbuement {
+
+    @Override
+    public String getID() {
+        return ImbuementRegistry.JUMP_BOOST;
+    }
+
+    @Override
+    public ImbuementTiers getTier() {
+        return ImbuementTiers.FOURTH;
+    }
+
+    @Override
+    public EnumSet<ImbuementApplicationTypes> getApplicationTypes() {
+        return EnumSet.of(ImbuementApplicationTypes.ON_JUMP, ImbuementApplicationTypes.ON_TICK);
+    }
+
+    @Override
+    public boolean applyEffect(EntityPlayer player, World world, ItemStack stack, ImbuementApplicationTypes matchedType, Object... params) {
+        if (matchedType == ImbuementApplicationTypes.ON_JUMP) {
+            Vec3d vec = player.getLookVec().normalize();
+            double yVelocity = ArsMagica.config.getJumpBoostFactor();
+            double xVelocity = player.motionX * 3.5 * Math.abs(vec.x);
+            double zVelocity = player.motionZ * 3.5 * Math.abs(vec.z);
+
+            if (EntityExtension.For(player).getIsFlipped()) {
+                yVelocity *= -1;
+            }
+
+            player.addVelocity(xVelocity, yVelocity, zVelocity);
+        } else if (matchedType == ImbuementApplicationTypes.ON_TICK) {
+            EntityExtension.For(player).setFallProtection(20);
+        }
+        return true;
+    }
+
+    @Override
+    public EntityEquipmentSlot[] getValidSlots() {
+        return new EntityEquipmentSlot[]{EntityEquipmentSlot.LEGS};
+    }
+
+    @Override
+    public boolean canApplyOnCooldown() {
+        return true;
+    }
+
+    @Override
+    public int getCooldown() {
+        return 0;
+    }
+
+    @Override
+    public int getArmorDamage() {
+        return 0;
+    }
+}

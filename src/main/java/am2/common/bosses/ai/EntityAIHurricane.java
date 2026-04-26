@@ -1,8 +1,5 @@
 package am2.common.bosses.ai;
 
-import java.util.Iterator;
-import java.util.List;
-
 import am2.api.DamageSources;
 import am2.api.math.AMVector3;
 import am2.common.bosses.BossActions;
@@ -11,123 +8,132 @@ import am2.common.bosses.IArsMagicaBoss;
 import am2.common.entity.EntityWhirlwind;
 import am2.common.packet.AMNetHandler;
 import am2.common.utils.MathUtilities;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 
-public class EntityAIHurricane extends EntityAIBase{
+import java.util.Iterator;
+import java.util.List;
 
-	private final EntityAirGuardian host;
-	private EntityLivingBase target;
-	private int cooldownTicks = 0;
+public class EntityAIHurricane extends EntityAIBase {
 
-	public EntityAIHurricane(EntityAirGuardian host, float moveSpeed){
-		this.host = host;
-		this.setMutexBits(1);
-	}
+    private final EntityAirGuardian host;
+    private EntityLivingBase target;
+    private int cooldownTicks = 0;
 
-	@Override
-	public boolean shouldExecute(){
-		if (cooldownTicks-- > 0 || ((IArsMagicaBoss)host).getCurrentAction() != BossActions.IDLE || !((IArsMagicaBoss)host).isActionValid(BossActions.SPINNING))
-			return false;
-		EntityLivingBase AITarget = host.getAttackTarget();
-		if (AITarget == null || AITarget.isDead || AITarget.getDistanceSq(host) > 25) return false;
-		this.target = AITarget;
-		((IArsMagicaBoss)host).setCurrentAction(BossActions.SPINNING);
-		return true;
-	}
+    public EntityAIHurricane(EntityAirGuardian host, float moveSpeed) {
+        this.host = host;
+        this.setMutexBits(1);
+    }
 
-	@Override
-	public boolean shouldContinueExecuting(){
-		EntityLivingBase AITarget = host.getAttackTarget();
-		if (host.hitCount >= 10){
-			((IArsMagicaBoss)host).setCurrentAction(BossActions.IDLE);
-			cooldownTicks = 20;
-			return false;
-		}
-		if (AITarget == null || AITarget.isDead || ((IArsMagicaBoss)host).getTicksInCurrentAction() > BossActions.SPINNING.getMaxActionTime()){
+    @Override
+    public boolean shouldExecute() {
+        if (cooldownTicks-- > 0 || ((IArsMagicaBoss) host).getCurrentAction() != BossActions.IDLE || !((IArsMagicaBoss) host).isActionValid(BossActions.SPINNING))
+            return false;
+        EntityLivingBase AITarget = host.getAttackTarget();
+        if (AITarget == null || AITarget.isDead || AITarget.getDistanceSq(host) > 25) return false;
+        this.target = AITarget;
+        ((IArsMagicaBoss) host).setCurrentAction(BossActions.SPINNING);
+        return true;
+    }
 
-			if (!host.world.isRemote){
-				int y = (int)host.posY + 1;
-				for (int x = -1; x <= 1; ++x){
-					for (int z = -1; z <= 1; ++z){
-						BlockPos pos = new BlockPos(host.posX + x, y, host.posZ + z);
-						while (!host.world.canBlockSeeSky(pos) && host.world.getBlockState(pos).getBlock() != Blocks.BEDROCK){
-							if (Math.abs(y - host.posY) > 10) break;
-							host.world.destroyBlock(new BlockPos ((int)host.posX + x, y++, (int)host.posZ + z), true);
-						}
-						y = (int)host.posY + 2;
-					}
-				}
-			}
+    @Override
+    public boolean shouldContinueExecuting() {
+        EntityLivingBase AITarget = host.getAttackTarget();
+        if (host.hitCount >= 10) {
+            ((IArsMagicaBoss) host).setCurrentAction(BossActions.IDLE);
+            cooldownTicks = 20;
+            return false;
+        }
+        if (AITarget == null || AITarget.isDead || ((IArsMagicaBoss) host).getTicksInCurrentAction() > BossActions.SPINNING.getMaxActionTime()) {
 
-			List<EntityLivingBase> nearbyEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(2, 2, 2));
-			for (Iterator<EntityLivingBase> enti = nearbyEntities.iterator();enti.hasNext();){
-				EntityLivingBase ent = enti.next();
-				if (ent == host) continue;
-				AMVector3 movement = MathUtilities.GetMovementVectorBetweenPoints(new AMVector3(host), new AMVector3(ent));
-				float factor = 2.15f;
+            if (!host.world.isRemote) {
+                int baseY = (int) host.posY + 1;
+                for (int x = -1; x <= 1; ++x) {
+                    for (int z = -1; z <= 1; ++z) {
+                        int y = baseY;
+                        BlockPos pos = new BlockPos(host.posX + x, y, host.posZ + z);
+                        // Fix server lock: add proper bounds checking and limit block destruction
+                        int maxBlocks = 10; // Limit blocks destroyed per column
+                        int blocksDestroyed = 0;
+                        while (!host.world.canBlockSeeSky(pos) &&
+                                host.world.getBlockState(pos).getBlock() != Blocks.BEDROCK &&
+                                Math.abs(y - host.posY) <= 10 &&
+                                blocksDestroyed < maxBlocks) {
+                            host.world.destroyBlock(new BlockPos((int) host.posX + x, y++, (int) host.posZ + z), true);
+                            pos = new BlockPos(host.posX + x, y, host.posZ + z);
+                            blocksDestroyed++;
+                        }
+                    }
+                }
+            }
 
-				double x = -(movement.x * factor);
-				double y = 2.5f;
-				double z = -(movement.z * factor);
+            List<EntityLivingBase> nearbyEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(2, 2, 2));
+            for (Iterator<EntityLivingBase> enti = nearbyEntities.iterator(); enti.hasNext(); ) {
+                EntityLivingBase ent = enti.next();
+                if (ent == host) continue;
+                AMVector3 movement = MathUtilities.GetMovementVectorBetweenPoints(new AMVector3(host), new AMVector3(ent));
+                float factor = 2.15f;
 
-				ent.attackEntityFrom(DamageSources.causeWindDamage(host), 12);
+                double x = -(movement.x * factor);
+                double y = 2.5f;
+                double z = -(movement.z * factor);
 
-				ent.addVelocity(x, y, z);
+                ent.attackEntityFrom(DamageSources.causeWindDamage(host), 12);
 
-				if (ent instanceof EntityPlayer){
-					AMNetHandler.INSTANCE.sendVelocityAddPacket(host.world, ent, x, y, z);
-				}
-				ent.fallDistance = 0f;
-			}
-			((IArsMagicaBoss)host).setCurrentAction(BossActions.IDLE);
-			cooldownTicks = 20;
-			return false;
-		}
-		return true;
-	}
+                ent.addVelocity(x, y, z);
 
-	@Override
-	public void updateTask(){
-		host.getLookHelper().setLookPositionWithEntity(target, 30, 30);
-		//host.getNavigator().tryMoveToEntityLiving(target, moveSpeed);
-		List<EntityLivingBase> nearbyEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(6, 3, 6));
-		for (EntityLivingBase ent : nearbyEntities){
-			if (ent == host) continue;
+                if (ent instanceof EntityPlayer) {
+                    AMNetHandler.INSTANCE.sendVelocityAddPacket(host.world, ent, x, y, z);
+                }
+                ent.fallDistance = 0f;
+            }
+            ((IArsMagicaBoss) host).setCurrentAction(BossActions.IDLE);
+            cooldownTicks = 20;
+            return false;
+        }
+        return true;
+    }
 
-			if (!host.world.isRemote && ent instanceof EntityWhirlwind){
-				ent.setDead();
-				continue;
-			}
-			AMVector3 movement = MathUtilities.GetMovementVectorBetweenPoints(new AMVector3(host).add(new AMVector3(0, host.getEyeHeight(), 0)), new AMVector3(ent));
-			float factor = 0.18f;
+    @Override
+    public void updateTask() {
+        host.getLookHelper().setLookPositionWithEntity(target, 30, 30);
+        //host.getNavigator().tryMoveToEntityLiving(target, moveSpeed);
+        List<EntityLivingBase> nearbyEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(6, 3, 6));
+        for (EntityLivingBase ent : nearbyEntities) {
+            if (ent == host) continue;
 
-			double x = (movement.x * factor);
-			double y = (movement.y * factor);
-			double z = (movement.z * factor);
+            if (!host.world.isRemote && ent instanceof EntityWhirlwind) {
+                ent.setDead();
+                continue;
+            }
+            AMVector3 movement = MathUtilities.GetMovementVectorBetweenPoints(new AMVector3(host).add(new AMVector3(0, host.getEyeHeight(), 0)), new AMVector3(ent));
+            float factor = 0.18f;
 
-			double oX = ent.motionX, oY = ent.motionY, oZ = ent.motionZ;
-			ent.addVelocity(x, y, z);
+            double x = (movement.x * factor);
+            double y = (movement.y * factor);
+            double z = (movement.z * factor);
 
-			if (Math.abs(ent.motionX) > Math.abs(x * 2)){
-				ent.motionX = x * (ent.motionX / ent.motionX);
-			}
-			if (Math.abs(ent.motionY) > Math.abs(y * 2)){
-				ent.motionY = y * (ent.motionY / ent.motionY);
-			}
-			if (Math.abs(ent.motionZ) > Math.abs(z * 2)){
-				ent.motionZ = z * (ent.motionZ / ent.motionZ);
-			}
+            double oX = ent.motionX, oY = ent.motionY, oZ = ent.motionZ;
+            ent.addVelocity(x, y, z);
 
-			if (ent instanceof EntityPlayer){
-				AMNetHandler.INSTANCE.sendVelocityAddPacket(host.world, ent, -(oX - ent.motionX), -(oY - ent.motionY), -(oZ - ent.motionZ));
-			}
-			ent.fallDistance = 0f;
+            if (Math.abs(ent.motionX) > Math.abs(x * 2)) {
+                ent.motionX = x * (ent.motionX / ent.motionX);
+            }
+            if (Math.abs(ent.motionY) > Math.abs(y * 2)) {
+                ent.motionY = y * (ent.motionY / ent.motionY);
+            }
+            if (Math.abs(ent.motionZ) > Math.abs(z * 2)) {
+                ent.motionZ = z * (ent.motionZ / ent.motionZ);
+            }
 
-		}
-	}
+            if (ent instanceof EntityPlayer) {
+                AMNetHandler.INSTANCE.sendVelocityAddPacket(host.world, ent, -(oX - ent.motionX), -(oY - ent.motionY), -(oZ - ent.motionZ));
+            }
+            ent.fallDistance = 0f;
+
+        }
+    }
 }

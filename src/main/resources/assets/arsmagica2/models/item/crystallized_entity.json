@@ -1,0 +1,10 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "minecraft:items/diamond"
+    },
+    "overrides": [
+        { "predicate": { "arsmagica2:entity_type": 1.0 }, "model": "arsmagica2:item/crystallized_entity_animal" },
+        { "predicate": { "arsmagica2:entity_type": 2.0 }, "model": "arsmagica2:item/crystallized_entity_biped" }
+    ]
+}

@@ -1,9 +1,7 @@
 package am2.common.items;
 
-import javax.annotation.Nullable;
-
-import am2.api.IBoundItem;
-import am2.common.defs.ItemDefs;
+import am2.api.items.IBoundItem;
+import am2.common.registry.AMItems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -16,97 +14,80 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
+
 public class ItemBoundBow extends ItemBow implements IBoundItem {
 
-	public ItemBoundBow() {
-		super();
-		this.maxStackSize = 1;
-		this.setMaxDamage(0);
-		this.setCreativeTab(null);
-		this.addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter()
-        {
+    public ItemBoundBow() {
+        super();
+        this.maxStackSize = 1;
+        this.setMaxDamage(0);
+        this.setCreativeTab(null);
+        this.addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter() {
             @SideOnly(Side.CLIENT)
-            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
-            {
-                if (entityIn == null)
-                {
+            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
+                if (entityIn == null) {
                     return 0.0F;
-                }
-                else
-                {
+                } else {
                     ItemStack itemstack = entityIn.getActiveItemStack();
-                    return itemstack != null && itemstack.getItem() == ItemDefs.BoundBow ? (float)(stack.getMaxItemUseDuration() - entityIn.getItemInUseCount()) / 20.0F : 0.0F;
+                    return !itemstack.isEmpty() && itemstack.getItem() == AMItems.bound_bow ? (float) (stack.getMaxItemUseDuration() - entityIn.getItemInUseCount()) / 20.0F : 0.0F;
                 }
             }
         });
-	}
+    }
 
-	@Override
-	public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-		return false;
-	}
+    @Override
+    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+        return false;
+    }
 
-	@Override
-	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
-		if (!stack.hasTagCompound())
-			return;
-		ItemStack copiedStack = stack.copy();
-		if (entityLiving instanceof EntityPlayer) {
-			EntityPlayer entityplayer = (EntityPlayer) entityLiving;
-			int i = this.getMaxItemUseDuration(stack) - timeLeft;
-			i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, (EntityPlayer) entityLiving, i, true);
-			if (i < 0)
-				return;
+    @Override
+    public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
+        ItemStack copiedStack = stack.copy();
+        if (entityLiving instanceof EntityPlayer) {
+            EntityPlayer entityplayer = (EntityPlayer) entityLiving;
+            int i = this.getMaxItemUseDuration(stack) - timeLeft;
+            i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, (EntityPlayer) entityLiving, i, true);
+            if (i < 0)
+                return;
 
-			if (true) {
+            if (true) {
 
-				float f = getArrowVelocity(i);
+                float f = getArrowVelocity(i);
 
-				if ((double) f >= 0.1D) {
-					if (!worldIn.isRemote) {
-						ItemArrow itemarrow = ItemDefs.BoundArrow;
-						EntityArrow entityarrow = itemarrow.createArrow(worldIn, copiedStack, entityplayer);
-						entityarrow.shoot(entityplayer, entityplayer.rotationPitch, entityplayer.rotationYaw, 0.0F, f * 3.0F, 1.0F);
+                if ((double) f >= 0.1D) {
+                    if (!worldIn.isRemote) {
+                        ItemArrow itemarrow = (ItemArrow) AMItems.bound_arrow;
+                        EntityArrow entityarrow = itemarrow.createArrow(worldIn, copiedStack, entityplayer);
+                        entityarrow.shoot(entityplayer, entityplayer.rotationPitch, entityplayer.rotationYaw, 0.0F, f * 3.0F, 1.0F);
 
-						if (f == 1.0F) {
-							entityarrow.setIsCritical(true);
-						}
+                        if (f == 1.0F) {
+                            entityarrow.setIsCritical(true);
+                        }
 
-						stack.damageItem(1, entityplayer);
-						entityarrow.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
+                        stack.damageItem(1, entityplayer);
+                        entityarrow.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
 
-						worldIn.spawnEntity(entityarrow);
-					}
+                        worldIn.spawnEntity(entityarrow);
+                    }
 
-					worldIn.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.NEUTRAL, 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
+                    worldIn.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.NEUTRAL, 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
 
-					entityplayer.addStat(StatList.getObjectUseStats(this));
-				}
-			}
-		}
-	}
-//
-//
-//	@SuppressWarnings("deprecation")
-//	@Override
-//	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player) {
-//		item.setItem(ItemDefs.spell);
-//		return false;
-//	}
+                    entityplayer.addStat(StatList.getObjectUseStats(this));
+                }
+            }
+        }
+    }
+    @Override
+    public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player) {
+        return unbindOnDrop(item, player);
+    }
 
-	@Override
-	public float maintainCost(EntityPlayer player, ItemStack stack) {
-		return normalMaintain;
-	}
-
-	public ItemBoundBow registerAndName(String name) {
-//		this.setTranslationKey(new ResourceLocation("arsmagica2", name).toString());
-//		// TODO: registry GameRegistry.register(this, new ResourceLocation("arsmagica2", name));
-		return this;
-	}
-
+    @Override
+    public float maintainCost(EntityPlayer player, ItemStack stack) {
+        return normalMaintain;
+    }
 }

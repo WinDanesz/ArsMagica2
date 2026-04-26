@@ -1,8 +1,6 @@
 package am2.common.world;
 
-import java.util.Random;
-
-import am2.ArsMagica2;
+import am2.ArsMagica;
 import am2.api.math.AMVector3;
 import am2.common.blocks.tileentity.flickers.FlickerOperatorMoonstoneAttractor;
 import am2.common.entity.EntityThrownRock;
@@ -16,103 +14,114 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-public class MeteorSpawnHelper{
-	private final Random rand = new Random();
-	private int ticksSinceLastMeteor = 0;
+import java.util.Random;
 
-	public static MeteorSpawnHelper instance = new MeteorSpawnHelper();
+public class MeteorSpawnHelper {
+    private final Random rand = new Random();
+    private int ticksSinceLastMeteor = 0;
 
-	public void tick(){
-		if (ticksSinceLastMeteor == 0){
-			if ( FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length < 1) return;
-			// Todo debug this
-			WorldServer ws = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[0];
-			if (rand.nextInt(2500 + (1000 * ws.provider.getMoonPhase(ws.provider.getWorldTime()))) == 0){
-				spawnMeteor();
-			}
-		}else{
-			ticksSinceLastMeteor--;
-		}
-	}
+    public static MeteorSpawnHelper instance = new MeteorSpawnHelper();
 
-	public void spawnMeteor(){
-		ticksSinceLastMeteor = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().rand.nextInt(36000) + 12000;
-		if ( FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length < 1) return;
+    public void tick() {
+        if (ticksSinceLastMeteor == 0) {
+            if (FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length < 1) return;
+            // Todo debug this
+            WorldServer ws = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[0];
+            int baseChance = ArsMagica.config.getMeteorSpawnBaseChance();
+            int moonPhaseMultiplier = ArsMagica.config.getMeteorSpawnMoonPhaseMultiplier();
+            if (rand.nextInt(baseChance + (moonPhaseMultiplier * ws.provider.getMoonPhase(ws.provider.getWorldTime()))) == 0) {
+                spawnMeteor();
+            }
+        } else {
+            ticksSinceLastMeteor--;
+        }
+    }
 
-		WorldServer ws = null;
-		for (WorldServer world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds){
-			if (world.provider.getDimension() == 0){
-				ws = world;
-				break;
-			}
-		}
-		if (ws == null) return;
+    public void spawnMeteor() {
+        int cooldownMin = ArsMagica.config.getMeteorSpawnCooldownMin();
+        int cooldownMax = ArsMagica.config.getMeteorSpawnCooldownMax();
+        // Ensure cooldownMax is greater than cooldownMin to avoid negative range
+        if (cooldownMax <= cooldownMin) {
+            ticksSinceLastMeteor = cooldownMin;
+        } else {
+            ticksSinceLastMeteor = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().rand.nextInt(cooldownMax - cooldownMin) + cooldownMin;
+        }
+        if (FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length < 1) return;
 
-		long time = ws.getWorldTime() % 24000;
-		if (time > 14500 && time < 21500){ //night time range (just past dusk and just before dawn)
-			if (ws.playerEntities.size() < 1) return;
+        WorldServer ws = null;
+        for (WorldServer world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds) {
+            if (world.provider.getDimension() == 0) {
+                ws = world;
+                break;
+            }
+        }
+        if (ws == null) return;
 
-			int playerID = rand.nextInt(ws.playerEntities.size());
-			EntityPlayer player = (EntityPlayer)ws.playerEntities.get(playerID);
+        long time = ws.getWorldTime() % 24000;
+        if (time > 14500 && time < 21500) { //night time range (just past dusk and just before dawn)
+            if (ws.playerEntities.isEmpty()) return;
 
-			if (EntityExtension.For(player).getCurrentLevel() < ArsMagica2.config.getMeteorMinSpawnLevel()) return;
+            int playerID = rand.nextInt(ws.playerEntities.size());
+            EntityPlayer player = (EntityPlayer) ws.playerEntities.get(playerID);
 
-			AMVector3 spawnCoord = new AMVector3(player);
-			boolean found = false;
-			int meteorOffsetRadius = 64;
+            if (EntityExtension.For(player).getCurrentLevel() < ArsMagica.config.getMeteorMinSpawnLevel()) return;
 
-			AMVector3 attractorCoord = FlickerOperatorMoonstoneAttractor.getMeteorAttractor(spawnCoord);
-			if (attractorCoord != null){
-				spawnCoord = attractorCoord;
-				meteorOffsetRadius = 4;
-			}
-			for (int i = 0; i < 10; ++i){
-				BlockPos offsetCoord = spawnCoord.add(new AMVector3(rand.nextInt(meteorOffsetRadius) - (meteorOffsetRadius / 2), 0, rand.nextInt(meteorOffsetRadius) - (meteorOffsetRadius / 2))).toBlockPos();
-				offsetCoord = correctYCoord(ws, offsetCoord);
+            AMVector3 spawnCoord = new AMVector3(player);
+            boolean found = false;
+            int meteorOffsetRadius = ArsMagica.config.getMeteorSpawnRadiusPlayer();
 
-				if (offsetCoord.getY() < 0)
-					return;
+            AMVector3 attractorCoord = FlickerOperatorMoonstoneAttractor.getMeteorAttractor(spawnCoord);
+            if (attractorCoord != null) {
+                spawnCoord = attractorCoord;
+                meteorOffsetRadius = ArsMagica.config.getMeteorSpawnRadiusAttractor();
+            }
+            for (int i = 0; i < 10; ++i) {
+                BlockPos offsetCoord = spawnCoord.add(new AMVector3(rand.nextInt(meteorOffsetRadius) - (meteorOffsetRadius / 2), 0, rand.nextInt(meteorOffsetRadius) - (meteorOffsetRadius / 2))).toBlockPos();
+                offsetCoord = correctYCoord(ws, offsetCoord);
 
-				if (topBlockIsBiomeGeneric(ws, offsetCoord)){
-					spawnCoord = new AMVector3(offsetCoord);
-					found = true;
-					break;
-				}
-			}
-			if (!found) return;
+                if (offsetCoord.getY() < 0)
+                    return;
 
-			EntityThrownRock meteor = new EntityThrownRock(ws);
-			meteor.setPosition(spawnCoord.x + rand.nextInt(meteorOffsetRadius) - (meteorOffsetRadius / 2), ws.getActualHeight(), spawnCoord.z + rand.nextInt(meteorOffsetRadius) - (meteorOffsetRadius / 2));
-			meteor.setMoonstoneMeteor();
-			meteor.setMoonstoneMeteorTarget(spawnCoord.toVec3D());
-			ws.spawnEntity(meteor);
-		}
+                if (topBlockIsBiomeGeneric(ws, offsetCoord)) {
+                    spawnCoord = new AMVector3(offsetCoord);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return;
 
-	}
+            EntityThrownRock meteor = new EntityThrownRock(ws);
+            meteor.setPosition(spawnCoord.x + rand.nextInt(meteorOffsetRadius) - (meteorOffsetRadius / 2), ws.getActualHeight(), spawnCoord.z + rand.nextInt(meteorOffsetRadius) - (meteorOffsetRadius / 2));
+            meteor.setMoonstoneMeteor();
+            meteor.setMoonstoneMeteorTarget(spawnCoord.toVec3D());
+            ws.spawnEntity(meteor);
+        }
 
-	private boolean topBlockIsBiomeGeneric(World world, BlockPos pos){
-		if (world == null)
-			return false;
+    }
 
-		pos = correctYCoord(world, pos);
-		if (pos.getY() < 0) return false;
+    private boolean topBlockIsBiomeGeneric(World world, BlockPos pos) {
+        if (world == null)
+            return false;
 
-		Biome biome = world.getBiome(pos);
+        pos = correctYCoord(world, pos);
+        if (pos.getY() < 0) return false;
 
-		Block block = world.getBlockState(pos).getBlock();
-		return (block == Blocks.OBSIDIAN || block == biome.topBlock.getBlock()) && world.canBlockSeeSky(pos.up());
-	}
+        Biome biome = world.getBiome(pos);
 
-	private BlockPos correctYCoord(World world, BlockPos pos){
-		if (world == null)
-			return pos;
+        Block block = world.getBlockState(pos).getBlock();
+        return (block == Blocks.OBSIDIAN || block == biome.topBlock.getBlock()) && world.canBlockSeeSky(pos.up());
+    }
 
-		while (pos.getY() < world.getActualHeight() && world.canBlockSeeSky(pos))
-			pos = pos.up();
+    private BlockPos correctYCoord(World world, BlockPos pos) {
+        if (world == null)
+            return pos;
 
-		while (world.isAirBlock(pos) && pos.getY() > -1)
-			pos = pos.down();
+        while (pos.getY() < world.getActualHeight() && world.canBlockSeeSky(pos))
+            pos = pos.up();
 
-		return pos;
-	}
+        while (world.isAirBlock(pos) && pos.getY() > -1)
+            pos = pos.down();
+
+        return pos;
+    }
 }

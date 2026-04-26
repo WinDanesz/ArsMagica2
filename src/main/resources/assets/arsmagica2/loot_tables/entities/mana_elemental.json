@@ -1,0 +1,75 @@
+{
+    "pools": [
+        {
+            "name": "mana_cake",
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "arsmagica2:mana_cake",
+                    "weight": 1
+                }
+            ]
+        },
+        {
+            "name": "arcane_essence",
+            "rolls": 1,
+            "conditions": [
+                {
+                    "condition": "random_chance_with_looting",
+                    "chance": 0.1,
+                    "looting_multiplier": 0.03
+                }
+            ],
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "arsmagica2:essence_arcane",
+                    "weight": 1
+                }
+            ]
+        },
+        {
+            "name": "vinteum_dust",
+            "rolls": 1,
+            "conditions": [
+                {
+                    "condition": "random_chance_with_looting",
+                    "chance": 0.4,
+                    "looting_multiplier": 0.1
+                }
+            ],
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "arsmagica2:vinteum_dust",
+                    "weight": 1,
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count": { "min": 1, "max": 2 }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "vinteum_ore",
+            "rolls": 1,
+            "conditions": [
+                {
+                    "condition": "random_chance_with_looting",
+                    "chance": 0.15,
+                    "looting_multiplier": 0.05
+                }
+            ],
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "arsmagica2:vinteum_ore",
+                    "weight": 1
+                }
+            ]
+        }
+    ]
+}

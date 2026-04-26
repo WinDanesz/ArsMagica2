@@ -3,20 +3,20 @@ package am2.common.entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
 
-public class EntityDummyCaster extends EntityLiving{
+public class EntityDummyCaster extends EntityLiving {
 
-	public EntityDummyCaster(World par1World){
-		super(par1World);
-	}
+    public EntityDummyCaster(World par1World) {
+        super(par1World);
+    }
 
-	@Override
-	public void onUpdate(){
+    @Override
+    public void onUpdate() {
 
-	}
+    }
 
-	@Override
-	public float getEyeHeight(){
-		return 0;
-	}
+    @Override
+    public float getEyeHeight() {
+        return 0;
+    }
 
 }

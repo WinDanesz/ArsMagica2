@@ -2,171 +2,157 @@ package am2.common.entity;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.common.util.Constants;
 
-public class EntityBroomInventory implements IInventory{
+import javax.annotation.Nullable;
 
-	private ItemStack[] inventory;
+public class EntityBroomInventory implements IInventory {
 
-	public EntityBroomInventory(){
-		inventory = new ItemStack[getSizeInventory()];
-	}
+    private NonNullList<ItemStack> inventory;
 
-	@Override
-	public int getSizeInventory(){
-		return 10;
-	}
+    public EntityBroomInventory() {
+        inventory = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
+    @Override
+    public int getSizeInventory() {
+        return 10;
+    }
 
-	@Override
-	public ItemStack getStackInSlot(int i){
-		if (i >= inventory.length)
-			return null;
-		return inventory[i];
-	}
+    @Override
+    public boolean isEmpty() {
+        for (ItemStack itemstack : this.inventory) {
+            if (!itemstack.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public ItemStack decrStackSize(int i, int j){
-		if (inventory[i] != null){
-			if (inventory[i].getCount() <= j){
-				ItemStack itemstack = inventory[i];
-				inventory[i] = null;
-				return itemstack;
-			}
-			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].getCount() == 0){
-				inventory[i] = null;
-			}
-			return itemstack1;
-		}else{
-			return null;
-		}
-	}
+    /**
+     * Returns the stack in the given slot.
+     */
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        return inventory.get(slot);
+    }
 
-	@Override
-	public ItemStack removeStackFromSlot(int i){
-		if (inventory[i] != null){
-			ItemStack itemstack = inventory[i];
-			inventory[i] = null;
-			return itemstack;
-		}else{
-			return null;
-		}
-	}
+    /**
+     * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
+     */
+    @Override
+    public ItemStack decrStackSize(int slot, int amount) {
+        ItemStack itemstack = ItemStackHelper.getAndSplit(this.inventory, slot, amount);
+        if (!itemstack.isEmpty()) {
+            this.markDirty();
+        }
+        return itemstack;
+    }
 
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
-			itemstack.setCount(getInventoryStackLimit());
-		}
-	}
+    @Override
+    public ItemStack removeStackFromSlot(int slot) {
 
-	@Override
-	public String getName(){
-		return "DaBroom";
-	}
+        ItemStack stack = getStackInSlot(slot);
 
-	@Override
-	public boolean hasCustomName(){
-		return false;
-	}
+        if (!stack.isEmpty()) {
+            setInventorySlotContents(slot, ItemStack.EMPTY);
+        }
 
-	@Override
-	public int getInventoryStackLimit(){
-		return 64;
-	}
+        return stack;
+    }
 
-	@Override
-	public void openInventory(EntityPlayer player){
+    public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
+        if (stack.isEmpty()) {
+            stack = ItemStack.EMPTY;
+        }
+        this.inventory.set(index, stack);
+        if (stack.getCount() > this.getInventoryStackLimit()) {
+            stack.setCount(this.getInventoryStackLimit());
+        }
 
-	}
+        this.markDirty();
+    }
 
-	@Override
-	public void closeInventory(EntityPlayer player){
+    @Override
+    public String getName() {
+        return "DaBroom";
+    }
 
-	}
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
 
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack){
-		return true;
-	}
+    @Override
+    public int getInventoryStackLimit() {
+        return 64;
+    }
 
-	public void saveBroomInventory(NBTTagCompound compound){
-		NBTTagList nbttaglist = new NBTTagList();
-		for (int i = 0; i < inventory.length; i++){
-			if (inventory[i] != null){
-				String tag = String.format("ArrayIndex", i);
-				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-				nbttagcompound1.setByte(tag, (byte)i);
-				inventory[i].writeToNBT(nbttagcompound1);
-				nbttaglist.appendTag(nbttagcompound1);
-			}
-		}
+    @Override
+    public void openInventory(EntityPlayer player) {
 
-		compound.setTag("DaBroomInventory", nbttaglist);
+    }
 
-	}
+    @Override
+    public void closeInventory(EntityPlayer player) {
 
-	public void loadBroomInventory(NBTTagCompound compound){
-		NBTTagList nbttaglist = compound.getTagList("DaBroomInventory", Constants.NBT.TAG_COMPOUND);
-		inventory = new ItemStack[getSizeInventory()];
-		for (int i = 0; i < nbttaglist.tagCount(); i++){
-			String tag = String.format("ArrayIndex", i);
-			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
-			byte byte0 = nbttagcompound1.getByte(tag);
-			if (byte0 >= 0 && byte0 < inventory.length){
-				inventory[byte0] = new ItemStack(nbttagcompound1);
-			}
-		}
-	}
+    }
 
-	@Override
-	public void markDirty(){
-	}
+    @Override
+    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+        return true;
+    }
 
-	@Override
-	public boolean isUsableByPlayer(EntityPlayer player) {
-		return false;
-	}
+    public void saveBroomInventory(NBTTagCompound nbttagcompound) {
+        ItemStackHelper.saveAllItems(nbttagcompound, this.inventory);
+    }
 
-	@Override
-	public ITextComponent getDisplayName() {
-		return new TextComponentString(getName());
-	}
+    public void loadBroomInventory(NBTTagCompound nbttagcompound) {
+        ItemStackHelper.loadAllItems(nbttagcompound, this.inventory);
+    }
 
-	@Override
-	public int getField(int id) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public void markDirty() {
+    }
 
-	@Override
-	public void setField(int id, int value) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
+        return false;
+    }
 
-	@Override
-	public int getFieldCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TextComponentString(getName());
+    }
 
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public int getField(int id) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+        // TODO Auto-generated method stub
+
+    }
 
 
 }

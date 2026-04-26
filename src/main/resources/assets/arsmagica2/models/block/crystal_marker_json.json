@@ -1,0 +1,157 @@
+{
+  "__comment": "Crystal Marker JSON model - replaces OBJ model",
+  "parent": "block/block",
+  "textures": {
+    "particle": "arsmagica2:blocks/custom/crystalmarker",
+    "crystal": "arsmagica2:blocks/custom/crystalmarker"
+  },
+  "elements": [
+    {
+      "__comment": "Base cube at center",
+      "from": [6, 4.5, 6.75],
+      "to": [10, 11.5, 10.75],
+      "faces": {
+        "down": { "uv": [4, 4, 8, 8], "texture": "#crystal" },
+        "up": { "uv": [4, 4, 8, 8], "texture": "#crystal" },
+        "north": { "uv": [4, 4, 8, 11], "texture": "#crystal" },
+        "south": { "uv": [4, 4, 8, 11], "texture": "#crystal" },
+        "west": { "uv": [4, 4, 8, 11], "texture": "#crystal" },
+        "east": { "uv": [4, 4, 8, 11], "texture": "#crystal" }
+      }
+    },
+    {
+      "__comment": "Top point",
+      "from": [7.5, 11.5, 8.25],
+      "to": [8.5, 12.5, 9.25],
+      "faces": {
+        "down": { "uv": [6, 6, 7, 7], "texture": "#crystal" },
+        "up": { "uv": [6, 6, 7, 7], "texture": "#crystal" },
+        "north": { "uv": [6, 6, 7, 7], "texture": "#crystal" },
+        "south": { "uv": [6, 6, 7, 7], "texture": "#crystal" },
+        "west": { "uv": [6, 6, 7, 7], "texture": "#crystal" },
+        "east": { "uv": [6, 6, 7, 7], "texture": "#crystal" }
+      }
+    },
+    {
+      "__comment": "Bottom point",
+      "from": [7.5, 3.5, 8.25],
+      "to": [8.5, 4.5, 9.25],
+      "faces": {
+        "down": { "uv": [6, 6, 7, 7], "texture": "#crystal" },
+        "up": { "uv": [6, 6, 7, 7], "texture": "#crystal" },
+        "north": { "uv": [6, 6, 7, 7], "texture": "#crystal" },
+        "south": { "uv": [6, 6, 7, 7], "texture": "#crystal" },
+        "west": { "uv": [6, 6, 7, 7], "texture": "#crystal" },
+        "east": { "uv": [6, 6, 7, 7], "texture": "#crystal" }
+      }
+    },
+    {
+      "__comment": "Left spike",
+      "from": [2.5, 7, 8.25],
+      "to": [6, 9, 9.25],
+      "faces": {
+        "down": { "uv": [0, 6, 4, 7], "texture": "#crystal" },
+        "up": { "uv": [0, 6, 4, 7], "texture": "#crystal" },
+        "north": { "uv": [0, 6, 4, 8], "texture": "#crystal" },
+        "south": { "uv": [0, 6, 4, 8], "texture": "#crystal" },
+        "west": { "uv": [6, 6, 7, 8], "texture": "#crystal" },
+        "east": { "uv": [6, 6, 7, 8], "texture": "#crystal" }
+      }
+    },
+    {
+      "__comment": "Right spike",
+      "from": [10, 7, 8.25],
+      "to": [13.5, 9, 9.25],
+      "faces": {
+        "down": { "uv": [12, 6, 16, 7], "texture": "#crystal" },
+        "up": { "uv": [12, 6, 16, 7], "texture": "#crystal" },
+        "north": { "uv": [12, 6, 16, 8], "texture": "#crystal" },
+        "south": { "uv": [12, 6, 16, 8], "texture": "#crystal" },
+        "west": { "uv": [6, 6, 7, 8], "texture": "#crystal" },
+        "east": { "uv": [6, 6, 7, 8], "texture": "#crystal" }
+      }
+    },
+    {
+      "__comment": "Top spike",
+      "from": [7.5, 12.5, 8.25],
+      "to": [8.5, 16, 9.25],
+      "faces": {
+        "down": { "uv": [6, 0, 7, 1], "texture": "#crystal" },
+        "up": { "uv": [6, 0, 7, 1], "texture": "#crystal" },
+        "north": { "uv": [6, 0, 7, 4], "texture": "#crystal" },
+        "south": { "uv": [6, 0, 7, 4], "texture": "#crystal" },
+        "west": { "uv": [6, 0, 7, 4], "texture": "#crystal" },
+        "east": { "uv": [6, 0, 7, 4], "texture": "#crystal" }
+      }
+    },
+    {
+      "__comment": "Bottom spike",
+      "from": [7.5, 0, 8.25],
+      "to": [8.5, 3.5, 9.25],
+      "faces": {
+        "down": { "uv": [6, 15, 7, 16], "texture": "#crystal" },
+        "up": { "uv": [6, 12, 7, 13], "texture": "#crystal" },
+        "north": { "uv": [6, 12, 7, 16], "texture": "#crystal" },
+        "south": { "uv": [6, 12, 7, 16], "texture": "#crystal" },
+        "west": { "uv": [6, 12, 7, 16], "texture": "#crystal" },
+        "east": { "uv": [6, 12, 7, 16], "texture": "#crystal" }
+      }
+    },
+    {
+      "__comment": "Diagonal connector - top left",
+      "from": [5, 10, 8.25],
+      "to": [6, 11, 9.25],
+      "rotation": { "origin": [8, 8, 8.75], "axis": "z", "angle": -22.5 },
+      "faces": {
+        "down": { "uv": [3, 8, 4, 9], "texture": "#crystal" },
+        "up": { "uv": [3, 8, 4, 9], "texture": "#crystal" },
+        "north": { "uv": [3, 8, 4, 9], "texture": "#crystal" },
+        "south": { "uv": [3, 8, 4, 9], "texture": "#crystal" },
+        "west": { "uv": [3, 8, 4, 9], "texture": "#crystal" },
+        "east": { "uv": [3, 8, 4, 9], "texture": "#crystal" }
+      }
+    },
+    {
+      "__comment": "Diagonal connector - top right",
+      "from": [10, 10, 8.25],
+      "to": [11, 11, 9.25],
+      "rotation": { "origin": [8, 8, 8.75], "axis": "z", "angle": 22.5 },
+      "faces": {
+        "down": { "uv": [12, 8, 13, 9], "texture": "#crystal" },
+        "up": { "uv": [12, 8, 13, 9], "texture": "#crystal" },
+        "north": { "uv": [12, 8, 13, 9], "texture": "#crystal" },
+        "south": { "uv": [12, 8, 13, 9], "texture": "#crystal" },
+        "west": { "uv": [12, 8, 13, 9], "texture": "#crystal" },
+        "east": { "uv": [12, 8, 13, 9], "texture": "#crystal" }
+      }
+    },
+    {
+      "__comment": "Diagonal connector - bottom left",
+      "from": [5, 5, 8.25],
+      "to": [6, 6, 9.25],
+      "rotation": { "origin": [8, 8, 8.75], "axis": "z", "angle": 22.5 },
+      "faces": {
+        "down": { "uv": [3, 6, 4, 7], "texture": "#crystal" },
+        "up": { "uv": [3, 6, 4, 7], "texture": "#crystal" },
+        "north": { "uv": [3, 6, 4, 7], "texture": "#crystal" },
+        "south": { "uv": [3, 6, 4, 7], "texture": "#crystal" },
+        "west": { "uv": [3, 6, 4, 7], "texture": "#crystal" },
+        "east": { "uv": [3, 6, 4, 7], "texture": "#crystal" }
+      }
+    },
+    {
+      "__comment": "Diagonal connector - bottom right",
+      "from": [10, 5, 8.25],
+      "to": [11, 6, 9.25],
+      "rotation": { "origin": [8, 8, 8.75], "axis": "z", "angle": -22.5 },
+      "faces": {
+        "down": { "uv": [12, 6, 13, 7], "texture": "#crystal" },
+        "up": { "uv": [12, 6, 13, 7], "texture": "#crystal" },
+        "north": { "uv": [12, 6, 13, 7], "texture": "#crystal" },
+        "south": { "uv": [12, 6, 13, 7], "texture": "#crystal" },
+        "west": { "uv": [12, 6, 13, 7], "texture": "#crystal" },
+        "east": { "uv": [12, 6, 13, 7], "texture": "#crystal" }
+      }
+    }
+  ]
+}

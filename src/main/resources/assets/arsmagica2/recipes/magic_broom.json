@@ -1,0 +1,24 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    " S ",
+    "ASA",
+    " H "
+  ],
+  "key": {
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "stickWood"
+    },
+    "A": {
+      "type": "forge:ore_dict",
+      "ore": "arcaneAsh"
+    },
+    "H": {
+      "item": "minecraft:hay_block"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:magic_broom"
+  }
+}

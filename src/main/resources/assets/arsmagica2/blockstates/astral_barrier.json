@@ -1,0 +1,15 @@
+{
+    "forge_marker" : 1,
+    "defaults": {
+        "custom": {
+        },
+        "model": "arsmagica2:scaledown",
+        "textures": {
+            "particle":"arsmagica2:blocks/custom/astral_barrier"
+        }
+    },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{}]
+    }
+}

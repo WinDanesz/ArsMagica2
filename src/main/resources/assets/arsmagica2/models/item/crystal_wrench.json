@@ -1,6 +1,20 @@
 {
-    "parent": "item/generated",
+    "parent": "item/handheld",
     "textures": {
         "layer0": "arsmagica2:items/crystal_wrench"
-    }
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "stored": 1
+            },
+            "model": "arsmagica2:item/crystal_wrench_stored"
+        },
+        {
+            "predicate": {
+                "disconnect": 1
+            },
+            "model": "arsmagica2:item/crystal_wrench_disconnect"
+        }
+    ]
 }

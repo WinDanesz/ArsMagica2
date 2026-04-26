@@ -1,0 +1,26 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "GDG",
+    "DED",
+    "GDG"
+  ],
+  "key": {
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "gemBlueTopaz"
+    },
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "dyeLightBlue"
+    },
+    "E": {
+      "item": "arsmagica2:crystal_marker",
+      "data": 1
+    }
+  },
+  "result": {
+    "item": "arsmagica2:crystal_marker",
+    "data": 5
+  }
+}

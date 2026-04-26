@@ -1,286 +1,272 @@
 package am2.common.blocks.tileentity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import am2.api.blocks.IKeystoneLockable;
 import am2.api.extensions.ISpellCaster;
-import am2.api.spell.AbstractSpellPart;
 import am2.api.spell.SpellComponent;
-import am2.common.defs.BlockDefs;
+import am2.api.spell.SpellPart;
+import am2.common.blocks.BlockSpellSealedDoor;
+import am2.common.registry.AMBlocks;
 import am2.common.spell.SpellCaster;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 
-public class TileEntitySpellSealedDoor extends TileEntity implements ITickable, IInventory, IKeystoneLockable<TileEntitySpellSealedDoor>{
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
-	private ItemStack[] inventory;
+public class TileEntitySpellSealedDoor extends TileEntity implements ITickable, IInventory, IKeystoneLockable<TileEntitySpellSealedDoor> {
 
-	private int lastAppliedTime = -1;
-	private int closeTime = -1;
-	private int curTime = 0;
-	private int opentime = 40;
+    private NonNullList<ItemStack> inventory;
 
-	private ArrayList<SpellComponent> appliedParts;
-	private ArrayList<SpellComponent> key;
+    private int lastAppliedTime = -1;
+    private int closeTime = -1;
+    private int curTime = 0;
+    private int opentime = 40;
 
-	public TileEntitySpellSealedDoor(){
-		inventory = new ItemStack[getSizeInventory()];
-		appliedParts = new ArrayList<SpellComponent>();
-		key = new ArrayList<SpellComponent>();
-	}
+    private ArrayList<SpellComponent> appliedParts;
+    private ArrayList<SpellComponent> key;
 
-	@Override
-	public ItemStack[] getRunesInKey(){
-		ItemStack[] runes = new ItemStack[3];
-		runes[0] = inventory[0];
-		runes[1] = inventory[1];
-		runes[2] = inventory[2];
-		return runes;
-	}
+    public TileEntitySpellSealedDoor() {
+        inventory = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+        appliedParts = new ArrayList<SpellComponent>();
+        key = new ArrayList<SpellComponent>();
+    }
 
-	@Override
-	public boolean keystoneMustBeHeld(){
-		return false;
-	}
+    @Override
+    public ItemStack[] getRunesInKey() {
+        ItemStack[] runes = new ItemStack[3];
+        runes[0] = inventory.get(0);
+        runes[1] = inventory.get(1);
+        runes[2] = inventory.get(2);
+        return runes;
+    }
 
-	@Override
-	public boolean keystoneMustBeInActionBar(){
-		return false;
-	}
+    @Override
+    public boolean keystoneMustBeHeld() {
+        return false;
+    }
 
-	@Override
-	public int getSizeInventory(){
-		return 4;
-	}
+    @Override
+    public boolean keystoneMustBeInActionBar() {
+        return false;
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
+    @Override
+    public int getSizeInventory() {
+        return 4;
+    }
 
-	@Override
-	public ItemStack getStackInSlot(int slot){
-		if (slot >= inventory.length)
-			return null;
-		return inventory[slot];
-	}
+    @Override
+    public boolean isEmpty() {
+        for (ItemStack itemstack : this.inventory) {
+            if (!itemstack.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public ItemStack decrStackSize(int i, int j){
-		if (inventory[i] != null){
-			if (inventory[i].getCount() <= j){
-				ItemStack itemstack = inventory[i];
-				inventory[i] = null;
-				return itemstack;
-			}
-			ItemStack itemstack1 = inventory[i].splitStack(j);
-			if (inventory[i].getCount() == 0){
-				inventory[i] = null;
-			}
-			return itemstack1;
-		}else{
-			return null;
-		}
-	}
-	
-	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
-		return false;
-	}
+    /**
+     * Returns the stack in the given slot.
+     */
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        return inventory.get(slot);
+    }
 
-	
-	@Override
-	public ItemStack removeStackFromSlot(int i){
-		if (inventory[i] != null){
-			ItemStack itemstack = inventory[i];
-			inventory[i] = null;
-			return itemstack;
-		}else{
-			return null;
-		}
-	}
+    /**
+     * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
+     */
+    @Override
+    public ItemStack decrStackSize(int slot, int amount) {
+        ItemStack itemstack = ItemStackHelper.getAndSplit(this.inventory, slot, amount);
+        if (!itemstack.isEmpty()) {
+            this.markDirty();
+        }
+        return itemstack;
+    }
 
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inventory[i] = itemstack;
-		if (itemstack != null && itemstack.getCount() > getInventoryStackLimit()){
-			itemstack.setCount( getInventoryStackLimit());
-		}
-	}
+    @Override
+    public ItemStack removeStackFromSlot(int slot) {
 
-	@Override
-	public String getName(){
-		return "Spell Sealed Door";
-	}
+        ItemStack stack = getStackInSlot(slot);
 
-	@Override
-	public int getInventoryStackLimit(){
-		return 1;
-	}
+        if (!stack.isEmpty()) {
+            setInventorySlotContents(slot, ItemStack.EMPTY);
+        }
 
-	@Override
-	public boolean isUsableByPlayer(EntityPlayer entityplayer){
-		if (world.getTileEntity(pos) != this){
-			return false;
-		}
-		return entityplayer.getDistanceSqToCenter(pos) <= 64D;
-	}
+        return stack;
+    }
 
-	@Override
-	public boolean hasCustomName(){
-		return false;
-	}
+    public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
+        if (stack.isEmpty()) {
+            stack = ItemStack.EMPTY;
+        }
+        this.inventory.set(index, stack);
+        if (stack.getCount() > this.getInventoryStackLimit()) {
+            stack.setCount(this.getInventoryStackLimit());
+        }
 
-	@Override
-	public void openInventory(EntityPlayer player){
-	}
+        this.markDirty();
+    }
 
-	@Override
-	public void closeInventory(EntityPlayer player){
-		analyzeSpellForKey();
-	}
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
+        return false;
+    }
 
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack){
-		return false;
-	}
+    @Override
+    public String getName() {
+        return "Spell Sealed Door";
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound){
-		super.readFromNBT(nbttagcompound);
-		NBTTagList nbttaglist = nbttagcompound.getTagList("SpellSealedDoorInventory", Constants.NBT.TAG_COMPOUND);
-		inventory = new ItemStack[getSizeInventory()];
-		for (int i = 0; i < nbttaglist.tagCount(); i++){
-			String tag = String.format("ArrayIndex", i);
-			NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbttaglist.getCompoundTagAt(i);
-			byte byte0 = nbttagcompound1.getByte(tag);
-			if (byte0 >= 0 && byte0 < inventory.length){
-				inventory[byte0] = new ItemStack((nbttagcompound1));
-			}
-		}
-	}
+    @Override
+    public int getInventoryStackLimit() {
+        return 1;
+    }
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound){
-		super.writeToNBT(nbttagcompound);
-		NBTTagList nbttaglist = new NBTTagList();
-		for (int i = 0; i < inventory.length; i++){
-			if (inventory[i] != null){
-				String tag = String.format("ArrayIndex", i);
-				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-				nbttagcompound1.setByte(tag, (byte)i);
-				inventory[i].writeToNBT(nbttagcompound1);
-				nbttaglist.appendTag(nbttagcompound1);
-			}
-		}
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+        if (world.getTileEntity(pos) != this) {
+            return false;
+        }
+        return entityplayer.getDistanceSqToCenter(pos) <= 64D;
+    }
 
-		nbttagcompound.setTag("SpellSealedDoorInventory", nbttaglist);
-		return nbttagcompound;
-	}
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
 
-	@Override
-	public void update(){
+    @Override
+    public void openInventory(EntityPlayer player) {
+    }
 
-		if (!world.isRemote){
-			curTime++;
+    @Override
+    public void closeInventory(EntityPlayer player) {
+        analyzeSpellForKey();
+    }
 
-			if (closeTime == -1 && lastAppliedTime != -1){
-				if (curTime > lastAppliedTime + 10){
-					clearAppliedParts();
-					return;
-				}
-				if (checkKey()){
-					clearAppliedParts();
-					setOpenState(true);
-					this.closeTime = curTime + opentime;
-				}
-			}
+    @Override
+    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+        return false;
+    }
 
-			if (closeTime != -1 && curTime > closeTime){
-				clearAppliedParts();
-				setOpenState(false);
-				closeTime = -1;
-			}
-		}
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound nbttagcompound) {
+        super.readFromNBT(nbttagcompound);
+        ItemStackHelper.loadAllItems(nbttagcompound, this.inventory);
+    }
 
-	private void setOpenState(boolean open){
-		BlockDefs.spellSealedDoor.toggleDoor(world, pos, open);
-	}
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
+        super.writeToNBT(nbttagcompound);
+        ItemStackHelper.saveAllItems(nbttagcompound, this.inventory);
+        return nbttagcompound;
+    }
 
-	public void addPartToCurrentKey(SpellComponent component){
-		this.appliedParts.add(component);
-		this.lastAppliedTime = curTime;
-	}
+    @Override
+    public void update() {
 
-	private boolean checkKey(){
-		if (key.size() != appliedParts.size()) return false;
-		if (key.equals(appliedParts)) return true;
-		return false;
-	}
+        if (!world.isRemote) {
+            curTime++;
 
-	private void clearAppliedParts(){
-		appliedParts.clear();
-		lastAppliedTime = -1;
-	}
+            if (closeTime == -1 && lastAppliedTime != -1) {
+                if (curTime > lastAppliedTime + 10) {
+                    clearAppliedParts();
+                    return;
+                }
+                if (checkKey()) {
+                    clearAppliedParts();
+                    setOpenState(true);
+                    this.closeTime = curTime + opentime;
+                }
+            }
 
-	public void analyzeSpellForKey(){
-		ItemStack spell = this.inventory[3];
+            if (closeTime != -1 && curTime > closeTime) {
+                clearAppliedParts();
+                setOpenState(false);
+                closeTime = -1;
+            }
+        }
+    }
 
-		if (spell == null) return;
+    private void setOpenState(boolean open) {
+        ((BlockSpellSealedDoor) AMBlocks.spell_sealed_door).toggleDoor(world, pos, open);
+    }
 
-		//if we're here, we have a spell to analyze!
-		key.clear();
-		ISpellCaster caster = spell.getCapability(SpellCaster.INSTANCE, null);
-		if (caster != null) {
-			for (List<AbstractSpellPart> parts : caster.getSpellCommon()) {
-				for (AbstractSpellPart part : parts) {
-					if (part instanceof SpellComponent) {
-						key.add((SpellComponent) part);
-					}
-				}
-			}
-		}
-	}
+    public void addPartToCurrentKey(SpellComponent component) {
+        this.appliedParts.add(component);
+        this.lastAppliedTime = curTime;
+    }
 
-	@Override
-	public ITextComponent getDisplayName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    private boolean checkKey() {
+        if (key.size() != appliedParts.size()) return false;
+        if (key.equals(appliedParts)) return true;
+        return false;
+    }
 
-	@Override
-	public int getField(int id) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    private void clearAppliedParts() {
+        appliedParts.clear();
+        lastAppliedTime = -1;
+    }
 
-	@Override
-	public void setField(int id, int value) {
-		// TODO Auto-generated method stub
-		
-	}
+    public void analyzeSpellForKey() {
+        ItemStack spell = this.inventory.get(3);
 
-	@Override
-	public int getFieldCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+        if (spell.isEmpty()) return;
 
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
+        //if we're here, we have a spell to analyze!
+        key.clear();
+        ISpellCaster caster = SpellCaster.of(spell);
+        if (caster != null) {
+            for (List<SpellPart> parts : caster.getSpellCommon()) {
+                for (SpellPart part : parts) {
+                    if (part instanceof SpellComponent) {
+                        key.add((SpellComponent) part);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int getField(int id) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+        // TODO Auto-generated method stub
+
+    }
 }

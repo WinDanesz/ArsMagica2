@@ -1,38 +1,38 @@
 package am2.common.navigation;
 
-public class BreadCrumb implements Comparable<BreadCrumb>{
+public class BreadCrumb implements Comparable<BreadCrumb> {
 
-	public Point3D position;
-	public BreadCrumb next;
-	public int cost = Integer.MAX_VALUE;
-	public boolean onClosedList = false;
-	public boolean onOpenList = false;
+    public Point3D position;
+    public BreadCrumb next;
+    public int cost = Integer.MAX_VALUE;
+    public boolean onClosedList = false;
+    public boolean onOpenList = false;
 
-	public BreadCrumb(Point3D position){
-		this.position = position;
-	}
+    public BreadCrumb(Point3D position) {
+        this.position = position;
+    }
 
-	public void unshift(){
-		this.position = this.position.Unshift();
-	}
+    public void unshift() {
+        this.position = this.position.Unshift();
+    }
 
-	public BreadCrumb(Point3D position, BreadCrumb parent){
-		this.position = position;
-		this.next = parent;
-	}
+    public BreadCrumb(Point3D position, BreadCrumb parent) {
+        this.position = position;
+        this.next = parent;
+    }
 
-	@Override
-	public boolean equals(Object o){
-		if (o instanceof BreadCrumb){
-			BreadCrumb b = (BreadCrumb)o;
-			if (this.position.equals(b.position))
-				return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof BreadCrumb) {
+            BreadCrumb b = (BreadCrumb) o;
+            if (this.position.equals(b.position))
+                return true;
+        }
+        return false;
+    }
 
-	@Override
-	public int compareTo(BreadCrumb o){
-		return Integer.compare(this.cost, o.cost);
-	}
+    @Override
+    public int compareTo(BreadCrumb o) {
+        return Integer.compare(this.cost, o.cost);
+    }
 }

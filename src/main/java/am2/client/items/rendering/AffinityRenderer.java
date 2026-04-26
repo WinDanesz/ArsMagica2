@@ -9,24 +9,24 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public class AffinityRenderer implements ItemMeshDefinition{
-	
-	private final String prefix;
-	
-	public AffinityRenderer(String prefix) {
-		this.prefix = prefix;
-	}
-	
-	public AffinityRenderer addModels(Item item) {
-		for (Affinity aff : ArsMagicaAPI.getAffinityRegistry().getValues())
-			ModelBakery.registerItemVariants(item, new ModelResourceLocation(new ResourceLocation(aff.getRegistryName().getNamespace(), prefix + aff.getRegistryName().getPath()), "inventory"));
-		return this;
-	}
-	
-	@Override
-	public ModelResourceLocation getModelLocation(ItemStack stack) {
-		Affinity aff = null; // todo registry ArsMagicaAPI.getAffinityRegistry().getObjectById(stack.getItemDamage());
-		return new ModelResourceLocation(new ResourceLocation(aff.getRegistryName().getNamespace(), prefix + aff.getRegistryName().getPath()), "inventory");
-	}
-	
+public class AffinityRenderer implements ItemMeshDefinition {
+
+    private final String prefix;
+
+    public AffinityRenderer(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public AffinityRenderer addModels(Item item) {
+        for (Affinity aff : ArsMagicaAPI.getAffinityRegistry().getValues())
+            ModelBakery.registerItemVariants(item, new ModelResourceLocation(new ResourceLocation(aff.getRegistryName().getNamespace(), prefix + aff.getRegistryName().getPath()), "inventory"));
+        return this;
+    }
+
+    @Override
+    public ModelResourceLocation getModelLocation(ItemStack stack) {
+        Affinity aff = Affinity.byNetworkID(stack.getItemDamage());
+        return new ModelResourceLocation(new ResourceLocation(aff.getRegistryName().getNamespace(), prefix + aff.getRegistryName().getPath()), "inventory");
+    }
+
 }

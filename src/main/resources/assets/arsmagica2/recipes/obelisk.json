@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "VSV",
+    "SCS",
+    "VSV"
+  ],
+  "key": {
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    },
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "stone"
+    },
+    "C": {
+      "item": "minecraft:stonebrick",
+      "data": 3
+    }
+  },
+  "result": {
+    "item": "arsmagica2:obelisk"
+  }
+}

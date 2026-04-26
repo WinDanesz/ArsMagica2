@@ -1,0 +1,79 @@
+{
+    "parent": "block/block",
+    "textures": {
+        "all": "arsmagica2:blocks/custom/keystonereceptacle",
+        "particle": "arsmagica2:blocks/custom/keystonereceptacle"
+    },
+    "elements": [
+        {
+            "name": "Main",
+            "comment": "Main body — from [0,0,0] to [16,16,12] (occupies back 12 units, portal opening faces south)",
+            "from": [0, 0, 0],
+            "to":   [16, 16, 12],
+            "faces": {
+                "north": { "uv": [10, 12, 14, 16], "texture": "#all" },
+                "south": { "uv": [3,  12,  7, 16], "texture": "#all" },
+                "east":  { "uv": [7,  12, 10, 16], "texture": "#all" },
+                "west":  { "uv": [0,  12,  3, 16], "texture": "#all" },
+                "up":    { "uv": [3,   9,  7, 12], "texture": "#all" },
+                "down":  { "uv": [7,   9, 11, 12], "texture": "#all" }
+            }
+        },
+        {
+            "name": "BoxBottom",
+            "comment": "Bottom bar of the portal frame",
+            "from": [0,  0, 12],
+            "to":   [16, 4, 16],
+            "faces": {
+                "north": { "uv": [6,  1, 10, 2], "texture": "#all" },
+                "south": { "uv": [1,  1,  5, 2], "texture": "#all" },
+                "east":  { "uv": [5,  1,  6, 2], "texture": "#all" },
+                "west":  { "uv": [0,  1,  1, 2], "texture": "#all" },
+                "up":    { "uv": [1,  0,  5, 1], "texture": "#all" },
+                "down":  { "uv": [5,  0,  9, 1], "texture": "#all" }
+            }
+        },
+        {
+            "name": "BoxTop",
+            "comment": "Top bar of the portal frame",
+            "from": [0,  12, 12],
+            "to":   [16, 16, 16],
+            "faces": {
+                "north": { "uv": [6,  3, 10, 4], "texture": "#all" },
+                "south": { "uv": [1,  3,  5, 4], "texture": "#all" },
+                "east":  { "uv": [5,  3,  6, 4], "texture": "#all" },
+                "west":  { "uv": [0,  3,  1, 4], "texture": "#all" },
+                "up":    { "uv": [1,  2,  5, 3], "texture": "#all" },
+                "down":  { "uv": [5,  2,  9, 3], "texture": "#all" }
+            }
+        },
+        {
+            "name": "BoxRight",
+            "comment": "Right pillar of the portal frame (east side, x=12-16)",
+            "from": [12, 4, 12],
+            "to":   [16, 12, 16],
+            "faces": {
+                "north": { "uv": [15, 1, 16, 3], "texture": "#all" },
+                "south": { "uv": [13, 1, 14, 3], "texture": "#all" },
+                "east":  { "uv": [14, 1, 15, 3], "texture": "#all" },
+                "west":  { "uv": [12, 1, 13, 3], "texture": "#all" },
+                "up":    { "uv": [13, 0, 14, 1], "texture": "#all" },
+                "down":  { "uv": [14, 0, 15, 1], "texture": "#all" }
+            }
+        },
+        {
+            "name": "BoxLeft",
+            "comment": "Left pillar of the portal frame (west side, x=0-4)",
+            "from": [0, 4, 12],
+            "to":   [4, 12, 16],
+            "faces": {
+                "north": { "uv": [15, 4, 16, 6], "texture": "#all" },
+                "south": { "uv": [13, 4, 14, 6], "texture": "#all" },
+                "east":  { "uv": [14, 4, 15, 6], "texture": "#all" },
+                "west":  { "uv": [12, 4, 13, 6], "texture": "#all" },
+                "up":    { "uv": [13, 3, 14, 4], "texture": "#all" },
+                "down":  { "uv": [14, 3, 15, 4], "texture": "#all" }
+            }
+        }
+    ]
+}

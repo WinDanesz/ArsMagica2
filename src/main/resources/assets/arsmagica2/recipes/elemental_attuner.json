@@ -1,0 +1,24 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "IDI",
+    "DBD",
+    "IDI"
+  ],
+  "key": {
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    },
+    "B": {
+      "item": "arsmagica2:chimerite_block"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:flicker_habitat"
+  }
+}

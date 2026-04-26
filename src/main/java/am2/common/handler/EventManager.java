@@ -1,8 +1,8 @@
 package am2.common.handler;
 
 import am2.common.blocks.tileentity.ITileEntityAMBase;
-import am2.common.network.PacketHandler;
 import am2.common.network.packets.MessageTEUpdate;
+import am2.network.AMNetworkHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -35,10 +35,11 @@ public class EventManager {
             for (TileEntity te : toUpdate) {
                 list.appendTag(te.getUpdateTag());
             }
+            toUpdate.clear();
 
             NBTTagCompound tag = new NBTTagCompound();
             tag.setTag("data", list);
-            PacketHandler.INSTANCE.sendToAll(new MessageTEUpdate(tag));
+            AMNetworkHandler.getNetwork().sendToAll(new MessageTEUpdate(tag));
         }
     }
 }

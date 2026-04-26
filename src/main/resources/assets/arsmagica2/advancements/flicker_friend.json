@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:flicker_jar"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.flicker_friend.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.flicker_friend.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "parent": "arsmagica2:compendium_data",
+  "criteria": {
+    "has_flicker_jar": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "arsmagica2:flicker_jar"
+          }
+        ]
+      }
+    }
+  }
+}

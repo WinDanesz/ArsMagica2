@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PRR",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "arsmagica2:witchwood_planks"
+    },
+    "R": {
+      "item": "arsmagica2:blank_rune"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:keystone_trapdoor",
+    "count": 2
+  }
+}

@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "half=bottom": { "model": "arsmagica2:witchwood_double_slab" },
+        "half=top": { "model": "arsmagica2:witchwood_double_slab" }
+    }
+}

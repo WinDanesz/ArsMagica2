@@ -1,89 +1,98 @@
 package am2.common.items;
 
-import am2.ArsMagica2;
+import am2.ArsMagica;
+import am2.common.container.InventoryKeyStone;
 import am2.common.container.InventoryRuneBag;
 import am2.common.defs.IDDefs;
-import am2.common.defs.ItemDefs;
+import am2.common.registry.AMItems;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 
-public class ItemRuneBag extends ItemArsMagica{
+import java.util.Arrays;
 
-	public ItemRuneBag(){
-		super();
-	}
+public class ItemRuneBag extends Item {
 
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer entityplayer, EnumHand hand){
-		if (entityplayer.isSneaking()){
-			FMLNetworkHandler.openGui(entityplayer, ArsMagica2.instance, IDDefs.GUI_RUNE_BAG, world, (int)entityplayer.posX, (int)entityplayer.posY, (int)entityplayer.posZ);
-		}
-		return super.onItemRightClick(world, entityplayer, hand);
-	}
+    public ItemRuneBag() {
+        super();
+        setMaxStackSize(1);
+    }
 
-	private ItemStack[] getMyInventory(ItemStack itemStack){
-		return ReadFromStackTagCompound(itemStack);
-	}
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        if (player.isSneaking()) {
+            player.openGui(ArsMagica.instance, IDDefs.GUI_RUNE_BAG, world, (int) player.posX, (int) player.posY, (int) player.posZ);
+        }
+        return super.onItemRightClick(world, player, hand);
+    }
 
-	public void UpdateStackTagCompound(ItemStack itemStack, ItemStack[] values){
-		if (itemStack.getTagCompound() == null){
-			itemStack.setTagCompound(new NBTTagCompound());
-		}
-		for (int i = 0; i < values.length; ++i){
-			ItemStack stack = values[i];
-			if (stack == null){
-				itemStack.getTagCompound().removeTag("runebagmeta" + i);
-				continue;
-			}else{
-				itemStack.getTagCompound().setInteger("runebagmeta" + i, stack.getItemDamage());
-			}
-		}
-	}
+    public void UpdateStackTagCompound(ItemStack itemStack, ItemStack[] values) {
+        if (!itemStack.hasTagCompound()) {
+            itemStack.setTagCompound(new NBTTagCompound());
+        }
+        for (int i = 0; i < values.length; ++i) {
+            ItemStack stack = values[i];
+            if (stack == ItemStack.EMPTY) {
+                itemStack.getTagCompound().removeTag("runebagmeta" + i);
+            } else if (stack.getItem() == AMItems.rune) {
+                itemStack.getTagCompound().setInteger("runebagmeta" + i, stack.getItemDamage());
+            }
+        }
 
-	@Override
-	public boolean getShareTag(){
-		return true;
-	}
+        if (itemStack.getTagCompound().getKeySet().isEmpty()) {
+            itemStack.setTagCompound(null);
+        }
+    }
 
-	public void UpdateStackTagCompound(ItemStack itemStack, InventoryRuneBag inventory){
-		if (itemStack.getTagCompound() == null){
-			itemStack.setTagCompound(new NBTTagCompound());
-		}
-		for (int i = 0; i < inventory.getSizeInventory(); ++i){
-			ItemStack stack = inventory.getStackInSlot(i);
-			if (stack == null){
-				continue;
-			}else{
-				itemStack.getTagCompound().setInteger("runebagmeta" + i, stack.getItemDamage());
-			}
-		}
-	}
+    @Override
+    public boolean getShareTag() {
+        return true;
+    }
 
-	public ItemStack[] ReadFromStackTagCompound(ItemStack itemStack){
-		if (itemStack.getTagCompound() == null){
-			return new ItemStack[InventoryRuneBag.inventorySize];
-		}
-		ItemStack[] items = new ItemStack[InventoryRuneBag.inventorySize];
-		for (int i = 0; i < items.length; ++i){
-			if (!itemStack.getTagCompound().hasKey("runebagmeta" + i) || itemStack.getTagCompound().getInteger("runebagmeta" + i) == -1){
-				items[i] = null;
-				continue;
-			}
-			int meta = 0;
-			meta = itemStack.getTagCompound().getInteger("runebagmeta" + i);
-			items[i] = new ItemStack(ItemDefs.rune, 1, meta);
-		}
-		return items;
-	}
+    public void UpdateStackTagCompound(ItemStack itemStack, InventoryRuneBag inventory) {
+        if (!itemStack.hasTagCompound()) {
+            itemStack.setTagCompound(new NBTTagCompound());
+        }
+        for (int i = 0; i < inventory.getSizeInventory(); ++i) {
+            ItemStack stack = inventory.getStackInSlot(i);
+            if (stack.isEmpty()) {
+                continue;
+            } else {
+                itemStack.getTagCompound().setInteger("runebagmeta" + i, stack.getItemDamage());
+            }
+        }
+    }
 
-	public InventoryRuneBag ConvertToInventory(ItemStack runeBagStack){
-		InventoryRuneBag irb = new InventoryRuneBag();
-		irb.SetInventoryContents(getMyInventory(runeBagStack));
-		return irb;
-	}
+    private static ItemStack[] readFromStackTagCompound(ItemStack itemStack) {
+        if (!itemStack.hasTagCompound()) {
+            ItemStack[] list = new ItemStack[InventoryKeyStone.inventorySize];
+            Arrays.fill(list, ItemStack.EMPTY);
+            return list;
+        }
+        ItemStack[] items = new ItemStack[InventoryRuneBag.inventorySize];
+        Arrays.fill(items, ItemStack.EMPTY);
+        for (int i = 0; i < items.length; ++i) {
+            if (!itemStack.getTagCompound().hasKey("runebagmeta" + i) || itemStack.getTagCompound().getInteger("runebagmeta" + i) == -1) {
+                items[i] = ItemStack.EMPTY;
+                continue;
+            }
+            int meta = 0;
+            meta = itemStack.getTagCompound().getInteger("runebagmeta" + i);
+            items[i] = new ItemStack(AMItems.rune, 1, meta);
+        }
+        return items;
+    }
+
+    public static InventoryRuneBag getInventory(ItemStack runeBagStack) {
+        if (runeBagStack == ItemStack.EMPTY) {
+            return InventoryRuneBag.EMPTY;
+        }
+        InventoryRuneBag irb = new InventoryRuneBag();
+        irb.SetInventoryContents(readFromStackTagCompound(runeBagStack));
+        return irb;
+    }
 }

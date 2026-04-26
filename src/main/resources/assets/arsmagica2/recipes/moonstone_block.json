@@ -1,0 +1,17 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "arsmagica2:moonstone"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:moonstone_block",
+    "count": 1
+  }
+}

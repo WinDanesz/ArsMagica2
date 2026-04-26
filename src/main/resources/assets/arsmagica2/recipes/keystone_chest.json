@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "WRW",
+    "WVW",
+    "WRW"
+  ],
+  "key": {
+    "W": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "R": {
+      "item": "arsmagica2:rune",
+      "data": 0
+    },
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:keystone_chest"
+  }
+}

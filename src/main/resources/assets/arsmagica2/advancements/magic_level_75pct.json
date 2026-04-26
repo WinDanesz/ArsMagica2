@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:infinity_orb",
+      "data": 2
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.magic_level_75pct.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.magic_level_75pct.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "parent": "arsmagica2:magic_level_50pct",
+  "criteria": {
+    "reach_level_75pct": {
+      "trigger": "arsmagica2:magic_level_reached",
+      "conditions": {
+        "level_percent": 75
+      }
+    }
+  },
+  "requirements": [["reach_level_75pct"]]
+}

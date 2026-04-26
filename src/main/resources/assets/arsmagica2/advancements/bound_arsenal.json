@@ -1,0 +1,49 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:bound_shield"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.bound_arsenal.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.bound_arsenal.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "arsmagica2:first_spell",
+  "criteria": {
+    "has_sword": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:bound_sword" }] }
+    },
+    "has_axe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:bound_axe" }] }
+    },
+    "has_pickaxe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:bound_pickaxe" }] }
+    },
+    "has_shovel": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:bound_shovel" }] }
+    },
+    "has_hoe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:bound_hoe" }] }
+    },
+    "has_bow": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:bound_bow" }] }
+    },
+    "has_shield": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:bound_shield" }] }
+    }
+  },
+  "requirements": [["has_sword", "has_axe", "has_pickaxe", "has_shovel", "has_hoe", "has_bow", "has_shield"]]
+}

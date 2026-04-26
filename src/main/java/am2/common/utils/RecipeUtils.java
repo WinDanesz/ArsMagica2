@@ -1,29 +1,27 @@
 package am2.common.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import am2.api.SpellRegistry;
+import am2.api.SpellRegistryHelper;
 import am2.api.event.SpellRecipeItemsEvent;
-import am2.api.spell.AbstractSpellPart;
+import am2.api.spell.SpellPart;
 import am2.common.LogHelper;
-import am2.common.defs.ItemDefs;
 import am2.common.power.PowerTypes;
+import am2.common.registry.AMItems;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class RecipeUtils {
 //	public static ItemStack parsePotionMeta(String potionDefinition){
@@ -60,213 +58,213 @@ public class RecipeUtils {
 //
 //		return potionMeta;
 //	}
-	
-	public static IRecipe getRecipeFor(ItemStack item){
 
-		if (item == null || item.getItem() == null) return null;
+    public static IRecipe getRecipeFor(ItemStack item) {
 
-		try{
-			ArrayList<IRecipe> possibleRecipes = new ArrayList<>();
-			for (IRecipe recipe : CraftingManager.REGISTRY){
-				ItemStack output = recipe.getRecipeOutput();
-				if (output == null) continue;
-				if (output.getItem() == item.getItem() && (output.getItemDamage() == Short.MAX_VALUE || output.getItemDamage() == item.getItemDamage())){
-					possibleRecipes.add(recipe);
-				}
-			}
+        if (item.isEmpty() || item.getItem() == null) return null;
 
-			if (possibleRecipes.size() > 0){
-				for (Object recipe : possibleRecipes){
-					if (((IRecipe)recipe).getRecipeOutput().getItemDamage() == item.getItemDamage()){
-						return (IRecipe)recipe;
-					}
-				}
-				return (IRecipe)possibleRecipes.get(0);
-			}
-		}catch (Throwable t){
+        try {
+            ArrayList<IRecipe> possibleRecipes = new ArrayList<>();
+            for (IRecipe recipe : CraftingManager.REGISTRY) {
+                ItemStack output = recipe.getRecipeOutput();
+                if (output.isEmpty()) continue;
+                if (output.getItem() == item.getItem() && (output.getItemDamage() == Short.MAX_VALUE || output.getItemDamage() == item.getItemDamage())) {
+                    possibleRecipes.add(recipe);
+                }
+            }
 
-		}
+            if (!possibleRecipes.isEmpty()) {
+                for (Object recipe : possibleRecipes) {
+                    if (((IRecipe) recipe).getRecipeOutput().getItemDamage() == item.getItemDamage()) {
+                        return (IRecipe) recipe;
+                    }
+                }
+                return (IRecipe) possibleRecipes.get(0);
+            }
+        } catch (Throwable t) {
 
-		return null;
-	}
+        }
 
-	public static int[] ParseEssenceIDs(String s){
-		if (s.toLowerCase().equals("e:*")){
-			int[] all = new int[PowerTypes.all().size()];
-			int count = 0;
-			for (PowerTypes type : PowerTypes.all()){
-				all[count++] = type.ID();
-			}
-			return all;
-		}
-		s = s.toLowerCase().replace("e:", "");
-		String[] split = s.split("\\|");
-		int[] ids = new int[split.length];
-		for (int i = 0; i < split.length; ++i){
-			try{
-				ids[i] = Integer.parseInt(split[i]);
-			}catch (NumberFormatException nex){
-				LogHelper.warn("Invalid power type ID while parsing value " + s);
-				ids[i] = 0;
-			}
-		}
-		return ids;
-	}
-	
-	public static ArrayList<ItemStack> getConvRecipe(AbstractSpellPart part) {
-		ArrayList<ItemStack> list = new ArrayList<>();
-		if (part == null){
-			LogHelper.error("Unable to write recipe to book.  Recipe part is null!");
-			return list;
-		}
-		
-		Object[] recipeItems = part.getRecipe();
-		SpellRecipeItemsEvent event = new SpellRecipeItemsEvent(SpellRegistry.getSkillFromPart(part).getID(), recipeItems);
-		MinecraftForge.EVENT_BUS.post(event);
-		recipeItems = event.recipeItems;
+        return null;
+    }
 
-		if (recipeItems == null){
-			LogHelper.error("Unable to write recipe to book.  Recipe items are null for part " + SpellRegistry.getSkillFromPart(part).getName() + "!");
-			return list;
-		}
-		for (int i = 0; i < recipeItems.length; ++i){
-			Object o = recipeItems[i];
-			String materialkey = "";
-			int qty = 1;
-			ItemStack recipeStack = null;
-			if (o instanceof ItemStack){
-				materialkey = ((ItemStack)o).getDisplayName();
-				recipeStack = (ItemStack)o;
-			}else if (o instanceof Item){
-				recipeStack = new ItemStack((Item)o);
-				materialkey = ((Item)o).getItemStackDisplayName(new ItemStack((Item)o));
-			}else if (o instanceof Block){
-				recipeStack = new ItemStack((Block)o);
-				materialkey = ((Block)o).getLocalizedName();
-			}else if (o instanceof String){
-				if (((String)o).startsWith("E:")){
-					int[] ids = RecipeUtils.ParseEssenceIDs((String)o);
-					materialkey = "Essence (";
-					for (int powerID : ids){
-						PowerTypes type = PowerTypes.getByID(powerID);
-						materialkey += type.name() + "/";
-					}
+    public static int[] ParseEssenceIDs(String s) {
+        if (s.toLowerCase().equals("e:*")) {
+            int[] all = new int[PowerTypes.all().size()];
+            int count = 0;
+            for (PowerTypes type : PowerTypes.all()) {
+                all[count++] = type.ID();
+            }
+            return all;
+        }
+        s = s.toLowerCase().replace("e:", "");
+        String[] split = s.split("\\|");
+        int[] ids = new int[split.length];
+        for (int i = 0; i < split.length; ++i) {
+            try {
+                ids[i] = Integer.parseInt(split[i]);
+            } catch (NumberFormatException nex) {
+                LogHelper.warn("Invalid power type ID while parsing value " + s);
+                ids[i] = 0;
+            }
+        }
+        return ids;
+    }
 
-					if (materialkey.equals("Essence (")){
-						++i;
-						continue;
-					}
+    public static ArrayList<ItemStack> getConvRecipe(SpellPart part) {
+        ArrayList<ItemStack> list = new ArrayList<>();
+        if (part == null) {
+            LogHelper.error("Unable to write recipe to book.  Recipe part is null!");
+            return list;
+        }
 
-					o = recipeItems[++i];
-					if (materialkey.startsWith("Essence (")){
-						materialkey = materialkey.substring(0, materialkey.lastIndexOf("/")) + ")";
-						qty = (Integer)o;
-						int flag = 0;
-						for (int f : ids){
-							flag |= f;
-						}
+        Object[] recipeItems = part.getEffectiveRecipe();
+        SpellRecipeItemsEvent event = new SpellRecipeItemsEvent(SpellRegistryHelper.getSkillFromPart(part).getID(), recipeItems);
+        MinecraftForge.EVENT_BUS.post(event);
+        recipeItems = event.recipeItems;
 
-						recipeStack = new ItemStack(ItemDefs.etherium, qty, flag);
-					}
+        if (recipeItems == null) {
+            LogHelper.error("Unable to write recipe to book.  Recipe items are null for part " + SpellRegistryHelper.getSkillFromPart(part).getName() + "!");
+            return list;
+        }
+        for (int i = 0; i < recipeItems.length; ++i) {
+            Object o = recipeItems[i];
+            String materialkey = "";
+            int qty = 1;
+            ItemStack recipeStack = ItemStack.EMPTY;
+            if (o instanceof ItemStack) {
+                materialkey = ((ItemStack) o).getDisplayName();
+                recipeStack = (ItemStack) o;
+            } else if (o instanceof Item) {
+                recipeStack = new ItemStack((Item) o);
+                materialkey = ((Item) o).getItemStackDisplayName(new ItemStack((Item) o));
+            } else if (o instanceof Block) {
+                recipeStack = new ItemStack((Block) o);
+                materialkey = ((Block) o).getLocalizedName();
+            } else if (o instanceof String) {
+                if (((String) o).startsWith("E:")) {
+                    int[] ids = RecipeUtils.ParseEssenceIDs((String) o);
+                    materialkey = "Essence (";
+                    for (int powerID : ids) {
+                        PowerTypes type = PowerTypes.getByID(powerID);
+                        materialkey += type.name() + "/";
+                    }
 
-				}else{
-					List<ItemStack> ores = OreDictionary.getOres((String)o);
-					recipeStack = ores.size() > 0 ? ores.get(1) : null;
-					materialkey = (String)o;
-				}
-			}
-			list.add(recipeStack);
-		}
-		return list;
-	}
+                    if (materialkey.equals("Essence (")) {
+                        ++i;
+                        continue;
+                    }
 
-	public static Object getRecipeItems(Object recipe){
-		if (recipe instanceof ShapedRecipes){
-			return getShapedRecipeItems((ShapedRecipes)recipe);
-		}else if (recipe instanceof ShapelessRecipes){
-			return getShapelessRecipeItems((ShapelessRecipes)recipe);
-		}else if (recipe instanceof ShapedOreRecipe){
-			return getShapedOreRecipeItems((ShapedOreRecipe)recipe);
-		}else if (recipe instanceof ShapelessOreRecipe){
-			return getShapelessOreRecipeItems((ShapelessOreRecipe)recipe);
-		}
-		return new Object[0];
-	}
-	
-	private static NonNullList<Ingredient> getShapedRecipeItems(ShapedRecipes recipe){
-		return recipe.recipeItems;
-	}
+                    o = recipeItems[++i];
+                    if (materialkey.startsWith("Essence (")) {
+                        materialkey = materialkey.substring(0, materialkey.lastIndexOf("/")) + ")";
+                        qty = (Integer) o;
+                        int flag = 0;
+                        for (int f : ids) {
+                            flag |= f;
+                        }
 
-	private static Object[] getShapelessRecipeItems(ShapelessRecipes recipe){
-		return recipe.recipeItems.toArray();
-	}
+                        recipeStack = new ItemStack(AMItems.etherium, qty, flag);
+                    }
 
-	private static Object[] getShapedOreRecipeItems(ShapedOreRecipe recipe){
-		Object[] components = ReflectionHelper.getPrivateValue(ShapedOreRecipe.class, recipe, "input");
-		return components;
-	}
+                } else {
+                    List<ItemStack> ores = OreDictionary.getOres((String) o);
+                    recipeStack = !ores.isEmpty() ? ores.get(1) : null;
+                    materialkey = (String) o;
+                }
+            }
+            list.add(recipeStack);
+        }
+        return list;
+    }
 
-	private static Object[] getShapelessOreRecipeItems(ShapelessOreRecipe recipe){
-		ArrayList<Object> components = ReflectionHelper.getPrivateValue(ShapelessOreRecipe.class, recipe, "input");
-		return components.toArray();
-	}
-	
-	public static void addShapedRecipeFirst(List<IRecipe> recipeList, ItemStack itemstack, Object... objArray){
-		String var3 = "";
-		int var4 = 0;
-		int var5 = 0;
-		int var6 = 0;
+    public static Object getRecipeItems(Object recipe) {
+        if (recipe instanceof ShapedRecipes) {
+            return getShapedRecipeItems((ShapedRecipes) recipe);
+        } else if (recipe instanceof ShapelessRecipes) {
+            return getShapelessRecipeItems((ShapelessRecipes) recipe);
+        } else if (recipe instanceof ShapedOreRecipe) {
+            return getShapedOreRecipeItems((ShapedOreRecipe) recipe);
+        } else if (recipe instanceof ShapelessOreRecipe) {
+            return getShapelessOreRecipeItems((ShapelessOreRecipe) recipe);
+        }
+        return new Object[0];
+    }
 
-		if (objArray[var4] instanceof String[]){
-			String[] var7 = ((String[])objArray[var4++]);
+    private static Object[] getShapedRecipeItems(ShapedRecipes recipe) {
+        return recipe.recipeItems.toArray();
+    }
 
-			for (int var8 = 0; var8 < var7.length; ++var8){
-				String var9 = var7[var8];
-				++var6;
-				var5 = var9.length();
-				var3 = var3 + var9;
-			}
-		}else{
-			while (objArray[var4] instanceof String){
-				String var11 = (String)objArray[var4++];
-				++var6;
-				var5 = var11.length();
-				var3 = var3 + var11;
-			}
-		}
+    private static Object[] getShapelessRecipeItems(ShapelessRecipes recipe) {
+        return recipe.recipeItems.toArray();
+    }
 
-		HashMap<Character, ItemStack> var12;
+    private static Object[] getShapedOreRecipeItems(ShapedOreRecipe recipe) {
+        List<Object> components = ReflectionHelper.getPrivateValue(ShapedOreRecipe.class, recipe, "input");
+        return components.toArray();
+    }
 
-		for (var12 = new HashMap<>(); var4 < objArray.length; var4 += 2){
-			Character var13 = (Character)objArray[var4];
-			ItemStack var14 = null;
+    private static Object[] getShapelessOreRecipeItems(ShapelessOreRecipe recipe) {
+        List<Object> components = ReflectionHelper.getPrivateValue(ShapelessOreRecipe.class, recipe, "input");
+        return components.toArray();
+    }
 
-			if (objArray[var4 + 1] instanceof Item){
-				var14 = new ItemStack((Item)objArray[var4 + 1]);
-			}else if (objArray[var4 + 1] instanceof Block){
-				var14 = new ItemStack((Block)objArray[var4 + 1], 1, Short.MAX_VALUE);
-			}else if (objArray[var4 + 1] instanceof ItemStack){
-				var14 = (ItemStack)objArray[var4 + 1];
-			}
+    public static void addShapedRecipeFirst(List<IRecipe> recipeList, ItemStack itemstack, Object... objArray) {
+        String var3 = "";
+        int var4 = 0;
+        int var5 = 0;
+        int var6 = 0;
 
-			var12.put(var13, var14);
-		}
+        if (objArray[var4] instanceof String[]) {
+            String[] var7 = ((String[]) objArray[var4++]);
 
-		ItemStack[] var15 = new ItemStack[var5 * var6];
+            for (int var8 = 0; var8 < var7.length; ++var8) {
+                String var9 = var7[var8];
+                ++var6;
+                var5 = var9.length();
+                var3 = var3 + var9;
+            }
+        } else {
+            while (objArray[var4] instanceof String) {
+                String var11 = (String) objArray[var4++];
+                ++var6;
+                var5 = var11.length();
+                var3 = var3 + var11;
+            }
+        }
 
-		for (int var16 = 0; var16 < var5 * var6; ++var16){
-			char var10 = var3.charAt(var16);
+        HashMap<Character, ItemStack> var12;
 
-			if (var12.containsKey(Character.valueOf(var10))){
-				var15[var16] = ((ItemStack)var12.get(Character.valueOf(var10))).copy();
-			}else{
-				var15[var16] = null;
-			}
-		}
+        for (var12 = new HashMap<>(); var4 < objArray.length; var4 += 2) {
+            Character var13 = (Character) objArray[var4];
+            ItemStack var14 = ItemStack.EMPTY;
 
-		// todo ShapedRecipes var17 = new ShapedRecipes(var5, var6, var15, itemstack);
-		// recipeList.add(0, var17);
-	}
+            if (objArray[var4 + 1] instanceof Item) {
+                var14 = new ItemStack((Item) objArray[var4 + 1]);
+            } else if (objArray[var4 + 1] instanceof Block) {
+                var14 = new ItemStack((Block) objArray[var4 + 1], 1, Short.MAX_VALUE);
+            } else if (objArray[var4 + 1] instanceof ItemStack) {
+                var14 = (ItemStack) objArray[var4 + 1];
+            }
+
+            var12.put(var13, var14);
+        }
+
+        ItemStack[] var15 = new ItemStack[var5 * var6];
+
+        for (int var16 = 0; var16 < var5 * var6; ++var16) {
+            char var10 = var3.charAt(var16);
+
+            if (var12.containsKey(Character.valueOf(var10))) {
+                var15[var16] = ((ItemStack) var12.get(Character.valueOf(var10))).copy();
+            } else {
+                var15[var16] = ItemStack.EMPTY;
+            }
+        }
+
+        // todo ShapedRecipes var17 = new ShapedRecipes(var5, var6, var15, itemstack);
+        // recipeList.add(0, var17);
+    }
 
 
 }

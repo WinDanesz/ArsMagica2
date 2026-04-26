@@ -1,0 +1,11 @@
+{
+    "variants": {
+        "facing=down": { "model": "arsmagica2:essence_conduit", "x": 180 },
+        "facing=up": { "model": "arsmagica2:essence_conduit" },
+        "facing=north": { "model": "arsmagica2:essence_conduit", "x": 90 },
+        "facing=south": { "model": "arsmagica2:essence_conduit", "x": 90, "y": 180 },
+        "facing=west": { "model": "arsmagica2:essence_conduit", "x": 90, "y": 270 },
+        "facing=east": { "model": "arsmagica2:essence_conduit", "x": 90, "y": 90 }
+    }
+}
+

@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:keystone"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.keystone_security.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.keystone_security.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "parent": "arsmagica2:compendium_data",
+  "criteria": {
+    "has_keystone": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "arsmagica2:keystone"
+          }
+        ]
+      }
+    }
+  }
+}

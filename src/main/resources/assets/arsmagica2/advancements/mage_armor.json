@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:mage_robe"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.mage_armor.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.mage_armor.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "arsmagica2:first_spell",
+  "criteria": {
+    "has_hood": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:mage_hood" }] }
+    },
+    "has_robe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:mage_robe" }] }
+    },
+    "has_leggings": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:mage_leggings" }] }
+    },
+    "has_boots": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "item": "arsmagica2:mage_boots" }] }
+    }
+  },
+  "requirements": [["has_hood", "has_robe", "has_leggings", "has_boots"]]
+}

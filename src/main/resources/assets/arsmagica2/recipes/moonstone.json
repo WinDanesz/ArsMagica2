@@ -1,0 +1,12 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "item": "arsmagica2:moonstone_block"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:moonstone",
+    "count": 9
+  }
+}

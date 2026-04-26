@@ -1,0 +1,22 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "item": "arsmagica2:cerublossom"
+    },
+    {
+      "item": "arsmagica2:desert_nova"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "arcaneAsh"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:purified_vinteum_dust"
+  }
+}

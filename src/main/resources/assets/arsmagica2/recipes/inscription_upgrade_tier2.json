@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shapeless",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "ebwizardry"
+      }
+    }
+  ],
+  "ingredients": [
+    {
+      "item": "arsmagica2:warding_candle",
+      "data": 0
+    },
+    {
+      "item": "minecraft:book"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:inscription_upgrade",
+    "data": 1
+  }
+}

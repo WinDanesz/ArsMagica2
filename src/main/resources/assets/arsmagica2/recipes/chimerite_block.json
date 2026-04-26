@@ -1,0 +1,17 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "arsmagica2:chimerite"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:chimerite_block",
+    "count": 1
+  }
+}

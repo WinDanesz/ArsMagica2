@@ -1,0 +1,22 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "item": "arsmagica2:cerublossom"
+    },
+    {
+      "item": "arsmagica2:desert_nova"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropWheat"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:mana_cake",
+    "count": 3
+  }
+}

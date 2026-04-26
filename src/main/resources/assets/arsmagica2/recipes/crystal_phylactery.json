@@ -1,0 +1,27 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    " B ",
+    "GPG",
+    " W "
+  ],
+  "key": {
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "gemMoonstone"
+    },
+    "W": {
+      "item": "arsmagica2:magic_wall"
+    },
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "blockGlassColorless"
+    },
+    "P": {
+      "item": "arsmagica2:purified_vinteum_dust"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:crystal_phylactery"
+  }
+}

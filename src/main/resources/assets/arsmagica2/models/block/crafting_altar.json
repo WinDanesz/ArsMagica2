@@ -1,0 +1,7 @@
+{
+	"parent": "block/cube_all",
+    "textures": {
+        "all": "arsmagica2:blocks/caster_rune_side",
+		"particle": "arsmagica2:blocks/rune_stone"
+	}
+}

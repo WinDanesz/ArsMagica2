@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G ",
+    "SKS",
+    " L "
+  ],
+  "key": {
+    "G": {
+      "item": "arsmagica2:greater_focus"
+    },
+    "S": {
+      "item": "arsmagica2:standard_focus"
+    },
+    "L": {
+      "item": "arsmagica2:lesser_focus"
+    },
+    "K": {
+      "item": "arsmagica2:keystone_door",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "arsmagica2:keystone_door",
+    "data": 1
+  }
+}

@@ -1,5 +1,10 @@
 {
+    "forge_marker": 1,
+    "defaults": {
+        "model": "arsmagica2:scaledown",
+        "textures": { "particle": "arsmagica2:blocks/rune_stone" }
+    },
     "variants": {
-		"normal": { "model": "arsmagica2:craftingAltar"}
+        "normal": [{}]
     }
 }

@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "IVI",
+    "VAV",
+    "IVI"
+  ],
+  "key": {
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "gemChimerite"
+    },
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    },
+    "A": {
+      "type": "forge:ore_dict",
+      "ore": "arcaneAsh"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:mana_battery"
+  }
+}

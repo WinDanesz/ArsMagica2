@@ -1,0 +1,37 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "COC",
+    "SWS",
+    "LHL"
+  ],
+  "key": {
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "craftingTableWood"
+    },
+    "O": {
+      "item": "minecraft:carpet",
+      "data": 32767
+    },
+    "W": {
+      "type": "forge:ore_dict",
+      "ore": "logWood"
+    },
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "slabWood"
+    },
+    "L": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "H": {
+      "type": "forge:ore_dict",
+      "ore": "chestWood"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:magicians_workbench"
+  }
+}

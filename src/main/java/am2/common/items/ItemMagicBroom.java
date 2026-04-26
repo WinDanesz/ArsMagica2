@@ -4,6 +4,7 @@ import am2.api.math.AMVector3;
 import am2.common.entity.EntityBroom;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
@@ -13,34 +14,34 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-public class ItemMagicBroom extends ItemArsMagica{
+public class ItemMagicBroom extends Item {
 
-	public ItemMagicBroom(){
-		super();
-	}
+    public ItemMagicBroom() {
+        super();
+    }
 
-	@Override
-	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-		if (!world.isRemote){
-			ItemStack stack = player.getHeldItem(hand);
-			RayTraceResult mop = this.rayTrace(world, player, true);
-			if (mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK){
-				TileEntity te = world.getTileEntity(mop.getBlockPos());
-				if (te instanceof IInventory){
-					EntityBroom broom = new EntityBroom(world);
-					broom.setPosition(player.posX, player.posY, player.posZ);
-					broom.setChestLocation(new AMVector3(mop.getBlockPos()));
-					world.spawnEntity(broom);
+    @Override
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+        if (!world.isRemote) {
+            ItemStack stack = player.getHeldItem(hand);
+            RayTraceResult mop = this.rayTrace(world, player, true);
+            if (mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK) {
+                TileEntity te = world.getTileEntity(mop.getBlockPos());
+                if (te instanceof IInventory) {
+                    EntityBroom broom = new EntityBroom(world);
+                    broom.setPosition(player.posX, player.posY, player.posZ);
+                    broom.setChestLocation(new AMVector3(mop.getBlockPos()));
+                    world.spawnEntity(broom);
 
-					stack.shrink(1);
+                    stack.shrink(1);
 
-					if (stack.getCount() == 0){
-						player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
-					}
-					return EnumActionResult.SUCCESS;
-				}
-			}
-		}
-		return EnumActionResult.PASS;
-	}
+                    if (stack.getCount() == 0) {
+                        player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
+                    }
+                    return EnumActionResult.SUCCESS;
+                }
+            }
+        }
+        return EnumActionResult.PASS;
+    }
 }

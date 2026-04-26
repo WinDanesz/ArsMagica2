@@ -1,0 +1,65 @@
+{
+    "pools": [
+        {
+            "name": "orb",
+            "rolls": 1,
+            "conditions": [
+                {
+                    "condition": "killed_by_player"
+                }
+            ],
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "arsmagica2:infinity_orb",
+                    "weight": 1,
+                    "functions": [
+                        {
+                            "function": "set_data",
+                            "data": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "essence",
+            "rolls": {
+                "min": 0,
+                "max": 3
+            },
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "arsmagica2:essence_lightning",
+                    "weight": 1
+                }
+            ]
+        },
+        {
+            "name": "rare",
+            "rolls": 1,
+            "conditions": [
+                {
+                    "condition": "killed_by_player"
+                }
+            ],
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "arsmagica2:lightning_charm",
+                    "weight": 3,
+                    "functions": [
+                        {
+                            "function": "arsmagica2:soulbind"
+                        }
+                    ]
+                },
+                {
+                    "type": "empty",
+                    "weight": 7
+                }
+            ]
+        }
+    ]
+}

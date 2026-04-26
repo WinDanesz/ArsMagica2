@@ -2,145 +2,146 @@ package am2.common.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 
-public class InventoryRuneBag implements IInventory{
-	public static final int inventorySize = 16;
-	private ItemStack[] inventoryItems;
+public class InventoryRuneBag implements IInventory {
+    public static final int inventorySize = 16;
+    private final NonNullList<ItemStack> inventoryContents;
 
-	public InventoryRuneBag(){
-		inventoryItems = new ItemStack[inventorySize];
-	}
+    public static final InventoryRuneBag EMPTY = new InventoryRuneBag();
 
-	public void SetInventoryContents(ItemStack[] inventoryContents){
-		int loops = Math.min(inventorySize, inventoryContents.length);
-		for (int i = 0; i < loops; ++i){
-			inventoryItems[i] = inventoryContents[i];
-		}
-	}
+    public InventoryRuneBag() {
+        inventoryContents = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+    }
 
-	@Override
-	public int getSizeInventory(){
-		return inventorySize;
-	}
+    public void SetInventoryContents(ItemStack[] inventoryContents) {
+        int loops = Math.min(inventorySize, inventoryContents.length);
+        for (int i = 0; i < loops; ++i) {
+            this.inventoryContents.set(i, inventoryContents[i]);
+        }
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
+    @Override
+    public int getSizeInventory() {
+        return inventorySize;
+    }
 
-	@Override
-	public ItemStack getStackInSlot(int i){
-		if (i < 0 || i > inventoryItems.length - 1){
-			return null;
-		}
-		return inventoryItems[i];
-	}
+    @Override
+    public boolean isEmpty() {
+        for (ItemStack itemstack : this.inventoryContents) {
+            if (!itemstack.isEmpty()) {
+                return false;
+            }
+        }
 
-	@Override
-	public ItemStack decrStackSize(int i, int j){
+        return true;
+    }
 
-		if (inventoryItems[i] != null){
-			if (inventoryItems[i].getCount() <= j){
-				ItemStack itemstack = inventoryItems[i];
-				inventoryItems[i] = null;
-				return itemstack;
-			}
-			ItemStack itemstack1 = inventoryItems[i].splitStack(j);
-			if (inventoryItems[i].getCount() == 0){
-				inventoryItems[i] = null;
-			}
-			return itemstack1;
-		}else{
-			return null;
-		}
-	}
+    @Override
+    public ItemStack getStackInSlot(int index) {
+        return index >= 0 && index < this.inventoryContents.size() ? (ItemStack) this.inventoryContents.get(index) : ItemStack.EMPTY;
+    }
 
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack){
-		inventoryItems[i] = itemstack;
-	}
+    @Override
+    public ItemStack decrStackSize(int index, int count) {
+        ItemStack itemstack = ItemStackHelper.getAndSplit(this.inventoryContents, index, count);
 
-	@Override
-	public String getName(){
-		return "Rune Bag";
-	}
+        if (!itemstack.isEmpty()) {
+            this.markDirty();
+        }
 
-	@Override
-	public int getInventoryStackLimit(){
-		return 1;
-	}
+        return itemstack;
+    }
 
-	@Override
-	public boolean isUsableByPlayer(EntityPlayer entityplayer){
-		return true;
-	}
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        this.inventoryContents.set(index, stack);
 
-	@Override
-	public void openInventory(EntityPlayer player){
-	}
+        if (!stack.isEmpty() && stack.getCount() > this.getInventoryStackLimit()) {
+            stack.setCount(this.getInventoryStackLimit());
+        }
 
-	@Override
-	public void closeInventory(EntityPlayer player){
-	}
+        this.markDirty();
+    }
 
-	public ItemStack[] GetInventoryContents(){
-		return inventoryItems;
-	}
+    @Override
+    public ItemStack removeStackFromSlot(int index) {
+        ItemStack itemstack = this.inventoryContents.get(index);
 
-	@Override
-	public ItemStack removeStackFromSlot(int i){
-		if (inventoryItems[i] != null){
-			ItemStack itemstack = inventoryItems[i];
-			inventoryItems[i] = null;
-			return itemstack;
-		}else{
-			return null;
-		}
-	}
+        if (itemstack.isEmpty()) {
+            return ItemStack.EMPTY;
+        } else {
+            this.inventoryContents.set(index, ItemStack.EMPTY);
+            return itemstack;
+        }
+    }
 
-	@Override
-	public boolean hasCustomName(){
-		return false;
-	}
+    @Override
+    public String getName() {
+        return "Rune Bag";
+    }
 
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack){
-		return false;
-	}
+    @Override
+    public int getInventoryStackLimit() {
+        return 1;
+    }
 
-	@Override
-	public void markDirty(){
-	}
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+        return true;
+    }
 
-	@Override
-	public ITextComponent getDisplayName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public void openInventory(EntityPlayer player) {
+    }
 
-	@Override
-	public int getField(int id) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public void closeInventory(EntityPlayer player) {
+    }
 
-	@Override
-	public void setField(int id, int value) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
 
-	@Override
-	public int getFieldCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+        return false;
+    }
 
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void markDirty() {
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int getField(int id) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+        // TODO Auto-generated method stub
+
+    }
 }

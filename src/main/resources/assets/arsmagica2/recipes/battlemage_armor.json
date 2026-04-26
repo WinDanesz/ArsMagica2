@@ -1,0 +1,26 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "RER",
+    "WLW",
+    "WWW"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:obsidian"
+    },
+    "E": {
+      "item": "arsmagica2:essence_earth"
+    },
+    "R": {
+      "item": "arsmagica2:rune",
+      "data": 1
+    },
+    "L": {
+      "item": "arsmagica2:gold_inlay"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:battlemage_chestplate"
+  }
+}

@@ -1,8 +1,8 @@
 {
     "parent": "block/inner_stairs",
     "textures": {
-        "bottom": "arsmagica2:blocks/planks_witchwood",
-        "top": "arsmagica2:blocks/planks_witchwood",
-        "side": "arsmagica2:blocks/planks_witchwood"
+        "bottom": "arsmagica2:blocks/witchwood_planks",
+        "top": "arsmagica2:blocks/witchwood_planks",
+        "side": "arsmagica2:blocks/witchwood_planks"
     }
 }

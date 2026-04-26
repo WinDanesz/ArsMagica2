@@ -1,0 +1,30 @@
+{
+  "type": "forge:ore_shaped",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ebwizardry"
+    }
+  ],
+  "pattern": [
+    " T ",
+    "NCN"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:gold_nugget"
+    },
+    "C": {
+      "item": "minecraft:carpet",
+      "data": 10
+    },
+    "T": {
+      "item": "ebwizardry:arcane_tome",
+      "data": 1
+    }
+  },
+  "result": {
+    "item": "arsmagica2:inscription_upgrade",
+    "data": 0
+  }
+}

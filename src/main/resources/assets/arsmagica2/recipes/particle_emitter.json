@@ -1,0 +1,21 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    " C ",
+    "CIC",
+    " C "
+  ],
+  "key": {
+    "I": {
+      "item": "arsmagica2:illusion_block",
+      "data": 0
+    },
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "gemChimerite"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:particle_emitter"
+  }
+}

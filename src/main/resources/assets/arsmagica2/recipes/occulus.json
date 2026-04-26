@@ -1,0 +1,29 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "SPS",
+    " S ",
+    "CVC"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stonebrick",
+      "data": 32767
+    },
+    "C": {
+      "item": "minecraft:coal",
+      "data": 32767
+    },
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "blockGlassColorless"
+    },
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "gemBlueTopaz"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:occulus"
+  }
+}

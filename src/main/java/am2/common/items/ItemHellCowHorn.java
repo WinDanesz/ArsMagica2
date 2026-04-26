@@ -1,10 +1,6 @@
 package am2.common.items;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import am2.common.enchantments.AMEnchantments;
+import am2.common.registry.AMEnchantments;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -18,16 +14,19 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemHellCowHorn extends ItemArsMagica{
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-	public ItemHellCowHorn(){
-		super();
-	}
+public class ItemHellCowHorn extends Item {
 
-	@Override
-	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player,
-									 Entity entity){
-		if (entity instanceof EntityLivingBase){
+    public ItemHellCowHorn() {
+        super();
+    }
+
+    @Override
+    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player,
+                                     Entity entity) {
+        if (entity instanceof EntityLivingBase) {
 			/*double dx = player.posX - entity.posX;
 			double dz = player.posZ - entity.posZ;
 			float angle = (float) Math.atan2(dz, dx);
@@ -36,33 +35,35 @@ public class ItemHellCowHorn extends ItemArsMagica{
 */			
 			/*if (player.world.rand.nextInt(10) < 3) 
 				SoundHelper.instance.playSoundAtEntity(player.world, player, player.world.rand.nextBoolean() ? "mob.moo.neutral" : "mob.moo.death", 1.0f);*/
-		}
-		return false;
-	}
+        }
+        return false;
+    }
 
-	public ItemStack createItemStack(){
-		ItemStack stack = new ItemStack(this, 1, 0);
-		Map<Enchantment, Integer> map = new LinkedHashMap<Enchantment, Integer>();
-		map.put(AMEnchantments.soulbound, 1);
-		map.put(Enchantments.FIRE_ASPECT, 3);
-		EnchantmentHelper.setEnchantments(map, stack);
-		return stack;
-	}
+    public ItemStack createItemStack() {
+        ItemStack stack = new ItemStack(this, 1, 0);
+        Map<Enchantment, Integer> map = new LinkedHashMap<Enchantment, Integer>();
+        map.put(AMEnchantments.soulbound, 1);
+        map.put(Enchantments.FIRE_ASPECT, 3);
+        EnchantmentHelper.setEnchantments(map, stack);
+        return stack;
+    }
 
-	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-		items.add(createItemStack());
-	}
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (!this.isInCreativeTab(tab)) return;
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean shouldRotateAroundWhenRendering(){
-		return true;
-	}
+        items.add(createItemStack());
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean isFull3D(){
-		return true;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean shouldRotateAroundWhenRendering() {
+        return true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean isFull3D() {
+        return true;
+    }
 }

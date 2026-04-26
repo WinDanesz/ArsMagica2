@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "arsmagica2:greater_mana_potion"
+    },
+    {
+      "item": "arsmagica2:greater_mana_potion"
+    },
+    {
+      "item": "arsmagica2:greater_mana_potion"
+    },
+    {
+      "item": "minecraft:string"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:mana_potion_bundle",
+    "data": 515
+  }
+}

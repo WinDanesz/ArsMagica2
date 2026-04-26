@@ -1,0 +1,30 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "TPF",
+    "SSS",
+    "W W"
+  ],
+  "key": {
+    "T": {
+      "item": "minecraft:torch"
+    },
+    "P": {
+      "item": "arsmagica2:spell_parchment"
+    },
+    "F": {
+      "item": "minecraft:feather"
+    },
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "slabWood"
+    },
+    "W": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:inscription_table"
+  }
+}

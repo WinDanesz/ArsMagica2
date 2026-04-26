@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:essence_life"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.boss_life_guardian.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.boss_life_guardian.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "arsmagica2:mage_armor",
+  "criteria": {
+    "killed_life_guardian": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "arsmagica2:life_guardian"
+        }
+      }
+    }
+  },
+  "requirements": [["killed_life_guardian"]]
+}

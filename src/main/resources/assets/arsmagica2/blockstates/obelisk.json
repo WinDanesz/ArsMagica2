@@ -1,13 +1,23 @@
 {
 	"forge_marker": 1,
 	"defaults": {
-		"custom": {
-		},
-		"model": "arsmagica2:scaledown"
+		"model": "arsmagica2:scaledown",
+		"textures": {
+			"particle": "arsmagica2:blocks/obelisk"
+		}
 	},
 	"variants": {
 		"normal": [{}],
-		"inventory": [{"submodel":"arsmagica2:obelisk.obj"}],
-		"facing": {"south":{}, "east":{}, "north":{}, "west":{}}
+		"inventory": [{}],
+		"active": {
+			"false": {},
+			"true": {}
+		},
+		"facing": {
+			"north": {},
+			"south": {},
+			"east": {},
+			"west": {}
+		}
 	}
 }

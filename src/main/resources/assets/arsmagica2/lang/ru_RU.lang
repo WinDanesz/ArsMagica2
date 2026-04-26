@@ -1,15 +1,15 @@
 # suppress inspection "WrongPropertyKeyValueDelimiter" for whole file
-affinity.air=Воздух
-affinity.fire=Огонь
-affinity.arcane=Магия
-affinity.life=Жизнь
-affinity.nature=Природа
-affinity.lightning=Молния
-affinity.water=Вода
-affinity.none=Пусто
-affinity.earth=Земля
-affinity.ice=Лед
-affinity.ender=Край
+affinity.arsmagica2:.air=Воздух
+affinity.arsmagica2:.fire=Огонь
+affinity.arsmagica2:.arcane=Магия
+affinity.arsmagica2:.life=Жизнь
+affinity.arsmagica2:.nature=Природа
+affinity.arsmagica2:.lightning=Молния
+affinity.arsmagica2:.water=Вода
+affinity.arsmagica2:.none=Пусто
+affinity.arsmagica2:.earth=Земля
+affinity.arsmagica2:.ice=Лед
+affinity.arsmagica2:.ender=Край
 
 fluid.liquid_essence=Жидкий эфир
 
@@ -97,7 +97,7 @@ item.arsmagica2:charge_focus.name=Фокус на энергию
 item.arsmagica2:item_focus.name=Фокус на предмет
 item.arsmagica2:magitech_goggles.name=Очки техномага
 item.arsmagica2:crystal_phylactery.name=Кристальный талисман
-item.arsmagica2:spell_staff_magitech.name=Посох техномага
+item.arsmagica2:attuning_staff.name=Посох техномага
 item.arsmagica2:lesser_focus.name=Малый фокус
 item.arsmagica2:standard_focus.name=Обычный фокус
 item.arsmagica2:mana_focus.name=Фокус на ману
@@ -156,6 +156,7 @@ item.arsmagica2:bound_shovel.name=Связанная лопата
 item.arsmagica2:bound_sword.name=Связанный меч
 item.arsmagica2:bound_bow.name=Связанный лук
 item.arsmagica2:bound_shield.name=Связанный щит
+item.arsmagica2:flickerJar.name=Банка для светлячка: %s
 #endregion
 
 #region Block names
@@ -233,33 +234,33 @@ tile.arsmagica2:fluid_block_liquid_essence=Жидкая эссенция
 #endregion
 
 #region Mobs
-entity.arsmagica2.DarkMage.name=Темный маг
-entity.arsmagica2.Dryad.name=Дриада
-entity.arsmagica2.EarthElemental.name=Элементаль земли
-entity.arsmagica2.FireElemental.name=Элементаль огня
-entity.arsmagica2.LightMage.name=Светлый маг
-entity.arsmagica2.ManaElemental.name=Элементаль маны
-entity.arsmagica2.WaterElemental.name=Элементаль воды
-entity.arsmagica2.ManaCreeper.name=Крипер маны
-entity.arsmagica2.Hecate.name=Геката
-entity.arsmagica2.Broom.name=Метла
-entity.arsmagica2.Darkling.name=Дарклинг
-entity.arsmagica2.HellCow.name=Hell Cow
+entity.DarkMage.name=Темный маг
+entity.Dryad.name=Дриада
+entity.EarthElemental.name=Элементаль земли
+entity.FireElemental.name=Элементаль огня
+entity.LightMage.name=Светлый маг
+entity.ManaElemental.name=Элементаль маны
+entity.WaterElemental.name=Элементаль воды
+entity.ManaCreeper.name=Крипер маны
+entity.Hecate.name=Геката
+entity.Broom.name=Метла
+entity.Darkling.name=Дарклинг
+entity.HellCow.name=Hell Cow
 
-entity.arsmagica2.WinterGuardian.name=Хранитель зимы
-entity.arsmagica2.LightningGuardian.name=Хранитель молний
-entity.arsmagica2.WaterGuardian.name=Хранитель воды
-entity.arsmagica2.EarthGuardian.name=Хранитель земли
-entity.arsmagica2.LifeGuardian.name=Хранитель жизни
-entity.arsmagica2.ArcaneGuardian.name=Хранитель тайны
-entity.arsmagica2.EnderGuardian.name=Хранитель края
-entity.arsmagica2.NatureGuardian.name=Хранитель природы
-entity.arsmagica2.FireGuardian.name=Хранитель огня
-entity.arsmagica2.AirGuardian.name=Хранитель воздуха
+entity.WinterGuardian.name=Хранитель зимы
+entity.LightningGuardian.name=Хранитель молний
+entity.WaterGuardian.name=Хранитель воды
+entity.EarthGuardian.name=Хранитель земли
+entity.LifeGuardian.name=Хранитель жизни
+entity.ArcaneGuardian.name=Хранитель тайны
+entity.EnderGuardian.name=Хранитель края
+entity.NatureGuardian.name=Хранитель природы
+entity.FireGuardian.name=Хранитель огня
+entity.AirGuardian.name=Хранитель воздуха
 #endregion
 
-itemGroup.am2.blocks=Ars Magica 2 Блоки
-itemGroup.am2.items=Ars Magica 2 Предметы
+itemGroup.arsmagica2.blocks=§9Ars Magica 2 Блоки §0(§11.12.2§0)
+itemGroup.arsmagica2.items=§9Ars Magica 2 Предметы §0(§11.12.2§0)
 
 etherium.any.name=Любой
 etherium.light.name=Светлый
@@ -700,7 +701,7 @@ am2.tooltip.approError=Что-то пошло не так при восстан�
 am2.tooltip.arcanespellbook=§3Получите мощь древних магов.§f
 am2.tooltip.armorlevel=Уровень опыта брони: %d
 am2.tooltip.armorxp=Наполненный опыт: %s
-am2.tooltip.bn_red=Бонус уменьшения перегорания
+am2.tooltip.burnout_reduction=Бонус уменьшения перегорания
 am2.tooltip.candlecantplace=Вы не можете установить настроенную свечу.
 am2.tooltip.cantSummonSelf=Вы не можете призвать ритуалом самого себя.
 am2.tooltip.cantTeleport=Искажение вокруг вас предотвращает все телепортации!
@@ -712,11 +713,11 @@ am2.tooltip.det_eth=Detected %s%s§f etherium: %s
 am2.tooltip.diffDimMark=Ваша метка в другом измерении
 am2.tooltip.disconnectPower=Все источники энергии отсоединились от этого блока.
 am2.tooltip.dispel=Рассеивание
-am2.tooltip.dr_drn=Защита от утопления
-am2.tooltip.dr_exp=Защита от взрывов
-am2.tooltip.dr_fall=Защита от падения
-am2.tooltip.dr_fire=Защита от огня
-am2.tooltip.dr_frst=Защита от холода
+am2.tooltip.drown_damage_resistance=Защита от утопления
+am2.tooltip.explosion_damage_reduction=Защита от взрывов
+am2.tooltip.fall_damage_reduction=Защита от падения
+am2.tooltip.fire_damage_reduction=Защита от огня
+am2.tooltip.frost_damage_reduction=Защита от холода
 am2.tooltip.dr_litn=Защита от молний
 am2.tooltip.dr_mage=Защита от магии
 am2.tooltip.dr_phy=Защита от физического урона
@@ -1496,7 +1497,7 @@ compendium.item.mana_cake.name=Торт маны
 compendium.item.crystal_wrench.name=Кристальный ключ
 compendium.item.spell_parchment.name=Пергамент заклинания
 compendium.item.crystal_phylactery.name=Кристальный талисман
-compendium.item.spell_staff_magitech.name=Посох техномага
+compendium.item.attuning_staff.name=Посох техномага
 compendium.item.spell_book.name=Книга заклинаний
 compendium.item.magic_broom.name=Магическая метла
 compendium.item.nature_scythe.name=Коса природы
@@ -1525,7 +1526,7 @@ compendium.crystal_wrench.page3=Вы также можете разъедини�
 compendium.crystal_wrench.page4=Кристальный ключ также может отобразить вам скрытые испускатели частиц и может копировать их настройки с помощью клика ПКМ в режиме разъединения. Настройки могут быть применены к любому другому испускателю с помощью клика ПКМ. Каждый раз при применении настроек вы должны скопировать их снова, если хотите применить их на другие испускатели частиц.
 compendium.spell_parchment.page1=Любой маг хотел бы читать заклинания без каких-либо инструментов или посохов, но ведь их тексты должны быть где-то написаны. За тысячи лет никто не придумал ничего лучше, чем обычный пергамент.
 compendium.crystal_phylactery.page1=Кристальный талисман служит для заключения внутри себя жизненной силы. Удерживая в своем инвентаре такой талисман, маг может заключать поверженных противников в него. Когда талисман будет заполнен, его можно будет использовать при создании заклинания призыва заключенного в нем существа.
-compendium.spell_staff_magitech.page1=Посох техномага - это улучшенная версия Spell staff, что привязана к окружающей мане. Он может чувствовать уровень энергии в заряженных блоках. Для этого нажмите им ПКМ по выбранному блоку. Надетые #9очки техномага#0 дают посоху дополнительные возможности. !d Также посох техномага может поднимать #9Магическую метлу#0. Для этого нажмите ПКМ по ней с помохом в руках.
+compendium.attuning_staff.page1=Посох техномага - это улучшенная версия Spell staff, что привязана к окружающей мане. Он может чувствовать уровень энергии в заряженных блоках. Для этого нажмите им ПКМ по выбранному блоку. Надетые #9очки техномага#0 дают посоху дополнительные возможности. !d Также посох техномага может поднимать #9Магическую метлу#0. Для этого нажмите ПКМ по ней с помохом в руках.
 compendium.spell_book.page1=Книга заклинаний позволяет магам удобно упорядочивать свои заклинания, при этом сохраняя свободное место в инвентаре. Переключать текущее заклинание в книге заклинаний можно с помощью клавиш z/x или при помощи колесика мыши с приседанием. Книги заклинаний могут быть покрашены в различные цвета. Также они могут быть #5зачарованы#0.
 compendium.magic_broom.page1=Вы взяли магические свойства тайной пыли и соединили их с метлой. Почему? Вы сами этого не знаете. Единственное, что вы знаете - эта метла очень любит поддерживать чистоту вокруг себя, собирая все предметы вокруг и укладывая их в привязанный сундук. Чтобы установить метлу, нажмите ПКМ на #5любом блоке с инвентарем#0. Это не будет работать иначе. Пока что метла будет собирать все потерянные вещи, хотя, в будущем вы найдете способ настраивать ее. !d При помощи ПКМ #9Посохом техномага#0 можно открепить метлу от блока.
 compendium.nature_scythe.page1=Эта коса, вырванная из рук самого Хранителя Природы, обладает великой силой. Она может невероятно эффективно срезать растения и листья в деревьев. Ее можно выбросить как бумеранг с помощью ПКМ, но это стоит 250 маны. Все эффекты срезки растений применяются во время броска, а урон увеличивается.

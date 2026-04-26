@@ -1,142 +1,171 @@
 package am2.common.entity.ai;
 
+import am2.api.extensions.IEntityExtension;
 import am2.api.extensions.ISpellCaster;
+import am2.common.extensions.EntityExtension;
 import am2.common.spell.SpellCaster;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.EntityFlyHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public class EntityAIRangedAttackSpell extends EntityAIBase{
-	World world;
+public class EntityAIRangedAttackSpell extends EntityAIBase {
+    private static final Logger LOGGER = LogManager.getLogger("AM2-SpellAI");
+    World world;
 
-	/**
-	 * The entity the AI instance has been applied to
-	 */
-	EntityCreature entityHost;
-	EntityLivingBase attackTarget;
+    /**
+     * The entity the AI instance has been applied to
+     */
+    EntityCreature entityHost;
+    EntityLivingBase attackTarget;
 
-	/**
-	 * A decrementing tick that spawns a ranged attack once this value reaches 0. It is then set back to the
-	 * maxRangedAttackTime.
-	 */
-	int rangedAttackTime;
-	float field_48370_e;
-	int field_48367_f;
+    /**
+     * A decrementing tick that spawns a ranged attack once this value reaches 0. It is then set back to the
+     * maxRangedAttackTime.
+     */
+    int rangedAttackTime;
+    float field_48370_e;
+    int field_48367_f;
 
-	/**
-	 * The maximum time the AI has to wait before peforming another ranged attack.
-	 */
-	int maxRangedAttackTime;
+    /**
+     * The maximum time the AI has to wait before peforming another ranged attack.
+     */
+    int maxRangedAttackTime;
 
-	ItemStack spellStack;
+    ItemStack spellStack;
 
-	public EntityAIRangedAttackSpell(EntityCreature host, float moveSpeed, int cooldown, ItemStack spellStack){
-		rangedAttackTime = 0;
-		field_48367_f = 0;
-		entityHost = host;
-		world = host.world;
-		field_48370_e = moveSpeed;
-		maxRangedAttackTime = cooldown;
-		this.spellStack = spellStack;
-		setMutexBits(3);
-	}
+    public EntityAIRangedAttackSpell(EntityCreature host, float moveSpeed, int cooldown, ItemStack spellStack) {
+        rangedAttackTime = 0;
+        field_48367_f = 0;
+        entityHost = host;
+        world = host.world;
+        field_48370_e = moveSpeed;
+        maxRangedAttackTime = cooldown;
+        this.spellStack = spellStack;
+        setMutexBits(3);
+    }
 
-	/**
-	 * Returns whether the EntityAIBase should begin execution.
-	 */
-	@Override
-	public boolean shouldExecute(){
-		if (entityHost == null)
-			return false;
-		EntityLivingBase entityliving = entityHost.getAttackTarget();
+    /**
+     * Returns whether the EntityAIBase should begin execution.
+     */
+    @Override
+    public boolean shouldExecute() {
+        if (entityHost == null)
+            return false;
+        EntityLivingBase entityliving = entityHost.getAttackTarget();
 
-		if (entityliving == null){
-			return false;
-		}else{
-			attackTarget = entityliving;
-			return true;
-		}
-	}
+        if (entityliving == null) {
+            return false;
+        } else {
+            attackTarget = entityliving;
+            return true;
+        }
+    }
 
-	/**
-	 * Returns whether an in-progress EntityAIBase should continue executing
-	 */
-	@Override
-	public boolean shouldContinueExecuting(){
-		return shouldExecute() && !entityHost.getNavigator().noPath();
-	}
+    /**
+     * Returns whether an in-progress EntityAIBase should continue executing
+     */
+    @Override
+    public boolean shouldContinueExecuting() {
+        return shouldExecute();
+    }
 
-	/**
-	 * Resets the task
-	 */
-	@Override
-	public void resetTask(){
-		attackTarget = null;
-	}
+    /**
+     * Resets the task
+     */
+    @Override
+    public void resetTask() {
+        attackTarget = null;
+    }
 
-	/**
-	 * Updates the task
-	 */
-	@Override
-	public void updateTask(){
-		double d = 225D;
-		double d1 = entityHost.getDistanceSq(attackTarget.posX, attackTarget.getEntityBoundingBox().minY, attackTarget.posZ);
-		boolean flag = entityHost.getEntitySenses().canSee(attackTarget);
+    /**
+     * Updates the task
+     */
+    @Override
+    public void updateTask() {
+        double d = 225D;
+        double d1 = entityHost.getDistanceSq(attackTarget.posX, attackTarget.getEntityBoundingBox().minY, attackTarget.posZ);
+        boolean flag = entityHost.getEntitySenses().canSee(attackTarget);
 
-		if (flag){
-			field_48367_f++;
-		}else{
-			field_48367_f = 0;
-		}
+        if (flag) {
+            field_48367_f++;
+        } else {
+            field_48367_f = 0;
+        }
 
-		if (d1 > d || field_48367_f > 20){
-			double deltaZ = attackTarget.posZ - entityHost.posZ;
-			double deltaX = attackTarget.posX - entityHost.posX;
+        if (d1 > d || field_48367_f > 20) {
+            double deltaZ = attackTarget.posZ - entityHost.posZ;
+            double deltaX = attackTarget.posX - entityHost.posX;
 
-			double angle = -Math.atan2(deltaZ, deltaX);
+            // Normalize direction from entity to target, then stop 6 blocks short of the target
+            double dist = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+            double nx = dist > 0.001 ? deltaX / dist : 0;
+            double nz = dist > 0.001 ? deltaZ / dist : 0;
+            double newX = attackTarget.posX - nx * 6;
+            double newZ = attackTarget.posZ - nz * 6;
 
-			double newX = attackTarget.posX + (Math.cos(angle) * 6);
-			double newZ = attackTarget.posZ + (Math.sin(angle) * 6);
+            // Use fly helper if available, otherwise fall back to navigator
+            if (entityHost.getMoveHelper() instanceof EntityFlyHelper) {
+                // Hover 4 blocks above the target so the elemental stays airborne
+                double hoverY = attackTarget.posY + 2.0;
+                ((EntityFlyHelper) entityHost.getMoveHelper()).setMoveTo(newX, hoverY, newZ, field_48370_e);
+            } else {
+                entityHost.getNavigator().tryMoveToXYZ(newX, attackTarget.posY, newZ, field_48370_e);
+            }
+        } else {
+            // In range — stop moving. For fly helper, hold position by zeroing motion;
+            // for navigator, clear the path.
+            if (entityHost.getMoveHelper() instanceof EntityFlyHelper) {
+                entityHost.motionX *= 0.5;
+                entityHost.motionZ *= 0.5;
+            } else {
+                entityHost.getNavigator().clearPath();
+            }
+        }
 
-			if (!entityHost.getNavigator().tryMoveToXYZ(newX, attackTarget.posY, newZ, 0.5f)){
-				entityHost.getNavigator().clearPath();
-				entityHost.setAttackTarget(null);
-			}
-		}else{
-			entityHost.getNavigator().clearPath();
-		}
+        entityHost.getLookHelper().setLookPositionWithEntity(attackTarget, 30F, 30F);
 
-		entityHost.getLookHelper().setLookPositionWithEntity(attackTarget, 30F, 30F);
+        rangedAttackTime = Math.max(rangedAttackTime - 1, 0);
 
-		rangedAttackTime = Math.max(rangedAttackTime - 1, 0);
+        if (rangedAttackTime > 0) {
+            return;
+        }
 
-		if (rangedAttackTime > 0){
-			return;
-		}
+        if (d1 > d || !flag) {
+            return;
+        } else {
+            doRangedAttack();
+            rangedAttackTime = maxRangedAttackTime;
+            return;
+        }
+    }
 
-		if (d1 > d || !flag){
-			return;
-		}else{
-			doRangedAttack();
-			rangedAttackTime = maxRangedAttackTime;
-			return;
-		}
-	}
+    /**
+     * Performs a ranged attack according to the AI's rangedAttackID.
+     */
+    private void doRangedAttack() {
+        if (entityHost.getAttackTarget() == null)
+            return;
+        entityHost.faceEntity(entityHost.getAttackTarget(), 180, 180);
 
-	/**
-	 * Performs a ranged attack according to the AI's rangedAttackID.
-	 */
-	private void doRangedAttack(){
-		if (entityHost.getAttackTarget() == null)
-			return;
-		entityHost.faceEntity(entityHost.getAttackTarget(), 180, 180);
-		ISpellCaster caster = spellStack.getCapability(SpellCaster.INSTANCE, null);
-		if (caster != null) {
-			caster.cast(spellStack, world, entityHost);
-		}
-		entityHost.swingArm(EnumHand.MAIN_HAND);
-	}
+        IEntityExtension ext = EntityExtension.For(entityHost);
+        float manaBefore = ext.getCurrentMana();
+        float manaMax = ext.getMaxMana();
+        LOGGER.info("[{}] PRE-CAST  mana: {}/{}", entityHost.getName(), manaBefore, manaMax);
+
+        ISpellCaster caster = spellStack.getCapability(SpellCaster.INSTANCE, null);
+        boolean success = caster != null && caster.cast(spellStack, world, entityHost);
+
+        float manaAfter = ext.getCurrentMana();
+        LOGGER.info("[{}] POST-CAST mana: {}/{}  (cast={})", entityHost.getName(), manaAfter, manaMax, success);
+
+        if (success) {
+            entityHost.swingArm(EnumHand.MAIN_HAND);
+        }
+    }
 }

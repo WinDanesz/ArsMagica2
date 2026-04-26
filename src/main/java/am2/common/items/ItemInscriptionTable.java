@@ -11,20 +11,20 @@ import net.minecraft.world.World;
 
 public class ItemInscriptionTable extends ItemBlock {
 
-	public ItemInscriptionTable(Block block) {
-		super(block);
-	}
+    public ItemInscriptionTable(Block block) {
+        super(block);
+    }
 
-	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (!block.isReplaceable(world, pos)) {
-			pos = pos.offset(facing);
-		}
-		BlockPos placePos = pos.offset(player.getHorizontalFacing().rotateY());
-		if (world.isAirBlock(placePos) || world.getBlockState(placePos).getBlock().isReplaceable(world, placePos)) {
-			return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
-		}
-		return EnumActionResult.FAIL;
-	}
+    @Override
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (!block.isReplaceable(world, pos)) {
+            pos = pos.offset(facing);
+        }
+        BlockPos placePos = pos.offset(player.getHorizontalFacing().rotateY());
+        if (world.isAirBlock(placePos) || world.getBlockState(placePos).getBlock().isReplaceable(world, placePos)) {
+            return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+        }
+        return EnumActionResult.FAIL;
+    }
 
 }

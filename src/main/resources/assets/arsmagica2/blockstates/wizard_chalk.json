@@ -1,0 +1,28 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "arsmagica2:rune",
+		"uvlock": true
+	},
+	"variants": {
+		"variant": {
+			0:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk1",   "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			1:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk2",   "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			2:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk3",   "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			3:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk4",   "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			4:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk5",   "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			5:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk6",   "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			6:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk7",   "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			7:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk8",   "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			8:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk9",   "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			9:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk10",  "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			10:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk11", "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			11:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk12", "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			12:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk13", "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			13:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk14", "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			14:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk15", "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}},
+			15:{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk16", "particle": "arsmagica2:blocks/wizard_chalk/wizard_chalk1"}}
+		},
+		"inventory": [{"textures":{"all":"arsmagica2:blocks/wizard_chalk/wizard_chalk1"}}]
+	}
+}

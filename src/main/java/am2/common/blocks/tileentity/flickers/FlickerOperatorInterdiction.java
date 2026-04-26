@@ -1,10 +1,10 @@
 package am2.common.blocks.tileentity.flickers;
 
-import am2.api.ArsMagicaAPI;
 import am2.api.affinity.Affinity;
 import am2.api.flickers.IFlickerController;
 import am2.common.blocks.BlockInvisibleUtility.EnumInvisibleType;
-import am2.common.defs.ItemDefs;
+import am2.common.registry.AMItems;
+import am2.common.registry.Affinities;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -13,99 +13,105 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class FlickerOperatorInterdiction extends FlickerOperatorContainment{
-	
-	public final static FlickerOperatorInterdiction instance = new FlickerOperatorInterdiction();
+public class FlickerOperatorInterdiction extends FlickerOperatorContainment {
 
-	@Override
-	public boolean DoOperation(World world, IFlickerController<?> habitat, boolean powered, Affinity[] flickers){
-		if (world.isRemote)
-			return true;
+    public final static FlickerOperatorInterdiction instance = new FlickerOperatorInterdiction();
 
-		boolean hasEnderAugment = false;
-		for (Affinity aff : flickers){
-			if (aff == Affinity.ENDER){
-				hasEnderAugment = true;
-				break;
-			}
-		}
+    @Override
+    public boolean DoOperation(World world, IFlickerController<?> habitat, boolean powered, Affinity[] flickers) {
+        if (world.isRemote)
+            return true;
 
-		int lastRadius = getLastRadius(habitat);
-		int calcRadius = calculateRadius(flickers);
+        boolean hasEnderAugment = false;
+        for (Affinity aff : flickers) {
+            if (aff == Affinities.ender) {
+                hasEnderAugment = true;
+                break;
+            }
+        }
 
-		if (lastRadius != calcRadius){
-			RemoveOperator(world, habitat, powered, flickers);
-		}
-		
-		BlockPos habitatPos = ((TileEntity)habitat).getPos();
-		
-		for (int i = 0; i < calcRadius * 2 + 1; ++i){
-			if (hasEnderAugment){
-				//-x
-				setUtilityBlock(world, habitatPos.add(-calcRadius, 0, -calcRadius + i), EnumInvisibleType.COLLISION_ALL);
-				//+x
-				setUtilityBlock(world, habitatPos.add(calcRadius + 1, 0, -calcRadius + i), EnumInvisibleType.COLLISION_ALL);
-				//-z
-				setUtilityBlock(world, habitatPos.add(-calcRadius + i, 0, -calcRadius), EnumInvisibleType.COLLISION_ALL);
-				//+z
-				setUtilityBlock(world, habitatPos.add(calcRadius + 1 - i, 0, calcRadius + 1), EnumInvisibleType.COLLISION_ALL);
-			}else{
-				//-x
-				setUtilityBlock(world, habitatPos.add(-calcRadius, 0, -calcRadius + i), EnumInvisibleType.COLLISION_ALL);
-				//+x
-				setUtilityBlock(world, habitatPos.add(calcRadius + 1, 0, -calcRadius + i), EnumInvisibleType.COLLISION_ALL);
-				//-z
-				setUtilityBlock(world, habitatPos.add(-calcRadius + i, 0, -calcRadius), EnumInvisibleType.COLLISION_ALL);
-				//+z
-				setUtilityBlock(world, habitatPos.add(calcRadius + 1 - i, 0, calcRadius + 1), EnumInvisibleType.COLLISION_ALL);
-			}
-		}
+        int lastRadius = getLastRadius(habitat);
+        int calcRadius = calculateRadius(flickers);
 
-		setLastRadius(habitat, calcRadius);
+        if (lastRadius != calcRadius) {
+            RemoveOperator(world, habitat, powered, flickers);
+        }
 
-		return true;
-	}
+        BlockPos habitatPos = ((TileEntity) habitat).getPos();
 
-	@Override
-	public void RemoveOperator(World world, IFlickerController<?> habitat, boolean powered){
-		int radius = 6;
-		BlockPos habitatPos = ((TileEntity)habitat).getPos();
+        for (int i = 0; i < calcRadius * 2 + 1; ++i) {
+            if (hasEnderAugment) {
+                //-x
+                setUtilityBlock(world, habitatPos.add(-calcRadius, 0, -calcRadius + i), EnumInvisibleType.COLLISION_ALL);
+                //+x
+                setUtilityBlock(world, habitatPos.add(calcRadius + 1, 0, -calcRadius + i), EnumInvisibleType.COLLISION_ALL);
+                //-z
+                setUtilityBlock(world, habitatPos.add(-calcRadius + i, 0, -calcRadius), EnumInvisibleType.COLLISION_ALL);
+                //+z
+                setUtilityBlock(world, habitatPos.add(calcRadius + 1 - i, 0, calcRadius + 1), EnumInvisibleType.COLLISION_ALL);
+            } else {
+                //-x
+                setUtilityBlock(world, habitatPos.add(-calcRadius, 0, -calcRadius + i), EnumInvisibleType.COLLISION_ALL);
+                //+x
+                setUtilityBlock(world, habitatPos.add(calcRadius + 1, 0, -calcRadius + i), EnumInvisibleType.COLLISION_ALL);
+                //-z
+                setUtilityBlock(world, habitatPos.add(-calcRadius + i, 0, -calcRadius), EnumInvisibleType.COLLISION_ALL);
+                //+z
+                setUtilityBlock(world, habitatPos.add(calcRadius + 1 - i, 0, calcRadius + 1), EnumInvisibleType.COLLISION_ALL);
+            }
+        }
 
-		for (int i = 0; i < radius * 2 + 1; ++i){
-			//-x
-			clearUtilityBlock(world, habitatPos.add(-radius, 0, -radius+i));
-			//+x
-			clearUtilityBlock(world, habitatPos.add(radius+1, 0, -radius+i));
-			//-z
-			clearUtilityBlock(world, habitatPos.add(-radius+i, 0, -radius));
-			//+z
-			clearUtilityBlock(world, habitatPos.add(radius+1-i, 0, +radius + 1));
-		}
-	}
+        setLastRadius(habitat, calcRadius);
 
-	@Override
-	public Object[] getRecipe(){
-		return new Object[]{
-				"FWF",
-				"ARN",
-				"IWI",
-				Character.valueOf('F'), "fenceWood",
-				//todo registry Character.valueOf('W'), Blocks.COBBLESTONE_WALL,
-				//todo registry Character.valueOf('A'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ARCANE)),
-				Character.valueOf('R'), new ItemStack(ItemDefs.rune, 1, EnumDyeColor.PURPLE.getDyeDamage()),
-				//todo registry Character.valueOf('N'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.AIR)),
-				Character.valueOf('I'), Blocks.IRON_BARS
+        return true;
+    }
 
-		};
-	}
-	
-	@Override
-	public ResourceLocation getTexture() {
-		return new ResourceLocation("arsmagica2", "FlickerOperatorInterdiction");
-	}
-	
-	@Override
-	public Affinity[] getMask() {
-		return new Affinity[]{Affinity.AIR, Affinity.ARCANE};
-	}
+    @Override
+    public void RemoveOperator(World world, IFlickerController<?> habitat, boolean powered) {
+        int radius = 6;
+        BlockPos habitatPos = ((TileEntity) habitat).getPos();
+
+        for (int i = 0; i < radius * 2 + 1; ++i) {
+            //-x
+            clearUtilityBlock(world, habitatPos.add(-radius, 0, -radius + i));
+            //+x
+            clearUtilityBlock(world, habitatPos.add(radius + 1, 0, -radius + i));
+            //-z
+            clearUtilityBlock(world, habitatPos.add(-radius + i, 0, -radius));
+            //+z
+            clearUtilityBlock(world, habitatPos.add(radius + 1 - i, 0, +radius + 1));
+        }
+    }
+
+    @Override
+    public Object[] getRecipe() {
+        return new Object[]{
+                "FWF",
+                "ARN",
+                "IWI",
+                Character.valueOf('F'), "fenceWood",
+                Character.valueOf('W'), Blocks.COBBLESTONE_WALL,
+                Character.valueOf('A'), new ItemStack(AMItems.flicker_jar, 1, Affinities.arcane.getID()),
+                Character.valueOf('R'), new ItemStack(AMItems.rune, 1, EnumDyeColor.PURPLE.getDyeDamage()),
+                Character.valueOf('N'), new ItemStack(AMItems.flicker_jar, 1, Affinities.air.getID()),
+                Character.valueOf('I'), Blocks.IRON_BARS
+
+        };
+    }
+
+    @Override
+    public ResourceLocation getTexture() {
+        return new ResourceLocation("arsmagica2", "FlickerOperatorInterdiction");
+    }
+
+    @Override
+    public Affinity[] getMask() {
+        return new Affinity[]{Affinities.air, Affinities.arcane};
+    }
+
+    @Override
+    public int getID() {
+        return 6;
+    }
+
 }

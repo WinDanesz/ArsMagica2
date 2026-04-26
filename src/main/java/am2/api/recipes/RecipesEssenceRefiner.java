@@ -1,249 +1,245 @@
 package am2.api.recipes;
 
-import java.util.HashMap;
-
-import am2.api.ArsMagicaAPI;
-import am2.api.affinity.Affinity;
-import am2.common.defs.BlockDefs;
-import am2.common.defs.ItemDefs;
 import am2.common.items.ItemCore;
-import am2.common.items.ItemOre;
+import am2.common.registry.AMBlocks;
+import am2.common.registry.AMItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-public class RecipesEssenceRefiner extends RecipesArsMagica{
-	private static final RecipesEssenceRefiner essenceExtractorRecipesBase = new RecipesEssenceRefiner();
+import java.util.HashMap;
 
-	public static final RecipesEssenceRefiner essenceRefinement(){
-		return essenceExtractorRecipesBase;
-	}
+public class RecipesEssenceRefiner extends RecipesArsMagica {
+    private static final RecipesEssenceRefiner essenceExtractorRecipesBase = new RecipesEssenceRefiner();
 
-	private RecipesEssenceRefiner(){
-		RecipeList = new HashMap<Integer, RecipeArsMagica>();
-		InitRecipes();
-	}
+    public static final RecipesEssenceRefiner essenceRefinement() {
+        return essenceExtractorRecipesBase;
+    }
 
-	private void InitRecipes(){
-// TODO registry
-//		//arcane essence
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ARCANE)));
-//		//earth essence
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Blocks.DIRT),
-//						new ItemStack(Blocks.STONE),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Blocks.STONE),
-//						new ItemStack(Blocks.OBSIDIAN)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.EARTH)));
-//		//air essence
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Items.FEATHER),
-//						new ItemStack(BlockDefs.tarmaRoot),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(BlockDefs.tarmaRoot),
-//						new ItemStack(Items.FEATHER)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.AIR)));
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(BlockDefs.tarmaRoot),
-//						new ItemStack(Items.FEATHER),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Items.FEATHER),
-//						new ItemStack(BlockDefs.tarmaRoot)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.AIR)));
-//		//fire essence
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Items.COAL),
-//						new ItemStack(Items.BLAZE_POWDER),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Items.BLAZE_POWDER),
-//						new ItemStack(Items.COAL)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.FIRE)));
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Items.BLAZE_POWDER),
-//						new ItemStack(Items.COAL),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Items.COAL),
-//						new ItemStack(Items.BLAZE_POWDER)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.FIRE)));
-//		//water essence
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(BlockDefs.wakebloom),
-//						new ItemStack(Items.WATER_BUCKET),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Items.WATER_BUCKET),
-//						new ItemStack(BlockDefs.wakebloom)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.WATER)));
-//
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Items.WATER_BUCKET),
-//						new ItemStack(BlockDefs.wakebloom),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(BlockDefs.wakebloom),
-//						new ItemStack(Items.WATER_BUCKET)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.WATER)));
-//
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Items.POTIONITEM, 1, 0),
-//						new ItemStack(BlockDefs.wakebloom),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(BlockDefs.wakebloom),
-//						new ItemStack(Items.POTIONITEM, 1, 0)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.WATER)));
-//
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(BlockDefs.wakebloom),
-//						new ItemStack(Items.POTIONITEM, 1, 0),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Items.POTIONITEM, 1, 0),
-//						new ItemStack(BlockDefs.wakebloom)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.WATER)));
-//		//ice essence
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Blocks.SNOW),
-//						new ItemStack(Blocks.ICE),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Blocks.ICE),
-//						new ItemStack(Blocks.SNOW)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ICE)));
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Blocks.ICE),
-//						new ItemStack(Blocks.SNOW),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Blocks.SNOW),
-//						new ItemStack(Blocks.ICE)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ICE)));
-//		//lightning essence
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Items.REDSTONE),
-//						new ItemStack(Items.GLOWSTONE_DUST),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Items.GLOWSTONE_DUST),
-//						new ItemStack(Items.REDSTONE),
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.LIGHTNING)));
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Items.GLOWSTONE_DUST),
-//						new ItemStack(Items.REDSTONE),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Items.REDSTONE),
-//						new ItemStack(Items.GLOWSTONE_DUST),
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.LIGHTNING)));
-//		//plant essence
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Blocks.LEAVES, 1, -1),
-//						new ItemStack(Blocks.WATERLILY),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Blocks.CACTUS),
-//						new ItemStack(Blocks.VINE)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.NATURE)));
-//		//life essence
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Items.EGG),
-//						new ItemStack(Items.GOLDEN_APPLE, 1, 0),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Items.GOLDEN_APPLE, 1, 0),
-//						new ItemStack(Items.EGG)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.LIFE)));
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Items.GOLDEN_APPLE),
-//						new ItemStack(Items.EGG, 1, 0),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Items.EGG, 1, 0),
-//						new ItemStack(Items.GOLDEN_APPLE)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.LIFE)));
-//		//ender essence
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Items.ENDER_PEARL),
-//						new ItemStack(Items.ENDER_EYE),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Items.ENDER_EYE),
-//						new ItemStack(Items.ENDER_PEARL)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ENDER)));
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(Items.ENDER_EYE),
-//						new ItemStack(Items.ENDER_PEARL),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(Items.ENDER_PEARL),
-//						new ItemStack(Items.ENDER_EYE)
-//				},
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ENDER)));
-//
-//		//base essence core
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.AIR)),
-//						new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.WATER)),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.FIRE)),
-//						new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.EARTH))
-//				},
-//				new ItemStack(ItemDefs.core, 1, ItemCore.META_BASE_CORE));
-//		//high essence core
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.LIGHTNING)),
-//						new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ICE)),
-//						new ItemStack(ItemDefs.itemOre, 1, ItemOre.META_ARCANEASH),
-//						new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.NATURE)),
-//						new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ARCANE))
-//				},
-//				new ItemStack(ItemDefs.core, 1, ItemCore.META_HIGH_CORE));
-//		//pure essence
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(ItemDefs.core, 1, ItemCore.META_HIGH_CORE),
-//						new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.LIFE)),
-//						new ItemStack(Items.DIAMOND),
-//						new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ENDER)),
-//						new ItemStack(ItemDefs.core, 1, ItemCore.META_BASE_CORE)
-//				},
-//				new ItemStack(ItemDefs.core, 1, ItemCore.META_PURE));
-//
-//		AddRecipe(new ItemStack[]{
-//						new ItemStack(ItemDefs.core, 1, ItemCore.META_HIGH_CORE),
-//						new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ENDER)),
-//						new ItemStack(Items.DIAMOND),
-//						new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.LIFE)),
-//						new ItemStack(ItemDefs.core, 1, ItemCore.META_BASE_CORE)
-//				},
-//				new ItemStack(ItemDefs.core, 1, ItemCore.META_PURE));
-//
-//		//deficit crystal
-//		AddRecipe(new ItemStack[]{
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ENDER)),
-//				new ItemStack(Items.MAGMA_CREAM),
-//				new ItemStack(Items.EMERALD),
-//				new ItemStack(Blocks.OBSIDIAN),
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ENDER)),
-//		}, new ItemStack(ItemDefs.deficitCrystal));
-//
-//		AddRecipe(new ItemStack[]{
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ENDER)),
-//				new ItemStack(Blocks.OBSIDIAN),
-//				new ItemStack(Items.EMERALD),
-//				new ItemStack(Items.MAGMA_CREAM),
-//				new ItemStack(ItemDefs.essence, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.ENDER)),
-//		}, new ItemStack(ItemDefs.deficitCrystal));
-	}
+    private RecipesEssenceRefiner() {
+        RecipeList = new HashMap<Integer, RecipeArsMagica>();
+        InitRecipes();
+    }
+
+    private void InitRecipes() {
+        //arcane essence
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(AMItems.arcane_ash)
+                },
+                new ItemStack(AMItems.essence_arcane));
+        //earth essence
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Blocks.DIRT),
+                        new ItemStack(Blocks.STONE),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Blocks.STONE),
+                        new ItemStack(Blocks.OBSIDIAN)
+                },
+                new ItemStack(AMItems.essence_earth));
+        //air essence
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Items.FEATHER),
+                        new ItemStack(AMBlocks.tarma_root),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(AMBlocks.tarma_root),
+                        new ItemStack(Items.FEATHER)
+                },
+                new ItemStack(AMItems.essence_air));
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(AMBlocks.tarma_root),
+                        new ItemStack(Items.FEATHER),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Items.FEATHER),
+                        new ItemStack(AMBlocks.tarma_root)
+                },
+                new ItemStack(AMItems.essence_air));
+        //fire essence
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Items.COAL),
+                        new ItemStack(Items.BLAZE_POWDER),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Items.BLAZE_POWDER),
+                        new ItemStack(Items.COAL)
+                },
+                new ItemStack(AMItems.essence_fire));
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Items.BLAZE_POWDER),
+                        new ItemStack(Items.COAL),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Items.COAL),
+                        new ItemStack(Items.BLAZE_POWDER)
+                },
+                new ItemStack(AMItems.essence_fire));
+        //water essence
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(AMBlocks.wakebloom),
+                        new ItemStack(Items.WATER_BUCKET),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Items.WATER_BUCKET),
+                        new ItemStack(AMBlocks.wakebloom)
+                },
+                new ItemStack(AMItems.essence_water));
+
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Items.WATER_BUCKET),
+                        new ItemStack(AMBlocks.wakebloom),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(AMBlocks.wakebloom),
+                        new ItemStack(Items.WATER_BUCKET)
+                },
+                new ItemStack(AMItems.essence_water));
+
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Items.POTIONITEM, 1, 0),
+                        new ItemStack(AMBlocks.wakebloom),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(AMBlocks.wakebloom),
+                        new ItemStack(Items.POTIONITEM, 1, 0)
+                },
+                new ItemStack(AMItems.essence_water));
+
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(AMBlocks.wakebloom),
+                        new ItemStack(Items.POTIONITEM, 1, 0),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Items.POTIONITEM, 1, 0),
+                        new ItemStack(AMBlocks.wakebloom)
+                },
+                new ItemStack(AMItems.essence_water));
+        //ice essence
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Blocks.SNOW),
+                        new ItemStack(Blocks.ICE),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Blocks.ICE),
+                        new ItemStack(Blocks.SNOW)
+                },
+                new ItemStack(AMItems.essence_ice));
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Blocks.ICE),
+                        new ItemStack(Blocks.SNOW),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Blocks.SNOW),
+                        new ItemStack(Blocks.ICE)
+                },
+                new ItemStack(AMItems.essence_ice));
+        //lightning essence
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Items.REDSTONE),
+                        new ItemStack(Items.GLOWSTONE_DUST),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Items.GLOWSTONE_DUST),
+                        new ItemStack(Items.REDSTONE),
+                },
+                new ItemStack(AMItems.essence_lightning));
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Items.GLOWSTONE_DUST),
+                        new ItemStack(Items.REDSTONE),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Items.REDSTONE),
+                        new ItemStack(Items.GLOWSTONE_DUST),
+                },
+                new ItemStack(AMItems.essence_lightning));
+        //plant essence
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Blocks.LEAVES, 1, -1),
+                        new ItemStack(Blocks.WATERLILY),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Blocks.CACTUS),
+                        new ItemStack(Blocks.VINE)
+                },
+                new ItemStack(AMItems.essence_nature));
+        //life essence
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Items.EGG),
+                        new ItemStack(Items.GOLDEN_APPLE, 1, 0),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Items.GOLDEN_APPLE, 1, 0),
+                        new ItemStack(Items.EGG)
+                },
+                new ItemStack(AMItems.essence_life));
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Items.GOLDEN_APPLE),
+                        new ItemStack(Items.EGG, 1, 0),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Items.EGG, 1, 0),
+                        new ItemStack(Items.GOLDEN_APPLE)
+                },
+                new ItemStack(AMItems.essence_life));
+        //ender essence
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Items.ENDER_PEARL),
+                        new ItemStack(Items.ENDER_EYE),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Items.ENDER_EYE),
+                        new ItemStack(Items.ENDER_PEARL)
+                },
+                new ItemStack(AMItems.essence_ender));
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(Items.ENDER_EYE),
+                        new ItemStack(Items.ENDER_PEARL),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(Items.ENDER_PEARL),
+                        new ItemStack(Items.ENDER_EYE)
+                },
+                new ItemStack(AMItems.essence_ender));
+
+        //base essence core
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(AMItems.essence_air),
+                        new ItemStack(AMItems.essence_water),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(AMItems.essence_fire),
+                        new ItemStack(AMItems.essence_earth)
+                },
+                new ItemStack(AMItems.core, 1, ItemCore.META_BASE_CORE));
+        //high essence core
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(AMItems.essence_lightning),
+                        new ItemStack(AMItems.essence_ice),
+                        new ItemStack(AMItems.arcane_ash),
+                        new ItemStack(AMItems.essence_nature),
+                        new ItemStack(AMItems.essence_arcane)
+                },
+                new ItemStack(AMItems.core, 1, ItemCore.META_HIGH_CORE));
+        //pure essence
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(AMItems.core, 1, ItemCore.META_HIGH_CORE),
+                        new ItemStack(AMItems.essence_life),
+                        new ItemStack(Items.DIAMOND),
+                        new ItemStack(AMItems.essence_ender),
+                        new ItemStack(AMItems.core, 1, ItemCore.META_BASE_CORE)
+                },
+                new ItemStack(AMItems.core, 1, ItemCore.META_PURE));
+
+        AddRecipe(new ItemStack[]{
+                        new ItemStack(AMItems.core, 1, ItemCore.META_HIGH_CORE),
+                        new ItemStack(AMItems.essence_ender),
+                        new ItemStack(Items.DIAMOND),
+                        new ItemStack(AMItems.essence_life),
+                        new ItemStack(AMItems.core, 1, ItemCore.META_BASE_CORE)
+                },
+                new ItemStack(AMItems.core, 1, ItemCore.META_PURE));
+
+        //deficit crystal
+        AddRecipe(new ItemStack[]{
+                new ItemStack(AMItems.essence_ender),
+                new ItemStack(Items.MAGMA_CREAM),
+                new ItemStack(Items.EMERALD),
+                new ItemStack(Blocks.OBSIDIAN),
+                new ItemStack(AMItems.essence_ender),
+        }, new ItemStack(AMItems.deficit_crystal));
+
+        AddRecipe(new ItemStack[]{
+                new ItemStack(AMItems.essence_ender),
+                new ItemStack(Blocks.OBSIDIAN),
+                new ItemStack(Items.EMERALD),
+                new ItemStack(Items.MAGMA_CREAM),
+                new ItemStack(AMItems.essence_ender),
+        }, new ItemStack(AMItems.deficit_crystal));
+    }
 }

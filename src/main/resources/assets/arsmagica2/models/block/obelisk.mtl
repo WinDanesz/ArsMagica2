@@ -1,13 +1,6 @@
-# Blender MTL File: 'None'
-# Material Count: 1
-
-newmtl Material
-Ns 92.156863
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd arsmagica2:blocks/custom/obelisk
+# Made in Blockbench 5.0.7 by Foreck
+newmtl m_e7b1baa7-004b-ab35-9787-fca3c6528051
+map_Kd arsmagica2:blocks/obelisk
+newmtl m_11ff8e9f-1165-0c53-d9c3-8b11a1a7a205
+map_Kd arsmagica2:blocks/obelisk_top
+newmtl none

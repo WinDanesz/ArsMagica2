@@ -1,0 +1,63 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:blue_topaz"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.gem_collector.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.gem_collector.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "arsmagica2:root",
+  "criteria": {
+    "has_chimerite": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "arsmagica2:chimerite"
+          }
+        ]
+      }
+    },
+    "has_blue_topaz": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "arsmagica2:blue_topaz"
+          }
+        ]
+      }
+    },
+    "has_moonstone": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "arsmagica2:moonstone"
+          }
+        ]
+      }
+    },
+    "has_sunstone": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "arsmagica2:sunstone"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_chimerite", "has_blue_topaz", "has_moonstone", "has_sunstone"]
+  ]
+}

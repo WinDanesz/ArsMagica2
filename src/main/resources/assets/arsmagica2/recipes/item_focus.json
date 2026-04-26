@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "PFS",
+    " W "
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:cobblestone"
+    },
+    "P": {
+      "item": "minecraft:iron_pickaxe"
+    },
+    "F": {
+      "item": "arsmagica2:standard_focus"
+    },
+    "S": {
+      "item": "minecraft:iron_shovel"
+    },
+    "W": {
+      "item": "minecraft:crafting_table"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:item_focus"
+  }
+}

@@ -9,40 +9,40 @@ import thehippomaster.AnimationAPI.AnimationAPI;
 import thehippomaster.AnimationAPI.IAnimatedEntity;
 
 public class PacketAnim implements IMessage {
-	
-	private byte animID;
-	private int entityID;
-	
-	public PacketAnim() {
-	}
-	
-	public PacketAnim(byte anim, int entity) {
-		animID = anim;
-		entityID = entity;
-	}
-	
-	@Override
-	public void toBytes( ByteBuf buffer) {
-		buffer.writeByte(animID);
-		buffer.writeInt(entityID);
-	}
 
-	@Override
-	public void fromBytes(ByteBuf buffer) {
-		animID = buffer.readByte();
-		entityID = buffer.readInt();
-	}
+    private byte animID;
+    private int entityID;
 
-	public static class Handler implements IMessageHandler<PacketAnim, IMessage> {
-		@Override
-		public IMessage onMessage(PacketAnim packet, MessageContext ctx) {
-			World world = AnimationAPI.proxy.getWorldClient();
-			IAnimatedEntity entity = (IAnimatedEntity)world.getEntityByID(packet.entityID);
-			if(entity != null && packet.animID != -1) {
-				entity.setAnimID(packet.animID);
-				if(packet.animID == 0) entity.setAnimTick(0);
-			}
-			return null;
-		}
-	}
+    public PacketAnim() {
+    }
+
+    public PacketAnim(byte anim, int entity) {
+        animID = anim;
+        entityID = entity;
+    }
+
+    @Override
+    public void toBytes(ByteBuf buffer) {
+        buffer.writeByte(animID);
+        buffer.writeInt(entityID);
+    }
+
+    @Override
+    public void fromBytes(ByteBuf buffer) {
+        animID = buffer.readByte();
+        entityID = buffer.readInt();
+    }
+
+    public static class Handler implements IMessageHandler<PacketAnim, IMessage> {
+        @Override
+        public IMessage onMessage(PacketAnim packet, MessageContext ctx) {
+            World world = AnimationAPI.proxy.getWorldClient();
+            IAnimatedEntity entity = (IAnimatedEntity) world.getEntityByID(packet.entityID);
+            if (entity != null && packet.animID != -1) {
+                entity.setAnimID(packet.animID);
+                if (packet.animID == 0) entity.setAnimTick(0);
+            }
+            return null;
+        }
+    }
 }

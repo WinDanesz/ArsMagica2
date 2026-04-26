@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "arsmagica2:wooden_leg"
+    },
+    {
+      "item": "arsmagica2:arcane_compendium"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:evil_book"
+  }
+}

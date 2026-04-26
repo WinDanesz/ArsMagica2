@@ -1,5 +1,19 @@
 {
-	"multipart": [{
-		"apply": {"model":"arsmagica2:null"}
-	}]
+	"variants": {
+		"facing=north": { 
+			"model": "arsmagica2:lectern"
+		},
+		"facing=south": { 
+			"model": "arsmagica2:lectern",
+			"y": 180
+		},
+		"facing=west": { 
+			"model": "arsmagica2:lectern",
+			"y": 270
+		},
+		"facing=east": { 
+			"model": "arsmagica2:lectern",
+			"y": 90
+		}
+	}
 }

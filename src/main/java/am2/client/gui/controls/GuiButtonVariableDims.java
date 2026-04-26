@@ -1,144 +1,143 @@
 package am2.client.gui.controls;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
 import am2.api.math.AMVector2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
-public class GuiButtonVariableDims extends GuiButton{
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-	boolean renderBorderOnly = false;
-	protected ArrayList<String> hoverTextLines = new ArrayList<String>();
+public class GuiButtonVariableDims extends GuiButton {
 
-	public GuiButtonVariableDims(int par1, int par2, int par3, String par4Str){
-		super(par1, par2, par3, par4Str);
-	}
+    boolean renderBorderOnly = false;
+    protected ArrayList<String> hoverTextLines = new ArrayList<String>();
 
-	public GuiButtonVariableDims setDimensions(int width, int height){
-		this.width = width;
-		this.height = height;
-		return this;
-	}
+    public GuiButtonVariableDims(int par1, int par2, int par3, String par4Str) {
+        super(par1, par2, par3, par4Str);
+    }
 
-	public void setPosition(int x, int y){
-		this.x = x;
-		this.y = y;
-	}
+    public GuiButtonVariableDims setDimensions(int width, int height) {
+        this.width = width;
+        this.height = height;
+        return this;
+    }
 
-	public GuiButtonVariableDims setBorderOnly(boolean borderOnly){
-		this.renderBorderOnly = borderOnly;
-		return this;
-	}
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 
-	public AMVector2 getPosition(){
-		return new AMVector2(this.x, this.y);
-	}
+    public GuiButtonVariableDims setBorderOnly(boolean borderOnly) {
+        this.renderBorderOnly = borderOnly;
+        return this;
+    }
 
-	public GuiButtonVariableDims setPopupText(String text){
-		this.hoverTextLines.clear();
-		String[] split = text.split("\\.");
-		for (String s : split){
-			hoverTextLines.add(s.trim() + ".");
-		}
-		return this;
-	}
+    public AMVector2 getPosition() {
+        return new AMVector2(this.x, this.y);
+    }
 
-	public AMVector2 getDimensions(){
-		return new AMVector2(width, height);
-	}
+    public GuiButtonVariableDims setPopupText(String text) {
+        this.hoverTextLines.clear();
+        String[] split = text.split("\\.");
+        for (String s : split) {
+            hoverTextLines.add(s.trim() + ".");
+        }
+        return this;
+    }
 
-	@Override
-	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks){
-		boolean isMousedOver = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-		if (!renderBorderOnly){
-			super.drawButton(mc, mouseX, mouseY, partialTicks);
-		}else{
-			int color = this.enabled ? 0xFFFFFF : 0x660000;
-			line(this.x, this.y, this.x + this.width, this.y, color);
-			line(this.x + this.width, this.y, this.x + this.width, this.y + this.height, color);
-			line(this.x + this.width, this.y + this.height, this.x, this.y + this.height, color);
-			line(this.x, this.y + this.height, this.x, this.y, color);
-		}
+    public AMVector2 getDimensions() {
+        return new AMVector2(width, height);
+    }
 
-		if (isMousedOver && this.hoverTextLines.size() > 0){
-			drawHoveringText(hoverTextLines, mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
-		}
-	}
+    @Override
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+        boolean isMousedOver = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+        if (!renderBorderOnly) {
+            super.drawButton(mc, mouseX, mouseY, partialTicks);
+        } else {
+            int color = this.enabled ? 0xFFFFFF : 0x660000;
+            line(this.x, this.y, this.x + this.width, this.y, color);
+            line(this.x + this.width, this.y, this.x + this.width, this.y + this.height, color);
+            line(this.x + this.width, this.y + this.height, this.x, this.y + this.height, color);
+            line(this.x, this.y + this.height, this.x, this.y, color);
+        }
 
-	protected void line(int startX, int startY, int endX, int endY, int color){
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glLineWidth(4f);
-		GL11.glColor3f((color & 0xFF0000) >> 16, (color & 0x00FF00) >> 8, color & 0x0000FF);
-		GL11.glBegin(GL11.GL_LINES);
-		GL11.glVertex3f(startX, startY, this.zLevel);
-		GL11.glVertex3f(endX, endY, this.zLevel);
-		GL11.glEnd();
-		GL11.glColor3f(1.0f, 1.0f, 1.0f);
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-	}
+        if (isMousedOver && !this.hoverTextLines.isEmpty()) {
+            drawHoveringText(hoverTextLines, mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
+        }
+    }
 
-	protected void drawHoveringText(List<String> par1List, int par2, int par3, FontRenderer font){
-		if (!par1List.isEmpty()){
-			GL11.glPushAttrib(GL11.GL_TEXTURE_BIT);
-			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-			GL11.glDisable(GL11.GL_DEPTH_TEST);
-			int k = 0;
-			Iterator<String> iterator = par1List.iterator();
+    protected void line(int startX, int startY, int endX, int endY, int color) {
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glLineWidth(4f);
+        GL11.glColor3f((color & 0xFF0000) >> 16, (color & 0x00FF00) >> 8, color & 0x0000FF);
+        GL11.glBegin(GL11.GL_LINES);
+        GL11.glVertex3f(startX, startY, this.zLevel);
+        GL11.glVertex3f(endX, endY, this.zLevel);
+        GL11.glEnd();
+        GL11.glColor3f(1.0f, 1.0f, 1.0f);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+    }
 
-			while (iterator.hasNext()){
-				String s = (String)iterator.next();
-				int l = font.getStringWidth(s);
+    protected void drawHoveringText(List<String> par1List, int par2, int par3, FontRenderer font) {
+        if (!par1List.isEmpty()) {
+            GL11.glPushAttrib(GL11.GL_TEXTURE_BIT);
+            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            int k = 0;
+            Iterator<String> iterator = par1List.iterator();
 
-				if (l > k){
-					k = l;
-				}
-			}
+            while (iterator.hasNext()) {
+                String s = (String) iterator.next();
+                int l = font.getStringWidth(s);
 
-			int i1 = par2 + 12;
-			int j1 = par3 - 12;
-			int k1 = 8;
+                if (l > k) {
+                    k = l;
+                }
+            }
 
-			if (par1List.size() > 1){
-				k1 += 2 + (par1List.size() - 1) * 10;
-			}
+            int i1 = par2 + 12;
+            int j1 = par3 - 12;
+            int k1 = 8;
 
-			this.zLevel = 300.0F;
-			int l1 = -267386864;
-			this.drawGradientRect(i1 - 3, j1 - 4, i1 + k + 3, j1 - 3, l1, l1);
-			this.drawGradientRect(i1 - 3, j1 + k1 + 3, i1 + k + 3, j1 + k1 + 4, l1, l1);
-			this.drawGradientRect(i1 - 3, j1 - 3, i1 + k + 3, j1 + k1 + 3, l1, l1);
-			this.drawGradientRect(i1 - 4, j1 - 3, i1 - 3, j1 + k1 + 3, l1, l1);
-			this.drawGradientRect(i1 + k + 3, j1 - 3, i1 + k + 4, j1 + k1 + 3, l1, l1);
-			int i2 = 1347420415;
-			int j2 = (i2 & 16711422) >> 1 | i2 & -16777216;
-			this.drawGradientRect(i1 - 3, j1 - 3 + 1, i1 - 3 + 1, j1 + k1 + 3 - 1, i2, j2);
-			this.drawGradientRect(i1 + k + 2, j1 - 3 + 1, i1 + k + 3, j1 + k1 + 3 - 1, i2, j2);
-			this.drawGradientRect(i1 - 3, j1 - 3, i1 + k + 3, j1 - 3 + 1, i2, i2);
-			this.drawGradientRect(i1 - 3, j1 + k1 + 2, i1 + k + 3, j1 + k1 + 3, j2, j2);
+            if (par1List.size() > 1) {
+                k1 += 2 + (par1List.size() - 1) * 10;
+            }
 
-			for (int k2 = 0; k2 < par1List.size(); ++k2){
-				String s1 = (String)par1List.get(k2);
-				font.drawStringWithShadow(s1, i1, j1, -1);
+            this.zLevel = 300.0F;
+            int l1 = -267386864;
+            this.drawGradientRect(i1 - 3, j1 - 4, i1 + k + 3, j1 - 3, l1, l1);
+            this.drawGradientRect(i1 - 3, j1 + k1 + 3, i1 + k + 3, j1 + k1 + 4, l1, l1);
+            this.drawGradientRect(i1 - 3, j1 - 3, i1 + k + 3, j1 + k1 + 3, l1, l1);
+            this.drawGradientRect(i1 - 4, j1 - 3, i1 - 3, j1 + k1 + 3, l1, l1);
+            this.drawGradientRect(i1 + k + 3, j1 - 3, i1 + k + 4, j1 + k1 + 3, l1, l1);
+            int i2 = 1347420415;
+            int j2 = (i2 & 16711422) >> 1 | i2 & -16777216;
+            this.drawGradientRect(i1 - 3, j1 - 3 + 1, i1 - 3 + 1, j1 + k1 + 3 - 1, i2, j2);
+            this.drawGradientRect(i1 + k + 2, j1 - 3 + 1, i1 + k + 3, j1 + k1 + 3 - 1, i2, j2);
+            this.drawGradientRect(i1 - 3, j1 - 3, i1 + k + 3, j1 - 3 + 1, i2, i2);
+            this.drawGradientRect(i1 - 3, j1 + k1 + 2, i1 + k + 3, j1 + k1 + 3, j2, j2);
 
-				if (k2 == 0){
-					j1 += 2;
-				}
+            for (int k2 = 0; k2 < par1List.size(); ++k2) {
+                String s1 = (String) par1List.get(k2);
+                font.drawStringWithShadow(s1, i1, j1, -1);
 
-				j1 += 10;
-			}
+                if (k2 == 0) {
+                    j1 += 2;
+                }
 
-			this.zLevel = 0.0F;
-			GL11.glEnable(GL11.GL_DEPTH_TEST);
-			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glPopAttrib();
-		}
-	}
+                j1 += 10;
+            }
+
+            this.zLevel = 0.0F;
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glPopAttrib();
+        }
+    }
 }

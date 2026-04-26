@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
 	"textures": {
-		"layer0": "arsmagica2:items/FlickerOperatorLight"
+		"layer0": "arsmagica2:items/flickeroperatorlight"
 	}
 }

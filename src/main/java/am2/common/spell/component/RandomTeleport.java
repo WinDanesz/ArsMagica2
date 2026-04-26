@@ -1,17 +1,14 @@
 package am2.common.spell.component;
 
-import java.util.EnumSet;
-import java.util.Random;
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-
 import am2.api.affinity.Affinity;
 import am2.api.spell.Operation;
 import am2.api.spell.SpellComponent;
 import am2.api.spell.SpellData;
 import am2.api.spell.SpellModifiers;
-import am2.common.defs.ItemDefs;
+import am2.common.registry.AMItems;
+import am2.common.registry.AMPotions;
+import am2.common.registry.Affinities;
+import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,8 +16,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -28,116 +23,111 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 
-public class RandomTeleport extends SpellComponent{
+import java.util.EnumSet;
+import java.util.Random;
+import java.util.Set;
 
-	@Override
-	public boolean applyEffectEntity(SpellData spell, World world, EntityLivingBase caster, Entity target){
-		Vec3d rLoc = getRandomTeleportLocation(world, spell, caster, target);
-		return teleportTo(rLoc.x, rLoc.y, rLoc.z, target);
-	}
+public class RandomTeleport extends SpellComponent {
 
-	private Vec3d getRandomTeleportLocation(World world, SpellData spell, EntityLivingBase caster, Entity target){
-		Vec3d origin = new Vec3d(target.posX, target.posY, target.posZ);
-		float maxDist = (float)spell.getModifiedValue(9, SpellModifiers.RANGE, Operation.MULTIPLY, world, caster, target);
-		origin = origin.add(new Vec3d((world.rand.nextDouble() - 0.5) * maxDist, (world.rand.nextDouble() - 0.5) * maxDist, (world.rand.nextDouble() - 0.5) * maxDist));
-		return origin;
-	}
-	
-	@Override
-	public EnumSet<SpellModifiers> getModifiers() {
-		return EnumSet.of(SpellModifiers.RANGE);
-	}
+    @Override
+    public boolean applyEffectEntity(SpellData spell, World world, EntityLivingBase caster, Entity target) {
+        // Fix Random Teleport bug: check for Astral Distortion effect
+        if (target instanceof EntityLivingBase && ((EntityLivingBase) target).isPotionActive(AMPotions.astral_distortion)) {
+            return false; // Teleportation blocked by Astral Distortion
+        }
+        Vec3d rLoc = getRandomTeleportLocation(world, spell, caster, target);
+        return teleportTo(rLoc.x, rLoc.y, rLoc.z, target);
+    }
 
-	protected boolean teleportTo(double par1, double par3, double par5, Entity target){
-		if (target instanceof EntityLivingBase){
-			EnderTeleportEvent event = new EnderTeleportEvent((EntityLivingBase)target, par1, par3, par5, 0);
-			if (MinecraftForge.EVENT_BUS.post(event)){
-				return false;
-			}
-			par1 = event.getTargetX();
-			par3 = event.getTargetY();
-			par5 = event.getTargetZ();
-		}
+    private Vec3d getRandomTeleportLocation(World world, SpellData spell, EntityLivingBase caster, Entity target) {
+        Vec3d origin = new Vec3d(target.posX, target.posY, target.posZ);
+        float maxDist = (float) spell.getModifiedValue(9, SpellModifiers.RANGE, Operation.MULTIPLY, world, caster, target);
+        origin = origin.add(new Vec3d((world.rand.nextDouble() - 0.5) * maxDist, (world.rand.nextDouble() - 0.5) * maxDist, (world.rand.nextDouble() - 0.5) * maxDist));
+        return origin;
+    }
 
-		double d3 = target.posX;
-		double d4 = target.posY;
-		double d5 = target.posZ;
-		target.posX = par1;
-		target.posY = par3;
-		target.posZ = par5;
-		boolean locationValid = false;
-		BlockPos pos = target.getPosition();
-		Block l;
+    @Override
+    public EnumSet<SpellModifiers> getModifiers() {
+        return EnumSet.of(SpellModifiers.RANGE);
+    }
 
-		if (target.world.getBlockState(pos) != null){
-			boolean targetBlockIsSolid = false;
+    protected boolean teleportTo(double par1, double par3, double par5, Entity target) {
+        if (target instanceof EntityLivingBase) {
+            EnderTeleportEvent event = new EnderTeleportEvent((EntityLivingBase) target, par1, par3, par5, 0);
+            if (MinecraftForge.EVENT_BUS.post(event)) {
+                return false;
+            }
+            par1 = event.getTargetX();
+            par3 = event.getTargetY();
+            par5 = event.getTargetZ();
+        }
 
-			while (!targetBlockIsSolid && pos.getY() > 0){
-				l = target.world.getBlockState(pos.down()).getBlock();
+        double d3 = target.posX;
+        double d4 = target.posY;
+        double d5 = target.posZ;
+        target.posX = par1;
+        target.posY = par3;
+        target.posZ = par5;
+        boolean locationValid = false;
+        BlockPos pos = target.getPosition();
+        Block l;
 
-				if (l != Blocks.AIR && l.isPassable(target.world, pos)){
-					targetBlockIsSolid = true;
-				}else{
-					--target.posY;
-					pos = pos.down();
-				}
-			}
+        if (target.world.getBlockState(pos) != null) {
+            boolean targetBlockIsSolid = false;
 
-			if (targetBlockIsSolid){
-				target.setPosition(target.posX, target.posY, target.posZ);
-				if (target.world.getCollisionBoxes(target, target.getEntityBoundingBox()).isEmpty()){
-					locationValid = true;
-				}
-			}
-		}
+            while (!targetBlockIsSolid && pos.getY() > 0) {
+                l = target.world.getBlockState(pos.down()).getBlock();
 
-		if (!locationValid){
-			target.setPosition(d3, d4, d5);
-			return false;
-		}else{
-			return true;
-		}
-	}
+                if (l != Blocks.AIR && l.isPassable(target.world, pos)) {
+                    targetBlockIsSolid = true;
+                } else {
+                    --target.posY;
+                    pos = pos.down();
+                }
+            }
 
-	@Override
-	public float manaCost(){
-		return 52.5f;
-	}
+            if (targetBlockIsSolid) {
+                target.setPosition(target.posX, target.posY, target.posZ);
+                if (target.world.getCollisionBoxes(target, target.getEntityBoundingBox()).isEmpty()) {
+                    locationValid = true;
+                }
+            }
+        }
 
-	@Override
-	public ItemStack[] reagents(EntityLivingBase caster){
-		return null;
-	}
+        if (!locationValid) {
+            target.setPosition(d3, d4, d5);
+            return false;
+        } else {
+            return true;
+        }
+    }
 
-	@Override
-	public void spawnParticles(World world, double x, double y, double z, EntityLivingBase caster, Entity target, Random rand, int colorModifier){
-		world.spawnParticle(EnumParticleTypes.PORTAL, target.posX + (rand.nextDouble() - 0.5D) * target.width, target.posY + rand.nextDouble() * target.height - 0.25D, target.posZ + (rand.nextDouble() - 0.5D) * target.width, (rand.nextDouble() - 0.5D) * 2.0D, -rand.nextDouble(), (rand.nextDouble() - 0.5D) * 2.0D);
-	}
+    @Override
+    public float manaCost() {
+        return 52.5f;
+    }
 
-	@Override
-	public Set<Affinity> getAffinity(){
-		return Sets.newHashSet(Affinity.ENDER);
-	}
 
-	@Override
-	public Object[] getRecipe(){
-		return new Object[]{
-				new ItemStack(ItemDefs.rune, 1, EnumDyeColor.BLACK.getDyeDamage()),
-				Items.ENDER_PEARL
-		};
-	}
+    @Override
+    public void spawnParticles(World world, double x, double y, double z, EntityLivingBase caster, Entity target, Random rand, int colorModifier) {
+        world.spawnParticle(EnumParticleTypes.PORTAL, target.posX + (rand.nextDouble() - 0.5D) * target.width, target.posY + rand.nextDouble() * target.height - 0.25D, target.posZ + (rand.nextDouble() - 0.5D) * target.width, (rand.nextDouble() - 0.5D) * 2.0D, -rand.nextDouble(), (rand.nextDouble() - 0.5D) * 2.0D);
+    }
 
-	@Override
-	public float getAffinityShift(Affinity affinity){
-		return 0.01f;
-	}
+    @Override
+    public Set<Affinity> getAffinity() {
+        return Sets.newHashSet(Affinities.ender);
+    }
 
-	@Override
-	public void encodeBasicData(NBTTagCompound tag, Object[] recipe) {}
+    @Override
+    public Object[] getRecipe() {
+        return new Object[]{
+                new ItemStack(AMItems.rune, 1, EnumDyeColor.BLACK.getDyeDamage()),
+                Items.ENDER_PEARL
+        };
+    }
 
-	@Override
-	public boolean applyEffectBlock(SpellData spell, World world, BlockPos blockPos, EnumFacing blockFace,
-			double impactX, double impactY, double impactZ, EntityLivingBase caster) {
-		return false;
-	}
+    @Override
+    public float getAffinityShift(Affinity affinity) {
+        return 0.01f;
+    }
 }

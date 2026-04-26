@@ -1,6 +1,7 @@
 {
 	"parent": "block/cube_all",
     "textures": {
-        "all": "arsmagica2:blocks/magic_wall"
+        "all": "arsmagica2:blocks/magic_wall",
+        "particle": "arsmagica2:blocks/magic_wall"
     }
 }

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " R ",
+    "RFR",
+    " R "
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "F": {
+      "item": "arsmagica2:lesser_focus"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:standard_focus"
+  }
+}

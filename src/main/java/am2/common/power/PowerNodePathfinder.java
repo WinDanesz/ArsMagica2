@@ -1,77 +1,77 @@
 package am2.common.power;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import am2.api.power.IPowerNode;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-public class PowerNodePathfinder extends AStar<BlockPos>{
+import java.util.ArrayList;
+import java.util.List;
 
-	private World world;
-	private BlockPos end;
-	private PowerTypes powerType;
+public class PowerNodePathfinder extends AStar<BlockPos> {
 
-	PowerNodePathfinder(World world, BlockPos start, BlockPos end, PowerTypes type){
-		this.world = world;
-		this.end = end;
-		this.powerType = type;
-	}
+    private World world;
+    private BlockPos end;
+    private PowerTypes powerType;
 
-	private IPowerNode<?> getPowerNode(World world, BlockPos location){
-		if (world.getChunk(new BlockPos(location)) != null){
-			Chunk chunk = world.getChunk(new BlockPos(location));
-			if (chunk.isLoaded()){
-				TileEntity te = world.getTileEntity(new BlockPos(location));
-				if (te instanceof IPowerNode)
-					return (IPowerNode<?>)te;
-			}
-		}
-		return null;
-	}
+    PowerNodePathfinder(World world, BlockPos start, BlockPos end, PowerTypes type) {
+        this.world = world;
+        this.end = end;
+        this.powerType = type;
+    }
 
-	@Override
-	protected boolean isGoal(BlockPos node){
-		return node.equals(end);
-	}
+    private IPowerNode<?> getPowerNode(World world, BlockPos location) {
+        if (world.getChunk(new BlockPos(location)) != null) {
+            Chunk chunk = world.getChunk(new BlockPos(location));
+            if (chunk.isLoaded()) {
+                TileEntity te = world.getTileEntity(new BlockPos(location));
+                if (te instanceof IPowerNode)
+                    return (IPowerNode<?>) te;
+            }
+        }
+        return null;
+    }
 
-	@Override
-	protected Double g(BlockPos from, BlockPos to){
-		return from.distanceSq(to);
-	}
+    @Override
+    protected boolean isGoal(BlockPos node) {
+        return node.equals(end);
+    }
 
-	@Override
-	protected Double h(BlockPos from, BlockPos to){
-		return from.distanceSq(to);
-	}
+    @Override
+    protected Double g(BlockPos from, BlockPos to) {
+        return from.distanceSq(to);
+    }
 
-	@Override
-	protected List<BlockPos> generateSuccessors(BlockPos node){
-		IPowerNode<?> powerNode = getPowerNode(world, node);
-		if (powerNode == null)
-			return new ArrayList<BlockPos>();
+    @Override
+    protected Double h(BlockPos from, BlockPos to) {
+        return from.distanceSq(to);
+    }
 
-		IPowerNode<?>[] candidates = PowerNodeRegistry.For(world).getAllNearbyNodes(world, node, powerType);
+    @Override
+    protected List<BlockPos> generateSuccessors(BlockPos node) {
+        IPowerNode<?> powerNode = getPowerNode(world, node);
+        if (powerNode == null)
+            return new ArrayList<BlockPos>();
 
-		ArrayList<BlockPos> prunedCandidates = new ArrayList<BlockPos>();
-		for (IPowerNode<?> candidate : candidates){
-			if (verifyCandidate(candidate)){
-				prunedCandidates.add(new BlockPos(((TileEntity)candidate).getPos()));
-			}
-		}
+        IPowerNode<?>[] candidates = PowerNodeRegistry.For(world).getAllNearbyNodes(world, node, powerType);
 
-		return prunedCandidates;
-	}
+        ArrayList<BlockPos> prunedCandidates = new ArrayList<BlockPos>();
+        for (IPowerNode<?> candidate : candidates) {
+            if (verifyCandidate(candidate)) {
+                prunedCandidates.add(new BlockPos(((TileEntity) candidate).getPos()));
+            }
+        }
 
-	private boolean verifyCandidate(IPowerNode<?> powerNode){
-		if (((TileEntity)powerNode).getPos().equals(end)){
-			for (PowerTypes type : powerNode.getValidPowerTypes())
-				if (type == powerType)
-					return true;
-		}
-		return powerNode.canRelayPower(powerType);
-	}
+        return prunedCandidates;
+    }
+
+    private boolean verifyCandidate(IPowerNode<?> powerNode) {
+        if (((TileEntity) powerNode).getPos().equals(end)) {
+            for (PowerTypes type : powerNode.getValidPowerTypes())
+                if (type == powerType)
+                    return true;
+        }
+        return powerNode.canRelayPower(powerType);
+    }
 }

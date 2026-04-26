@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "L",
+    "F"
+  ],
+  "key": {
+    "L": {
+      "item": "arsmagica2:essence_life"
+    },
+    "F": {
+      "item": "arsmagica2:standard_focus"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:player_focus"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WLW",
+    "WRW",
+    " B "
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:wool",
+      "data": 12
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "R": {
+      "item": "arsmagica2:rune",
+      "data": 10
+    },
+    "B": {
+      "item": "minecraft:potion"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:mage_hood"
+  }
+}

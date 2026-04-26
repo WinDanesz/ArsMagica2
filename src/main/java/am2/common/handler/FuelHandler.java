@@ -1,6 +1,6 @@
 package am2.common.handler;
 
-import am2.common.defs.BlockDefs;
+import am2.common.registry.AMBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,10 +16,10 @@ public class FuelHandler implements IFuelHandler {
         Item fuelItem = fuel.getItem();
         Block fuelBlock = Block.getBlockFromItem(fuelItem);
 
-        if (fuelBlock == BlockDefs.witchwoodPlanks) return 300;
-        if (fuelBlock == BlockDefs.witchwoodLog) return 300;
-        if (fuelBlock == BlockDefs.witchwoodSapling) return 100;
-        if (fuelBlock == BlockDefs.witchwoodStairs) return 300;
+        if (fuelBlock == AMBlocks.witchwood_planks) return 300;
+        if (fuelBlock == AMBlocks.witchwood_log) return 300;
+        if (fuelBlock == AMBlocks.witchwood_sapling) return 100;
+        if (fuelBlock == AMBlocks.witchwood_stairs) return 300;
 
         return 0;
     }

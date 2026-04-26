@@ -1,0 +1,6 @@
+{
+    "parent": "arsmagica2:block/warding_candle",
+    "textures": {
+        "1": "arsmagica2:blocks/candle_flame_red"
+    }
+}

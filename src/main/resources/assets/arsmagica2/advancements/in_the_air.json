@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:air_sled"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.in_the_air.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.in_the_air.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "arsmagica2:first_spell",
+  "criteria": {
+    "has_air_sled": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "arsmagica2:air_sled"
+          }
+        ]
+      }
+    }
+  }
+}

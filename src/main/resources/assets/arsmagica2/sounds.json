@@ -49,6 +49,25 @@
 	},
 	
 	
+	"mob.airguardian.hit": {
+	  "category": "hostile",
+	  "sounds": [
+	    "arsmagica2:mob/lightningguardian/hit"
+	  ]
+	},
+	"mob.airguardian.death": {
+	  "category": "hostile",
+	  "sounds": [
+	    "arsmagica2:mob/lightningguardian/death"
+	  ]
+	},
+	"mob.airguardian.idle": {
+	  "category": "hostile",
+	  "sounds": [
+	    "arsmagica2:mob/lightningguardian/idle"
+	  ]
+	},
+	
 	"mob.arcaneguardian.death": {
 	  "category": "hostile",
 	  "sounds": [
@@ -247,6 +266,12 @@
 	    "arsmagica2:mob/lightningguardian/attack"
 	  ]
 	},
+	"mob.lightningguardian.attack_static": {
+	  "category": "hostile",
+	  "sounds": [
+	    "arsmagica2:mob/lightningguardian/static"
+	  ]
+	},
 	"mob.lightningguardian.static": {
 	  "category": "hostile",
 	  "sounds": [
@@ -341,6 +366,18 @@
 	    "arsmagica2:mob/natureguardian/whirlloop"
 	  ]
 	},
+	"mob.waterguardian.hit": {
+	  "category": "hostile",
+	  "sounds": [
+	    "arsmagica2:mob/natureguardian/hit"
+	  ]
+	},
+	"mob.waterguardian.attack": {
+	  "category": "hostile",
+	  "sounds": [
+	    "arsmagica2:mob/natureguardian/attack"
+	  ]
+	},
 	"mob.waterguardian.death": {
 	  "category": "hostile",
 	  "sounds": [
@@ -377,10 +414,29 @@
 	    "arsmagica2:mob/winterguardian/attack"
 	  ]
 	},
-	"mob.winterguardian.launch_arm": {
+	"mob.winterguardian.launcharm": {
 	  "category": "hostile",
 	  "sounds": [
 	    "arsmagica2:mob/winterguardian/launch_arm"
+	  ]
+	},
+	
+	"mob.manaelemental.hit": {
+	  "category": "hostile",
+	  "sounds": [
+	    "arsmagica2:mob/arcaneguardian/hit"
+	  ]
+	},
+	"mob.manaelemental.living": {
+	  "category": "hostile",
+	  "sounds": [
+	    "arsmagica2:mob/arcaneguardian/idle"
+	  ]
+	},
+	"mob.manaelemental.death": {
+	  "category": "hostile",
+	  "sounds": [
+	    "arsmagica2:mob/arcaneguardian/death"
 	  ]
 	},
 	

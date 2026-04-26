@@ -1,5 +1,5 @@
 package am2.api.items;
 
-public interface ISpellFocus{
-	public int getFocusLevel();
+public interface ISpellFocus {
+    public int getFocusLevel();
 }

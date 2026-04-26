@@ -1,0 +1,18 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    " S ",
+    "SSS",
+    "SS "
+  ],
+  "key": {
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "cobblestone"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:blank_rune",
+    "count": 2
+  }
+}

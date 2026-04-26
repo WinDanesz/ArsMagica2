@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:arcane_compendium"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.compendium_data.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.compendium_data.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "arsmagica2:root",
+  "criteria": {
+    "has_compendium": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "arsmagica2:arcane_compendium"
+          }
+        ]
+      }
+    }
+  }
+}

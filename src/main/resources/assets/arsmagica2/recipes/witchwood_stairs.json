@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  W",
+    " WW",
+    "WWW"
+  ],
+  "key": {
+    "W": {
+      "item": "arsmagica2:witchwood_planks"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:witchwood_stairs",
+    "count": 4
+  }
+}

@@ -1,0 +1,16 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "arsmagica2:magicians_workbench",
+        "textures": {
+            "particle": "arsmagica2:blocks/magicians_workbench"
+        }
+    },
+    "variants": {
+        "facing=north": [{}],
+        "facing=south": [{ "y": 180 }],
+        "facing=west": [{ "y": 270 }],
+        "facing=east": [{ "y": 90 }]
+    }
+}
+

@@ -1,7 +1,5 @@
 package am2.common.entity;
 
-import java.util.HashMap;
-
 import am2.api.DamageSources;
 import am2.api.math.AMVector3;
 import am2.common.navigation.PathNavigator;
@@ -15,107 +13,115 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
-public class EntityWhirlwind extends EntityFlying{
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-	private final HashMap<EntityPlayer, Integer> cooldownList;
-	private AMVector3 currentTarget;
-	private final PathNavigator nav;
+public class EntityWhirlwind extends EntityFlying {
 
-	public EntityWhirlwind(World par1World){
-		super(par1World);
-		cooldownList = new HashMap<EntityPlayer, Integer>();
-		nav = new PathNavigator(this);
-	}
+    private final HashMap<EntityPlayer, Integer> cooldownList;
+    private AMVector3 currentTarget;
+    private final PathNavigator nav;
 
-	@Override
-	public void onCollideWithPlayer(EntityPlayer player){
-		if (!world.isRemote){
-			Integer cd = cooldownList.get(player);
-			if (cd == null || cd <= 0){
-				if (!world.isRemote && rand.nextInt(100) < 10){
-					int slot = player.inventory.mainInventory.size() + rand.nextInt(4);
-					if (player.inventory.getStackInSlot(slot) != null){
-						ItemStack armorStack = player.inventory.getStackInSlot(slot).copy();
-						if (!player.inventory.addItemStackToInventory(armorStack)){
-							EntityItem item = new EntityItem(world);
-							item.setPosition(player.posX, player.posY, player.posZ);
-							item.setVelocity(rand.nextDouble() * 0.2 - 0.1, rand.nextDouble() * 0.2 - 0.1, rand.nextDouble() * 0.2 - 0.1);
-							world.spawnEntity(item);
-						}
-						player.inventory.setInventorySlotContents(slot, null);
-					}
-				}
-				player.attackEntityFrom(DamageSources.causeWindDamage(this), 2);
-				float velX = world.rand.nextFloat() * 0.2f;
-				float veZ = world.rand.nextFloat() * 0.2f;
-				player.addVelocity(velX, 0.8, veZ);
-				AMNetHandler.INSTANCE.sendVelocityAddPacket(world, player, velX, 0.8, veZ);
-				player.fallDistance = 0;
-				setCooldownFor(player);
-			}
-		}
-	}
+    public EntityWhirlwind(World par1World) {
+        super(par1World);
+        cooldownList = new HashMap<EntityPlayer, Integer>();
+        nav = new PathNavigator(this);
+    }
 
-	@Override
-	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2){
-		return false;
-	}
+    @Override
+    public void onCollideWithPlayer(EntityPlayer player) {
+        if (!world.isRemote) {
+            Integer cd = cooldownList.get(player);
+            if (cd == null || cd <= 0) {
+                if (!world.isRemote && rand.nextInt(100) < 10) {
+                    int slot = player.inventory.mainInventory.size() + rand.nextInt(4);
+                    if (!player.inventory.getStackInSlot(slot).isEmpty()) {
+                        ItemStack armorStack = player.inventory.getStackInSlot(slot).copy();
+                        if (!player.inventory.addItemStackToInventory(armorStack)) {
+                            EntityItem item = new EntityItem(world);
+                            item.setPosition(player.posX, player.posY, player.posZ);
+                            item.setVelocity(rand.nextDouble() * 0.2 - 0.1, rand.nextDouble() * 0.2 - 0.1, rand.nextDouble() * 0.2 - 0.1);
+                            world.spawnEntity(item);
+                        }
+                        player.inventory.setInventorySlotContents(slot, ItemStack.EMPTY);
+                    }
+                }
+                player.attackEntityFrom(DamageSources.causeWindDamage(this), 2);
+                float velX = world.rand.nextFloat() * 0.2f;
+                float veZ = world.rand.nextFloat() * 0.2f;
+                player.addVelocity(velX, 0.8, veZ);
+                AMNetHandler.INSTANCE.sendVelocityAddPacket(world, player, velX, 0.8, veZ);
+                player.fallDistance = 0;
+                setCooldownFor(player);
+            }
+        }
+    }
 
-	@Override
-	public void onUpdate(){
-		if (currentTarget == null || new AMVector3(this).distanceSqTo(currentTarget) < 2)
-			generateNewTarget();
+    @Override
+    public boolean attackEntityFrom(DamageSource par1DamageSource, float par2) {
+        return false;
+    }
 
-		nav.tryMoveFlying(world, this);
+    @Override
+    public void onUpdate() {
+        if (currentTarget == null || new AMVector3(this).distanceSqTo(currentTarget) < 2)
+            generateNewTarget();
 
-		if (this.ticksExisted > 140 && !this.world.isRemote)
-			this.setDead();
+        nav.tryMoveFlying(world, this);
+
+        if (this.ticksExisted > 140 && !this.world.isRemote)
+            this.setDead();
 
 
-		tickCooldowns();
+        tickCooldowns();
 
-		super.onUpdate();
-	}
+        super.onUpdate();
+    }
 
-	private void generateNewTarget(){
-		EntityPlayer closest = null;
-		for (Object player : this.world.playerEntities){
-			if (closest == null || ((EntityPlayer)player).getDistanceSq(this) < this.getDistanceSq(closest)){
-				closest = (EntityPlayer)player;
-			}
-		}
-		if (closest != null && this.getDistanceSq(closest) < 64D)
-			currentTarget = new AMVector3(closest);
-		else
-			currentTarget = new AMVector3(this).add(new AMVector3(world.rand.nextInt(10) - 5, 0, world.rand.nextInt(10) - 5));
+    private void generateNewTarget() {
+        EntityPlayer closest = null;
+        for (Object player : this.world.playerEntities) {
+            if (closest == null || ((EntityPlayer) player).getDistanceSq(this) < this.getDistanceSq(closest)) {
+                closest = (EntityPlayer) player;
+            }
+        }
+        if (closest != null && this.getDistanceSq(closest) < 64D)
+            currentTarget = new AMVector3(closest);
+        else
+            currentTarget = new AMVector3(this).add(new AMVector3(world.rand.nextInt(10) - 5, 0, world.rand.nextInt(10) - 5));
 
-		nav.SetWaypoint(world, currentTarget.toBlockPos(), this);
-	}
+        nav.SetWaypoint(world, currentTarget.toBlockPos(), this);
+    }
 
-	private void setCooldownFor(EntityPlayer player){
-		cooldownList.put(player, 20);
-	}
+    private void setCooldownFor(EntityPlayer player) {
+        cooldownList.put(player, 20);
+    }
 
-	private void tickCooldowns(){
-		for (EntityPlayer player : cooldownList.keySet()){
-			Integer current = cooldownList.get(player);
-			if (current <= 0) continue;
-			cooldownList.put(player, --current);
-		}
-	}
-	
-	@Override
-	public ItemStack getHeldItem(EnumHand hand) {
-		return null;
-	}
-	
-	@Override
-	public void setItemStackToSlot(EntityEquipmentSlot slotIn, ItemStack stack) {
-	}
+    private void tickCooldowns() {
+        Iterator<Map.Entry<EntityPlayer, Integer>> it = cooldownList.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<EntityPlayer, Integer> entry = it.next();
+            if (entry.getValue() <= 0) {
+                it.remove();
+            } else {
+                entry.setValue(entry.getValue() - 1);
+            }
+        }
+    }
 
-	@Override
-	public boolean canBePushed(){
-		return false;
-	}
+    @Override
+    public ItemStack getHeldItem(EnumHand hand) {
+        return null;
+    }
+
+    @Override
+    public void setItemStackToSlot(EntityEquipmentSlot slotIn, ItemStack stack) {
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false;
+    }
 
 }

@@ -1,0 +1,136 @@
+{
+    "pools": [
+        {
+            "name": "arsmagica2_stronghold_crossing_additions",
+            "rolls": { "min": 1, "max": 2 },
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "arsmagica2:rune",
+                    "weight": 3,
+                    "functions": [
+                        {
+                            "function": "set_data",
+                            "data": { "min": 0, "max": 15 }
+                        },
+                        {
+                            "function": "set_count",
+                            "count": { "min": 1, "max": 2 }
+                        }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:vinteum_dust",
+                    "weight": 5,
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count": { "min": 2, "max": 4 }
+                        }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:infinity_orb",
+                    "entryName": "infinity_orb_blue",
+                    "weight": 5,
+                    "functions": [
+                        { "function": "set_data", "data": 0 },
+                        { "function": "set_count", "count": { "min": 1, "max": 1 } }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:infinity_orb",
+                    "entryName": "infinity_orb_green",
+                    "weight": 3,
+                    "functions": [
+                        { "function": "set_data", "data": 1 },
+                        { "function": "set_count", "count": { "min": 1, "max": 1 } }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:infinity_orb",
+                    "entryName": "infinity_orb_red",
+                    "weight": 1,
+                    "functions": [
+                        { "function": "set_data", "data": 2 },
+                        { "function": "set_count", "count": { "min": 1, "max": 1 } }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:affinity_tome_none",
+                    "entryName": "affinity_tome_none",
+                    "weight": 1
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:affinity_tome_arcane",
+                    "entryName": "affinity_tome_arcane",
+                    "weight": 1
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:affinity_tome_water",
+                    "entryName": "affinity_tome_water",
+                    "weight": 1
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:affinity_tome_fire",
+                    "entryName": "affinity_tome_fire",
+                    "weight": 1
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:affinity_tome_earth",
+                    "entryName": "affinity_tome_earth",
+                    "weight": 1
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:affinity_tome_air",
+                    "entryName": "affinity_tome_air",
+                    "weight": 1
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:affinity_tome_lightning",
+                    "entryName": "affinity_tome_lightning",
+                    "weight": 1
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:affinity_tome_ice",
+                    "entryName": "affinity_tome_ice",
+                    "weight": 1
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:affinity_tome_nature",
+                    "entryName": "affinity_tome_nature",
+                    "weight": 1
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:affinity_tome_life",
+                    "entryName": "affinity_tome_life",
+                    "weight": 1
+                },
+                {
+                    "type": "item",
+                    "name": "arsmagica2:affinity_tome_ender",
+                    "entryName": "affinity_tome_ender",
+                    "weight": 1
+                },
+                {
+                    "type": "empty",
+                    "weight": 6
+                }
+            ]
+        }
+    ]
+}

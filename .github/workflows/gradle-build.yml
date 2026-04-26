@@ -1,0 +1,97 @@
+name: Gradle Build
+
+on:
+  push:
+    branches: [ "**" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Load Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+            
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        cache-read-only: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/main' }}
+    
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    
+    - name: Build with Gradle
+      run: ./gradlew build --max-workers=1 --no-daemon
+
+    - name: Run unit tests
+      run: ./gradlew test --max-workers=1 --no-daemon
+
+    - name: Publish test report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Unit Tests
+        path: build/test-results/test/*.xml
+        reporter: java-junit
+        fail-on-error: false
+
+    - name: Prepare Minecraft server for startup test
+      run: |
+        mkdir -p run
+        echo "eula=true" > run/eula.txt
+        echo "online-mode=false" > run/server.properties
+
+    - name: Test server startup (10 second run)
+      timeout-minutes: 10
+      run: |
+        ./gradlew runServer --no-daemon > /tmp/server-output.log 2>&1 &
+        SERVER_PID=$!
+        trap 'kill $SERVER_PID 2>/dev/null || true; wait $SERVER_PID 2>/dev/null || true' EXIT
+
+        echo "Server started with PID $SERVER_PID, waiting 10 seconds..."
+        sleep 10
+
+        if ! kill -0 $SERVER_PID 2>/dev/null; then
+          echo "::error::Server process crashed during startup!"
+          echo "=== Server Output ==="
+          cat /tmp/server-output.log
+          exit 1
+        fi
+
+        if grep -qE "Exception in thread|Caused by:|/FATAL\]" /tmp/server-output.log; then
+          echo "::error::Errors found in server output!"
+          echo "=== Server Output ==="
+          cat /tmp/server-output.log
+          exit 1
+        fi
+
+        echo "Server ran for 10 seconds without errors. Shutting down..."
+        echo "=== Server Output ==="
+        cat /tmp/server-output.log
+        echo "Server startup test passed!"
+
+    - name: Upload build artifacts
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: build/libs/*.jar
+        retention-days: 30

@@ -1,0 +1,20 @@
+{
+    "variants": {
+        "facing=east,on_ceiling=false,on_wall=false":  {"model": "arsmagica2:chalk_arrow",         "y": 90},
+        "facing=east,on_ceiling=false,on_wall=true":   {"model": "arsmagica2:chalk_arrow_wall_empty"},
+        "facing=east,on_ceiling=true,on_wall=false":   {"model": "arsmagica2:chalk_arrow_ceiling",  "y": 90},
+        "facing=east,on_ceiling=true,on_wall=true":    {"model": "arsmagica2:chalk_arrow",         "y": 90},
+        "facing=north,on_ceiling=false,on_wall=false": {"model": "arsmagica2:chalk_arrow"},
+        "facing=north,on_ceiling=false,on_wall=true":  {"model": "arsmagica2:chalk_arrow_wall_empty"},
+        "facing=north,on_ceiling=true,on_wall=false":  {"model": "arsmagica2:chalk_arrow_ceiling"},
+        "facing=north,on_ceiling=true,on_wall=true":   {"model": "arsmagica2:chalk_arrow"},
+        "facing=south,on_ceiling=false,on_wall=false": {"model": "arsmagica2:chalk_arrow",         "y": 180},
+        "facing=south,on_ceiling=false,on_wall=true":  {"model": "arsmagica2:chalk_arrow_wall_empty"},
+        "facing=south,on_ceiling=true,on_wall=false":  {"model": "arsmagica2:chalk_arrow_ceiling",  "y": 180},
+        "facing=south,on_ceiling=true,on_wall=true":   {"model": "arsmagica2:chalk_arrow",         "y": 180},
+        "facing=west,on_ceiling=false,on_wall=false":  {"model": "arsmagica2:chalk_arrow",         "y": 270},
+        "facing=west,on_ceiling=false,on_wall=true":   {"model": "arsmagica2:chalk_arrow_wall_empty"},
+        "facing=west,on_ceiling=true,on_wall=false":   {"model": "arsmagica2:chalk_arrow_ceiling",  "y": 270},
+        "facing=west,on_ceiling=true,on_wall=true":    {"model": "arsmagica2:chalk_arrow",         "y": 270}
+    }
+}

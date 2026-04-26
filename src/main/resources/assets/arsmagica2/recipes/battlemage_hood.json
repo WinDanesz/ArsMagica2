@@ -1,0 +1,26 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "WLW",
+    "WRW",
+    " E "
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:obsidian"
+    },
+    "L": {
+      "item": "arsmagica2:gold_inlay"
+    },
+    "R": {
+      "item": "arsmagica2:rune",
+      "data": 1
+    },
+    "E": {
+      "item": "arsmagica2:essence_water"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:battlemage_helmet"
+  }
+}

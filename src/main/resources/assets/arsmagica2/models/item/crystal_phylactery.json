@@ -2,5 +2,10 @@
     "parent": "item/generated",
     "textures": {
         "layer0": "arsmagica2:items/crystal_phylactery"
-    }
+    },
+    "overrides": [
+        { "predicate": { "arsmagica2:fill": 0.25 }, "model": "arsmagica2:item/crystal_phylactery_quarter" },
+        { "predicate": { "arsmagica2:fill": 0.5  }, "model": "arsmagica2:item/crystal_phylactery_half" },
+        { "predicate": { "arsmagica2:fill": 1.0  }, "model": "arsmagica2:item/crystal_phylactery_full" }
+    ]
 }

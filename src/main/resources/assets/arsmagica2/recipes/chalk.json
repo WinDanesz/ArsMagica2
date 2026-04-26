@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "dyeWhite"
+    },
+    {
+      "item": "minecraft:clay_ball"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    },
+    {
+      "item": "minecraft:flint"
+    },
+    {
+      "item": "minecraft:paper"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:chalk"
+  }
+}

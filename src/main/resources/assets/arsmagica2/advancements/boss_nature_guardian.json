@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:essence_nature"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.boss_nature_guardian.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.boss_nature_guardian.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "arsmagica2:mage_armor",
+  "criteria": {
+    "killed_nature_guardian": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "arsmagica2:nature_guardian"
+        }
+      }
+    }
+  },
+  "requirements": [["killed_nature_guardian"]]
+}

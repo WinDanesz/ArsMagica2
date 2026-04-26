@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "arsmagica2:spell"
+    },
+    "title": {
+      "translate": "advancement.arsmagica2.first_spell.title"
+    },
+    "description": {
+      "translate": "advancement.arsmagica2.first_spell.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "arsmagica2:compendium_data",
+  "criteria": {
+    "has_spell": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "arsmagica2:spell"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,16 +1,16 @@
 package am2.client.blocks.render;
 
-import am2.ArsMagica2;
+import am2.ArsMagica;
 import am2.common.blocks.BlockIllusionBlock;
 import am2.common.blocks.tileentity.TileEntityIllusionBlock;
-import am2.common.defs.BlockDefs;
-import am2.common.defs.PotionEffectsDefs;
+import am2.common.registry.AMBlocks;
+import am2.common.registry.AMPotions;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -21,41 +21,42 @@ import net.minecraft.world.World;
 
 public class TileIllusionBlockRenderer extends TileEntitySpecialRenderer<TileEntityIllusionBlock> {
 
-	@Override
-	public void render(TileEntityIllusionBlock te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-		Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-		GlStateManager.pushMatrix();
-		RenderHelper.disableStandardItemLighting();
-		GlStateManager.translate(x, y, z);
-		GlStateManager.translate(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-		boolean flag = te.getMimicBlock() != null && te.getMimicBlock() != Blocks.AIR.getDefaultState();
-		if (BlockIllusionBlock.getIllusionType(te.getWorld().getBlockState(te.getPos())).canBeRevealed())
-			flag &= ArsMagica2.proxy.getLocalPlayer() != null && !ArsMagica2.proxy.getLocalPlayer().isPotionActive(PotionEffectsDefs.TRUE_SIGHT);
-		if (flag) {
-			Tessellator.getInstance().getBuffer().begin(7, DefaultVertexFormats.BLOCK);
-			Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(te.getMimicBlock(), te.getPos(), te.getWorld(), Tessellator.getInstance().getBuffer());
-			Tessellator.getInstance().draw();
-			if (destroyStage >= 0) {
-				Tessellator.getInstance().getBuffer().begin(7, DefaultVertexFormats.BLOCK);
-				TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/destroy_stage_" + destroyStage);
-	            IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(te.getMimicBlock());
-	            IBakedModel ibakedmodel1 = net.minecraftforge.client.ForgeHooksClient.getDamageModel(ibakedmodel, sprite, te.getMimicBlock(), te.getWorld(), te.getPos());
-				Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(te.getWorld(), ibakedmodel1, te.getMimicBlock(), te.getPos(), Tessellator.getInstance().getBuffer(), true);
-				Tessellator.getInstance().draw();
-			}
-		} else {
-			IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(BlockDefs.illusionBlock.getDefaultState());
-			Tessellator t = Tessellator.getInstance();
-			BufferBuilder wr = t.getBuffer();
-			wr.begin(7, DefaultVertexFormats.BLOCK);
-			World world = te.getWorld();
-			IBlockState state = world.getBlockState(te.getPos());
-			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(world, model, state, te.getPos(), wr, true);
-			t.draw();		}
-		GlStateManager.disableBlend();
-		GlStateManager.popMatrix();
-		RenderHelper.enableStandardItemLighting();
-	}
+    @Override
+    public void render(TileEntityIllusionBlock te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        GlStateManager.pushMatrix();
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.translate(x, y, z);
+        GlStateManager.translate(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        boolean flag = te.getMimicBlock() != null && te.getMimicBlock() != Blocks.AIR.getDefaultState();
+        if (BlockIllusionBlock.getIllusionType(te.getWorld().getBlockState(te.getPos())).canBeRevealed())
+            flag &= ArsMagica.proxy.getLocalPlayer() != null && !ArsMagica.proxy.getLocalPlayer().isPotionActive(AMPotions.true_sight);
+        if (flag) {
+            Tessellator.getInstance().getBuffer().begin(7, DefaultVertexFormats.BLOCK);
+            Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(te.getMimicBlock(), te.getPos(), te.getWorld(), Tessellator.getInstance().getBuffer());
+            Tessellator.getInstance().draw();
+            if (destroyStage >= 0 && te.getWorld() != null) {
+                Tessellator.getInstance().getBuffer().begin(7, DefaultVertexFormats.BLOCK);
+                TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/destroy_stage_" + destroyStage);
+                IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(te.getMimicBlock());
+                IBakedModel ibakedmodel1 = net.minecraftforge.client.ForgeHooksClient.getDamageModel(ibakedmodel, sprite, te.getMimicBlock(), te.getWorld(), te.getPos());
+                Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(te.getWorld(), ibakedmodel1, te.getMimicBlock(), te.getPos(), Tessellator.getInstance().getBuffer(), true);
+                Tessellator.getInstance().draw();
+            }
+        } else {
+            IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(AMBlocks.illusion_block.getDefaultState());
+            Tessellator t = Tessellator.getInstance();
+            BufferBuilder wr = t.getBuffer();
+            wr.begin(7, DefaultVertexFormats.BLOCK);
+            World world = te.getWorld();
+            IBlockState state = world.getBlockState(te.getPos());
+            Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(world, model, state, te.getPos(), wr, true);
+            t.draw();
+        }
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
+        RenderHelper.enableStandardItemLighting();
+    }
 }

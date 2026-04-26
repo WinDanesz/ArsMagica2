@@ -1,0 +1,22 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "III",
+    "IVI",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "arcaneAsh"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:iron_inlay",
+    "count": 4
+  }
+}

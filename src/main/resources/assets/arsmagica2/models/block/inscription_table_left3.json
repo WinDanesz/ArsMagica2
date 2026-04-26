@@ -1,0 +1,76 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "arsmagica2:blocks/inscription_table"
+	},
+	"elements": [
+		{
+			"from": [-0.60175, 19.4, 6.1],
+			"to": [5.19825, 21.4, 14.9],
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [5.19825, 19.4, 15]},
+			"faces": {
+				"north": {"uv": [0, 10, 0.75, 10.25], "texture": "#0"},
+				"south": {"uv": [0, 11.125, 0.75, 11.375], "texture": "#0"},
+				"west": {"uv": [0, 10.75, 1.125, 11], "texture": "#0"},
+				"down": {"uv": [0.75, 9.875, 0, 8.75], "texture": "#0"}
+			}
+		},
+		{
+			"from": [-0.80175, 19.4, 6],
+			"to": [5.19825, 19.6, 15],
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [5.19825, 17.4, 15]},
+			"faces": {
+				"north": {"uv": [0, 8.75, 0.75, 8.875], "texture": "#0"},
+				"east": {"uv": [0, 8.75, 0.75, 8.875], "texture": "#0"},
+				"south": {"uv": [0, 8.75, 0.75, 8.875], "texture": "#0"},
+				"west": {"uv": [0, 8.75, 0.75, 8.875], "texture": "#0"},
+				"up": {"uv": [0.75, 9.875, 0, 8.75], "texture": "#0"},
+				"down": {"uv": [0.75, 9.875, 0, 8.75], "texture": "#0"}
+			}
+		},
+		{
+			"from": [-0.80175, 21.4, 6],
+			"to": [5.19825, 21.6, 15],
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [5.19825, 19.4, 15]},
+			"faces": {
+				"north": {"uv": [0, 8.75, 0.75, 8.875], "texture": "#0"},
+				"east": {"uv": [0, 10.375, 1.125, 10.5], "texture": "#0"},
+				"south": {"uv": [0, 8.75, 0.75, 8.875], "texture": "#0"},
+				"west": {"uv": [0, 8.75, 0.75, 8.875], "texture": "#0"},
+				"up": {"uv": [3, 9.875, 2.25, 8.75], "texture": "#0"},
+				"down": {"uv": [0.75, 9.875, 0, 8.75], "texture": "#0"}
+			}
+		},
+		{
+			"from": [4.99825, 19.6, 6],
+			"to": [5.19825, 21.4, 15],
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [5.19825, 18.4, 15]},
+			"faces": {
+				"north": {"uv": [0, 8.75, 0.75, 8.875], "texture": "#0"},
+				"east": {"uv": [0, 10.375, 1.125, 10.625], "texture": "#0"},
+				"south": {"uv": [0, 8.75, 0.75, 8.875], "texture": "#0"},
+				"west": {"uv": [0, 8.75, 0.75, 8.875], "texture": "#0"},
+				"up": {"uv": [0.75, 9.875, 0, 8.75], "texture": "#0", "cullface": "up"},
+				"down": {"uv": [0.75, 9.875, 0, 8.75], "texture": "#0"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "left",
+			"origin": [2, 14, 2],
+			"scope": 0,
+			"color": 0,
+			"children": [
+				{
+					"name": "book",
+					"origin": [2, 14, 2],
+					"scope": 0,
+					"color": 0,
+					"children": [0, 1, 2, 3]
+				}
+			]
+		}
+	]
+}

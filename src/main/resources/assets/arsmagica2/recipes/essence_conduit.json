@@ -1,0 +1,21 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    " C ",
+    " S ",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "stone"
+    },
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "gemChimerite"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:essence_conduit"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "SVS",
+    "SAS",
+    "SVS"
+  ],
+  "key": {
+    "V": {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    },
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "slimeball"
+    },
+    "A": {
+      "item": "minecraft:bow"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:binding_catalyst",
+    "data": 5
+  }
+}

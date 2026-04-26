@@ -1,12 +1,12 @@
 package am2.common.blocks.tileentity.flickers;
 
-import am2.api.ArsMagicaAPI;
 import am2.api.affinity.Affinity;
+import am2.api.flickers.AbstractFlickerFunctionality;
 import am2.api.flickers.IFlickerController;
-import am2.common.defs.ItemDefs;
+import am2.common.registry.AMItems;
+import am2.common.registry.Affinities;
 import am2.common.utils.AffinityShiftUtils;
 import am2.common.utils.InventoryUtilities;
-import am2.api.flickers.AbstractFlickerFunctionality;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -17,100 +17,105 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class FlickerOperatorPackedEarth extends AbstractFlickerFunctionality{
-	
-	public final static FlickerOperatorPackedEarth instance = new FlickerOperatorPackedEarth();
+public class FlickerOperatorPackedEarth extends AbstractFlickerFunctionality {
 
-	@Override
-	public boolean RequiresPower(){
-		return false;
-	}
+    public final static FlickerOperatorPackedEarth instance = new FlickerOperatorPackedEarth();
 
-	@Override
-	public int PowerPerOperation(){
-		return 10;
-	}
+    @Override
+    public boolean RequiresPower() {
+        return false;
+    }
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public boolean DoOperation(World world, IFlickerController<?> habitat, boolean powered){
-		int searchesPerLoop = 12;
+    @Override
+    public int PowerPerOperation() {
+        return 10;
+    }
 
-		int radius = 6;
-		int diameter = radius * 2 + 1;
+    @Override
+    public int getID() {
+        return 11;
+    }
 
-		if (!world.isRemote){
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean DoOperation(World world, IFlickerController<?> habitat, boolean powered) {
+        int searchesPerLoop = 12;
 
-			boolean actionPerformed = false;
-			for (int i = 0; i < searchesPerLoop && !actionPerformed; ++i){
-				TileEntity te = world.getTileEntity(((TileEntity)habitat).getPos().down());
-				if (te == null || !(te instanceof IInventory)){
-					return false;
-				}
-				
-				BlockPos effectPos = ((TileEntity)habitat).getPos().add(-radius, -1, -radius).add(world.rand.nextInt(diameter), world.rand.nextInt(diameter), world.rand.nextInt(radius));
-				
-				if (effectPos.getY() < 3)
-					effectPos = new BlockPos(effectPos.getX(), 3, effectPos.getY());
+        int radius = 6;
+        int diameter = radius * 2 + 1;
 
-				Block block = world.getBlockState(effectPos).getBlock();
+        if (!world.isRemote) {
 
-				if (world.isAirBlock(effectPos) || block.isReplaceable(world, effectPos)){
-					int inventoryIndex = InventoryUtilities.getFirstBlockInInventory((IInventory)te);
-					if (inventoryIndex > -1){
-						ItemStack stack = ((IInventory)te).getStackInSlot(inventoryIndex);
-						InventoryUtilities.decrementStackQuantity((IInventory)te, inventoryIndex, 1);
-						world.setBlockState(effectPos, Block.getBlockFromItem(stack.getItem()).getStateFromMeta(stack.getItemDamage()));
-						actionPerformed = true;
-					}
-				}
-			}
-		}
+            boolean actionPerformed = false;
+            for (int i = 0; i < searchesPerLoop && !actionPerformed; ++i) {
+                TileEntity te = world.getTileEntity(((TileEntity) habitat).getPos().down());
+                if (te == null || !(te instanceof IInventory)) {
+                    return false;
+                }
 
-		return true;
-	}
+                BlockPos effectPos = ((TileEntity) habitat).getPos().add(-radius, -1, -radius).add(world.rand.nextInt(diameter), world.rand.nextInt(diameter), world.rand.nextInt(diameter));
 
-	@Override
-	public boolean DoOperation(World world, IFlickerController<?> controller, boolean powered, Affinity[] flickers){
-		return DoOperation(world, controller, powered);
-	}
+                if (effectPos.getY() < 3)
+                    effectPos = new BlockPos(effectPos.getX(), 3, effectPos.getY());
 
-	@Override
-	public void RemoveOperator(World world, IFlickerController<?> controller, boolean powered){
-	}
+                Block block = world.getBlockState(effectPos).getBlock();
 
-	@Override
-	public int TimeBetweenOperation(boolean powered, Affinity[] flickers){
-		return powered ? 1 : 20;
-	}
+                if (world.isAirBlock(effectPos) || block.isReplaceable(world, effectPos)) {
+                    int inventoryIndex = InventoryUtilities.getFirstBlockInInventory((IInventory) te);
+                    if (inventoryIndex > -1) {
+                        ItemStack stack = ((IInventory) te).getStackInSlot(inventoryIndex);
+                        InventoryUtilities.decrementStackQuantity((IInventory) te, inventoryIndex, 1);
+                        world.setBlockState(effectPos, Block.getBlockFromItem(stack.getItem()).getStateFromMeta(stack.getItemDamage()));
+                        actionPerformed = true;
+                    }
+                }
+            }
+        }
 
-	@Override
-	public void RemoveOperator(World world, IFlickerController<?> controller, boolean powered, Affinity[] flickers){
-	}
+        return true;
+    }
 
-	@Override
-	public Object[] getRecipe(){
-		return new Object[]{
-				"DDD",
-				"RFR",
-				" E ",
-				Character.valueOf('D'), Blocks.DIRT,
-				Character.valueOf('R'), new ItemStack(ItemDefs.rune, 1, EnumDyeColor.BLACK.getDyeDamage()),
-				Character.valueOf('E'), AffinityShiftUtils.getEssenceForAffinity(Affinity.EARTH),
-				//todo registry Character.valueOf('F'), new ItemStack(ItemDefs.flickerJar, 1, ArsMagicaAPI.getAffinityRegistry().getId(Affinity.EARTH))
+    @Override
+    public boolean DoOperation(World world, IFlickerController<?> controller, boolean powered, Affinity[] flickers) {
+        return DoOperation(world, controller, powered);
+    }
 
-		};
-	}
-	
-	@Override
-	public ResourceLocation getTexture() {
-		return new ResourceLocation("arsmagica2", "FlickerOperatorPackedEarth");
-	}
+    @Override
+    public void RemoveOperator(World world, IFlickerController<?> controller, boolean powered) {
+    }
 
-	@Override
-	public Affinity[] getMask() {
-		return new Affinity[]{Affinity.EARTH};
-	}
+    @Override
+    public int TimeBetweenOperation(boolean powered, Affinity[] flickers) {
+        return powered ? 1 : 20;
+    }
+
+    @Override
+    public void RemoveOperator(World world, IFlickerController<?> controller, boolean powered, Affinity[] flickers) {
+    }
+
+    @Override
+    public Object[] getRecipe() {
+        return new Object[]{
+                "DDD",
+                "RFR",
+                " E ",
+                Character.valueOf('D'), Blocks.DIRT,
+                Character.valueOf('R'), new ItemStack(AMItems.rune, 1, EnumDyeColor.BLACK.getDyeDamage()),
+                Character.valueOf('E'), AffinityShiftUtils.getEssenceForAffinity(Affinities.earth),
+                Character.valueOf('F'), new ItemStack(AMItems.flicker_jar, 1, Affinities.earth.getID())
+
+        };
+    }
+
+    @Override
+    public ResourceLocation getTexture() {
+        return new ResourceLocation("arsmagica2", "FlickerOperatorPackedEarth");
+    }
+
+    @Override
+    public Affinity[] getMask() {
+        return new Affinity[]{Affinities.earth};
+    }
 
 
 }

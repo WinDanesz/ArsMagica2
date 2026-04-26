@@ -1,0 +1,21 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    " GT",
+    "G G",
+    "GG "
+  ],
+  "key": {
+    "T": {
+      "type": "forge:ore_dict",
+      "ore": "gemBlueTopaz"
+    },
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "nuggetGold"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:attuning_staff"
+  }
+}
