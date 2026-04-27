@@ -29,5 +29,3 @@ Most notable changes include:
 
 * [1.7.10 version's MinecraftForum page](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1292222)
 * [1.7.10 Unofficial Wiki](http://am2.wikia.com/wiki/Ars_Magica_2_Wiki)
-
-#

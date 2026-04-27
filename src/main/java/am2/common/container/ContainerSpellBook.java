@@ -1,6 +1,6 @@
 package am2.common.container;
 
-import am2.common.compat.electroblob.EBWizardryCompatHandler;
+import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.container.slot.SlotOneItemClassOnly;
 import am2.common.items.ItemSpellBase;
 import am2.common.items.ItemSpellBook;
@@ -26,12 +26,28 @@ public class ContainerSpellBook extends Container {
 
         @Override
         public boolean isItemValid(ItemStack stack) {
-            return super.isItemValid(stack) || EBWizardryCompatHandler.isEBWizSpellBookItem(stack);
+            return super.isItemValid(stack) || isSafeEBWizSpellBook(stack);
         }
 
         @Override
         public void putStack(ItemStack stack) {
-            super.putStack(EBWizardryCompatHandler.convertEBWizSpellBook(stack));
+            super.putStack(convertSafeEBWizSpellBook(stack));
+        }
+    }
+
+    private static boolean isSafeEBWizSpellBook(ItemStack stack) {
+        try {
+            return EBWizardryCompatBootstrap.isEBWizSpellBook(stack);
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
+    private static ItemStack convertSafeEBWizSpellBook(ItemStack stack) {
+        try {
+            return EBWizardryCompatBootstrap.convertEBWizSpellBook(stack);
+        } catch (Throwable ignored) {
+            return stack;
         }
     }
 
@@ -126,7 +142,7 @@ public class ContainerSpellBook extends Container {
                 }
             } else if (i >= 40 && i < 67) //range 27 - player inventory
             {
-                if (itemstack.getItem() instanceof ItemSpellBase || EBWizardryCompatHandler.isEBWizSpellBookItem(itemstack)) {
+                if (itemstack.getItem() instanceof ItemSpellBase || isSafeEBWizSpellBook(itemstack)) {
                     for (int n = 0; n < 40; n++) {
                         Slot scrollSlot = (Slot) inventorySlots.get(n);
                         if (scrollSlot.getHasStack()) continue;
@@ -148,7 +164,7 @@ public class ContainerSpellBook extends Container {
                 }
             } else if (i >= 67 && i < 76) //range 9 - player action bar
             {
-                if (itemstack.getItem() instanceof ItemSpellBase || EBWizardryCompatHandler.isEBWizSpellBookItem(itemstack)) {
+                if (itemstack.getItem() instanceof ItemSpellBase || isSafeEBWizSpellBook(itemstack)) {
                     for (int n = 0; n < 40; n++) {
                         Slot scrollSlot = (Slot) inventorySlots.get(n);
                         if (scrollSlot.getHasStack()) continue;

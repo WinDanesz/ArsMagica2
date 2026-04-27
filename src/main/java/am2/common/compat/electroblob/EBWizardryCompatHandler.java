@@ -5,7 +5,6 @@ import am2.api.affinity.Affinity;
 import am2.api.extensions.IEntityExtension;
 import am2.common.LogHelper;
 import am2.common.compat.electroblob.item.ItemEBWizSpellBinding;
-import am2.common.compat.electroblob.item.ItemSpellBookEBWiz;
 import am2.common.compat.electroblob.spells.IceStatue;
 import am2.common.compat.electroblob.spells.Metamorphosis;
 import am2.common.compat.electroblob.spells.PlaceTemporaryBlock;
@@ -54,8 +53,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *   <li>The equivalent AM2 mana is deducted after the spell succeeds
  *       (in {@code SpellCastEvent.Post}).</li>
  * </ol>
- * If the caster does not have enough AM2 mana the spell proceeds normally,
- * consuming wand mana as usual.
+ * If the caster does not have enough AM2 mana the cast is cancelled outright
+ * (the spell fails rather than silently falling back to wand mana).
  *
  * <h3>Event bridge</h3>
  * Both AM2's {@code am2.api.event.SpellCastEvent} and EBWiz's
@@ -69,6 +68,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * loaded even when EBWiz is absent, triggering a {@link NoClassDefFoundError}.
  */
 public final class EBWizardryCompatHandler {
+
+    // Double-supplier keeps ItemSpellBookEBWiz class resolution deferred until actual item creation.
+    private static final java.util.function.Supplier<java.util.function.Supplier<net.minecraft.item.Item>> SPELLBOOK_ITEM_FACTORY =
+            () -> am2.common.compat.electroblob.item.ItemSpellBookEBWiz::new;
 
     /**
      * Returns the AM2 mana cost for the EBWiz spell bound in {@code stack},
@@ -183,7 +186,9 @@ public final class EBWizardryCompatHandler {
      * <p>If the caster holds enough AM2 mana to cover the spell's cost the
      * wand's mana-cost modifier is zeroed, ensuring the wand is not drained.
      * The AM2 mana amount is stored and will be deducted in
-     * {@link #onEBWizSpellCastPost}.
+     * {@link #onEBWizSpellCastPost}.  If the caster does not have enough AM2
+     * mana the event is cancelled so the spell fails cleanly instead of
+     * silently consuming wand mana as a free fallback.
      */
     @SubscribeEvent
     public void onEBWizSpellCastPre(electroblob.wizardry.event.SpellCastEvent.Pre event) {
@@ -213,10 +218,14 @@ public final class EBWizardryCompatHandler {
         float disciplineCostMult = getDisciplineCostMultiplier(caster, event.getSpell());
         float am2ManaCost = event.getSpell().getCost() * costModifier * ArsMagica.config.getEBWizManaCostMultiplier() * burnoutMultiplier * disciplineCostMult;
 
-        boolean disableWandMana = ArsMagica.config.getEBWizDisableWandMana();
-        if (disableWandMana) {
-            // Config: wand mana must never be used. The spell can only proceed if
-            // the caster has enough AM2 mana; otherwise cancel it outright.
+        // Scrolls have no wand-mana fallback of their own, so by default they
+        // require AM2 mana (configurable via EBWiz_Scroll_Requires_Mana).
+        boolean requireAM2Mana = ArsMagica.config.getEBWizDisableWandMana()
+                || (event.getSource() == electroblob.wizardry.event.SpellCastEvent.Source.SCROLL
+                        && ArsMagica.config.getEBWizScrollRequiresMana());
+        if (requireAM2Mana) {
+            // The spell can only proceed if the caster has enough AM2 mana;
+            // otherwise cancel it outright.
             if (am2ManaCost <= 0 || !am2Data.hasEnoughMana(am2ManaCost)) {
                 event.setCanceled(true);
                 return;
@@ -226,7 +235,14 @@ public final class EBWizardryCompatHandler {
             return;
         }
 
-        if (am2ManaCost <= 0 || !am2Data.hasEnoughMana(am2ManaCost)) return;
+        if (am2ManaCost <= 0) return; // spell has no AM2 cost, let wand handle it normally
+
+        if (!am2Data.hasEnoughMana(am2ManaCost)) {
+            // Not enough AM2 mana – cancel the cast outright instead of silently
+            // falling back to wand mana, which would allow free infinite casts.
+            event.setCanceled(true);
+            return;
+        }
 
         // AM2 mana will cover this cast – zero out the EBWiz wand cost so the
         // wand is not drained.  The third parameter (needsSyncing=false) means
@@ -616,10 +632,15 @@ public final class EBWizardryCompatHandler {
     /**
      * Creates the EBWiz-aware spell book item.
      * Only called from {@link EBWizardryCompatBootstrap#createSpellBookItem()} after
-     * confirming EBWiz is loaded, so referencing {@link ItemSpellBookEBWiz} here is safe.
+     * confirming EBWiz is loaded.
      */
     public static net.minecraft.item.Item createSpellBookItem() {
-        return new ItemSpellBookEBWiz();
+        try {
+            return SPELLBOOK_ITEM_FACTORY.get().get();
+        } catch (Throwable t) {
+            LogHelper.warn("AM2 EBWiz compat: failed to create ItemSpellBookEBWiz, falling back to ItemSpellBook (%s)", t.toString());
+        }
+        return new am2.common.items.ItemSpellBook();
     }
 
     /**

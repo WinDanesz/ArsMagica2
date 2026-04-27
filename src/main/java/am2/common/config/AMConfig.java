@@ -191,6 +191,7 @@ public class AMConfig extends Configuration {
     private final String KEY_EBWizSpellsInSpellBook = "EBWiz_Spells_In_SpellBook";
     private final String KEY_EBWizManaCostMultiplier = "EBWiz_Mana_Cost_Multiplier";
     private final String KEY_EBWizDisableWandMana = "EBWiz_Disable_Wand_Mana";
+    private final String KEY_EBWizScrollRequiresMana = "EBWiz_Scroll_Requires_Mana";
     private final String KEY_EBWizHideWandTooltip = "EBWiz_Hide_Wand_Mana_Tooltip";
     private final String KEY_EBWizMagicXPMultiplier = "EBWiz_Magic_XP_Multiplier";
     private final String KEY_EBWizPreserveSpellBook = "EBWiz_Preserve_Spell_Book";
@@ -698,6 +699,7 @@ public class AMConfig extends Configuration {
     private boolean ebwizSpellsInSpellBook;
     private float ebwizManaCostMultiplier;
     private boolean ebwizDisableWandMana;
+    private boolean ebwizScrollRequiresMana;
     private boolean ebwizHideWandTooltip;
     private float ebwizMagicXPMultiplier;
     private boolean ebwizPreserveSpellBook;
@@ -1173,6 +1175,10 @@ public class AMConfig extends Configuration {
         this.ebwizDisableWandMana = this.get(CATEGORY_INTEGRATION, this.KEY_EBWizDisableWandMana, false,
                 "If true, EBWiz wand mana is always zeroed when a spell is cast – the wand never consumes its own mana charge. "
                 + "AM2 mana is still deducted as normal when the caster has sufficient mana.").getBoolean(false);
+        this.ebwizScrollRequiresMana = this.get(CATEGORY_INTEGRATION, this.KEY_EBWizScrollRequiresMana, true,
+                "If true (default), casting EBWiz spells from scrolls always requires AM2 mana; the cast is cancelled if the "
+                + "caster does not have enough mana (and the scroll is not consumed). "
+                + "Set to false to allow scrolls to be used freely without AM2 mana.").getBoolean(true);
         this.ebwizHideWandTooltip = this.get(CATEGORY_INTEGRATION, this.KEY_EBWizHideWandTooltip, false,
                 "If true, the Mana and Durability lines are removed from EBWiz wand tooltips. "
                 + "Useful together with EBWiz_Disable_Wand_Mana to avoid showing misleading wand charge info.").getBoolean(false);
@@ -2522,6 +2528,10 @@ public class AMConfig extends Configuration {
 
     public boolean getEBWizDisableWandMana() {
         return this.ebwizDisableWandMana;
+    }
+
+    public boolean getEBWizScrollRequiresMana() {
+        return this.ebwizScrollRequiresMana;
     }
 
     public boolean getEBWizHideWandTooltip() {
