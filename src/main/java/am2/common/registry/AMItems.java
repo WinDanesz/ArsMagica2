@@ -320,7 +320,7 @@ public final class AMItems {
         registerItemBlock(registry, AMBlocks.black_aurem);
         registerItemBlockBaked(registry, AMBlocks.celestial_prism);
         registerItemBlock(registry, AMBlocks.lectern);
-        registerItemBlock(registry, AMBlocks.inscription_table);
+        registerItemBlock(registry, AMBlocks.inscription_table, new ItemInscriptionTable(AMBlocks.inscription_table));
         registerItemBlock(registry, AMBlocks.magicians_workbench);
         registerItemBlock(registry, AMBlocks.armor_imbuer);
         registerItemBlock(registry, AMBlocks.calefactor);
