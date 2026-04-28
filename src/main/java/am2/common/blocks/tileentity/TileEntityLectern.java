@@ -140,6 +140,7 @@ public class TileEntityLectern extends TileEntityEnchantmentTable implements ITi
             stack.setCount(1);
         }
         this.stack = stack;
+        markDirty();
         if (!this.world.isRemote) {
             AMNetworkHandler.getNetwork().sendToAllAround(new PacketLecternSync(pos, stack), new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 32));
         }

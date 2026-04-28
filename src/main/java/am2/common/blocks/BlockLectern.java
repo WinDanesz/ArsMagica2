@@ -1,7 +1,9 @@
 package am2.common.blocks;
 
-import am2.ArsMagica;
+import am2.client.gui.AMGuiHelper;
 import am2.common.blocks.tileentity.TileEntityLectern;
+import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
+import am2.common.registry.AMItems;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -13,6 +15,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -64,24 +67,20 @@ public class BlockLectern extends BlockAMSpecialRenderContainer {
                     }
                 }
             } else {
-                if ((te.getStack().getItem() == Items.WRITTEN_BOOK || te.getStack().getItem() == Items.WRITABLE_BOOK) && world.isRemote && player == ArsMagica.proxy.getLocalPlayer()) {
-                    openBook(player, te);
-                } else {
-                    // Temporarily place the lectern's stack in the player's hand so that
-                    // Item.onItemRightClick can read it via player.getHeldItem(hand)
-                    ItemStack originalHeld = player.getHeldItem(hand);
-                    player.setHeldItem(hand, te.getStack().copy());
-                    te.getStack().getItem().onItemRightClick(world, player, hand);
-                    player.setHeldItem(hand, originalHeld);
+                if (world.isRemote) {
+                    openSupportedLecternItem(player, te.getStack());
                 }
                 return true;
             }
         } else {
-            if (player.getHeldItem(hand) != null) {
+            if (!world.isRemote && !player.getHeldItem(hand).isEmpty()) {
                 if (te.setStack(player.getHeldItem(hand).copy())) {
                     player.getHeldItem(hand).shrink(1);
-                    if (player.getHeldItem(hand).getCount() <= 0) {
-                        player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
+                    if (player.getHeldItem(hand).isEmpty()) {
+                        player.setHeldItem(hand, ItemStack.EMPTY);
+                    }
+                    if (player instanceof EntityPlayerMP) {
+                        ((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
                     }
                 }
             }
@@ -91,8 +90,20 @@ public class BlockLectern extends BlockAMSpecialRenderContainer {
     }
 
     @SideOnly(Side.CLIENT)
-    private void openBook(EntityPlayer player, TileEntityLectern te) {
-        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenBook(player, te.getStack(), false));
+    private void openSupportedLecternItem(EntityPlayer player, ItemStack lecternStack) {
+        Item item = lecternStack.getItem();
+
+        if (item == Items.WRITTEN_BOOK || item == Items.WRITABLE_BOOK) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiScreenBook(player, lecternStack, false));
+            return;
+        }
+
+        if (item == AMItems.arcane_compendium) {
+            AMGuiHelper.OpenCompendiumGui(lecternStack);
+            return;
+        }
+
+        EBWizardryCompatBootstrap.openLecternGuiClient(lecternStack);
     }
 
     @Override

@@ -387,6 +387,34 @@ public final class EBWizardryCompatHandler {
     }
 
     /**
+     * Opens EBWiz book GUIs used by AM2 lectern interactions.
+     * Returns true if a supported GUI was opened.
+     */
+    @SideOnly(Side.CLIENT)
+    public static boolean openLecternGuiClient(ItemStack stack) {
+        if (stack.isEmpty()) return false;
+
+        ResourceLocation id = stack.getItem().getRegistryName();
+        if (id == null || !"ebwizardry".equals(id.getNamespace())) return false;
+
+        if ("spell_book".equals(id.getPath())) {
+            net.minecraft.client.Minecraft.getMinecraft().displayGuiScreen(
+                    new electroblob.wizardry.client.gui.GuiSpellBook(stack));
+            return true;
+        }
+
+        if ("wizard_handbook".equals(id.getPath())) {
+            if (electroblob.wizardry.Wizardry.settings.loadHandbook) {
+                net.minecraft.client.Minecraft.getMinecraft().displayGuiScreen(
+                        new electroblob.wizardry.client.gui.handbook.GuiWizardHandbook());
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Converts an EBWiz {@code ItemSpellBook} stack into an
      * {@link ItemEBWizSpellBinding} stack so it can be stored in and cast from
      * an AM2 spell book slot.

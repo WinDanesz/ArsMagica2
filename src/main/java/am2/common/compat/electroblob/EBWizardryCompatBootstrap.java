@@ -17,6 +17,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Bootstrap class for Electroblob's Wizardry (ebwizardry) compatibility.
@@ -431,6 +433,17 @@ public final class EBWizardryCompatBootstrap {
             return EBWizardryCompatHandler.createSpellBookItem();
         }
         return new ItemSpellBook();
+    }
+
+    /**
+     * Attempts to open an Electroblob's Wizardry lectern-readable GUI for the given
+     * stack on the client. Returns {@code true} when a supported EBWiz GUI was opened.
+     * Safe to call unconditionally from common code.
+     */
+    @SideOnly(Side.CLIENT)
+    public static boolean openLecternGuiClient(ItemStack stack) {
+        if (!Loader.isModLoaded(MODID)) return false;
+        return EBWizardryCompatHandler.openLecternGuiClient(stack);
     }
 
     /**
