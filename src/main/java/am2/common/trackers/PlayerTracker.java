@@ -72,6 +72,10 @@ public class PlayerTracker {
 
     @SubscribeEvent
     public void onPlayerLogout(PlayerLoggedOutEvent event) {
+        // Clear the per-player armor infusion cache so the WeakHashMap entry is
+        // released promptly rather than waiting for GC.
+        ArmorHelper.clearArmorCache(event.player);
+
         //kill any summoned creatures
         if (!event.player.world.isRemote) {
             List<Entity> list = event.player.world.loadedEntityList;

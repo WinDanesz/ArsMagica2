@@ -12,10 +12,32 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.EntityEquipmentSlot.Type;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.WeakHashMap;
+
 public class ArmorHelper {
+
+    /** Shared empty array to avoid repeated allocations. */
+    private static final ArmorImbuement[] EMPTY_IMBUEMENTS = new ArmorImbuement[0];
+
+    /**
+     * Per-player, per-slot infusion cache. Keyed on the raw NBT infusion string so it
+     * auto-invalidates on changes. WeakHashMap releases entries when the player is GC'd.
+     */
+    private static final Map<EntityPlayer, EnumMap<EntityEquipmentSlot, Object[]>>
+            armorInfusionCache = Collections.synchronizedMap(new WeakHashMap<>());
+
+    /** Call on player logout to release the cache entry promptly. */
+    public static void clearArmorCache(EntityPlayer player) {
+        armorInfusionCache.remove(player);
+    }
 
     private static final int IMBUE_TIER_COST = 12;
 
@@ -24,13 +46,17 @@ public class ArmorHelper {
         return !stack.isEmpty();
     }
 
+    /** Run infusion logic every N ticks; costs are scaled up to keep the same rate. */
+    private static final int INFUSION_TICK_INTERVAL = 5;
+
     //======================================================================================================
     // Infusion
     //======================================================================================================
     public static void HandleArmorInfusion(EntityPlayer player) {
+        if (player.ticksExisted % INFUSION_TICK_INTERVAL != 0) return;
+
         EntityExtension ext = EntityExtension.For(player);
 
-        // Armor infusion requires at least magic level 1
         if (ext.getCurrentLevel() < 1) {
             return;
         }
@@ -46,18 +72,17 @@ public class ArmorHelper {
             infusionCost *= 0.75;
         }
 
-        // Apply config multiplier to infusion cost
+        infusionCost *= INFUSION_TICK_INTERVAL; // scale up to compensate for tick throttling
         infusionCost *= (float) ArsMagica.config.getArmorInfusionCostMultiplier();
 
-        // Only repair if there's damage to repair and enough mana to do so
         if (infusionCost > 0 && ext.hasEnoughMana(infusionCost)) {
             //deduct mana
             ext.deductMana(infusionCost);
-            //bank infusion
-            ext.bankedInfusionHelm += GetArsMagicaArmorRepairAmountFromSlot(player, EntityEquipmentSlot.HEAD);
-            ext.bankedInfusionChest += GetArsMagicaArmorRepairAmountFromSlot(player, EntityEquipmentSlot.CHEST);
-            ext.bankedInfusionLegs += GetArsMagicaArmorRepairAmountFromSlot(player, EntityEquipmentSlot.LEGS);
-            ext.bankedInfusionBoots += GetArsMagicaArmorRepairAmountFromSlot(player, EntityEquipmentSlot.FEET);
+            //bank infusion (scaled by interval to maintain the same repair rate)
+            ext.bankedInfusionHelm += GetArsMagicaArmorRepairAmountFromSlot(player, EntityEquipmentSlot.HEAD) * INFUSION_TICK_INTERVAL;
+            ext.bankedInfusionChest += GetArsMagicaArmorRepairAmountFromSlot(player, EntityEquipmentSlot.CHEST) * INFUSION_TICK_INTERVAL;
+            ext.bankedInfusionLegs += GetArsMagicaArmorRepairAmountFromSlot(player, EntityEquipmentSlot.LEGS) * INFUSION_TICK_INTERVAL;
+            ext.bankedInfusionBoots += GetArsMagicaArmorRepairAmountFromSlot(player, EntityEquipmentSlot.FEET) * INFUSION_TICK_INTERVAL;
 
 
             //repair armor if infusion bank is above 1
@@ -122,14 +147,13 @@ public class ArmorHelper {
                 return -1;
             }
             ItemStack stack = player.getItemStackFromSlot(slot);
-            // Broken armor doesn't count towards set bonus
             if (AMArmor.isArmorBroken(stack)) {
                 return -1;
             }
             AMArmor armor = (AMArmor) stack.getItem();
-            if (matlID == -1) {
+            if (matlID == -1)
                 matlID = armor.getMaterialID();
-            } else {
+            else {
                 if (matlID != armor.getMaterialID()) {
                     return -1;
                 }
@@ -151,15 +175,57 @@ public class ArmorHelper {
 
     public static ArmorImbuement[] getInfusionsOnArmor(EntityPlayer player, EntityEquipmentSlot armorSlot) {
         ItemStack stack = player.getItemStackFromSlot(armorSlot);
-        return getInfusionsOnArmor(stack);
+
+        if (stack.isEmpty() || !(stack.getItem() instanceof ItemArmor)) {
+            return EMPTY_IMBUEMENTS;
+        }
+
+        // Cache key: raw NBT infusion string (cheap to read; only parse on miss)
+        String currentList = null;
+        if (stack.hasTagCompound()) {
+            NBTBase propsTag = stack.getTagCompound().getTag(AMArmor.NBT_KEY_AMPROPS);
+            if (propsTag instanceof NBTTagCompound) {
+                String s = ((NBTTagCompound) propsTag).getString(AMArmor.NBT_KEY_EFFECTS);
+                if (!s.isEmpty()) currentList = s;
+            }
+        }
+
+        // Cache hit
+        EnumMap<EntityEquipmentSlot, Object[]> slotMap = armorInfusionCache.get(player);
+        if (slotMap != null) {
+            Object[] entry = slotMap.get(armorSlot);
+            if (entry != null && Objects.equals(entry[0], currentList)) {
+                return (ArmorImbuement[]) entry[1];
+            }
+        }
+
+        // Cache miss: parse and store
+        ArmorImbuement[] result;
+        if (currentList == null) {
+            result = EMPTY_IMBUEMENTS;
+        } else {
+            String[] ids = currentList.split(AMArmor.INFUSION_DELIMITER);
+            result = new ArmorImbuement[ids.length];
+            for (int i = 0; i < ids.length; ++i) {
+                result[i] = ImbuementRegistry.instance.getImbuementByID(new ResourceLocation(ids[i]));
+            }
+        }
+
+        if (slotMap == null) {
+            slotMap = new EnumMap<>(EntityEquipmentSlot.class);
+            armorInfusionCache.put(player, slotMap);
+        }
+        slotMap.put(armorSlot, new Object[]{currentList, result});
+
+        return result;
     }
 
     public static ArmorImbuement[] getInfusionsOnArmor(ItemStack stack) {
         if (stack.isEmpty() || !stack.hasTagCompound() || !(stack.getItem() instanceof ItemArmor))
-            return new ArmorImbuement[0];
-        NBTTagCompound armorProps = (NBTTagCompound) stack.getTagCompound().getTag(AMArmor.NBT_KEY_AMPROPS);
-        if (armorProps != null) {
-            String infusionList = armorProps.getString(AMArmor.NBT_KEY_EFFECTS);
+            return EMPTY_IMBUEMENTS;
+        NBTBase propsTag = stack.getTagCompound().getTag(AMArmor.NBT_KEY_AMPROPS);
+        if (propsTag instanceof NBTTagCompound) {
+            String infusionList = ((NBTTagCompound) propsTag).getString(AMArmor.NBT_KEY_EFFECTS);
             if (infusionList != null && !infusionList.isEmpty()) {
                 String[] ids = infusionList.split(AMArmor.INFUSION_DELIMITER);
                 ArmorImbuement[] infusions = new ArmorImbuement[ids.length];
@@ -169,7 +235,7 @@ public class ArmorHelper {
                 return infusions;
             }
         }
-        return new ArmorImbuement[0];
+        return EMPTY_IMBUEMENTS;
     }
 
     public static boolean isInfusionPreset(ItemStack stack, String id) {

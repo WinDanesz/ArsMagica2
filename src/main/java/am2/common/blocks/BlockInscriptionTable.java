@@ -51,8 +51,12 @@ public class BlockInscriptionTable extends BlockAMSpecialRenderContainer {
         BlockPos placePos = pos.offset(state.getValue(FACING));
         if (worldIn.isAirBlock(placePos) || worldIn.getBlockState(placePos).getBlock().isReplaceable(worldIn, placePos))
             worldIn.setBlockState(pos.offset(state.getValue(FACING)), state.withProperty(LEFT, true), 3);
-        else
+        else {
+            if (!worldIn.isRemote && placer instanceof EntityPlayer && !((EntityPlayer) placer).capabilities.isCreativeMode) {
+                ((EntityPlayer) placer).inventory.addItemStackToInventory(new ItemStack(this));
+            }
             worldIn.setBlockToAir(pos);
+        }
     }
 
     @Override
