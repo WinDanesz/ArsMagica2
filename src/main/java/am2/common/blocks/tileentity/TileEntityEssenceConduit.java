@@ -1,7 +1,5 @@
 package am2.common.blocks.tileentity;
 
-import am2.ArsMagica;
-import am2.client.particles.AMParticle;
 import am2.common.blocks.BlockEssenceConduit;
 import am2.common.power.PowerNodeRegistry;
 import am2.common.power.PowerTypes;
@@ -23,8 +21,6 @@ public class TileEntityEssenceConduit extends TileEntityAMPower {
     private float rotationIncrementZ;
 
     private boolean isFirstTick = true;
-
-    private AMParticle radiant;
 
     private boolean channeling;
 
@@ -49,25 +45,6 @@ public class TileEntityEssenceConduit extends TileEntityAMPower {
             redstonePowered = true;
         } else {
             redstonePowered = false;
-        }
-
-        if (world.isRemote && !redstonePowered && channeling) {
-            if (radiant == null || !radiant.isAlive()) {
-                radiant = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "radiant",
-                        pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
-                if (radiant != null) {
-                    radiant.setIgnoreMaxAge(true);
-                    radiant.setDontRequireControllers();
-                    radiant.setRGBColorF(0.1f, 0.1f, 0.1f);
-                    radiant.setParticleScale(0.1f);
-                    radiant.setNoVelocityUpdates();
-                }
-            } else {
-                radiant.setParticleAge(0);
-            }
-        } else if (world.isRemote && radiant != null && radiant.isAlive()) {
-            radiant.setExpired();
-            radiant = null;
         }
 
         if (!world.isRemote) {
