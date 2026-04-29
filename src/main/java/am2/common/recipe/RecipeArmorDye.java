@@ -2,7 +2,6 @@ package am2.common.recipe;
 
 import am2.common.items.AMArmor;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
@@ -23,21 +22,22 @@ public class RecipeArmorDye extends IForgeRegistryEntry.Impl<IRecipe> implements
     private static final Map<String, Integer> DYE_TO_COLOR = new LinkedHashMap<>();
 
     static {
-        DYE_TO_COLOR.put("dyeWhite",     EnumDyeColor.WHITE.getColorValue());
-        DYE_TO_COLOR.put("dyeOrange",    EnumDyeColor.ORANGE.getColorValue());
-        DYE_TO_COLOR.put("dyeMagenta",   EnumDyeColor.MAGENTA.getColorValue());
-        DYE_TO_COLOR.put("dyeLightBlue", EnumDyeColor.LIGHT_BLUE.getColorValue());
-        DYE_TO_COLOR.put("dyeYellow",    EnumDyeColor.YELLOW.getColorValue());
-        DYE_TO_COLOR.put("dyeLime",      EnumDyeColor.LIME.getColorValue());
-        DYE_TO_COLOR.put("dyePink",      EnumDyeColor.PINK.getColorValue());
-        DYE_TO_COLOR.put("dyeGray",      EnumDyeColor.GRAY.getColorValue());
-        DYE_TO_COLOR.put("dyeLightGray", EnumDyeColor.SILVER.getColorValue());
-        DYE_TO_COLOR.put("dyeCyan",      EnumDyeColor.CYAN.getColorValue());
-        DYE_TO_COLOR.put("dyePurple",    EnumDyeColor.PURPLE.getColorValue());
-        DYE_TO_COLOR.put("dyeBlue",      EnumDyeColor.BLUE.getColorValue());
-        DYE_TO_COLOR.put("dyeBrown",     EnumDyeColor.BROWN.getColorValue());
-        DYE_TO_COLOR.put("dyeGreen",     EnumDyeColor.GREEN.getColorValue());
-        DYE_TO_COLOR.put("dyeRed",       EnumDyeColor.RED.getColorValue());
+        // Avoid EnumDyeColor#getColorValue to stay compatible with mixed mapping/runtime environments.
+        DYE_TO_COLOR.put("dyeWhite",     0xF0F0F0);
+        DYE_TO_COLOR.put("dyeOrange",    0xEB8844);
+        DYE_TO_COLOR.put("dyeMagenta",   0xC354CD);
+        DYE_TO_COLOR.put("dyeLightBlue", 0x6689D3);
+        DYE_TO_COLOR.put("dyeYellow",    0xDECF2A);
+        DYE_TO_COLOR.put("dyeLime",      0x41CD34);
+        DYE_TO_COLOR.put("dyePink",      0xD88198);
+        DYE_TO_COLOR.put("dyeGray",      0x434343);
+        DYE_TO_COLOR.put("dyeLightGray", 0xABABAB);
+        DYE_TO_COLOR.put("dyeCyan",      0x287697);
+        DYE_TO_COLOR.put("dyePurple",    0x7B2FBE);
+        DYE_TO_COLOR.put("dyeBlue",      0x253193);
+        DYE_TO_COLOR.put("dyeBrown",     0x51301A);
+        DYE_TO_COLOR.put("dyeGreen",     0x3B511A);
+        DYE_TO_COLOR.put("dyeRed",       0xB3312C);
         DYE_TO_COLOR.put("dyeBlack",     0x3B3B44); // lighter than EnumDyeColor.BLACK so texture detail remains visible
     }
 
