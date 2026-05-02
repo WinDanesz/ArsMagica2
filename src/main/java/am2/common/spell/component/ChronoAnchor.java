@@ -13,6 +13,7 @@ import am2.common.registry.AMItems;
 import am2.common.registry.AMPotions;
 import am2.common.registry.Affinities;
 import am2.common.utils.SpellUtils;
+import am2.common.extensions.EntityExtension;
 import com.google.common.collect.Sets;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -37,6 +38,9 @@ public class ChronoAnchor extends SpellComponent {
                 if (((EntityLivingBase) target).isPotionActive(AMPotions.temporal_anchor))
                     ((EntityLivingBase) target).removePotionEffect(AMPotions.temporal_anchor);
                 ((EntityLivingBase) target).addPotionEffect(new PotionEffect(AMPotions.temporal_anchor, duration, spell.getModifierCount(SpellModifiers.BUFF_POWER)));
+                EntityExtension ext = EntityExtension.For((EntityLivingBase) target);
+                if (ext != null)
+                    ext.setAnchor(target.posX, target.posY, target.posZ, target.dimension, ((EntityLivingBase) target).getHealth());
                 return true;
             }
         }

@@ -183,6 +183,11 @@ public interface IEntityExtension {
                 contingencyTag.setString("Type", "null");
             }
             am2tag.setBoolean("DiscoveredCompendium", instance.hasDiscoveredCompendium());
+            am2tag.setDouble("AnchorX", instance.getAnchorX());
+            am2tag.setDouble("AnchorY", instance.getAnchorY());
+            am2tag.setDouble("AnchorZ", instance.getAnchorZ());
+            am2tag.setInteger("AnchorDim", instance.getAnchorDimensionID());
+            am2tag.setFloat("AnchorHealth", instance.getAnchorHealth());
             return compound;
         }
 
@@ -231,6 +236,15 @@ public interface IEntityExtension {
                 instance.setContingency(ContingencyType.NULL, null);
             }
             instance.setHasDiscoveredCompendium(am2tag.getBoolean("DiscoveredCompendium"));
+            if (am2tag.hasKey("AnchorX")) {
+                instance.setAnchor(
+                    am2tag.getDouble("AnchorX"),
+                    am2tag.getDouble("AnchorY"),
+                    am2tag.getDouble("AnchorZ"),
+                    am2tag.getInteger("AnchorDim"),
+                    am2tag.getFloat("AnchorHealth")
+                );
+            }
         }
     }
 
@@ -310,4 +324,17 @@ public interface IEntityExtension {
     boolean hasDiscoveredCompendium();
 
     void setHasDiscoveredCompendium(boolean discovered);
+
+    /** Stores the temporal anchor state (position, dimension, and health) at the time of casting. */
+    void setAnchor(double x, double y, double z, int dim, float health);
+
+    double getAnchorX();
+
+    double getAnchorY();
+
+    double getAnchorZ();
+
+    int getAnchorDimensionID();
+
+    float getAnchorHealth();
 }

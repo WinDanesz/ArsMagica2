@@ -41,9 +41,22 @@ public class PotionEffectHandler {
     public void playerPreDeathEvent(LivingDeathEvent e) {
         PotionEffect effect = e.getEntityLiving().getActivePotionEffect(AMPotions.temporal_anchor);
         if (effect != null) {
-            // Temporal anchor prevents death - vanilla will call removeAttributesModifiersFromEntity which handles restoration
             e.getEntityLiving().removePotionEffect(AMPotions.temporal_anchor);
             e.setCanceled(true);
+
+            EntityLivingBase entity = e.getEntityLiving();
+            EntityExtension ext = EntityExtension.For(entity);
+            float restoreHealth;
+            if (ext != null && ext.getAnchorHealth() > 0) {
+                restoreHealth = ext.getAnchorHealth();
+                if (entity.dimension == ext.getAnchorDimensionID()) {
+                    entity.setPositionAndUpdate(ext.getAnchorX(), ext.getAnchorY(), ext.getAnchorZ());
+                }
+            } else {
+                restoreHealth = 1.0f;
+            }
+            entity.setHealth(restoreHealth);
+            entity.hurtResistantTime = 20;
         }
     }
 

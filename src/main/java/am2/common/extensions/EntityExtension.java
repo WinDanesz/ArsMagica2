@@ -100,6 +100,12 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
     private double markZ;
     private int markDimension = -512;
 
+    private double anchorX;
+    private double anchorY;
+    private double anchorZ;
+    private int anchorDimension = -512;
+    private float anchorHealth;
+
     private boolean glyphSet = false;
     private double glyphX;
     private double glyphY;
@@ -374,6 +380,30 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
         this.setMarkZ(z);
         this.setMarkDimensionID(dim);
     }
+
+    @Override
+    public void setAnchor(double x, double y, double z, int dim, float health) {
+        this.anchorX = x;
+        this.anchorY = y;
+        this.anchorZ = z;
+        this.anchorDimension = dim;
+        this.anchorHealth = health;
+    }
+
+    @Override
+    public double getAnchorX() { return this.anchorX; }
+
+    @Override
+    public double getAnchorY() { return this.anchorY; }
+
+    @Override
+    public double getAnchorZ() { return this.anchorZ; }
+
+    @Override
+    public int getAnchorDimensionID() { return this.anchorDimension; }
+
+    @Override
+    public float getAnchorHealth() { return this.anchorHealth; }
 
     @Override
     public boolean hasGlyph() {
