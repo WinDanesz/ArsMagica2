@@ -33,7 +33,7 @@ public class EntityAIChaosWaterBolt extends EntityAIBase {
     }
 
     private static ItemStack getCastStack() {
-        if (castStack.isEmpty()) {
+        if (castStack == null || castStack.isEmpty()) {
             castStack = NPCSpells.getInstance().createSpell(Lists.newArrayList(Projectile(), WateryGrave(), MagicDamage(), Knockback()));
         }
         return castStack;
