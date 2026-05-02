@@ -234,29 +234,29 @@ tile.arsmagica2:fluid_block_liquid_essence=Жидкая эссенция
 #endregion
 
 #region Mobs
-entity.DarkMage.name=Темный маг
-entity.Dryad.name=Дриада
-entity.EarthElemental.name=Элементаль земли
-entity.FireElemental.name=Элементаль огня
-entity.LightMage.name=Светлый маг
-entity.ManaElemental.name=Элементаль маны
-entity.WaterElemental.name=Элементаль воды
-entity.ManaCreeper.name=Крипер маны
-entity.Hecate.name=Геката
-entity.Broom.name=Метла
-entity.Darkling.name=Дарклинг
-entity.HellCow.name=Hell Cow
+entity.arsmagica2.dark_mage.name=Темный маг
+entity.arsmagica2.dryad.name=Дриада
+entity.arsmagica2.earth_elemental.name=Элементаль земли
+entity.arsmagica2.fire_elemental.name=Элементаль огня
+entity.arsmagica2.light_mage.name=Светлый маг
+entity.arsmagica2.mana_elemental.name=Элементаль маны
+entity.arsmagica2.water_elemental.name=Элементаль воды
+entity.arsmagica2.mana_creeper.name=Крипер маны
+entity.arsmagica2.hecate.name=Геката
+entity.arsmagica2.broom.name=Метла
+entity.arsmagica2.darkling.name=Дарклинг
+entity.arsmagica2.hell_cow.name=Hell Cow
 
-entity.WinterGuardian.name=Хранитель зимы
-entity.LightningGuardian.name=Хранитель молний
-entity.WaterGuardian.name=Хранитель воды
-entity.EarthGuardian.name=Хранитель земли
-entity.LifeGuardian.name=Хранитель жизни
-entity.ArcaneGuardian.name=Хранитель тайны
-entity.EnderGuardian.name=Хранитель края
-entity.NatureGuardian.name=Хранитель природы
-entity.FireGuardian.name=Хранитель огня
-entity.AirGuardian.name=Хранитель воздуха
+entity.arsmagica2.winter_guardian.name=Хранитель зимы
+entity.arsmagica2.lightning_guardian.name=Хранитель молний
+entity.arsmagica2.water_guardian.name=Хранитель воды
+entity.arsmagica2.earth_guardian.name=Хранитель земли
+entity.arsmagica2.life_guardian.name=Хранитель жизни
+entity.arsmagica2.arcane_guardian.name=Хранитель тайны
+entity.arsmagica2.ender_guardian.name=Хранитель края
+entity.arsmagica2.nature_guardian.name=Хранитель природы
+entity.arsmagica2.fire_guardian.name=Хранитель огня
+entity.arsmagica2.air_guardian.name=Хранитель воздуха
 #endregion
 
 itemGroup.arsmagica2.blocks=§9Ars Magica 2 Блоки §0(§11.12.2§0)

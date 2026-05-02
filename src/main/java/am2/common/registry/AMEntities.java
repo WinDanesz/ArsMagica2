@@ -7,62 +7,81 @@ import am2.common.LogHelper;
 import am2.common.bosses.*;
 import am2.common.entity.*;
 import am2.common.utils.RenderFactory;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Set;
 
+@Mod.EventBusSubscriber(modid = ArsMagica.MODID)
 public class AMEntities {
     public static final AMEntities instance = new AMEntities();
 
-    public void registerEntities() {
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "spell_projectile"), EntitySpellProjectile.class, "spell_projectile", 0, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "rift_storage"), EntityRiftStorage.class, "rift_storage", 1, ArsMagica.instance, 64, 2, false);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "spell_effect"), EntitySpellEffect.class, "spell_effect", 2, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "thrown_rock"), EntityThrownRock.class, "thrown_rock", 3, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "bound_arrow"), EntityBoundArrow.class, "bound_arrow", 4, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "darkling"), EntityDarkling.class, "darkling", 5, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "dark_mage"), EntityDarkMage.class, "dark_mage", 6, ArsMagica.instance, 64, 2, true, 0x110011, 0xAA00FF);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "dryad"), EntityDryad.class, "dryad", 7, ArsMagica.instance, 64, 2, true, 0x00ff00, 0x34e122);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "earth_elemental"), EntityEarthElemental.class, "earth_elemental", 8, ArsMagica.instance, 64, 2, true, 0x61330b, 0x00ff00);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "fire_elemental"), EntityFireElemental.class, "fire_elemental", 9, ArsMagica.instance, 64, 2, true, 0xef260b, 0xff0000);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "light_mage"), EntityLightMage.class, "light_mage", 10, ArsMagica.instance, 64, 2, true, 0xEEEEFF, 0xAA00FF);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "mana_elemental"), EntityManaElemental.class, "mana_elemental", 11, ArsMagica.instance, 64, 2, true, 0xcccccc, 0xb935cd);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "mana_vortex"), EntityManaVortex.class, "mana_vortex", 12, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "shockwave"), EntityShockwave.class, "shockwave", 13, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "thrown_sickle"), EntityThrownSickle.class, "thrown_sickle", 14, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "whirlwind"), EntityWhirlwind.class, "whirlwind", 15, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "winter_guardian_arm"), EntityWinterGuardianArm.class, "winter_guardian_arm", 16, ArsMagica.instance, 64, 2, true);
+    private static int id = 0;
 
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "air_guardian"), EntityAirGuardian.class, "air_guardian", 17, ArsMagica.instance, 64, 2, true, 0xFFFFFF, 0xFFCC00);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "arcane_guardian"), EntityArcaneGuardian.class, "arcane_guardian", 18, ArsMagica.instance, 64, 2, true, 0x999999, 0xcc00cc);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "earth_guardian"), EntityEarthGuardian.class, "earth_guardian", 19, ArsMagica.instance, 64, 2, true, 0x663300, 0x339900);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "ender_guardian"), EntityEnderGuardian.class, "ender_guardian", 20, ArsMagica.instance, 64, 2, true, 0x000000, 0x6633);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "fire_guardian"), EntityFireGuardian.class, "fire_guardian", 21, ArsMagica.instance, 64, 2, true, 0xFFFFFF, 0xFF0000);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "life_guardian"), EntityLifeGuardian.class, "life_guardian", 22, ArsMagica.instance, 64, 2, true, 0x00E6FF, 0xFFE600);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "lightning_guardian"), EntityLightningGuardian.class, "lightning_guardian", 23, ArsMagica.instance, 64, 2, true, 0xFFE600, 0x00C4FF);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "nature_guardian"), EntityNatureGuardian.class, "nature_guardian", 24, ArsMagica.instance, 64, 2, true, 0x44FF00, 0x307D0F);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "water_guardian"), EntityWaterGuardian.class, "water_guardian", 25, ArsMagica.instance, 64, 2, true, 0x0F387D, 0x0097CE);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "winter_guardian"), EntityWinterGuardian.class, "winter_guardian", 26, ArsMagica.instance, 64, 2, true, 0x00CEBA, 0x104742);
+    @SubscribeEvent
+    public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
+        IForgeRegistry<EntityEntry> registry = event.getRegistry();
 
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "air_sled"), EntityAirSled.class, "air_sled", 27, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "broom"), EntityBroom.class, "broom", 28, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "water_elemental"), EntityWaterElemental.class, "water_elemental", 29, ArsMagica.instance, 64, 2, true, 0x0b5cef, 0x0000ff);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "mana_creeper"), EntityManaCreeper.class, "mana_creeper", 30, ArsMagica.instance, 64, 2, true, 0x0b5cef, 0xb935cd);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "lightning_elemental"), EntityLightningElemental.class, "lightning_elemental", 37, ArsMagica.instance, 64, 2, true, 0xFFFF44, 0xFFAA00);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "ice_elemental"), EntityIceElemental.class, "ice_elemental", 38, ArsMagica.instance, 64, 2, true, 0xaaddff, 0xffffff);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "hecate"), EntityHecate.class, "hecate", 31, ArsMagica.instance, 64, 2, true, 0xef260b, 0x3f043d);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "flicker"), EntityFlicker.class, "flicker", 32, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "hell_cow"), EntityHellCow.class, "hell_cow", 33, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "shadow_helper"), EntityShadowHelper.class, "shadow_helper", 34, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "spell_orb"), EntitySpellOrb.class, "spell_orb", 35, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "spell_puddle"), EntitySpellPuddle.class, "spell_puddle", 36, ArsMagica.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "flying_book"), EntityFlyingBook.class, "flying_book", 39, ArsMagica.instance, 64, 2, true);
-       // EntityRegistry.registerModEntity(new ResourceLocation(ArsMagica.MODID, "spell_slice"), EntitySpellSlice.class, "spell_slice", 37, ArsMagica.instance, 64, 2, true);
+        registry.register(create(EntitySpellProjectile.class,   "spell_projectile")   .tracker(64, 2, true).build());
+        registry.register(create(EntityRiftStorage.class,        "rift_storage")        .tracker(64, 2, false).build());
+        registry.register(create(EntitySpellEffect.class,        "spell_effect")        .tracker(64, 2, true).build());
+        registry.register(create(EntityThrownRock.class,         "thrown_rock")         .tracker(64, 2, true).build());
+        registry.register(create(EntityBoundArrow.class,         "bound_arrow")         .tracker(64, 2, true).build());
+        registry.register(create(EntityDarkling.class,           "darkling")            .tracker(64, 2, true).build());
+        registry.register(create(EntityDarkMage.class,           "dark_mage")           .tracker(64, 2, true).egg(0x110011, 0xAA00FF).build());
+        registry.register(create(EntityDryad.class,              "dryad")               .tracker(64, 2, true).egg(0x00ff00, 0x34e122).build());
+        registry.register(create(EntityEarthElemental.class,     "earth_elemental")     .tracker(64, 2, true).egg(0x61330b, 0x00ff00).build());
+        registry.register(create(EntityFireElemental.class,      "fire_elemental")      .tracker(64, 2, true).egg(0xef260b, 0xff0000).build());
+        registry.register(create(EntityLightMage.class,          "light_mage")          .tracker(64, 2, true).egg(0xEEEEFF, 0xAA00FF).build());
+        registry.register(create(EntityManaElemental.class,      "mana_elemental")      .tracker(64, 2, true).egg(0xcccccc, 0xb935cd).build());
+        registry.register(create(EntityManaVortex.class,         "mana_vortex")         .tracker(64, 2, true).build());
+        registry.register(create(EntityShockwave.class,          "shockwave")           .tracker(64, 2, true).build());
+        registry.register(create(EntityThrownSickle.class,       "thrown_sickle")       .tracker(64, 2, true).build());
+        registry.register(create(EntityWhirlwind.class,          "whirlwind")           .tracker(64, 2, true).build());
+        registry.register(create(EntityWinterGuardianArm.class,  "winter_guardian_arm") .tracker(64, 2, true).build());
+
+        registry.register(create(EntityAirGuardian.class,        "air_guardian")        .tracker(64, 2, true).egg(0xFFFFFF, 0xFFCC00).build());
+        registry.register(create(EntityArcaneGuardian.class,     "arcane_guardian")     .tracker(64, 2, true).egg(0x999999, 0xcc00cc).build());
+        registry.register(create(EntityEarthGuardian.class,      "earth_guardian")      .tracker(64, 2, true).egg(0x663300, 0x339900).build());
+        registry.register(create(EntityEnderGuardian.class,      "ender_guardian")      .tracker(64, 2, true).egg(0x000000, 0x6633).build());
+        registry.register(create(EntityFireGuardian.class,       "fire_guardian")       .tracker(64, 2, true).egg(0xFFFFFF, 0xFF0000).build());
+        registry.register(create(EntityLifeGuardian.class,       "life_guardian")       .tracker(64, 2, true).egg(0x00E6FF, 0xFFE600).build());
+        registry.register(create(EntityLightningGuardian.class,  "lightning_guardian")  .tracker(64, 2, true).egg(0xFFE600, 0x00C4FF).build());
+        registry.register(create(EntityNatureGuardian.class,     "nature_guardian")     .tracker(64, 2, true).egg(0x44FF00, 0x307D0F).build());
+        registry.register(create(EntityWaterGuardian.class,      "water_guardian")      .tracker(64, 2, true).egg(0x0F387D, 0x0097CE).build());
+        registry.register(create(EntityWinterGuardian.class,     "winter_guardian")     .tracker(64, 2, true).egg(0x00CEBA, 0x104742).build());
+
+        registry.register(create(EntityAirSled.class,            "air_sled")            .tracker(64, 2, true).build());
+        registry.register(create(EntityBroom.class,              "broom")               .tracker(64, 2, true).build());
+        registry.register(create(EntityWaterElemental.class,     "water_elemental")     .tracker(64, 2, true).egg(0x0b5cef, 0x0000ff).build());
+        registry.register(create(EntityManaCreeper.class,        "mana_creeper")        .tracker(64, 2, true).egg(0x0b5cef, 0xb935cd).build());
+        registry.register(create(EntityHecate.class,             "hecate")              .tracker(64, 2, true).egg(0xef260b, 0x3f043d).build());
+        registry.register(create(EntityFlicker.class,            "flicker")             .tracker(64, 2, true).build());
+        registry.register(create(EntityHellCow.class,            "hell_cow")            .tracker(64, 2, true).build());
+        registry.register(create(EntityShadowHelper.class,       "shadow_helper")       .tracker(64, 2, true).build());
+        registry.register(create(EntitySpellOrb.class,           "spell_orb")           .tracker(64, 2, true).build());
+        registry.register(create(EntitySpellPuddle.class,        "spell_puddle")        .tracker(64, 2, true).build());
+        registry.register(create(EntityLightningElemental.class, "lightning_elemental") .tracker(64, 2, true).egg(0xFFFF44, 0xFFAA00).build());
+        registry.register(create(EntityIceElemental.class,       "ice_elemental")       .tracker(64, 2, true).egg(0xaaddff, 0xffffff).build());
+        registry.register(create(EntityFlyingBook.class,         "flying_book")         .tracker(64, 2, true).build());
+    }
+
+    private static <T extends Entity> EntityEntryBuilder<T> create(Class<T> entityClass, String name) {
+        ResourceLocation registryName = new ResourceLocation(ArsMagica.MODID, name);
+        return EntityEntryBuilder.<T>create()
+                .entity(entityClass)
+                .id(registryName, id++)
+                .name(ArsMagica.MODID + "." + name);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

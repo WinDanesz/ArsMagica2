@@ -210,7 +210,6 @@ public class CommonProxy implements IGuiHandler {
 
         AMSounds.registerSounds();
         GameRegistry.registerFuelHandler(new FuelHandler());
-        AMEntities.instance.registerEntities();
         AMEntities.instance.initializeSpawns();
         SkillTrees.init();
 
