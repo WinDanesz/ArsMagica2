@@ -235,6 +235,7 @@ tile.arsmagica2\:slipstream_generator.name=Slipstream Generator
 tile.arsmagica2\:lectern.name=Lectern
 tile.arsmagica2\:essence_conduit.name=Essence Conduit
 tile.arsmagica2\:mana_battery.name=Mana Battery
+am2.tooltip.mana_battery=Requires a redstone signal to act as a consumer
 tile.arsmagica2\:armor_imbuer.name=Armor Imbuement Table
 tile.arsmagica2\:inscription_table.name=Inscription Table
 tile.arsmagica2\:black_aurem.name=Black Aurem
