@@ -177,7 +177,7 @@ public class ItemRenderer {
             }
             GlStateManager.scale(0.15f, 0.15f, 0.15f);
         }
-        new SpellParticleRender(new ArrayList<>()).renderEffect(Affinities.fire, false, (EntityLivingBase) data[0]);
+        new SpellParticleRender(new ArrayList<>()).renderEffect(Affinities.fire, item, false, (EntityLivingBase) data[0]);
         GlStateManager.popMatrix();
     }
 

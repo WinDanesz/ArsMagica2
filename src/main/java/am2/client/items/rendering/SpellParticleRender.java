@@ -27,6 +27,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -116,7 +117,6 @@ public class SpellParticleRender extends ItemOverrideList {
         }
 
         ItemStack scrollStack = ItemStack.EMPTY;
-        ;
         if (item.getItem() instanceof ItemSpellBase) {
             scrollStack = item;
         } else if (item.getItem() instanceof ItemSpellBook) {
@@ -138,11 +138,11 @@ public class SpellParticleRender extends ItemOverrideList {
 
         Affinity affinity = caster.createSpellData(scrollStack).getMainShift();
 
-        renderEffect(affinity, true, entity);
+        renderEffect(affinity, item, true, entity);
         return true;
     }
 
-    public void renderEffect(Affinity affinity, boolean includeArm, EntityLivingBase entity) {
+    public void renderEffect(Affinity affinity, ItemStack stack, boolean includeArm, EntityLivingBase entity) {
 
         if (!setupIcons) {
             setupAffinityIcons();
@@ -160,18 +160,23 @@ public class SpellParticleRender extends ItemOverrideList {
 
             GL11.glPushMatrix();
 
-//			if (((EntityPlayer)entity).getItemInUseCount() > 0){
-//				GL11.glRotatef(120, 1, 0, 1);
-//				GL11.glRotatef(-10, 0, 1, 0);
-//				GL11.glTranslatef(2f, 0f, 0.8f);
-//			}else{
-//				GL11.glTranslatef(3f, -1.2f, -2.5f);
-//				GL11.glScalef(scale, scale, scale);
-//				GL11.glRotatef(-45, 0, 1, 0);
-//			}
-//			GlStateManager.rotate(90, 0, 1, 0);
-            RenderHelper.disableStandardItemLighting();
-            GL11.glTranslatef(0.0f, 0.0f, -2.5f);
+            float x = 0;
+            float z = -2.5f;
+            float y = 0;
+            ItemStack leftStack = mc.player.getHeldItemOffhand();
+            if (ItemStack.areItemStacksEqual(stack, leftStack)) {
+                if (mc.player.getItemInUseCount() > 0) {
+                    z += 0;
+                } else {
+                    x = -2;
+                }
+            }
+            if (mc.player.getItemInUseCount() > 0){
+                y = 0.8f;
+                x += -0.3f;
+            }
+            GL11.glTranslatef(x, y, z);
+
             RenderByAffinity(affinity);
             RenderHelper.enableStandardItemLighting();
             GL11.glPopMatrix();
@@ -291,8 +296,7 @@ public class SpellParticleRender extends ItemOverrideList {
     }
 
     private void renderFirstPersonArm(EntityPlayerSP player) {
-        EnumHandSide hand = EnumHandSide.LEFT;
-        boolean flag = hand != EnumHandSide.LEFT;
+        boolean flag = player.isHandActive() && player.getActiveHand() ==  EnumHand.OFF_HAND;
         float f = flag ? 1.0F : -1.0F;
         float f1 = MathHelper.sqrt(0);
         GlStateManager.rotate(f * 45.0F, 0.0F, 1.0F, 0.0F);
