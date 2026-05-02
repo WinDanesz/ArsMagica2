@@ -1,10 +1,12 @@
 # Ars Magica 2 - For Minecraft 1.12.2
 
+Dev Build Permalink: https://nightly.link/WinDanesz/ArsMagica2/actions/runs/25259740534
+
 This is a port of Mithion's Ars Magica 2 mod for Minecraft version 1.12.2 by WinDanesz. 
 
 It was built on top of the 1.10.2 version of EdwinMindcraft and the original 1.7.10 version of the mod.
 
-## Changes in 1.12.2, compared to 1.7.10
+## Changes in 1.12.2 compared to 1.7.10
 
 The goal of the port was to remain faithful to the original mechanics and atmosphere of the mod with porting all existing features, but at the same time, modernize assets and visuals to be on par with the most popular and high quality 1.12.2 mods. My personal goal was also to implement integration with Electroblob's Wizardry and resurrect some old AM features.
 
@@ -16,6 +18,10 @@ Most notable changes include:
 - Comprehensive configs. To allow players and pack makers to tweak AM, a large amount of new configs were introduced.
 - **Integration with Electroblob's Wizardry**. This was always a big desire for me, to play these two magic mods together as each of them has its own strength. I was aiming to create a seamless blend of the two. In AM 1.12.2 there is now a comprehensive integration to allow playing these mods under a unified mana, casting, levelling, and affinity system. This integration is optional, enabled by default when both mods are present.
   Some Changes:
+    - New item textures and models
+    - New creatures
+    - Some new items
+    - New Spell parts
     - Option to use AM's mana to cast Wizardry spells, disables Wizardry's wand mana
     - Wizardry spells castable from AM spell books or AM spell items (wands still function)
     - Wizardry spells are mapped to AM's affinities. This was a bit challenging as we have 9 affinities and 7 elements, with only a few matching 1:1. I think I created a sensible default mapping, but it can also be freely tweaked in the configs on a per-element and even per-spell level.
