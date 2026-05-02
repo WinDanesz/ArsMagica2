@@ -339,7 +339,7 @@ public class EntityFlicker extends EntityAmbientCreature {
 
     @Override
     public boolean getCanSpawnHere() {
-        if (ArsMagica.proxy.getTotalFlickerCount() > 12 * world.playerEntities.size() || world.rand.nextDouble() > 0.2f) {
+        if (ArsMagica.proxy.getTotalFlickerCount() > ArsMagica.config.GetFlickerMaxPerPlayer() * world.playerEntities.size() || world.rand.nextDouble() > ArsMagica.config.GetFlickerSpawnChance() / 100.0) {
             return false;
         }
         //get the biome we're trying to spawn in

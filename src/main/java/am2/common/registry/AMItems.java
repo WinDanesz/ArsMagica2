@@ -286,7 +286,7 @@ public final class AMItems {
         // Uses the ElectroblobCompat facade to keep ItemEBWizSpellBinding out of AMItems bytecode.
         EBWizardryCompatBootstrap.registerEBWizItems(registry);
 
-        registerItemBlock(registry, AMBlocks.mana_battery);
+        registerItemBlock(registry, AMBlocks.mana_battery, new ItemBlockManaBattery(AMBlocks.mana_battery));
         registerItemBlock(registry, AMBlocks.occulus);
         registerItemBlock(registry, AMBlocks.magic_wall);
 

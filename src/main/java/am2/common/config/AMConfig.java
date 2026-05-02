@@ -69,6 +69,8 @@ public class AMConfig extends Configuration {
     private final String KEY_LightningElementalSpawnRate = "lightning_elemental_spawn_rate";
     private final String KEY_IceElementalSpawnRate = "ice_elemental_spawn_rate";
     private final String KEY_FlickerSpawnRate = "flicker_spawn_rate";
+    private final String KEY_FlickerMaxPerPlayer = "flicker_max_per_player";
+    private final String KEY_FlickerSpawnChance = "flicker_spawn_chance";
 
     /** Mob Stats **/
     private final String KEY_FireElementalMaxHealth = "fire_elemental_max_health";
@@ -2166,6 +2168,8 @@ public class AMConfig extends Configuration {
         this.get(CATEGORY_MOBS, this.KEY_FireElementalSpawnRate, 12).setRequiresMcRestart(true);
         this.get(CATEGORY_MOBS, this.KEY_LightningElementalSpawnRate, 12).setRequiresMcRestart(true);
         this.get(CATEGORY_MOBS, this.KEY_FlickerSpawnRate, 1).setRequiresMcRestart(true);
+        this.get(CATEGORY_MOBS, this.KEY_FlickerMaxPerPlayer, 6, "Maximum number of flickers allowed per online player. Default: 6").setRequiresMcRestart(false);
+        this.get(CATEGORY_MOBS, this.KEY_FlickerSpawnChance, 10, "Percentage chance (1-100) that a flicker spawn attempt succeeds. Default: 10").setRequiresMcRestart(false);
     }
 
     public int GetHecateSpawnRate() {
@@ -2246,6 +2250,16 @@ public class AMConfig extends Configuration {
     public int GetFlickerSpawnRate() {
         Property prop = this.get(CATEGORY_MOBS, this.KEY_FlickerSpawnRate, 1).setRequiresMcRestart(true);
         return Math.max(prop.getInt(1), 0);
+    }
+
+    public int GetFlickerMaxPerPlayer() {
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_FlickerMaxPerPlayer, 6, "Maximum number of flickers allowed per online player. Default: 6");
+        return Math.max(prop.getInt(6), 0);
+    }
+
+    public int GetFlickerSpawnChance() {
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_FlickerSpawnChance, 10, "Percentage chance (1-100) that a flicker spawn attempt succeeds. Default: 10");
+        return Math.min(Math.max(prop.getInt(10), 0), 100);
     }
 
     //====================================================================================
