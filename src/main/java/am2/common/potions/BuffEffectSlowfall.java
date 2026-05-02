@@ -11,7 +11,8 @@ public class BuffEffectSlowfall extends AMPotion {
 
     @Override
     public void performEffect(EntityLivingBase entity, int amplifier) {
-        // Slowfall logic handled elsewhere
+        entity.setPosition(entity.posX, entity.posY + (entity.fallDistance / 1.1), entity.posZ);
+        entity.fallDistance = 0;
     }
 
     @Override

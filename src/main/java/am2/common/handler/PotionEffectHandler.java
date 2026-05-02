@@ -4,7 +4,6 @@ import am2.ArsMagica;
 import am2.api.event.SpellCastEvent;
 import am2.common.blocks.tileentity.TileEntityAstralBarrier;
 import am2.common.extensions.EntityExtension;
-import am2.common.potions.BuffStatModifiers;
 import am2.common.registry.AMItems;
 import am2.common.registry.AMPotions;
 import am2.common.utils.DimensionUtilities;
@@ -13,6 +12,7 @@ import am2.common.utils.SelectionUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.item.ItemStack;
@@ -24,7 +24,6 @@ import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -61,24 +60,6 @@ public class PotionEffectHandler {
 
         float damage = EntityExtension.For(event.getEntityLiving()).protect(event.getAmount());
         event.setAmount(damage);
-    }
-
-    @SubscribeEvent
-    public void livingUpdate(LivingUpdateEvent e) {
-        BuffStatModifiers.instance.applyStatModifiersBasedOnBuffs(e.getEntityLiving());
-        if (e.getEntityLiving().isPotionActive(AMPotions.slowfall)) {
-            e.getEntityLiving().setPosition(e.getEntityLiving().posX, e.getEntityLiving().posY + (e.getEntityLiving().fallDistance / 1.1), e.getEntityLiving().posZ);
-            e.getEntityLiving().fallDistance = 0;
-        }
-        if (e.getEntityLiving().isPotionActive(AMPotions.gravity_well) && e.getEntityLiving().motionY < 0) {
-            e.getEntityLiving().motionY *= 2;
-        }
-
-        if (e.getEntityLiving().isPotionActive(AMPotions.agility)) {
-            e.getEntityLiving().stepHeight = 1.01f;
-        } else if (e.getEntityLiving().stepHeight == 1.01f) {
-            e.getEntityLiving().stepHeight = 0.6f;
-        }
     }
 
     @SubscribeEvent

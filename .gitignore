@@ -11,3 +11,5 @@ gradle-app.setting
 /*.iml
 /*.ipr
 /*.iws
+.vscode/settings.json
+.vscode/tasks.json

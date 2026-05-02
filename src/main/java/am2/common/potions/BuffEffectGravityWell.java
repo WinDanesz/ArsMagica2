@@ -20,10 +20,13 @@ public class BuffEffectGravityWell extends AMPotion {
 
     @Override
     public void performEffect(EntityLivingBase entity, int amplifier) {
+        if (entity.motionY < 0) {
+            entity.motionY *= 2;
+        }
     }
 
     @Override
     public boolean isReady(int duration, int amplifier) {
-        return false;
+        return true;
     }
 }
