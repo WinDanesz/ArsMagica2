@@ -180,16 +180,18 @@ public class EntityHandler {
     @SubscribeEvent
     public void entityTick(LivingUpdateEvent event) {
 
+        EntityExtension ext = EntityExtension.For(event.getEntityLiving());
+
         // Run mana regen/burnout BEFORE the sync check so changes coalesce in the same tick
         if (!event.getEntity().world.isRemote)
-            EntityExtension.For(event.getEntityLiving()).manaBurnoutTick();
+            ext.manaBurnoutTick();
 
         //Pre Tick, Data Sync
         if (!event.getEntity().world.isRemote) {
             EntityLivingBase ent = event.getEntityLiving();
             NetworkRegistry.TargetPoint tp = new NetworkRegistry.TargetPoint(ent.dimension, ent.posX, ent.posY, ent.posZ, 64);
-            if (EntityExtension.For(ent).shouldUpdate())
-                AMNetworkHandler.getNetwork().sendToAllAround(new PacketSyncExtendedProps(ent.getEntityId(), EntityExtension.For(ent).generateUpdatePacket()), tp);
+            if (ext.shouldUpdate())
+                AMNetworkHandler.getNetwork().sendToAllAround(new PacketSyncExtendedProps(ent.getEntityId(), ext.generateUpdatePacket()), tp);
             if (ent instanceof EntityPlayer) {
                 if (AffinityData.For(ent).shouldUpdate())
                     AMNetworkHandler.getNetwork().sendToAllAround(new PacketSyncAffinityData(ent.getEntityId(), AffinityData.For(ent).generateUpdatePacket()), tp);
@@ -203,8 +205,7 @@ public class EntityHandler {
         if (event.getEntityLiving() instanceof EntityPlayer) playerTick((EntityPlayer) event.getEntityLiving());
 
         if (event.getEntity().world.isRemote)
-            EntityExtension.For(event.getEntityLiving()).spawnManaLinkParticles();
-        EntityExtension ext = EntityExtension.For(event.getEntityLiving());
+            ext.spawnManaLinkParticles();
         EntityLivingBase entity = event.getEntityLiving();
         if (event.getEntity().ticksExisted % 20 == 0) {
             ArrayList<SpellData> rs = ext.runningStacks;

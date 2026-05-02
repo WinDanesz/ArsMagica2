@@ -135,6 +135,20 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 
     public ArrayList<SpellData> runningStacks = new ArrayList<>();
 
+    // Max mana result cache: recomputed at most once per entity tick.
+    private float cachedMaxMana = -1f;
+    private int cachedMaxManaTick = -1;
+
+    // Regen multiplier: armor-set, skill, imbue-enchant, and EBWiz-compat factors bundled
+    // and recomputed every REGEN_CACHE_INTERVAL ticks to avoid per-tick inventory scans.
+    private float cachedRegenMultiplier = 1.0f;
+    private int cachedRegenMultiplierTick = -1000;
+
+    // Burnout reduction factor cache (imbue-enchant scan + attribute lookup).
+    private float cachedBurnoutFactor = 0.01f;
+    private int cachedBurnoutFactorTick = -1000;
+
+    private static final int REGEN_CACHE_INTERVAL = 20;
 
     private void addSyncCode(int code) {
         this.syncCode |= code;
@@ -241,11 +255,17 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 
     @Override
     public float getMaxMana() {
+        if (this.entity != null && this.entity.ticksExisted == this.cachedMaxManaTick) {
+            return this.cachedMaxMana;
+        }
         float coeff = (float) ArsMagica.config.getManaCoefficient();
         float mana = (float) (Math.pow(this.getCurrentLevel(), 1.5f) * (coeff * ((float) this.getCurrentLevel() / 100f)) + ArsMagica.config.getBaseMana());
         if (this.entity.isPotionActive(AMPotions.mana_boost))
             mana *= 1 + (0.25 * (this.entity.getActivePotionEffect(AMPotions.mana_boost).getAmplifier() + 1));
-        return (float) (mana + this.entity.getAttributeMap().getAttributeInstance(ArsMagicaAPI.maxManaBonus).getAttributeValue());
+        float result = (float) (mana + this.entity.getAttributeMap().getAttributeInstance(ArsMagicaAPI.maxManaBonus).getAttributeValue());
+        this.cachedMaxMana = result;
+        this.cachedMaxManaTick = this.entity.ticksExisted;
+        return result;
     }
 
     @Override
@@ -287,6 +307,8 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
                     this.entity.world.playSound(null, this.entity.posX, this.entity.posY, this.entity.posZ, SoundEvents.ENTITY_PLAYER_LEVELUP, this.entity.getSoundCategory(), 0.75F, 1.0F);
             }
             this.currentLevel = currentLevel;
+            this.cachedMaxManaTick = -1;
+            this.cachedRegenMultiplierTick = -1000;
         }
     }
 
@@ -694,64 +716,70 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
                     this.setCurrentMana(0);
                 }
 
-                int regenTicks = (int) Math.ceil(this.ticksForFullRegen * this.entity.getAttributeMap()
-                        .getAttributeInstance(ArsMagicaAPI.manaRegenTimeModifier).getAttributeValue());
+                // Refresh the cached regen multiplier (armor set, skills, imbue enchants,
+                // EBWiz ring — all equipment-based and safe to re-check every 20 ticks)
+                // every REGEN_CACHE_INTERVAL ticks to avoid per-tick inventory scans.
+                if (this.entity.ticksExisted - this.cachedRegenMultiplierTick >= REGEN_CACHE_INTERVAL) {
+                    float regenMult = 1.0f;
+                    if (this.entity instanceof EntityPlayer) {
+                        EntityPlayer player = (EntityPlayer) this.entity;
+                        int armorSet = ArmorHelper.getFullArsMagicaArmorSet(player);
+                        if (armorSet == ArsMagicaArmorMaterial.MAGE.getMaterialID()) {
+                            regenMult *= 0.8f;
+                        } else if (armorSet == ArsMagicaArmorMaterial.BATTLEMAGE.getMaterialID()) {
+                            regenMult *= 0.95f;
+                        } else if (armorSet == ArsMagicaArmorMaterial.ARCHMAGE.getMaterialID()) {
+                            regenMult *= 0.5f;
+                        }
+                        if (SkillData.For(player).hasSkill(AMSkills.mana_regen_iii.getID())) {
+                            regenMult *= 0.7f;
+                        } else if (SkillData.For(player).hasSkill(AMSkills.mana_regen_ii.getID())) {
+                            regenMult *= 0.85f;
+                        } else if (SkillData.For(player).hasSkill(AMSkills.mana_regen_i.getID())) {
+                            regenMult *= 0.95f;
+                        }
+                        if (ArsMagica.config.getIsImbueEnchantEnabled()) {
+                            int numArmorPieces = 0;
+                            for (int i = 0; i < 4; ++i) {
+                                ItemStack stack = player.inventory.armorInventory.get(0);
+                                if (ImbuementRegistry.instance.isImbuementPresent(stack, ImbuementRegistry.MANA_REGEN))
+                                    numArmorPieces++;
+                            }
+                            regenMult *= 1.0f - (0.15f * numArmorPieces);
+                        }
+                        // Ring of Condensing is armor-slot equipment — safe to cache.
+                        float ringCondensingBonus = EBWizardryCompatBootstrap.getRingCondensingRegenMultiplier(player);
+                        if (ringCondensingBonus > 0f) regenMult *= (1.0f - ringCondensingBonus);
+                    }
+                    this.cachedRegenMultiplier = regenMult;
+                    this.cachedRegenMultiplierTick = this.entity.ticksExisted;
+                }
 
+                // Condenser wand is held-item sensitive (hotbar can change every tick) —
+                // apply its multiplier live rather than from the 20-tick cache.
+                float liveRegenMult = this.cachedRegenMultiplier;
+                if (this.entity instanceof EntityPlayer) {
+                    float condenserBonus = EBWizardryCompatBootstrap.getCondenserRegenMultiplier((EntityPlayer) this.entity);
+                    if (condenserBonus > 0f) liveRegenMult *= (1.0f - condenserBonus);
+                }
+
+                int regenTicks = (int) Math.ceil(this.ticksForFullRegen
+                        * this.entity.getAttributeMap().getAttributeInstance(ArsMagicaAPI.manaRegenTimeModifier).getAttributeValue()
+                        * liveRegenMult);
                 if (this.entity.isPotionActive(AMPotions.mana_regeneration)) {
                     PotionEffect pe = this.entity.getActivePotionEffect(AMPotions.mana_regeneration);
                     regenTicks *= Math.max(0.01, 1.0f - ((pe.getAmplifier() + 1) * 0.25f));
                 }
 
-                if (this.entity instanceof EntityPlayer) {
-                    EntityPlayer player = (EntityPlayer) this.entity;
-                    int armorSet = ArmorHelper.getFullArsMagicaArmorSet(player);
-                    if (armorSet == ArsMagicaArmorMaterial.MAGE.getMaterialID()) {
-                        regenTicks *= 0.8;
-                    } else if (armorSet == ArsMagicaArmorMaterial.BATTLEMAGE.getMaterialID()) {
-                        regenTicks *= 0.95;
-                    } else if (armorSet == ArsMagicaArmorMaterial.ARCHMAGE.getMaterialID()) {
-                        regenTicks *= 0.5;
-                    }
-
-                    if (SkillData.For(player).hasSkill(AMSkills.mana_regen_iii.getID())) {
-                        regenTicks *= 0.7f;
-                    } else if (SkillData.For(player).hasSkill(AMSkills.mana_regen_ii.getID())) {
-                        regenTicks *= 0.85f;
-                    } else if (SkillData.For(player).hasSkill(AMSkills.mana_regen_i.getID())) {
-                        regenTicks *= 0.95f;
-                    }
-
-                    int numArmorPieces = 0;
-                    if (ArsMagica.config.getIsImbueEnchantEnabled()) {
-                        for (int i = 0; i < 4; ++i) {
-                            ItemStack stack = player.inventory.armorInventory.get(0);
-                            if (ImbuementRegistry.instance.isImbuementPresent(stack, ImbuementRegistry.MANA_REGEN))
-                                numArmorPieces++;
-                        }
-                    }
-                    regenTicks *= 1.0f - (0.15f * numArmorPieces);
-
-                    // EBWiz Condenser upgrade: holding a wand with condenser upgrade boosts AM2 mana regen.
-                    float condenserBonus = EBWizardryCompatBootstrap.getCondenserRegenMultiplier(player);
-                    if (condenserBonus > 0f) {
-                        regenTicks *= (1.0f - condenserBonus);
-                    }
-                    // EBWiz Ring of Condensing: wearing this ring boosts AM2 mana regen by 20%.
-                    float ringCondensingBonus = EBWizardryCompatBootstrap.getRingCondensingRegenMultiplier(player);
-                    if (ringCondensingBonus > 0f) {
-                        regenTicks *= (1.0f - ringCondensingBonus);
-                    }
-                }
-
                 float manaToAdd = (actualMaxMana / regenTicks);
 
                 this.setCurrentManaFromRegen(this.getCurrentMana() + manaToAdd);
-                if (this.getCurrentMana() > this.getMaxMana()) {
-                    this.setCurrentMana(this.getMaxMana()); // immediate sync when capping
+                if (this.getCurrentMana() > actualMaxMana) {
+                    this.setCurrentMana(actualMaxMana); // immediate sync when capping
                 }
             }
-        } else if (this.getCurrentMana() > this.getMaxMana()) {
-            float overloadMana = this.getCurrentMana() - this.getMaxMana();
+        } else if (this.getCurrentMana() > actualMaxMana) {
+            float overloadMana = this.getCurrentMana() - actualMaxMana;
             float toRemove = Math.max(overloadMana * 0.002f, 1.0f);
             this.deductMana(toRemove);
             if (this.entity instanceof EntityPlayer && SkillData.For(this.entity).hasSkill(AMSkills.shield_overload.getID())) {
@@ -767,19 +795,24 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
         }
 
         if (this.getCurrentBurnout() > 0) {
-            int numArmorPieces = 0;
-            if (ArsMagica.config.getIsImbueEnchantEnabled() && this.entity instanceof EntityPlayer) {
-                EntityPlayer player = (EntityPlayer) this.entity;
-                for (int i = 0; i < 4; ++i) {
-                    ItemStack stack = player.inventory.armorInventory.get(i);
-                    if (stack.isEmpty()) continue;
-                    if (ImbuementRegistry.instance.isImbuementPresent(stack, ImbuementRegistry.BURNOUT_REDUCTION))
-                        numArmorPieces++;
+            // Recompute burnout factor (imbue-enchant scan + attribute lookup) on the same
+            // interval as the regen multiplier to avoid per-tick inventory iteration.
+            if (this.entity.ticksExisted - this.cachedBurnoutFactorTick >= REGEN_CACHE_INTERVAL) {
+                int numArmorPieces = 0;
+                if (ArsMagica.config.getIsImbueEnchantEnabled() && this.entity instanceof EntityPlayer) {
+                    EntityPlayer player = (EntityPlayer) this.entity;
+                    for (int i = 0; i < 4; ++i) {
+                        ItemStack stack = player.inventory.armorInventory.get(i);
+                        if (stack.isEmpty()) continue;
+                        if (ImbuementRegistry.instance.isImbuementPresent(stack, ImbuementRegistry.BURNOUT_REDUCTION))
+                            numArmorPieces++;
+                    }
                 }
+                this.cachedBurnoutFactor = (float) ((0.01f + (0.015f * numArmorPieces)) * this.entity.getAttributeMap()
+                        .getAttributeInstance(ArsMagicaAPI.burnoutReductionRate).getAttributeValue());
+                this.cachedBurnoutFactorTick = this.entity.ticksExisted;
             }
-            float factor = (float) ((0.01f + (0.015f * numArmorPieces)) * this.entity.getAttributeMap()
-                    .getAttributeInstance(ArsMagicaAPI.burnoutReductionRate).getAttributeValue());
-            float decreaseAmt = factor * this.getCurrentLevel();
+            float decreaseAmt = this.cachedBurnoutFactor * this.getCurrentLevel();
             this.setCurrentBurnout(this.getCurrentBurnout() - decreaseAmt);
             if (this.getCurrentBurnout() < 0) {
                 this.setCurrentBurnout(0);
