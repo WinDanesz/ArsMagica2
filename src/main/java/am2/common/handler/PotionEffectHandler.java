@@ -60,8 +60,6 @@ public class PotionEffectHandler {
         }
     }
 
-    // REMOVED: applyPotionEffect and loadPotionEffect - no longer need BuffEffect conversion
-
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void entityDamageEvent(LivingHurtEvent event) {
         if (event.isCanceled()) return;

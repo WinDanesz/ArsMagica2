@@ -61,6 +61,7 @@ public class ItemMageHood extends AMArmor {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+        super.addInformation(stack, world, tooltip, flag);
         if (stack.getItem() == AMItems.mage_hood) {
             tooltip.add(I18n.format("am2.tooltip.hood_toggle"));
         }

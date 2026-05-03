@@ -2,15 +2,25 @@ package am2.common.items;
 
 import am2.common.armor.ArsMagicaArmorMaterial;
 import am2.common.registry.AMTabs;
+import com.google.common.collect.Multimap;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.ISpecialArmor;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class AMArmor extends ItemArmor implements ISpecialArmor {
 
@@ -77,6 +87,26 @@ public class AMArmor extends ItemArmor implements ISpecialArmor {
      */
     public static boolean isArmorBroken(ItemStack armor) {
         return armor.getItemDamage() >= armor.getMaxDamage() - 1;
+    }
+
+    @Override
+    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
+        Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
+        // Remove the vanilla ARMOR attribute — ISpecialArmor handles protection via getProperties()
+        // and display via getArmorDisplay(). Keeping the attribute would stack both systems.
+        multimap.removeAll(SharedMonsterAttributes.ARMOR.getName());
+        multimap.removeAll(SharedMonsterAttributes.ARMOR_TOUGHNESS.getName());
+        return multimap;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable net.minecraft.world.World world, List<String> tooltip, ITooltipFlag flag) {
+        int armorValue = GetDamageReduction();
+        if (isArmorBroken(stack)) {
+            armorValue = 0;
+        }
+        tooltip.add(I18n.format("attribute.modifier.equals.0", armorValue, I18n.format("attribute.name.generic.armor")));
     }
 
     @Override
