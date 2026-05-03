@@ -96,6 +96,7 @@ public class TileObeliskRenderer extends TileEntitySpecialRenderer<TileEntityObe
 
         boolean active = hasWorld && te.burnTimeRemaining > 0;
 
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         GlStateManager.pushMatrix();
 
         GlStateManager.translate(x, y, z);
@@ -135,6 +136,7 @@ public class TileObeliskRenderer extends TileEntitySpecialRenderer<TileEntityObe
         GlStateManager.color(1f, 1f, 1f, 1f);
 
         GlStateManager.popMatrix();
+        GL11.glPopAttrib();
     }
 
     private void renderFaces(List<int[][]> faces) {

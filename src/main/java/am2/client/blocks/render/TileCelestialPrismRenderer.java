@@ -79,6 +79,7 @@ public class TileCelestialPrismRenderer extends TileEntitySpecialRenderer<TileEn
             brightness = 1.0f;
         }
 
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         GlStateManager.pushMatrix();
 
         GlStateManager.translate(x + 0.5, y, z + 0.5);
@@ -113,5 +114,6 @@ public class TileCelestialPrismRenderer extends TileEntitySpecialRenderer<TileEn
         GlStateManager.color(1f, 1f, 1f, 1f);
 
         GlStateManager.popMatrix();
+        GL11.glPopAttrib();
     }
 }
