@@ -144,6 +144,11 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
     private float cachedRegenMultiplier = 1.0f;
     private int cachedRegenMultiplierTick = -1000;
 
+    // Cached value of the manaRegenTimeModifier attribute — changes very rarely (only when
+    // modifiers are added/removed), so it is safe to read every REGEN_CACHE_INTERVAL ticks
+    // instead of every tick.  Stored alongside cachedRegenMultiplier and refreshed together.
+    private float cachedRegenTimeAttr = 1.0f;
+
     // Burnout reduction factor cache (imbue-enchant scan + attribute lookup).
     private float cachedBurnoutFactor = 0.01f;
     private int cachedBurnoutFactorTick = -1000;
@@ -704,6 +709,22 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 
     @Override
     public void manaBurnoutTick() {
+        // Fast path: non-player entities at magic level 0 with no active AM2 magic state
+        // (no burnout, no gravity override, no mana shield) represent the vast majority of
+        // loaded entities (vanilla mobs, animals, etc.).  Skip all the expensive attribute
+        // lookups, regen-multiplier cache refreshes, and burnout calculations for them.
+        if (!(this.entity instanceof EntityPlayer)
+                && this.currentLevel == 0
+                && !this.disableGravity
+                && this.manaShield <= 0f) {
+            // Ensure mana is at baseMana immediately — gradual regen serves no purpose for
+            // non-player level-0 entities that cannot cast spells.
+            float baseMana = (float) ArsMagica.config.getBaseMana();
+            if (this.currentMana < baseMana) {
+                this.setCurrentMana(baseMana);
+            }
+            return;
+        }
         if (this.isGravityDisabled()) {
             this.entity.motionY = 0;
         }
@@ -719,7 +740,11 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
                 // Refresh the cached regen multiplier (armor set, skills, imbue enchants,
                 // EBWiz ring — all equipment-based and safe to re-check every 20 ticks)
                 // every REGEN_CACHE_INTERVAL ticks to avoid per-tick inventory scans.
+                // Also refreshes cachedRegenTimeAttr (the manaRegenTimeModifier attribute)
+                // to avoid a per-tick AttributeMap lookup.
                 if (this.entity.ticksExisted - this.cachedRegenMultiplierTick >= REGEN_CACHE_INTERVAL) {
+                    this.cachedRegenTimeAttr = (float) this.entity.getAttributeMap()
+                            .getAttributeInstance(ArsMagicaAPI.manaRegenTimeModifier).getAttributeValue();
                     float regenMult = 1.0f;
                     if (this.entity instanceof EntityPlayer) {
                         EntityPlayer player = (EntityPlayer) this.entity;
@@ -764,7 +789,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
                 }
 
                 int regenTicks = (int) Math.ceil(this.ticksForFullRegen
-                        * this.entity.getAttributeMap().getAttributeInstance(ArsMagicaAPI.manaRegenTimeModifier).getAttributeValue()
+                        * this.cachedRegenTimeAttr
                         * liveRegenMult);
                 if (this.entity.isPotionActive(AMPotions.mana_regeneration)) {
                     PotionEffect pe = this.entity.getActivePotionEffect(AMPotions.mana_regeneration);
