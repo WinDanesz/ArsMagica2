@@ -96,7 +96,7 @@ public class TileObeliskRenderer extends TileEntitySpecialRenderer<TileEntityObe
 
         boolean active = hasWorld && te.burnTimeRemaining > 0;
 
-        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+        boolean wasBlendEnabled = GL11.glIsEnabled(GL11.GL_BLEND);
         GlStateManager.pushMatrix();
 
         GlStateManager.translate(x, y, z);
@@ -132,11 +132,10 @@ public class TileObeliskRenderer extends TileEntitySpecialRenderer<TileEntityObe
 
         GlStateManager.enableCull();
         GlStateManager.enableLighting();
-        GlStateManager.disableBlend();
+        if (wasBlendEnabled) GlStateManager.enableBlend(); else GlStateManager.disableBlend();
         GlStateManager.color(1f, 1f, 1f, 1f);
 
         GlStateManager.popMatrix();
-        GL11.glPopAttrib();
     }
 
     private void renderFaces(List<int[][]> faces) {

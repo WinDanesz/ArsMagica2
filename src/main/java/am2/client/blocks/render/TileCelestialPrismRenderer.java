@@ -79,7 +79,7 @@ public class TileCelestialPrismRenderer extends TileEntitySpecialRenderer<TileEn
             brightness = 1.0f;
         }
 
-        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+        boolean wasBlendEnabled = GL11.glIsEnabled(GL11.GL_BLEND);
         GlStateManager.pushMatrix();
 
         GlStateManager.translate(x + 0.5, y, z + 0.5);
@@ -110,10 +110,9 @@ public class TileCelestialPrismRenderer extends TileEntitySpecialRenderer<TileEn
 
         GlStateManager.enableCull();
         GlStateManager.enableLighting();
-        GlStateManager.disableBlend();
+        if (wasBlendEnabled) GlStateManager.enableBlend(); else GlStateManager.disableBlend();
         GlStateManager.color(1f, 1f, 1f, 1f);
 
         GlStateManager.popMatrix();
-        GL11.glPopAttrib();
     }
 }
