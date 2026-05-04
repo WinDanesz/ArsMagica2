@@ -737,7 +737,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
                 if (currentConsumedPower >= stack.getCount()) {
                     //PowerNodeRegistry.For(this.world).setPower(this, this.currentMainPowerTypes, 0);
                     if (!world.isRemote)
-                        addItemToRecipe(new ItemStack(AMItems.etherium, stack.getCount(), flags));
+                        addItemToRecipe(new ItemStack(AMItems.etherium, 1, flags));
                     setNoPowerRequests();
                     flipSwitch();
                 }
@@ -1630,7 +1630,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
             if (addedItem == null)
                 continue;
             ItemStack stack = new ItemStack((addedItem));
-            if (stack.isEmpty())
+            if (stack.getItem() == null || stack.getItem() == net.minecraft.init.Items.AIR)
                 continue;
             this.allAddedItems.add(stack);
         }
@@ -1641,7 +1641,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
             if (addedItem == null)
                 continue;
             ItemStack stack = new ItemStack((addedItem));
-            if (stack.isEmpty())
+            if (stack.getItem() == null || stack.getItem() == net.minecraft.init.Items.AIR)
                 continue;
             this.currentAddedItems.add(stack);
         }
