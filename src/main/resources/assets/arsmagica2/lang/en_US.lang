@@ -200,6 +200,7 @@ item.arsmagica2\:bound_sword.name=Bound Sword
 item.arsmagica2\:bound_bow.name=Bound Bow
 item.arsmagica2\:bound_shield.name=Bound Shield
 item.arsmagica2\:flickerJar.name=%s Flicker Jar
+item.arsmagica2\:spell_component.name=Spell Component
 
 #Block Names
 tile.arsmagica2\:frost.name=Frost

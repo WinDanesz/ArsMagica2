@@ -88,5 +88,9 @@ public class AMJEIPlugin implements IModPlugin {
 			String descKey = "jei." + ArsMagica.MODID + ".infinity_orb_" + tierName + ".desc";
 			registry.addIngredientInfo(new ItemStack(AMItems.infinity_orb, 1, meta), VanillaTypes.ITEM, descKey);
 		}
+
+		// Hide internal items that should not appear in JEI
+		registry.getJeiHelpers().getIngredientBlacklist().addIngredientToBlacklist(new ItemStack(AMItems.spell_component));
+
 	}
 }
