@@ -115,7 +115,6 @@ public class Summon extends SpellComponent {
         if (s == null || s.isEmpty()) return;
         ResourceLocation key = new ResourceLocation(s);
         if (!EntityList.isRegistered(key)) return;
-        stack.setString("SpawnClassName", key.toString());
         stack.setString("SummonType", key.toString());
     }
 
@@ -123,7 +122,6 @@ public class Summon extends SpellComponent {
         if (clazz == null) return;
         ResourceLocation key = EntityList.getKey(clazz);
         if (key == null) return;
-        stack.setString("SpawnClassName", key.toString());
         stack.setString("SummonType", key.toString());
     }
 

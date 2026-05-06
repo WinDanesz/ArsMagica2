@@ -118,7 +118,7 @@ public class TileEntitySummoner extends TileEntityAMPower implements IInventory,
         }
         //FIXME
         SpellData data = new SpellData(new ItemStack(AMItems.spell), Lists.newArrayList(), UUID.randomUUID(), new NBTTagCompound());
-        data.getStoredData().setString("SummonType", inventory.get(SUMMON_SLOT).getTagCompound().getString("SpawnClassName"));
+        data.getStoredData().setString("SummonType", inventory.get(SUMMON_SLOT).getTagCompound().getString("SummonType"));
         EntityLiving summon = ((Summon) ArsMagicaAPI.getSpellRegistry().getValue(new ResourceLocation("arsmagica2:summon"))).summonCreature(data, dummyCaster, dummyCaster, world, pos.getX(), pos.getY() + 1, pos.getZ());
         if (summon != null) {
             if (summon instanceof EntityCreature)

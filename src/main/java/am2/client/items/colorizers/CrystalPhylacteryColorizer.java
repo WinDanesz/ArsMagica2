@@ -13,7 +13,7 @@ public class CrystalPhylacteryColorizer implements IItemColor {
             int color = 0x0000FF;
             if (stack.hasTagCompound()) {
                 assert stack.getTagCompound() != null;
-                String className = stack.getTagCompound().getString("SpawnClassName");
+                String className = stack.getTagCompound().getString("SummonType");
                 Integer storedColor = ((ItemCrystalPhylactery) stack.getItem()).spawnableEntities.get(className);
                 if (storedColor != null) {
                     color = storedColor;

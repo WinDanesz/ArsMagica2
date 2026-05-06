@@ -56,7 +56,7 @@ public class ItemCrystalPhylactery extends Item {
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         if (stack.hasTagCompound()) {
-            String className = stack.getTagCompound().getString("SpawnClassName");
+            String className = stack.getTagCompound().getString("SummonType");
             tooltip.add(I18n.format("am2.tooltip.phyEss", I18n.format("entity." + className + ".name")));
             float pct = stack.getTagCompound().getFloat("PercentFilled");
             tooltip.add(I18n.format("am2.tooltip.pctFull", pct));
@@ -112,10 +112,10 @@ public class ItemCrystalPhylactery extends Item {
         if (!stack.hasTagCompound())
             stack.setTagCompound(new NBTTagCompound());
 
-        String s = EntityList.getTranslationName(EntityList.getKey(clazz));
-        if (s != null) {
+        ResourceLocation key = EntityList.getKey(clazz);
+        if (key != null) {
             assert stack.getTagCompound() != null;
-            stack.getTagCompound().setString("SpawnClassName", s);
+            stack.getTagCompound().setString("SummonType", key.toString());
         }
     }
 
@@ -126,7 +126,7 @@ public class ItemCrystalPhylactery extends Item {
         if (!stack.hasTagCompound())
             return true;
 
-        String e = stack.getTagCompound().getString("SpawnClassName");
+        String e = stack.getTagCompound().getString("SummonType");
         String s = EntityList.getEntityString(entity);
 
         return e.equals(s);
@@ -139,7 +139,7 @@ public class ItemCrystalPhylactery extends Item {
     public String getSpawnClass(ItemStack stack) {
         if (!stack.hasTagCompound())
             return null;
-        return stack.getTagCompound().getString("SpawnClassName");
+        return stack.getTagCompound().getString("SummonType");
     }
 
 
@@ -175,7 +175,7 @@ public class ItemCrystalPhylactery extends Item {
             ItemStack stack = new ItemStack(this, 1, META_FULL);
             stack.setTagCompound(new NBTTagCompound());
             assert stack.getTagCompound() != null;
-            stack.getTagCompound().setString("SpawnClassName", s);
+            stack.getTagCompound().setString("SummonType", s);
             stack.getTagCompound().setFloat("PercentFilled", 100);
             items.add(stack);
         }
