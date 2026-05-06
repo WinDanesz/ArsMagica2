@@ -1,12 +1,6 @@
 {
   "name": "ArsMagica2Port",
-  "image": "mcr.microsoft.com/devcontainers/java:1-25",
-  "features": {
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "25",
-      "jdkDistro": "ms"
-    }
-  },
+  "image": "mcr.microsoft.com/devcontainers/java:dev-25",
   "customizations": {
     "vscode": {
       "extensions": [
