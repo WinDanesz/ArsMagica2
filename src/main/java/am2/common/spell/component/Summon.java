@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -36,20 +37,15 @@ public class Summon extends SpellComponent {
 
 
     public EntityLiving summonCreature(SpellData spell, EntityLivingBase caster, EntityLivingBase target, World world, double x, double y, double z) {
-        Class<? extends Entity> clazz = getSummonType(spell);
-        EntityLiving entity = null;
-        try {
-            entity = (EntityLiving) clazz.getConstructor(World.class).newInstance(world);
-        } catch (Throwable t) {
-            am2.ArsMagica.LOGGER.error("Exception caught: ", t);
+        ResourceLocation key = getSummonType(spell);
+        Entity spawned = EntityList.createEntityByIDFromName(key, world);
+        if (!(spawned instanceof EntityLiving)) {
+            am2.ArsMagica.LOGGER.error("Summon: entity '{}' is not an EntityLiving", key);
             return null;
         }
+        EntityLiving entity = (EntityLiving) spawned;
 
-        if (entity == null) {
-            return null;
-        }
         if (entity instanceof EntitySkeleton) {
-//			((EntitySkeleton)entity).(SkeletonType.NORMAL);
             ((EntitySkeleton) entity).setHeldItem(EnumHand.MAIN_HAND, new ItemStack(Items.BOW));
         } else if (entity instanceof EntityHorse && caster instanceof EntityPlayer) {
             ((EntityHorse) entity).setTamedBy(((EntityPlayer) caster));
@@ -96,37 +92,39 @@ public class Summon extends SpellComponent {
         }
     }
 
-    public Class<? extends Entity> getSummonType(SpellData spell) {
+    private static final ResourceLocation DEFAULT_SUMMON = new ResourceLocation("minecraft", "skeleton");
+
+    public ResourceLocation getSummonType(SpellData spell) {
         String s = spell.getStoredData().getString("SummonType");
-        if (s == null || s.equals(""))
-            s = "Skeleton"; //default!  default!  default!
-        Class<? extends Entity> clazz = (Class<? extends Entity>) EntityList.getClassFromName(s);
-        return clazz;
+        if (s == null || s.isEmpty())
+            return DEFAULT_SUMMON;
+        ResourceLocation key = new ResourceLocation(s);
+        return EntityList.isRegistered(key) ? key : DEFAULT_SUMMON;
     }
 
-    public Class<? extends Entity> getSummonType(ISpellCaster spell) {
+    public ResourceLocation getSummonType(ISpellCaster spell) {
         String s = spell.getCommonStoredData().getString("SummonType");
-        if (s == null || s.equals(""))
-            s = "Skeleton"; //default!  default!  default!
-        Class<? extends Entity> clazz = (Class<? extends Entity>) EntityList.getClassFromName(s);
-        return clazz;
+        if (s == null || s.isEmpty())
+            return DEFAULT_SUMMON;
+        ResourceLocation key = new ResourceLocation(s);
+        return EntityList.isRegistered(key) ? key : DEFAULT_SUMMON;
     }
 
 
     public void setSummonType(NBTTagCompound stack, String s) {
-        Class<? extends Entity> clazz = (Class<? extends Entity>) EntityList.getClassFromName(s);
-        setSummonType(stack, clazz);
+        if (s == null || s.isEmpty()) return;
+        ResourceLocation key = new ResourceLocation(s);
+        if (!EntityList.isRegistered(key)) return;
+        stack.setString("SpawnClassName", key.toString());
+        stack.setString("SummonType", key.toString());
     }
 
     public void setSummonType(NBTTagCompound stack, Class<? extends Entity> clazz) {
-        clazz = checkForSpecialSpawns(stack, clazz);
-
-        String s = (String) EntityList.getKey(clazz).toString();
-        if (s == null)
-            s = "";
-
-        stack.setString("SpawnClassName", s);
-        stack.setString("SummonType", s);
+        if (clazz == null) return;
+        ResourceLocation key = EntityList.getKey(clazz);
+        if (key == null) return;
+        stack.setString("SpawnClassName", key.toString());
+        stack.setString("SummonType", key.toString());
     }
 
     private Class<? extends Entity> checkForSpecialSpawns(NBTTagCompound tag, Class<? extends Entity> clazz) {
