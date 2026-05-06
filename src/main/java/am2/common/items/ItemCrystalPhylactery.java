@@ -1,8 +1,6 @@
 package am2.common.items;
 
 import am2.ArsMagica;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -25,18 +23,20 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 
 public class ItemCrystalPhylactery extends Item {
 
-    public final HashMap<String, Integer> spawnableEntities;
+    public static final String TAG_SUMMON_TYPE     = "SummonType";
+    private static final String TAG_PERCENT_FILLED = "PercentFilled";
 
-    public static final int META_EMPTY = 0;
+    public final Map<String, Integer> spawnableEntities;
+
+    public static final int META_EMPTY   = 0;
     public static final int META_QUARTER = 1;
-    public static final int META_HALF = 2;
-    public static final int META_FULL = 3;
-
+    public static final int META_HALF    = 2;
+    public static final int META_FULL    = 3;
 
     public ItemCrystalPhylactery() {
         super();
@@ -56,9 +56,13 @@ public class ItemCrystalPhylactery extends Item {
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         if (stack.hasTagCompound()) {
-            String className = stack.getTagCompound().getString("SummonType");
-            tooltip.add(I18n.format("am2.tooltip.phyEss", I18n.format("entity." + className + ".name")));
-            float pct = stack.getTagCompound().getFloat("PercentFilled");
+            if (stack.getTagCompound().hasKey(TAG_SUMMON_TYPE)) {
+                String registryKey = stack.getTagCompound().getString(TAG_SUMMON_TYPE);
+                String entityName = EntityList.getTranslationName(new ResourceLocation(registryKey));
+                if (entityName == null) entityName = new ResourceLocation(registryKey).getPath();
+                tooltip.add(I18n.format("am2.tooltip.phyEss", I18n.format("entity." + entityName + ".name")));
+            }
+            float pct = stack.getTagCompound().getFloat(TAG_PERCENT_FILLED);
             tooltip.add(I18n.format("am2.tooltip.pctFull", pct));
         } else {
             tooltip.add(I18n.format("am2.tooltip.empty"));
@@ -66,118 +70,99 @@ public class ItemCrystalPhylactery extends Item {
     }
 
     public void addFill(ItemStack stack) {
-        if (stack.hasTagCompound()) {
-            float pct = stack.getTagCompound().getFloat("PercentFilled");
-            pct += itemRand.nextFloat() * 5;
-            if (pct > 100) pct = 100;
-            stack.getTagCompound().setFloat("PercentFilled", pct);
-            if (pct == 100)
-                stack.setItemDamage(META_FULL);
-            else if (pct > 50)
-                stack.setItemDamage(META_HALF);
-            else if (pct > 25)
-                stack.setItemDamage(META_QUARTER);
-            else
-                stack.setItemDamage(META_EMPTY);
-
-        }
+        if (!stack.hasTagCompound()) return;
+        if (!stack.getTagCompound().hasKey(TAG_SUMMON_TYPE)) return;
+        float pct = stack.getTagCompound().getFloat(TAG_PERCENT_FILLED);
+        pct = Math.min(pct + itemRand.nextFloat() * 5, 100);
+        stack.getTagCompound().setFloat(TAG_PERCENT_FILLED, pct);
+        updateDamageMeta(stack, pct);
     }
 
     public void addFill(ItemStack stack, float amt) {
-        if (stack.hasTagCompound()) {
-            float pct = stack.getTagCompound().getFloat("PercentFilled");
-            pct += amt;
-            if (pct > 100) pct = 100;
-            stack.getTagCompound().setFloat("PercentFilled", pct);
-            if (pct == 100)
-                stack.setItemDamage(META_FULL);
-            else if (pct > 50)
-                stack.setItemDamage(META_HALF);
-            else if (pct > 25)
-                stack.setItemDamage(META_QUARTER);
-            else
-                stack.setItemDamage(META_EMPTY);
+        if (!stack.hasTagCompound()) return;
+        float pct = Math.min(stack.getTagCompound().getFloat(TAG_PERCENT_FILLED) + amt, 100);
+        stack.getTagCompound().setFloat(TAG_PERCENT_FILLED, pct);
+        updateDamageMeta(stack, pct);
+    }
 
-        }
+    private void updateDamageMeta(ItemStack stack, float pct) {
+        if (pct >= 100)    stack.setItemDamage(META_FULL);
+        else if (pct > 50) stack.setItemDamage(META_HALF);
+        else if (pct > 25) stack.setItemDamage(META_QUARTER);
+        else               stack.setItemDamage(META_EMPTY);
+    }
+
+    private NBTTagCompound getOrCreateTag(ItemStack stack) {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        return stack.getTagCompound();
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public boolean hasEffect(ItemStack par1ItemStack) {
         return par1ItemStack.getItemDamage() == META_FULL;
     }
 
-    // TODO
     public void setSpawnClass(ItemStack stack, Class<? extends Entity> clazz) {
-        if (!stack.hasTagCompound())
-            stack.setTagCompound(new NBTTagCompound());
-
         ResourceLocation key = EntityList.getKey(clazz);
-        if (key != null) {
-            assert stack.getTagCompound() != null;
-            stack.getTagCompound().setString("SummonType", key.toString());
-        }
+        if (key == null) return;
+        getOrCreateTag(stack).setString(TAG_SUMMON_TYPE, key.toString());
     }
 
     public boolean canStore(ItemStack stack, EntityLiving entity) {
         if (!entity.isNonBoss()) return false;
-        if (stack.getItemDamage() == META_FULL)
-            return false;
-        if (!stack.hasTagCompound())
-            return true;
-
-        String e = stack.getTagCompound().getString("SummonType");
-        String s = EntityList.getEntityString(entity);
-
-        return e.equals(s);
+        if (stack.getItemDamage() == META_FULL) return false;
+        if (!stack.hasTagCompound()) return true;
+        ResourceLocation key = EntityList.getKey(entity);
+        if (key == null) return false;
+        return stack.getTagCompound().getString(TAG_SUMMON_TYPE).equals(key.toString());
     }
 
     public boolean isFull(ItemStack stack) {
         return stack.getItemDamage() == META_FULL;
     }
 
+    @Nullable
     public String getSpawnClass(ItemStack stack) {
-        if (!stack.hasTagCompound())
-            return null;
-        return stack.getTagCompound().getString("SummonType");
+        if (!stack.hasTagCompound()) return null;
+        return stack.getTagCompound().getString(TAG_SUMMON_TYPE);
     }
 
-
     @Override
-    @SideOnly(Side.CLIENT)
     public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
         if (!this.isInCreativeTab(tab)) return;
-        for (EntityEntry ent : ForgeRegistries.ENTITIES.getValuesCollection()) {
-            String name = ent.getName();
-            Class<? extends Entity> c = ent.getEntityClass();
-            try {
-                if (EntityLiving.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers()) && ent.getEntityClass().getName().startsWith("net.minecraft.entity")) {
-                    int color = 0;
-                    boolean found = false;
-                    for (EntityList.EntityEggInfo info : EntityList.ENTITY_EGGS.values()) {
-                        Class<? extends Entity> spawnClass = Objects.requireNonNull(ForgeRegistries.ENTITIES.getValue(info.spawnedID)).getEntityClass();
-                        if (spawnClass == c) {
-                            color = info.primaryColor;
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) color = new Random().nextInt();
-                    if (Minecraft.getMinecraft().getRenderManager().getEntityClassRenderObject(c) instanceof RenderLivingBase)
-                        spawnableEntities.put(name, color);
-                }
-            } catch (SecurityException ignored) {
-            }
-        }
+        ensureSpawnableEntities();
         items.add(new ItemStack(this));
-        for (String s : this.spawnableEntities.keySet()) {
+        for (String s : spawnableEntities.keySet()) {
             if (s == null) continue;
             ItemStack stack = new ItemStack(this, 1, META_FULL);
-            stack.setTagCompound(new NBTTagCompound());
-            assert stack.getTagCompound() != null;
-            stack.getTagCompound().setString("SummonType", s);
-            stack.getTagCompound().setFloat("PercentFilled", 100);
+            NBTTagCompound tag = getOrCreateTag(stack);
+            tag.setString(TAG_SUMMON_TYPE, s);
+            tag.setFloat(TAG_PERCENT_FILLED, 100);
             items.add(stack);
+        }
+    }
+
+    private void ensureSpawnableEntities() {
+        if (!spawnableEntities.isEmpty()) return;
+        for (EntityEntry ent : ForgeRegistries.ENTITIES.getValuesCollection()) {
+            ResourceLocation regName = ent.getRegistryName();
+            if (regName == null) continue;
+            Class<? extends Entity> c = ent.getEntityClass();
+            try {
+                if (!EntityLiving.class.isAssignableFrom(c)) continue;
+                if (Modifier.isAbstract(c.getModifiers())) continue;
+                if (!c.getName().startsWith("net.minecraft.entity")) continue;
+                int color = itemRand.nextInt();
+                for (EntityList.EntityEggInfo info : EntityList.ENTITY_EGGS.values()) {
+                    Class<? extends Entity> spawnClass = Objects.requireNonNull(ForgeRegistries.ENTITIES.getValue(info.spawnedID)).getEntityClass();
+                    if (spawnClass == c) {
+                        color = info.primaryColor;
+                        break;
+                    }
+                }
+                spawnableEntities.put(regName.toString(), color);
+            } catch (SecurityException ignored) {
+            }
         }
     }
 }

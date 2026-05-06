@@ -14,6 +14,8 @@ import am2.common.registry.AMItems;
 import am2.common.registry.Affinities;
 import am2.common.utils.EntityUtils;
 import com.google.common.collect.Sets;
+import electroblob.wizardry.util.BlockUtils;
+import electroblob.wizardry.util.GeometryUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntitySkeleton;
@@ -26,15 +28,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
-import java.util.EnumSet;
-import java.util.Random;
-import java.util.Set;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public class Summon extends SpellComponent {
 
+    private static final ResourceLocation DEFAULT_SUMMON = new ResourceLocation("minecraft", "skeleton");
 
     public EntityLiving summonCreature(SpellData spell, EntityLivingBase caster, EntityLivingBase target, World world, double x, double y, double z) {
         ResourceLocation key = getSummonType(spell);
@@ -46,11 +50,12 @@ public class Summon extends SpellComponent {
         EntityLiving entity = (EntityLiving) spawned;
 
         if (entity instanceof EntitySkeleton) {
-            ((EntitySkeleton) entity).setHeldItem(EnumHand.MAIN_HAND, new ItemStack(Items.BOW));
+            entity.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(Items.BOW));
         } else if (entity instanceof EntityHorse && caster instanceof EntityPlayer) {
             ((EntityHorse) entity).setTamedBy(((EntityPlayer) caster));
         }
-        entity.setPosition(x, y, z);
+        BlockPos pos = findNearbyFloorSpace(world, new BlockPos(x, y, z), 2, 2, true);
+        entity.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
         world.spawnEntity(entity);
         if (caster instanceof EntityPlayer) {
             EntityUtils.makeSummon_PlayerFaction((EntityCreature) entity, (EntityPlayer) caster, false);
@@ -92,10 +97,9 @@ public class Summon extends SpellComponent {
         }
     }
 
-    private static final ResourceLocation DEFAULT_SUMMON = new ResourceLocation("minecraft", "skeleton");
 
     public ResourceLocation getSummonType(SpellData spell) {
-        String s = spell.getStoredData().getString("SummonType");
+        String s = spell.getStoredData().getString(ItemCrystalPhylactery.TAG_SUMMON_TYPE);
         if (s == null || s.isEmpty())
             return DEFAULT_SUMMON;
         ResourceLocation key = new ResourceLocation(s);
@@ -103,7 +107,7 @@ public class Summon extends SpellComponent {
     }
 
     public ResourceLocation getSummonType(ISpellCaster spell) {
-        String s = spell.getCommonStoredData().getString("SummonType");
+        String s = spell.getCommonStoredData().getString(ItemCrystalPhylactery.TAG_SUMMON_TYPE);
         if (s == null || s.isEmpty())
             return DEFAULT_SUMMON;
         ResourceLocation key = new ResourceLocation(s);
@@ -115,27 +119,14 @@ public class Summon extends SpellComponent {
         if (s == null || s.isEmpty()) return;
         ResourceLocation key = new ResourceLocation(s);
         if (!EntityList.isRegistered(key)) return;
-        stack.setString("SummonType", key.toString());
+        stack.setString(ItemCrystalPhylactery.TAG_SUMMON_TYPE, key.toString());
     }
 
     public void setSummonType(NBTTagCompound stack, Class<? extends Entity> clazz) {
         if (clazz == null) return;
         ResourceLocation key = EntityList.getKey(clazz);
         if (key == null) return;
-        stack.setString("SummonType", key.toString());
-    }
-
-    private Class<? extends Entity> checkForSpecialSpawns(NBTTagCompound tag, Class<? extends Entity> clazz) {
-//		if (clazz == EntityChicken.class){
-//			if (SpellUtils.modifierIsPresent(SpellModifiers.DAMAGE, stack) && SpellUtils.componentIsPresent(stack, Haste.class)){
-//				return EntityBattleChicken.class;
-//			}
-//		}else if (clazz == EntityCow.class){
-//			if (SpellUtils.modifierIsPresent(SpellModifiers.DAMAGE, stack) && SpellUtils.componentIsPresent(stack, AstralDistortion.class)){
-//				return EntityHellCow.class;
-//			}
-//		}
-        return clazz;
+        stack.setString(ItemCrystalPhylactery.TAG_SUMMON_TYPE, key.toString());
     }
 
     @Override
@@ -205,6 +196,73 @@ public class Summon extends SpellComponent {
                 if (is.getItem().equals(AMItems.crystal_phylactery))
                     setSummonType(tag, is);
             }
+        }
+    }
+
+    @Nullable
+    public static Integer getNearestFloor(World world, BlockPos pos, int range){
+        return getNearestSurface(world, pos, EnumFacing.UP, range, true, BlockUtils.SurfaceCriteria.COLLIDABLE);
+    }
+
+    @Nullable
+    public static Integer getNearestSurface(World world, BlockPos pos, EnumFacing direction, int range,
+                                            boolean doubleSided, BlockUtils.SurfaceCriteria criteria){
+
+        // This is a neat trick that allows a default 'not found' return value for integers where all possible integer
+        // values could, in theory, be returned. The alternative is to use a double and have NaN as the default, but
+        // that would introduce extra casting, and since NaN can be calculated with, it could produce strange results
+        // when unaccounted for. Using an Integer means it'll immediately throw an NPE instead.
+        Integer surface = null;
+        int currentBest = Integer.MAX_VALUE;
+
+        for(int i = doubleSided ? -range : 0; i <= range && i < currentBest; i++){ // Now short-circuits for efficiency
+
+            BlockPos testPos = pos.offset(direction, i);
+
+            if(criteria.test(world, testPos, direction)){
+                // Because the loop now short-circuits, this must be closer than the previous surface found
+                surface = (int)GeometryUtils.component(GeometryUtils.getFaceCentre(testPos, direction), direction.getAxis());
+                currentBest = Math.abs(i);
+            }
+        }
+
+        return surface;
+    }
+
+
+    @Nullable
+    public static BlockPos findNearbyFloorSpace(World world, BlockPos origin, int horizontalRange, int verticalRange, boolean lineOfSight){
+
+        List<BlockPos> possibleLocations = new ArrayList<>();
+
+        final Vec3d centre = GeometryUtils.getCentre(origin);
+
+        for(int x = -horizontalRange; x <= horizontalRange; x++){
+            for(int z = -horizontalRange; z <= horizontalRange; z++){
+
+                Integer y = getNearestFloor(world, origin.add(x, 0, z), verticalRange);
+
+                if(y != null){
+
+                    BlockPos location = new BlockPos(origin.getX() + x, y, origin.getZ() + z);
+
+                    if(lineOfSight){
+                        // Since we're only using finding collidable surfaces, it doesn't make much sense to include
+                        // non-collidable blocks here!
+                        RayTraceResult rayTrace = world.rayTraceBlocks(centre, GeometryUtils.getCentre(location),
+                                false, true, false);
+                        if(rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) continue;
+                    }
+
+                    possibleLocations.add(location);
+                }
+            }
+        }
+
+        if(possibleLocations.isEmpty()){
+            return null;
+        }else{
+            return possibleLocations.get(world.rand.nextInt(possibleLocations.size()));
         }
     }
 }
