@@ -269,6 +269,7 @@ public class EntitySpellProjectile extends Entity {
             }
             // ─────────────────────────────────────────────────────────────────────────────
         } catch (NullPointerException e) {
+            e.printStackTrace();
             this.setDead();
         }
     }
