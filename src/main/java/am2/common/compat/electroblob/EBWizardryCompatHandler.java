@@ -13,9 +13,9 @@ import am2.common.extensions.AffinityData;
 import am2.common.extensions.EntityExtension;
 import am2.common.extensions.SkillData;
 import am2.common.registry.AMItems;
-import am2.common.skill.Discipline;
 import am2.common.registry.AMPotions;
 import am2.common.registry.Affinities;
+import am2.common.skill.Discipline;
 import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.inventory.ContainerBookshelf;
 import electroblob.wizardry.registry.Spells;
@@ -107,7 +107,9 @@ public final class EBWizardryCompatHandler {
         return spell.getCost() * costMultiplier * ArsMagica.config.getEBWizManaCostMultiplier() * disciplineCostMult;
     }
 
-    /** Search radius (blocks) used when counting EBWiz summons near a caster. */
+    /**
+     * Search radius (blocks) used when counting EBWiz summons near a caster.
+     */
     private static final double SUMMON_SEARCH_RADIUS = 28.0;
 
     /**
@@ -125,10 +127,10 @@ public final class EBWizardryCompatHandler {
         if (caster == null || caster.world == null) return 0;
         net.minecraft.util.math.AxisAlignedBB box = caster.getEntityBoundingBox().grow(SUMMON_SEARCH_RADIUS);
         return caster.world.getEntitiesWithinAABB(
-            net.minecraft.entity.Entity.class,
-            box,
-            e -> e instanceof electroblob.wizardry.entity.living.ISummonedCreature
-                && ((electroblob.wizardry.entity.living.ISummonedCreature) e).getCaster() == caster
+                net.minecraft.entity.Entity.class,
+                box,
+                e -> e instanceof electroblob.wizardry.entity.living.ISummonedCreature
+                        && ((electroblob.wizardry.entity.living.ISummonedCreature) e).getCaster() == caster
         ).size();
     }
 
@@ -222,7 +224,7 @@ public final class EBWizardryCompatHandler {
         // require AM2 mana (configurable via EBWiz_Scroll_Requires_Mana).
         boolean requireAM2Mana = ArsMagica.config.getEBWizDisableWandMana()
                 || (event.getSource() == electroblob.wizardry.event.SpellCastEvent.Source.SCROLL
-                        && ArsMagica.config.getEBWizScrollRequiresMana());
+                && ArsMagica.config.getEBWizScrollRequiresMana());
         if (requireAM2Mana) {
             // The spell can only proceed if the caster has enough AM2 mana;
             // otherwise cancel it outright.
@@ -445,8 +447,8 @@ public final class EBWizardryCompatHandler {
      *   <li>ADVANCED   – 2 000</li>
      *   <li>MASTER     – 2 500</li>
      * </ul>
-     *
-    /**
+     * <p>
+     * /**
      * Returns the amount of neutral etherium required to transcribe an EBWiz spell book
      * at the AM2 Crafting Altar.  Both the base cost and the per-tier increment are
      * configured via {@link am2.common.config.AMConfig}:
@@ -533,15 +535,24 @@ public final class EBWizardryCompatHandler {
      */
     public static Affinity lookupAffinity(String name) {
         switch (name.toLowerCase(java.util.Locale.ROOT)) {
-            case "fire":      return Affinities.fire;
-            case "ice":       return Affinities.ice;
-            case "lightning": return Affinities.lightning;
-            case "earth":     return Affinities.earth;
-            case "water":     return Affinities.water;
-            case "life":      return Affinities.life;
-            case "nature":    return Affinities.nature;
-            case "ender":     return Affinities.ender;
-            default:          return Affinities.arcane;
+            case "fire":
+                return Affinities.fire;
+            case "ice":
+                return Affinities.ice;
+            case "lightning":
+                return Affinities.lightning;
+            case "earth":
+                return Affinities.earth;
+            case "water":
+                return Affinities.water;
+            case "life":
+                return Affinities.life;
+            case "nature":
+                return Affinities.nature;
+            case "ender":
+                return Affinities.ender;
+            default:
+                return Affinities.arcane;
         }
     }
 
@@ -574,12 +585,16 @@ public final class EBWizardryCompatHandler {
         }
     }
 
-    /** Overload with explicit spread, default velocity scale of 1. */
+    /**
+     * Overload with explicit spread, default velocity scale of 1.
+     */
     public static void spawnFrostParticles(net.minecraft.world.World world, double x, double y, double z, int count, java.util.Random rand, double spread) {
         spawnFrostParticles(world, x, y, z, count, rand, spread, 1.0);
     }
 
-    /** Convenience overload with default spread of 0.4 blocks and full velocity. */
+    /**
+     * Convenience overload with default spread of 0.4 blocks and full velocity.
+     */
     public static void spawnFrostParticles(net.minecraft.world.World world, double x, double y, double z, int count, java.util.Random rand) {
         spawnFrostParticles(world, x, y, z, count, rand, 0.4, 1.0);
     }
@@ -750,7 +765,7 @@ public final class EBWizardryCompatHandler {
                 r("ebwizardry:magic_crystal:2", "minecraft:snow"));
         map.put("arsmagica2:drown",
                 r("ebwizardry:magic_crystal:2", "ebwizardry:magic_crystal:2",
-                  "minecraft:water_bucket", "minecraft:string", "arsmagica2:blue_topaz"));
+                        "minecraft:water_bucket", "minecraft:string", "arsmagica2:blue_topaz"));
         map.put("arsmagica2:create_water",
                 r("ebwizardry:magic_crystal:2", "minecraft:water_bucket"));
         map.put("arsmagica2:water_breathing",
@@ -763,7 +778,7 @@ public final class EBWizardryCompatHandler {
         // ---- Lightning (magic_crystal:3) ------------------------------------
         map.put("arsmagica2:lightning_damage",
                 r("ebwizardry:magic_crystal:3", "minecraft:iron_ingot",
-                  "minecraft:stick", "arsmagica2:vinteum_dust"));
+                        "minecraft:stick", "arsmagica2:vinteum_dust"));
         map.put("arsmagica2:storm",
                 r("ebwizardry:magic_crystal:3", "arsmagica2:blue_topaz", "minecraft:ghast_tear"));
 
@@ -780,7 +795,7 @@ public final class EBWizardryCompatHandler {
                 r("ebwizardry:magic_crystal:5", "minecraft:dye:15"));
         map.put("arsmagica2:plant",
                 r("ebwizardry:magic_crystal:5", "minecraft:wheat_seeds",
-                  "minecraft:sapling:*", "minecraft:wheat_seeds"));
+                        "minecraft:sapling:*", "minecraft:wheat_seeds"));
         map.put("arsmagica2:physical_damage",
                 r("ebwizardry:magic_crystal:5", "minecraft:iron_sword"));
         map.put("arsmagica2:knockback",
@@ -799,10 +814,10 @@ public final class EBWizardryCompatHandler {
                 r("ebwizardry:magic_crystal:6", "minecraft:ender_pearl"));
         map.put("arsmagica2:transplace",
                 r("ebwizardry:magic_crystal:6", "minecraft:compass",
-                  "ebwizardry:magic_crystal:6", "minecraft:ender_pearl"));
+                        "ebwizardry:magic_crystal:6", "minecraft:ender_pearl"));
         map.put("arsmagica2:recall",
                 r("ebwizardry:magic_crystal:6", "minecraft:compass",
-                  "minecraft:map", "minecraft:ender_pearl"));
+                        "minecraft:map", "minecraft:ender_pearl"));
         map.put("arsmagica2:astral_distortion",
                 r("ebwizardry:magic_crystal:6", "minecraft:ender_eye"));
         map.put("arsmagica2:flight",
@@ -817,13 +832,13 @@ public final class EBWizardryCompatHandler {
                 r("ebwizardry:magic_crystal:6", "minecraft:piston"));
         map.put("arsmagica2:rift",
                 r("ebwizardry:magic_crystal:6", "ebwizardry:magic_crystal",
-                  "minecraft:chest", "minecraft:ender_eye"));
+                        "minecraft:chest", "minecraft:ender_eye"));
         map.put("arsmagica2:charm",
                 r("ebwizardry:magic_crystal:6", "arsmagica2:essence_life",
-                  "arsmagica2:crystal_phylactery"));
+                        "arsmagica2:crystal_phylactery"));
         map.put("arsmagica2:invisibility",
                 r("ebwizardry:magic_crystal:6", "arsmagica2:chimerite",
-                  "ore:listAllpotionItem"));
+                        "ore:listAllpotionItem"));
         map.put("arsmagica2:slow",
                 r("ebwizardry:magic_crystal:6", "minecraft:slime_ball"));
         map.put("arsmagica2:haste",
@@ -834,7 +849,7 @@ public final class EBWizardryCompatHandler {
                 r("ebwizardry:magic_crystal:6", "arsmagica2:moonstone", "arsmagica2:vinteum_dust"));
         map.put("arsmagica2:silence",
                 r("ebwizardry:magic_crystal:6", "arsmagica2:arcane_ash",
-                  "minecraft:jukebox", "ebwizardry:magic_crystal:6"));
+                        "minecraft:jukebox", "ebwizardry:magic_crystal:6"));
         map.put("arsmagica2:disarm",
                 r("ebwizardry:magic_crystal:6", "minecraft:iron_sword"));
         map.put("arsmagica2:telekinesis",
@@ -856,15 +871,15 @@ public final class EBWizardryCompatHandler {
         // falling_star uses 2x essence_arcane in its recipe – not substituted.
         map.put("arsmagica2:magic_damage",
                 r("ebwizardry:magic_crystal", "minecraft:dye:4", "minecraft:book",
-                  "minecraft:stone_sword"));
+                        "minecraft:stone_sword"));
         map.put("arsmagica2:mana_blast",
                 r("ebwizardry:magic_crystal", "arsmagica2:mana_focus", "arsmagica2:greater_focus"));
         map.put("arsmagica2:dispel",
                 r("ebwizardry:magic_crystal", "arsmagica2:arcane_ash",
-                  "arsmagica2:blue_topaz", "minecraft:milk_bucket"));
+                        "arsmagica2:blue_topaz", "minecraft:milk_bucket"));
         map.put("arsmagica2:light",
                 r("ebwizardry:magic_crystal", "arsmagica2:cerublossom",
-                  "minecraft:torch", "arsmagica2:vinteum_torch"));
+                        "minecraft:torch", "arsmagica2:vinteum_torch"));
         map.put("arsmagica2:attract",
                 r("ebwizardry:magic_crystal", "minecraft:iron_ingot"));
         map.put("arsmagica2:repel",
@@ -875,13 +890,17 @@ public final class EBWizardryCompatHandler {
                 r("ebwizardry:magic_crystal", "minecraft:glass", "minecraft:iron_block"));
         map.put("arsmagica2:mana_shield",
                 r("ebwizardry:magic_crystal", "arsmagica2:mana_focus", "arsmagica2:battlemage_chestplate",
-                  "arsmagica2:mage_robe"));
+                        "arsmagica2:mage_robe"));
 
         return map;
     }
 
-    /** Convenience varargs helper for building recipe string arrays. */
-    private static String[] r(String... items) { return items; }
+    /**
+     * Convenience varargs helper for building recipe string arrays.
+     */
+    private static String[] r(String... items) {
+        return items;
+    }
 
     // -------------------------------------------------------------------------
     // Artefact potency → AM2 spell power
@@ -910,7 +929,7 @@ public final class EBWizardryCompatHandler {
      * @return a multiplier ≥ {@code 1.0f} to apply to AM2 spell damage
      */
     public static float computeArtefactPotencyMultiplier(net.minecraft.entity.player.EntityPlayer player, float ratio,
-            @javax.annotation.Nullable am2.api.affinity.Affinity dominantAffinity) {
+                                                         @javax.annotation.Nullable am2.api.affinity.Affinity dominantAffinity) {
         electroblob.wizardry.util.SpellModifiers fakeModifiers = new electroblob.wizardry.util.SpellModifiers();
         fakeModifiers.set(electroblob.wizardry.util.SpellModifiers.POTENCY, 1.0f, false);
         electroblob.wizardry.spell.Spell representative = spellForAffinity(dominantAffinity);
@@ -1109,14 +1128,22 @@ public final class EBWizardryCompatHandler {
      */
     public static Discipline getDisciplineForElementOrdinal(int elementOrdinal) {
         switch (elementOrdinal) {
-            case 1: return Discipline.FIRE;
-            case 2: return Discipline.ICE;
-            case 3: return Discipline.LIGHTNING;
-            case 4: return Discipline.NECROMANCY;
-            case 5: return Discipline.EARTH;
-            case 6: return Discipline.SORCERY;
-            case 7: return Discipline.HEALING;
-            default: return null;
+            case 1:
+                return Discipline.FIRE;
+            case 2:
+                return Discipline.ICE;
+            case 3:
+                return Discipline.LIGHTNING;
+            case 4:
+                return Discipline.NECROMANCY;
+            case 5:
+                return Discipline.EARTH;
+            case 6:
+                return Discipline.SORCERY;
+            case 7:
+                return Discipline.HEALING;
+            default:
+                return null;
         }
     }
 
@@ -1167,14 +1194,22 @@ public final class EBWizardryCompatHandler {
      */
     public static ItemStack getAM2EssenceForElement(int elementOrdinal) {
         switch (elementOrdinal) {
-            case 1: return new ItemStack(AMItems.essence_fire);
-            case 2: return new ItemStack(AMItems.essence_ice);
-            case 3: return new ItemStack(AMItems.essence_lightning);
-            case 4: return new ItemStack(AMItems.essence_ender);
-            case 5: return new ItemStack(AMItems.essence_earth);
-            case 6: return new ItemStack(AMItems.essence_arcane);
-            case 7: return new ItemStack(AMItems.essence_life);
-            default: return ItemStack.EMPTY;
+            case 1:
+                return new ItemStack(AMItems.essence_fire);
+            case 2:
+                return new ItemStack(AMItems.essence_ice);
+            case 3:
+                return new ItemStack(AMItems.essence_lightning);
+            case 4:
+                return new ItemStack(AMItems.essence_ender);
+            case 5:
+                return new ItemStack(AMItems.essence_earth);
+            case 6:
+                return new ItemStack(AMItems.essence_arcane);
+            case 7:
+                return new ItemStack(AMItems.essence_life);
+            default:
+                return ItemStack.EMPTY;
         }
     }
 
@@ -1270,7 +1305,8 @@ public final class EBWizardryCompatHandler {
      * Returns a display-friendly element name for the given ordinal.
      */
     public static String getElementDisplayName(int elementOrdinal) {
-        if (elementOrdinal < 0 || elementOrdinal >= electroblob.wizardry.constants.Element.values().length) return "Unknown";
+        if (elementOrdinal < 0 || elementOrdinal >= electroblob.wizardry.constants.Element.values().length)
+            return "Unknown";
         return electroblob.wizardry.constants.Element.values()[elementOrdinal].getDisplayName();
     }
 

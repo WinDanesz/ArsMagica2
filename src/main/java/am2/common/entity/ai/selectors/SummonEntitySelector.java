@@ -2,21 +2,48 @@ package am2.common.entity.ai.selectors;
 
 import am2.common.utils.EntityUtils;
 import com.google.common.base.Predicate;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IEntityOwnable;
+import net.minecraft.entity.monster.IMob;
 
-public class SummonEntitySelector implements Predicate<EntityMob> {
+/**
+ * Target selector for player-faction AM2 summons.
+ *
+ * <p>When Electroblob's Wizardry is present, {@link #ebwizValidator} is set by
+ * {@code EBWizardryCompatBootstrap} and delegates target validity to
+ * {@code AllyDesignationSystem.isValidTarget}, giving summons full awareness of
+ * the EBWiz ally system. Without EBWiz the fallback restricts targets to
+ * {@link IMob} implementors and excludes the owner and other AM2 summons.
+ */
+public class SummonEntitySelector implements Predicate<EntityLivingBase> {
 
-    public static final SummonEntitySelector instance = new SummonEntitySelector();
+    /**
+     * Set by {@code EBWizardryCompatBootstrap.register()} when EBWiz is loaded.
+     * Signature mirrors {@code AllyDesignationSystem.isValidTarget(attacker, target)}.
+     */
+    public static java.util.function.BiPredicate<Entity, Entity> ebwizValidator = null;
 
-    private SummonEntitySelector() {
+    private final EntityLivingBase owner;
+
+    public SummonEntitySelector(EntityLivingBase owner) {
+        this.owner = owner;
     }
 
     @Override
-    public boolean apply(EntityMob entity) {
-        if (entity != null) {
-            return !EntityUtils.isSummon(entity);
-        }
-        return false;
-    }
+    public boolean apply(EntityLivingBase entity) {
+        if (entity == null || entity == owner) return false;
+        if (entity.isInvisible()) return false;
 
+        if (entity instanceof IEntityOwnable && owner.equals(((IEntityOwnable) entity).getOwner())) return false;
+
+        // Use the AllyDesignation System from EBWiz if available, to allow summons to properly target allies and enemies
+        if (ebwizValidator != null) {
+            return ebwizValidator.test(owner, entity);
+        }
+
+        // Fallback without EBWiz: only attack hostile mobs; skip AM2 summons
+        if (!(entity instanceof IMob)) return false;
+        return !EntityUtils.isSummon(entity);
+    }
 }

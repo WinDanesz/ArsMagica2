@@ -49,6 +49,8 @@ public final class EBWizardryCompatBootstrap {
         if (Loader.isModLoaded(MODID)) {
             MinecraftForge.EVENT_BUS.register(new EBWizardryCompatHandler());
             registerCompendiumEntry();
+            am2.common.entity.ai.selectors.SummonEntitySelector.ebwizValidator =
+                    electroblob.wizardry.util.AllyDesignationSystem::isValidTarget;
             LogHelper.info("Electroblob's Wizardry detected – AM2 compatibility module loaded.");
         }
     }
