@@ -155,6 +155,7 @@ public final class AMItems {
     public static final Item battlemage_leggings = placeholder();
     public static final Item battlemage_boots = placeholder();
     public static final Item crystallized_entity = placeholder();
+    public static final Item debug_rune = placeholder();
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<Item> event) {
@@ -281,6 +282,7 @@ public final class AMItems {
         registerItem(registry, "mana_martini", ArsMagica.MODID, new ItemManaMartini());
         registerItem(registry, "crystal_phylactery", ArsMagica.MODID, new ItemCrystalPhylactery());
         registerItem(registry, "crystallized_entity", ArsMagica.MODID, new ItemCrystallizedEntity(), true);
+        registerItem(registry, "debug_rune", ArsMagica.MODID, new ItemDebugRune());
 
         // EBWiz compatibility – only register when Electroblob's Wizardry is present.
         // Uses the ElectroblobCompat facade to keep ItemEBWizSpellBinding out of AMItems bytecode.
