@@ -4,6 +4,7 @@ import am2.ArsMagica;
 import am2.api.math.AMVector3;
 import am2.common.blocks.tileentity.TileEntitySummoner;
 import am2.common.entity.ai.EntityAIGuardSpawnLocation;
+import am2.common.entity.ai.EntityAIHurtByTargetExcludeOwner;
 import am2.common.entity.ai.EntityAISummonFollowOwner;
 import am2.common.entity.ai.selectors.SummonEntitySelector;
 import am2.common.extensions.EntityExtension;
@@ -16,10 +17,7 @@ import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
-import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.monster.EntityShulker;
-import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -177,34 +175,10 @@ public class EntityUtils {
             if (storeForRevert)
                 storedTasks.put(entityliving.getEntityId(), new ArrayList<EntityAITasks.EntityAITaskEntry>(entityliving.targetTasks.taskEntries));
 
-            boolean addMeleeAttack = false;
-            ArrayList<EntityAITaskEntry> toRemove = new ArrayList<EntityAITaskEntry>();
-            for (Object task : entityliving.tasks.taskEntries) {
-                EntityAITaskEntry base = (EntityAITaskEntry) task;
-                if (base.action instanceof EntityAIAttackMelee) {
-                    toRemove.add(base);
-                    addMeleeAttack = true;
-                }
-            }
-
-            entityliving.tasks.taskEntries.removeAll(toRemove);
-
-            if (storeForRevert)
-                storedAITasks.put(entityliving.getEntityId(), toRemove);
-
-            if (addMeleeAttack) {
-                float speed = entityliving.getAIMoveSpeed();
-                if (speed <= 0) speed = 1.0f;
-                entityliving.tasks.addTask(3, new EntityAIAttackMelee(entityliving, speed, true));
-            }
-
             entityliving.targetTasks.taskEntries.clear();
 
-            entityliving.targetTasks.addTask(1, new EntityAIHurtByTarget(entityliving, true));
-            entityliving.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityMob>(entityliving, EntityMob.class, 0, true, false, SummonEntitySelector.instance));
-            entityliving.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntitySlime>(entityliving, EntitySlime.class, true));
-            entityliving.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityGhast>(entityliving, EntityGhast.class, true));
-            entityliving.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityShulker>(entityliving, EntityShulker.class, true));
+            entityliving.targetTasks.addTask(1, new EntityAIHurtByTargetExcludeOwner(entityliving, true));
+            entityliving.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(entityliving, EntityLivingBase.class, 0, true, false, new SummonEntitySelector(player)));
 
             if (!entityliving.world.isRemote && entityliving.getAttackTarget() != null && entityliving.getAttackTarget() instanceof EntityPlayer)
                 ArsMagica.proxy.addDeferredTargetSet(entityliving, null);
