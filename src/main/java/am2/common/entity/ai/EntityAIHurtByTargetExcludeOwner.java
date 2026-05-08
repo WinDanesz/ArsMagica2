@@ -20,6 +20,9 @@ public class EntityAIHurtByTargetExcludeOwner extends EntityAIHurtByTarget {
         EntityLivingBase attacker = creature.getRevengeTarget();
         if (attacker == null) return true;
         int ownerId = EntityUtils.getOwner(creature);
-        return ownerId < 0 || attacker.getEntityId() != ownerId;
+        if (ownerId < 0) return true;
+        if (attacker.getEntityId() == ownerId) return false;
+        // Exclude other summons of the same owner
+        return !EntityUtils.isSummon(attacker) || EntityUtils.getOwner(attacker) != ownerId;
     }
 }

@@ -32,7 +32,11 @@ public class SummonEntitySelector implements Predicate<EntityLivingBase> {
 
     @Override
     public boolean apply(EntityLivingBase entity) {
-        if (entity == null || entity == owner) return false;
+        if (entity == null || owner == null || entity == owner) return false;
+
+        // Exclude other summons of the same owner
+        if (EntityUtils.isSummon(entity) && EntityUtils.getOwner(entity) == owner.getEntityId()) return false;
+
         if (entity.isInvisible()) return false;
 
         if (entity instanceof IEntityOwnable && owner.equals(((IEntityOwnable) entity).getOwner())) return false;
