@@ -59,15 +59,15 @@ jobs:
         echo "eula=true" > run/eula.txt
         echo "online-mode=false" > run/server.properties
 
-    - name: Test server startup (10 second run)
+    - name: Test server startup (30 second run)
       timeout-minutes: 10
       run: |
         ./gradlew runServer --no-daemon > /tmp/server-output.log 2>&1 &
         SERVER_PID=$!
         trap 'kill $SERVER_PID 2>/dev/null || true; wait $SERVER_PID 2>/dev/null || true' EXIT
 
-        echo "Server started with PID $SERVER_PID, waiting 10 seconds..."
-        sleep 10
+        echo "Server started with PID $SERVER_PID, waiting 30 seconds..."
+        sleep 30
 
         if ! kill -0 $SERVER_PID 2>/dev/null; then
           echo "::error::Server process crashed during startup!"
@@ -83,7 +83,7 @@ jobs:
           exit 1
         fi
 
-        echo "Server ran for 10 seconds without errors. Shutting down..."
+        echo "Server ran for 30 seconds without errors. Shutting down..."
         echo "=== Server Output ==="
         cat /tmp/server-output.log
         echo "Server startup test passed!"
