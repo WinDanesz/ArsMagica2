@@ -14,8 +14,7 @@ import am2.common.registry.AMItems;
 import am2.common.registry.Affinities;
 import am2.common.utils.EntityUtils;
 import com.google.common.collect.Sets;
-import electroblob.wizardry.util.BlockUtils;
-import electroblob.wizardry.util.GeometryUtils;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntitySkeleton;
@@ -201,12 +200,12 @@ public class Summon extends SpellComponent {
 
     @Nullable
     public static Integer getNearestFloor(World world, BlockPos pos, int range){
-        return getNearestSurface(world, pos, EnumFacing.UP, range, true, BlockUtils.SurfaceCriteria.COLLIDABLE);
+        return getNearestSurface(world, pos, EnumFacing.UP, range, true);
     }
 
     @Nullable
     public static Integer getNearestSurface(World world, BlockPos pos, EnumFacing direction, int range,
-                                            boolean doubleSided, BlockUtils.SurfaceCriteria criteria){
+                                            boolean doubleSided){
 
         // This is a neat trick that allows a default 'not found' return value for integers where all possible integer
         // values could, in theory, be returned. The alternative is to use a double and have NaN as the default, but
@@ -218,10 +217,18 @@ public class Summon extends SpellComponent {
         for(int i = doubleSided ? -range : 0; i <= range && i < currentBest; i++){ // Now short-circuits for efficiency
 
             BlockPos testPos = pos.offset(direction, i);
+            IBlockState state = world.getBlockState(testPos);
 
-            if(criteria.test(world, testPos, direction)){
+            if(state.getCollisionBoundingBox(world, testPos) != net.minecraft.block.Block.NULL_AABB){
                 // Because the loop now short-circuits, this must be closer than the previous surface found
-                surface = (int)GeometryUtils.component(GeometryUtils.getFaceCentre(testPos, direction), direction.getAxis());
+                int coord;
+                switch (direction.getAxis()) {
+                    case X: coord = testPos.getX(); break;
+                    case Y: coord = testPos.getY(); break;
+                    case Z: coord = testPos.getZ(); break;
+                    default: throw new Error(); // Should never happen
+                }
+                surface = direction.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE ? coord + 1 : coord;
                 currentBest = Math.abs(i);
             }
         }
@@ -235,7 +242,7 @@ public class Summon extends SpellComponent {
 
         List<BlockPos> possibleLocations = new ArrayList<>();
 
-        final Vec3d centre = GeometryUtils.getCentre(origin);
+        final Vec3d centre = new Vec3d(origin.getX() + 0.5, origin.getY() + 0.5, origin.getZ() + 0.5);
 
         for(int x = -horizontalRange; x <= horizontalRange; x++){
             for(int z = -horizontalRange; z <= horizontalRange; z++){
@@ -249,7 +256,7 @@ public class Summon extends SpellComponent {
                     if(lineOfSight){
                         // Since we're only using finding collidable surfaces, it doesn't make much sense to include
                         // non-collidable blocks here!
-                        RayTraceResult rayTrace = world.rayTraceBlocks(centre, GeometryUtils.getCentre(location),
+                        RayTraceResult rayTrace = world.rayTraceBlocks(centre, new Vec3d(location.getX() + 0.5, location.getY() + 0.5, location.getZ() + 0.5),
                                 false, true, false);
                         if(rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) continue;
                     }
