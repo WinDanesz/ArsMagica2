@@ -33,8 +33,6 @@ public class AMSkills {
     public static final Skill augmented_casting = placeholder();
     public static final Skill affinity_gains = placeholder();
     public static final Skill extra_summons = placeholder();
-    public static final Skill extra_summons_ii = placeholder();
-    public static final Skill extra_summons_iii = placeholder();
     public static final Skill shield_overload = placeholder();
     public static final Skill colour = placeholder();
 
@@ -216,9 +214,7 @@ public static final Skill glyph = placeholder();
         registry.register(new Skill("spell_motion", ResourceUtils.getSkillIcon("spell_motion"), SkillPoint.GREEN_SKILL_POINT, 230, 120, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_ii"));
         registry.register(new Skill("augmented_casting", ResourceUtils.getSkillIcon("augmented_casting"), SkillPoint.RED_SKILL_POINT, 230, 165, SkillTrees.TREE_TALENT, "arsmagica2:spell_motion"));
         registry.register(new Skill("affinity_gains", ResourceUtils.getSkillIcon("affinity_gains"), SkillPoint.BLUE_SKILL_POINT, 365, 120, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_i"));
-        registry.register(new Skill("extra_summons", ResourceUtils.getSkillIcon("extra_summon"), SkillPoint.RED_SKILL_POINT, 230, 210, SkillTrees.TREE_TALENT, "arsmagica2:augmented_casting"));
-        registry.register(new Skill("extra_summons_ii", ResourceUtils.getSkillIcon("extra_summon"), SkillPoint.RED_SKILL_POINT, 230, 255, SkillTrees.TREE_TALENT, "arsmagica2:extra_summons"));
-        registry.register(new Skill("extra_summons_iii", ResourceUtils.getSkillIcon("extra_summon"), SkillPoint.RED_SKILL_POINT, 230, 300, SkillTrees.TREE_TALENT, "arsmagica2:extra_summons_ii"));
+        registry.register(new Skill("extra_summons", ResourceUtils.getSkillIcon("extra_summon"), SkillPoint.RED_SKILL_POINT, 230, 210, SkillTrees.TREE_TALENT, ArsMagica.config.getExtraSummonsMaxLevel(), "arsmagica2:augmented_casting"));
         registry.register(new Skill("shield_overload", ResourceUtils.getSkillIcon("shield_overload"), SkillPoint.SILVER_POINT, 275, 210, SkillTrees.TREE_TALENT));
 
 

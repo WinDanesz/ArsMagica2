@@ -582,11 +582,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
     public int getMaxSummons() {
         if (!(this.entity instanceof EntityPlayer)) return 3;
         ISkillData skills = SkillData.For(this.entity);
-        int max = 1;
-        if (skills.hasSkill(AMSkills.extra_summons.getID())) max++;
-        if (skills.hasSkill(AMSkills.extra_summons_ii.getID())) max++;
-        if (skills.hasSkill(AMSkills.extra_summons_iii.getID())) max++;
-        return max;
+        return 1 + skills.getSkillLevel(AMSkills.extra_summons.getID());
     }
 
     @Override

@@ -25,7 +25,11 @@ public interface ISkillData {
 
     public void unlockSkill(String name);
 
-    public HashMap<Skill, Boolean> getSkills();
+    public int getSkillLevel(String name);
+
+    public void setSkillLevel(String name, int level);
+
+    public HashMap<Skill, Integer> getSkills();
 
     public HashMap<SkillPoint, Integer> getSkillPoints();
 
@@ -68,12 +72,12 @@ public interface ISkillData {
             NBTTagCompound am2Tag = NBTUtils.getAM2Tag(nbt);
             NBTTagList skillList = NBTUtils.addCompoundList(am2Tag, "Skills");
             NBTTagList skillPointList = NBTUtils.addCompoundList(am2Tag, "SkillPoints");
-            for (Entry<Skill, Boolean> skill : instance.getSkills().entrySet()) {
+            for (Entry<Skill, Integer> skill : instance.getSkills().entrySet()) {
                 if (skill.getKey() == null)
                     continue;
                 NBTTagCompound tmp = new NBTTagCompound();
                 tmp.setString("Skill", skill.getKey().getID());
-                tmp.setBoolean("Unlocked", skill.getValue());
+                tmp.setInteger("Level", skill.getValue());
                 skillList.appendTag(tmp);
             }
             for (Entry<SkillPoint, Integer> skill : instance.getSkillPoints().entrySet()) {
@@ -106,8 +110,9 @@ public interface ISkillData {
             NBTTagList skillPointList = NBTUtils.addCompoundList(am2Tag, "SkillPoints");
             for (int i = 0; i < skillList.tagCount(); i++) {
                 NBTTagCompound tmp = skillList.getCompoundTagAt(i);
-                if (tmp.getBoolean("Unlocked"))
-                    instance.unlockSkill(tmp.getString("Skill"));
+                int level = tmp.hasKey("Level") ? tmp.getInteger("Level") : (tmp.getBoolean("Unlocked") ? 1 : 0);
+                if (level > 0)
+                    instance.setSkillLevel(tmp.getString("Skill"), level);
             }
             for (int i = 0; i < skillPointList.tagCount(); i++) {
                 NBTTagCompound tmp = skillPointList.getCompoundTagAt(i);

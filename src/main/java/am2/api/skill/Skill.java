@@ -19,6 +19,7 @@ public class Skill extends IForgeRegistryEntry.Impl<Skill> {
     private String[] parents;
     private ResourceLocation icon;
     private SkillPoint point;
+    private int maxLevel = 1;
 
     private Skill(ResourceLocation icon, SkillPoint point, int posX, int posY, SkillTree tree, String... string) {
         this.posX = posX;
@@ -33,6 +34,12 @@ public class Skill extends IForgeRegistryEntry.Impl<Skill> {
     public Skill(String string, ResourceLocation icon, SkillPoint point, int posX, int posY, SkillTree tree, String... strings) {
         this(icon, point, posX, posY, tree, strings);
         this.setRegistryName(new ResourceLocation(ArsMagicaAPI.getCurrentModId(), string));
+    }
+
+    public Skill(String string, ResourceLocation icon, SkillPoint point, int posX, int posY, SkillTree tree, int maxLevel, String... strings) {
+        this(icon, point, posX, posY, tree, strings);
+        this.setRegistryName(new ResourceLocation(ArsMagicaAPI.getCurrentModId(), string));
+        this.maxLevel = maxLevel;
     }
 
     /**
@@ -87,6 +94,10 @@ public class Skill extends IForgeRegistryEntry.Impl<Skill> {
 
     public SkillPoint getPoint() {
         return point;
+    }
+
+    public int getMaxLevel() {
+        return maxLevel;
     }
 
     @Override

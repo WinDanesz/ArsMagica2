@@ -167,14 +167,17 @@ public final class EBWizardryCompatHandler {
         IEntityExtension am2Data = EntityExtension.For(caster);
         if (am2Data == null) return;
 
-        // The entity is already in the world when this event fires, so
-        // countSummonsFor(caster) includes it. Subtract 1 to get the number
-        // of EBWiz summons that existed BEFORE this entity joined.
-        int ebwizBefore = Math.max(0, countSummonsFor(caster) - 1);
+        // EBWizardry registers summons in its own tracking after EntityJoinWorldEvent,
+        // so countSummonsFor(caster) does NOT yet include the joining entity here.
+        int ebwizBefore = countSummonsFor(caster);
         int am2Count = am2Data.getCurrentSummons();
         if (am2Count + ebwizBefore >= am2Data.getMaxSummons()) {
             event.getEntity().setDead();
             event.setCanceled(true);
+            if (caster instanceof net.minecraft.entity.player.EntityPlayer) {
+                ((net.minecraft.entity.player.EntityPlayer) caster).sendStatusMessage(
+                        new net.minecraft.util.text.TextComponentTranslation("am2.tooltip.noMoreSummons"), false);
+            }
         }
     }
 

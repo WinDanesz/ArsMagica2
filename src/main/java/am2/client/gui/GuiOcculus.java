@@ -185,11 +185,9 @@ public class GuiOcculus extends GuiScreen {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         if (mouseButton == 0) {
-            if (hoverItem != null && !SkillData.For(player).hasSkill(hoverItem.getID())) {
-                ISkillData data = SkillData.For(player);
-                if (data.canLearn(hoverItem.getID())) {
-                    AMNetworkHandler.getNetwork().sendToServer(new PacketOcculusUnlock(hoverItem.getID()));
-                }
+            ISkillData data = SkillData.For(player);
+            if (hoverItem != null && data.canLearn(hoverItem.getID())) {
+                AMNetworkHandler.getNetwork().sendToServer(new PacketOcculusUnlock(hoverItem.getID()));
             } else if (this.currentTree != SkillTrees.TREE_AFFINITY && this.currentTree != SkillTrees.TREE_DISCIPLINE && selectedButton == null)
                 isDragging = true;
         }
@@ -454,6 +452,10 @@ public class GuiOcculus extends GuiScreen {
                     }
                     ArrayList<String> list = new ArrayList<String>();
                     list.add(s.getPoint().getChatColor().toString() + s.getName());
+                    if (s.getMaxLevel() > 1) {
+                        int lvl = data.getSkillLevel(s.getID());
+                        list.add(TextFormatting.YELLOW.toString() + "Level " + lvl + "/" + s.getMaxLevel());
+                    }
                     if (ArsMagica.disabledSkills.isSkillDisabled(s.getID()))
                         list.add(TextFormatting.DARK_RED.toString() + I18n.format("am2.gui.occulus.disabled"));
                     else if (hasPrereq)

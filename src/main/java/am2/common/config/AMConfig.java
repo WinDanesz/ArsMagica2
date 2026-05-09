@@ -49,6 +49,7 @@ public class AMConfig extends Configuration {
 
     private final String KEY_SecondarySkillTreeTierCap = "secondary_skill_tree_tier_cap";
     private final String KEY_MagicLevelCap = "magic_level_cap";
+    private final String KEY_ExtraSummonsMaxLevel = "extra_summons_max_level";
     private final String KEY_DigBreaksTEs = "dig_breaks_tile_entities";
     private final String KEY_DisplayManaInInventory = "display_mana_in_inventory";
     private final String KEY_ManaCap = "mana_cap";
@@ -576,6 +577,7 @@ public class AMConfig extends Configuration {
 
     private int secondarySkillTreeTierCap;
     private int magicLevelCap;
+    private int extraSummonsMaxLevel;
     private int mageVillagerProfessionID;
     private String[] digBlacklist;
     private int[] worldgenBlacklist;
@@ -960,6 +962,7 @@ public class AMConfig extends Configuration {
 
         this.secondarySkillTreeTierCap = this.get(CATEGORY_GENERAL, this.KEY_SecondarySkillTreeTierCap, 99, "Sets how far a player may progress into secondary skill trees.").getInt();
         this.magicLevelCap = this.get(CATEGORY_GENERAL, this.KEY_MagicLevelCap, 99, "Maximum magic level a player can reach. Milestone advancements scale proportionally to this value.").getInt();
+        this.extraSummonsMaxLevel = this.get(CATEGORY_GENERAL, this.KEY_ExtraSummonsMaxLevel, 12, "Maximum number of levels for the Extra Summons skill in the Occulus. Default: 12").getInt();
         this.mageVillagerProfessionID = this.get(CATEGORY_GENERAL, this.KEY_MageVillagerProfessionID, 29).getInt();
 
         this.manaHudPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_ManaHudPositionX, 0.7104166746139526).getDouble(0.7104166746139526), this.get(CATEGORY_UI, this.KEY_ManaHudPositionY, 0.9137254953384399).getDouble(0.9137254953384399));
@@ -1633,6 +1636,10 @@ public class AMConfig extends Configuration {
 
     public int getSkillTreeSecondaryTierCap() {
         return this.secondarySkillTreeTierCap;
+    }
+
+    public int getExtraSummonsMaxLevel() {
+        return this.extraSummonsMaxLevel;
     }
 
     public int getMagicLevelCap() {
