@@ -292,7 +292,7 @@ public class TileEntityCrystalMarker extends TileEntity implements IInventory, I
             return ItemStack.EMPTY;
         }
         ItemStack stack = this.filterItems[i];
-        return stack.isEmpty() ? ItemStack.EMPTY : stack;
+        return (stack == null || stack.isEmpty()) ? ItemStack.EMPTY : stack;
     }
 
     @Override
