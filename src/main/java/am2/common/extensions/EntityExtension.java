@@ -4,6 +4,7 @@ import am2.ArsMagica;
 import am2.api.ArsMagicaAPI;
 import am2.api.event.PlayerMagicLevelChangeEvent;
 import am2.api.extensions.IEntityExtension;
+import am2.api.extensions.ISkillData;
 import am2.api.math.AMVector2;
 import am2.api.spell.SpellData;
 import am2.client.particles.AMLineArc;
@@ -579,7 +580,13 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 
     @Override
     public int getMaxSummons() {
-        return this.entity instanceof EntityPlayer && SkillData.For(this.entity).hasSkill(AMSkills.extra_summons.getID()) ? 2 : 3;
+        if (!(this.entity instanceof EntityPlayer)) return 3;
+        ISkillData skills = SkillData.For(this.entity);
+        int max = 1;
+        if (skills.hasSkill(AMSkills.extra_summons.getID())) max++;
+        if (skills.hasSkill(AMSkills.extra_summons_ii.getID())) max++;
+        if (skills.hasSkill(AMSkills.extra_summons_iii.getID())) max++;
+        return max;
     }
 
     @Override

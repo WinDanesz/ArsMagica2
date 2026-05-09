@@ -53,7 +53,10 @@ public class Summon extends SpellComponent {
         } else if (entity instanceof EntityHorse && caster instanceof EntityPlayer) {
             ((EntityHorse) entity).setTamedBy(((EntityPlayer) caster));
         }
-        BlockPos pos = findNearbyFloorSpace(world, new BlockPos(x, y, z), 2, 2, true);
+        BlockPos pos = findNearbyFloorSpace(world, new BlockPos(x, y, z), 3, 3, false);
+        if (pos == null) {
+            pos = new BlockPos(x + 0.5f, y + 0.5f, z + 0.5f);
+        }
         entity.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
         world.spawnEntity(entity);
         if (caster instanceof EntityPlayer) {
@@ -62,6 +65,10 @@ public class Summon extends SpellComponent {
             EntityUtils.makeSummon_MonsterFaction((EntityCreature) entity, false);
         }
         EntityUtils.setOwner(entity, caster);
+
+        String creatureName = EntityList.getEntityString(entity);
+        if (creatureName == null || creatureName.isEmpty()) creatureName = entity.getClass().getSimpleName();
+        entity.setCustomNameTag(caster.getName() + "'s " + creatureName);
 
         int duration = (int) spell.getModifiedValue(4800, SpellModifiers.DURATION, Operation.MULTIPLY, world, caster, target);
 
