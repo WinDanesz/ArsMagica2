@@ -88,13 +88,13 @@ jobs:
         cat /tmp/server-output.log
         echo "Server startup test passed!"
 
+    - name: Remove unwanted build artifacts
+      run: rm -f build/libs/*-sources.jar build/libs/*-dev.jar
+
     - name: Upload build artifacts
       if: success()
       uses: actions/upload-artifact@v4
       with:
         name: build-artifacts
-        path: |
-          build/libs/*.jar
-          !build/libs/*-sources.jar
-          !build/libs/*-dev.jar
+        path: build/libs/*.jar
         retention-days: 30
