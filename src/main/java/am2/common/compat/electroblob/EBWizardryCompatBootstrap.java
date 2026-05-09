@@ -51,6 +51,48 @@ public final class EBWizardryCompatBootstrap {
             registerCompendiumEntry();
             am2.common.entity.ai.selectors.SummonEntitySelector.ebwizValidator =
                     electroblob.wizardry.util.AllyDesignationSystem::isValidTarget;
+
+            // Tell Wizardry to treat AM2 summons as allies of their owner so that
+            // Wizardry minions won't attack them and healing spells will affect them.
+            electroblob.wizardry.util.AllyDesignationSystem.registerValidTargetPredicate((attacker, target) -> {
+                if (!(target instanceof EntityLivingBase)) return false;
+                if (!am2.common.utils.EntityUtils.isSummon((EntityLivingBase) target)) return false;
+                int ownerEntityId = am2.common.utils.EntityUtils.getOwner((EntityLivingBase) target);
+                if (ownerEntityId == -1) return false;
+                net.minecraft.entity.Entity ownerEntity = target.world.getEntityByID(ownerEntityId);
+                if (ownerEntity == null) return false;
+                // Direct owner — never attack
+                if (attacker == ownerEntity) return true;
+                // Another AM2 summon of the same owner — don't attack each other
+                if (attacker instanceof EntityLivingBase
+                        && am2.common.utils.EntityUtils.isSummon((EntityLivingBase) attacker)
+                        && am2.common.utils.EntityUtils.getOwner((EntityLivingBase) attacker) == ownerEntityId) return true;
+                // Cross-player: attacker is a Wizardry ally of the summon's owner
+                if (attacker instanceof net.minecraft.entity.player.EntityPlayer
+                        && ownerEntity instanceof net.minecraft.entity.player.EntityPlayer)
+                    return electroblob.wizardry.util.AllyDesignationSystem.isPlayerAlly(
+                            (net.minecraft.entity.player.EntityPlayer) attacker,
+                            (net.minecraft.entity.player.EntityPlayer) ownerEntity);
+                return false;
+            });
+
+            electroblob.wizardry.util.AllyDesignationSystem.registerAllyPredicate((allyOf, possibleAlly) -> {
+                if (!am2.common.utils.EntityUtils.isSummon(possibleAlly)) return false;
+                int ownerEntityId = am2.common.utils.EntityUtils.getOwner(possibleAlly);
+                if (ownerEntityId == -1) return false;
+                net.minecraft.entity.Entity ownerEntity = possibleAlly.world.getEntityByID(ownerEntityId);
+                if (ownerEntity == null) return false;
+                // Direct owner can always heal/buff their own summons
+                if (allyOf == ownerEntity) return true;
+                // Cross-player: allyOf is a Wizardry ally of the summon's owner
+                if (allyOf instanceof net.minecraft.entity.player.EntityPlayer
+                        && ownerEntity instanceof net.minecraft.entity.player.EntityPlayer)
+                    return electroblob.wizardry.util.AllyDesignationSystem.isPlayerAlly(
+                            (net.minecraft.entity.player.EntityPlayer) allyOf,
+                            (net.minecraft.entity.player.EntityPlayer) ownerEntity);
+                return false;
+            });
+
             LogHelper.info("Electroblob's Wizardry detected – AM2 compatibility module loaded.");
         }
     }
