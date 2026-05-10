@@ -113,7 +113,7 @@ public class FlickerOperatorFlatLands extends AbstractFlickerFunctionality {
 
     @Override
     public ResourceLocation getTexture() {
-        return new ResourceLocation("arsmagica2", "FlickerOperatorFlatLands");
+        return new ResourceLocation("arsmagica2", "flickeroperatorflatlands");
     }
 
     @Override

@@ -109,7 +109,7 @@ public class FlickerOperatorPackedEarth extends AbstractFlickerFunctionality {
 
     @Override
     public ResourceLocation getTexture() {
-        return new ResourceLocation("arsmagica2", "FlickerOperatorPackedEarth");
+        return new ResourceLocation("arsmagica2", "flickeroperatorpackedearth");
     }
 
     @Override

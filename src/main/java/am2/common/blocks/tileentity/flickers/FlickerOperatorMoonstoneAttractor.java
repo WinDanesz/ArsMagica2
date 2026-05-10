@@ -93,7 +93,7 @@ public class FlickerOperatorMoonstoneAttractor extends AbstractFlickerFunctional
 
     @Override
     public ResourceLocation getTexture() {
-        return new ResourceLocation("arsmagica2", "FlickerOperatorMoonstoneAttractor");
+        return new ResourceLocation("arsmagica2", "flickeroperatormoonstoneattractor");
     }
 
     @Override
