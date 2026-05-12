@@ -67,8 +67,7 @@ public class Chain extends SpellShape {
         for (EntityLivingBase e : targets) {
             if (e == caster)
                 continue;
-            result = spell.applyComponentsToEntity(world, caster, target);//.applyStageToEntity(stack, caster, world, e, giveXP);
-            spell.execute(world, caster, target, x, y, z, side);//SpellUtils.applyStackStage(stack, caster, e, e.posX, e.posY, e.posZ, null, world, true, giveXP, 0);
+            result = spell.applyComponentsToEntity(world, caster, e);
 
             if (world.isRemote) {
                 if (prevEntity == null)
