@@ -1,5 +1,8 @@
 package am2.common.commands;
 
+import am2.api.compendium.CompendiumCategory;
+import am2.api.compendium.CompendiumEntry;
+import am2.api.extensions.IArcaneCompendium;
 import am2.common.armor.ArmorHelper;
 import am2.common.extensions.AffinityData;
 import am2.common.extensions.EntityExtension;
@@ -19,6 +22,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -67,6 +71,8 @@ public class CommandArsMagica extends CommandBase {
             handleSetMana(server, sender, args);
         } else if (args[0].equalsIgnoreCase("infusexp")) {
             handleInfuseXP(server, sender, args);
+        } else if (args[0].equalsIgnoreCase("unlockcompendium")) {
+            handleUnlockCompendium(server, sender, args);
         }
     }
 
@@ -134,17 +140,57 @@ public class CommandArsMagica extends CommandBase {
         notifyCommandListener(sender, this, "Added %.0f infused XP to held armor (level now %d)", amount, ArmorHelper.getArmorLevel(heldItem));
     }
 
+    private void handleUnlockCompendium(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        if (args.length < 2) throw new WrongUsageException("/am unlockcompendium <all|entryId> [player]");
+
+        EntityPlayer player;
+        if (args.length >= 3) {
+            Entity ent = getEntity(server, sender, args[2]);
+            if (!(ent instanceof EntityPlayer)) throw new CommandException("Target must be a player");
+            player = (EntityPlayer) ent;
+        } else {
+            player = getCommandSenderAsPlayer(sender);
+        }
+
+        IArcaneCompendium compendium = ArcaneCompendium.For(player);
+
+        if (args[1].equalsIgnoreCase("all")) {
+            for (CompendiumEntry entry : CompendiumCategory.getAllEntries()) {
+                compendium.unlockEntry(entry.getID());
+            }
+            compendium.forceUpdate();
+            notifyCommandListener(sender, this, "Unlocked all compendium entries for %s", player.getDisplayNameString());
+        } else {
+            String entryId = args[1];
+            CompendiumEntry entry = CompendiumCategory.getEntryByID(entryId);
+            if (entry == null) throw new CommandException("Unknown compendium entry: %s", entryId);
+            compendium.unlockEntry(entryId);
+            compendium.forceUpdate();
+            notifyCommandListener(sender, this, "Unlocked compendium entry '%s' for %s", entryId, player.getDisplayNameString());
+        }
+    }
+
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1)
-            return getListOfStringsMatchingLastWord(args, Lists.newArrayList("magiclevel", "forcesync", "updatespells", "setmana", "infusexp"));
+            return getListOfStringsMatchingLastWord(args, Lists.newArrayList("magiclevel", "forcesync", "updatespells", "setmana", "infusexp", "unlockcompendium"));
         else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("magiclevel")) return Collections.emptyList();
             else if (args[0].equalsIgnoreCase("setmana")) return Collections.emptyList();
+            else if (args[0].equalsIgnoreCase("unlockcompendium")) {
+                List<String> completions = new ArrayList<>();
+                completions.add("all");
+                for (CompendiumEntry entry : CompendiumCategory.getAllEntries()) {
+                    completions.add(entry.getID());
+                }
+                return getListOfStringsMatchingLastWord(args, completions);
+            }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("magiclevel"))
                 return getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
             else if (args[0].equalsIgnoreCase("setmana"))
+                return getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
+            else if (args[0].equalsIgnoreCase("unlockcompendium"))
                 return getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
         }
         return Collections.emptyList();
