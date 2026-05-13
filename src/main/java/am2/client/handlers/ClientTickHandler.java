@@ -15,7 +15,9 @@ import am2.common.items.ItemSpellBase;
 import am2.common.items.ItemSpellBook;
 import am2.common.power.PowerNodeEntry;
 import am2.common.power.PowerTypes;
+import am2.common.blocks.tileentity.TileEntityIllusionBlock;
 import am2.common.registry.AMItems;
+import am2.common.registry.AMPotions;
 import am2.common.registry.ImbuementRegistry;
 import am2.common.spell.SpellCaster;
 import am2.common.spell.component.Telekinesis;
@@ -66,6 +68,8 @@ public class ClientTickHandler {
 
     private String lastWorldName;
 
+    private boolean wasTrueSightActive = false;
+
     private void gameTick_Start() {
 
         if (Minecraft.getMinecraft().isIntegratedServerRunning()) {
@@ -114,6 +118,21 @@ public class ClientTickHandler {
 
         if (Minecraft.getMinecraft().isIntegratedServerRunning()) {
             applyDeferredPotionEffects();
+        }
+
+        // Track true sight: when it changes, update the cached flag and force a chunk rebuild
+        // on every illusion block so renderTileEntityFast re-bakes with the new appearance.
+        if (Minecraft.getMinecraft().player != null) {
+            boolean nowActive = Minecraft.getMinecraft().player.isPotionActive(AMPotions.true_sight);
+            if (nowActive != wasTrueSightActive) {
+                wasTrueSightActive = nowActive;
+                TileEntityIllusionBlock.trueSightActive = nowActive;
+                for (TileEntityIllusionBlock te : TileEntityIllusionBlock.CLIENT_INSTANCES) {
+                    if (!te.isInvalid() && te.hasWorld()) {
+                        Minecraft.getMinecraft().world.markBlockRangeForRenderUpdate(te.getPos(), te.getPos());
+                    }
+                }
+            }
         }
 
         if (!powerWatch.equals(new Vec3d(0, 0, 0))) {

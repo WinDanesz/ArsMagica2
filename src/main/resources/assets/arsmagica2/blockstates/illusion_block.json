@@ -1,5 +1,6 @@
 {
-	"multipart": [{
-		"apply": {"model":"arsmagica2:illusion_block"}
-	}]
+	"variants": {
+		"illusion_type=default":     {"model": "arsmagica2:illusion_block"},
+		"illusion_type=non_collide": {"model": "arsmagica2:illusion_block"}
+	}
 }

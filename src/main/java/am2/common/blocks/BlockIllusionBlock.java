@@ -1,8 +1,8 @@
 package am2.common.blocks;
 
 import am2.common.blocks.tileentity.TileEntityIllusionBlock;
-import am2.common.registry.AMItems;
 import am2.common.registry.AMPotions;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -11,7 +11,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -19,6 +18,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -26,6 +28,17 @@ import java.util.List;
 public class BlockIllusionBlock extends BlockAMContainer {
 
     public static final PropertyEnum<EnumIllusionType> ILLUSION_TYPE = PropertyEnum.create("illusion_type", EnumIllusionType.class);
+
+    /**
+     * Unlisted property: carries the mimic block state into the baked model during chunk rebuild.
+     * Never serialized — only exists in the IExtendedBlockState passed to IBakedModel.getQuads().
+     */
+    public static final IUnlistedProperty<IBlockState> MIMIC_BLOCK = new IUnlistedProperty<IBlockState>() {
+        @Override public String getName()                   { return "mimic_block"; }
+        @Override public boolean isValid(IBlockState value) { return true; }
+        @Override public Class<IBlockState> getType()       { return IBlockState.class; }
+        @Override public String valueToString(IBlockState v){ return v.toString(); }
+    };
 
     public BlockIllusionBlock() {
         super(Material.WOOD);
@@ -39,7 +52,27 @@ public class BlockIllusionBlock extends BlockAMContainer {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, ILLUSION_TYPE);
+        return new ExtendedBlockState(this, new net.minecraft.block.properties.IProperty[]{ILLUSION_TYPE},
+                new IUnlistedProperty[]{MIMIC_BLOCK});
+    }
+
+    @Override
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        if (!(state instanceof IExtendedBlockState)) return state;
+        IExtendedBlockState extended = (IExtendedBlockState) state;
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileEntityIllusionBlock) {
+            TileEntityIllusionBlock illusion = (TileEntityIllusionBlock) te;
+            boolean revealed = getIllusionType(state).canBeRevealed()
+                    && TileEntityIllusionBlock.trueSightActive;
+            if (!revealed) {
+                IBlockState mimic = illusion.getMimicBlock();
+                if (mimic != null && mimic.getBlock() != Blocks.AIR) {
+                    extended = extended.withProperty(MIMIC_BLOCK, mimic);
+                }
+            }
+        }
+        return extended;
     }
 
     @Override
@@ -96,13 +129,27 @@ public class BlockIllusionBlock extends BlockAMContainer {
     }
 
     @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        TileEntity te = worldIn.getTileEntity(pos);
+        if (te instanceof TileEntityIllusionBlock) {
+            ((TileEntityIllusionBlock) te).scanMimicBlock();
+        }
+    }
+
+    @Override
     public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
 
     @Override
+    public boolean canRenderInLayer(IBlockState state, net.minecraft.util.BlockRenderLayer layer) {
+        // Allow rendering in all layers so transparent/cutout mimics (glass, leaves) work correctly
+        return true;
+    }
+
+    @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.INVISIBLE;
+        return EnumBlockRenderType.MODEL;
     }
 
     @Override
@@ -121,27 +168,6 @@ public class BlockIllusionBlock extends BlockAMContainer {
     @Override
     public boolean isFullCube(IBlockState state) {
         return false;
-    }
-
-    public Object[] GetRecipeComponents(boolean alwaysPassable) {
-        if (alwaysPassable) {
-            return new Object[]{
-                    "BRB", "RGR", "BRB",
-                    'R', new ItemStack(AMItems.rune, 1, EnumDyeColor.BLACK.getDyeDamage()),
-                    'G', Blocks.GLASS,
-                    'B', new ItemStack(AMItems.chimerite)
-            };
-        } else {
-            return new Object[]{
-                    "BRB", "R R", "BRB",
-                    'R', new ItemStack(AMItems.rune, 1, EnumDyeColor.BLACK.getDyeDamage()),
-                    'B', new ItemStack(AMItems.chimerite)
-            };
-        }
-    }
-
-    public int GetCraftingQuantity() {
-        return 4;
     }
 
     @Override

@@ -174,7 +174,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEverstone.class, new TileEverstoneRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityArcaneReconstructor.class, new TileArcaneReconstructorRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityArcaneDeconstructor.class, new TileArcaneDeconstructorRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityIllusionBlock.class, new TileIllusionBlockRenderer());
+        // Illusion block now uses IExtendedBlockState + IBakedModel — no TESR needed
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySeerStone.class, new TileSeerStoneRenderer());
         // Calefactor uses JSON model for base, TESR for item/particles
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCalefactor.class, new TileCalefactorRenderer());
@@ -250,6 +250,22 @@ public class ClientProxy extends CommonProxy {
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ChalkArrowItemColorizer(), AMItems.colored_chalk);
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new ChalkArrowBlockColorizer(), AMBlocks.chalk_arrow);
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new MonoColorizer(0xFFFFFF), AMBlocks.witchwood_leaves);
+        // Delegate illusion block tinting to the mimic block so tinted blocks (grass, leaves, etc.) show correct biome colour
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(
+            (state, worldIn, pos, tintIndex) -> {
+                if (worldIn != null && pos != null) {
+                    net.minecraft.tileentity.TileEntity te = worldIn.getTileEntity(pos);
+                    if (te instanceof am2.common.blocks.tileentity.TileEntityIllusionBlock) {
+                        IBlockState mimic = ((am2.common.blocks.tileentity.TileEntityIllusionBlock) te).getMimicBlock();
+                        if (mimic != null && mimic.getBlock() != net.minecraft.init.Blocks.AIR) {
+                            return Minecraft.getMinecraft().getBlockColors().colorMultiplier(mimic, worldIn, pos, tintIndex);
+                        }
+                    }
+                }
+                return -1;
+            },
+            AMBlocks.illusion_block
+        );
         ArmorColorizer armorColorizer = new ArmorColorizer();
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(armorColorizer,
                 AMItems.mage_hood, AMItems.mage_robe, AMItems.mage_leggings, AMItems.mage_boots,

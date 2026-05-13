@@ -1,5 +1,7 @@
 package am2.client;
 
+import am2.client.blocks.render.IllusionBakedModel;
+import am2.common.blocks.BlockIllusionBlock;
 import am2.ArsMagica;
 import am2.api.items.IMultiTexturedItem;
 import am2.client.compat.electroblob.EBWizSpellBindingRenderer;
@@ -181,6 +183,17 @@ public final class AMModels {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
+        // Replace illusion block models with IllusionBakedModel so the mimic appearance is
+        // baked into the chunk VBO via IExtendedBlockState — no TESR needed.
+        for (BlockIllusionBlock.EnumIllusionType type : BlockIllusionBlock.EnumIllusionType.values()) {
+            ModelResourceLocation mrl = new ModelResourceLocation(
+                    AMBlocks.illusion_block.getRegistryName(), "illusion_type=" + type.getName());
+            IBakedModel fallback = event.getModelRegistry().getObject(mrl);
+            if (fallback != null) {
+                event.getModelRegistry().putObject(mrl, new IllusionBakedModel(fallback));
+            }
+        }
+
         for (ModelResourceLocation modelResourceLocation : modelResourceLocationList) {
 
             IBakedModel model = event.getModelRegistry().getObject(modelResourceLocation);
