@@ -1,8 +1,10 @@
 package am2.common.entity.ai;
 
+import am2.common.entity.ai.selectors.SummonEntitySelector;
 import am2.common.utils.EntityUtils;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 
 public class EntityAIHurtByTargetExcludeOwner extends EntityAIHurtByTarget {
@@ -23,6 +25,11 @@ public class EntityAIHurtByTargetExcludeOwner extends EntityAIHurtByTarget {
         if (ownerId < 0) return true;
         if (attacker.getEntityId() == ownerId) return false;
         // Exclude other summons of the same owner
-        return !EntityUtils.isSummon(attacker) || EntityUtils.getOwner(attacker) != ownerId;
+        if (EntityUtils.isSummon(attacker) && EntityUtils.getOwner(attacker) == ownerId) return false;
+        // Use EBWiz validator if available, otherwise restrict to hostile mobs only
+        if (SummonEntitySelector.ebwizValidator != null) {
+            return SummonEntitySelector.ebwizValidator.test(creature, attacker);
+        }
+        return attacker instanceof IMob;
     }
 }

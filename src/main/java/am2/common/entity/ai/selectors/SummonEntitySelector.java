@@ -41,13 +41,20 @@ public class SummonEntitySelector implements Predicate<EntityLivingBase> {
 
         if (entity instanceof IEntityOwnable && owner.equals(((IEntityOwnable) entity).getOwner())) return false;
 
+        // Base filter: only consider hostile mobs or summons as attack candidates.
+        // This must run before the EBWiz validator so passive animals (chickens, cows, etc.)
+        // are never targeted — AllyDesignationSystem.isValidTarget only tracks ally
+        // relationships and returns true for any non-ally, including passive mobs.
+        boolean isHostile = entity instanceof IMob;
+        boolean isAnySummon = EntityUtils.isSummon(entity);
+        if (!isHostile && !isAnySummon) return false;
+
         // Use the AllyDesignation System from EBWiz if available, to allow summons to properly target allies and enemies
         if (ebwizValidator != null) {
             return ebwizValidator.test(owner, entity);
         }
 
         // Fallback without EBWiz: only attack hostile mobs; skip AM2 summons
-        if (!(entity instanceof IMob)) return false;
-        return !EntityUtils.isSummon(entity);
+        return isHostile && !isAnySummon;
     }
 }
