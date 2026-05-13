@@ -4,7 +4,9 @@ package am2.common.spell;
 import am2.api.ArsMagicaAPI;
 import am2.api.SpellRegistryHelper;
 import am2.api.event.SpellCastEvent;
+import am2.api.extensions.ISkillData;
 import am2.api.skill.Skill;
+import am2.api.skill.SkillPoint;
 import am2.api.spell.SpellData;
 import am2.api.spell.SpellPart;
 import am2.common.extensions.EntityExtension;
@@ -132,7 +134,11 @@ public class SpellUnlockManager {
 
         public void unlockFor(EntityPlayer player) {
             if (!player.world.isRemote) {
-                SkillData.For(player).unlockSkill(unlock.getID());
+                // Grant a silver point first (matching 1.7.10 reference), then unlockSkill
+                // spends it, so the net balance stays at zero.
+                ISkillData data = SkillData.For(player);
+                data.setSkillPoint(SkillPoint.SILVER_POINT, data.getSkillPoint(SkillPoint.SILVER_POINT) + 1);
+                data.unlockSkill(unlock.getID());
             }
         }
     }

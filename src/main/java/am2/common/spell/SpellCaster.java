@@ -23,11 +23,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.oredict.OreDictionary;
+import am2.api.event.SpellCastEvent;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -126,6 +128,9 @@ public class SpellCaster implements ISpellCaster, ICapabilityProvider, ICapabili
         SpellData data = this.createSpellData(source);
         float manaCost = this.getManaCost(world, caster);
         if (ext.hasEnoughMana(manaCost)) {
+            SpellCastEvent.Pre preEvent = new SpellCastEvent.Pre(caster, data, manaCost);
+            if (MinecraftForge.EVENT_BUS.post(preEvent)) return false;
+            manaCost = preEvent.manaCost;
             List<String> missingReagents = getMissingReagentNames(data, caster);
             if (!missingReagents.isEmpty()) {
                 if (caster instanceof EntityPlayer && !world.isRemote) {
@@ -165,6 +170,9 @@ public class SpellCaster implements ISpellCaster, ICapabilityProvider, ICapabili
             }
             if (result != SpellCastResult.FREE_CAST) {
                 ext.setCurrentBurnout(Math.min(ext.getMaxBurnout(), ext.getCurrentBurnout() + (cost * multiplier)));
+            }
+            if (result == SpellCastResult.SUCCESS || result == SpellCastResult.FREE_CAST) {
+                MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(caster, data, manaCost));
             }
             return result == SpellCastResult.SUCCESS || result == SpellCastResult.FREE_CAST;
         }

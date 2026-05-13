@@ -46,6 +46,7 @@ public class SpellCastEvent extends Event {
      * <p>This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.
      * Canceling it prevents the spell from being cast and the mana from being deducted.</p>
      */
+    @net.minecraftforge.fml.common.eventhandler.Cancelable
     public static class Pre extends SpellCastEvent {
 
         /**
