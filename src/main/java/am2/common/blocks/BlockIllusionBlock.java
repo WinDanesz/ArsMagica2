@@ -142,6 +142,12 @@ public class BlockIllusionBlock extends BlockAMContainer {
     }
 
     @Override
+    public boolean isTranslucent(IBlockState state) {
+        // Allows faces between two adjacent no-mimic illusion blocks to be culled correctly
+        return true;
+    }
+
+    @Override
     public boolean canRenderInLayer(IBlockState state, net.minecraft.util.BlockRenderLayer layer) {
         // Allow rendering in all layers so transparent/cutout mimics (glass, leaves) work correctly
         return true;

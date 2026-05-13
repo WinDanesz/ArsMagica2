@@ -145,6 +145,7 @@ public class EntityHandler {
     public void onPlayerMagicLevelChange(PlayerMagicLevelChangeEvent event) {
         if (event.getEntityPlayer() != null) {
             for (SkillPoint point : SkillPointRegistry.getSkillPointMap().values()) {
+                if (point.getLevelsForPoint() <= 0) continue; // SILVER_POINT (levelsForPoint=-1) is never earned via leveling
                 if (point.getMinEarnLevel() > event.getLevel()) continue;
                 if ((event.getLevel() - point.getMinEarnLevel()) % point.getLevelsForPoint() == 0)
                     SkillData.For(event.getEntityPlayer()).setSkillPoint(point, SkillData.For(event.getEntityPlayer()).getSkillPoint(point) + 1);

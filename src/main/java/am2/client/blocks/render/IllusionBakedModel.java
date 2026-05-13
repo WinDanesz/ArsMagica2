@@ -52,7 +52,11 @@ public class IllusionBakedModel implements IBakedModel {
                         .getQuads(mimic, side, rand);
             }
         }
-        // No mimic set (block revealed by true sight, or scan not yet complete)
+        // No mimic — render the illusion block's own translucent texture only in TRANSLUCENT pass
+        BlockRenderLayer currentLayer = MinecraftForgeClient.getRenderLayer();
+        if (currentLayer != null && currentLayer != BlockRenderLayer.TRANSLUCENT) {
+            return Collections.emptyList();
+        }
         return fallback.getQuads(state, side, rand);
     }
 
