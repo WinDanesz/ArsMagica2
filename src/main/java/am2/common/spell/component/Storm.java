@@ -49,8 +49,7 @@ public class Storm extends SpellComponent {
     }
 
     private void applyEffect(EntityLivingBase caster, World world) {
-        float rainStrength = world.getRainStrength(1.0f);
-        if (rainStrength > 0.9D) {
+        if (world.isThundering()) {
             if (!world.isRemote) {
                 int xzradius = 50;
                 int random = world.rand.nextInt(100);
@@ -86,6 +85,9 @@ public class Storm extends SpellComponent {
         } else {
             if (!world.isRemote) {
                 world.getWorldInfo().setRaining(true);
+                world.getWorldInfo().setRainTime(6000);
+                world.getWorldInfo().setThundering(true);
+                world.getWorldInfo().setThunderTime(6000);
             }
         }
     }
