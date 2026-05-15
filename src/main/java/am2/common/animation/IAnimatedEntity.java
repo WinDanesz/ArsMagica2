@@ -1,4 +1,4 @@
-package thehippomaster.AnimationAPI;
+package am2.common.animation;
 
 public interface IAnimatedEntity {
 

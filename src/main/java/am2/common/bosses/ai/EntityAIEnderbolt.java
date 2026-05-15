@@ -8,8 +8,8 @@ import am2.common.spell.SpellCaster;
 import am2.common.utils.NPCSpells;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.SoundCategory;
-import thehippomaster.AnimationAPI.AIAnimation;
-import thehippomaster.AnimationAPI.IAnimatedEntity;
+import am2.common.animation.AIAnimation;
+import am2.common.animation.IAnimatedEntity;
 
 public class EntityAIEnderbolt extends AIAnimation {
     private int cooldownTicks = 0;

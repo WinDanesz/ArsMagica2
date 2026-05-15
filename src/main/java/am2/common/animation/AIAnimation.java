@@ -1,4 +1,4 @@
-package thehippomaster.AnimationAPI;
+package am2.common.animation;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;

@@ -8,11 +8,11 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
-import thehippomaster.AnimationAPI.IAnimatedEntity;
-import thehippomaster.AnimationAPI.client.Animator;
+import am2.client.animation.Animator;
+import am2.common.animation.IAnimatedEntity;
 
 //
-//import thehippomaster.AnimationAPI.client.Animator;
+//import am2.client.animation.Animator;
 
 public class ModelEnderGuardian extends ModelBase {
     //fields

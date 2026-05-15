@@ -6,8 +6,8 @@ import am2.common.bosses.EntityEnderGuardian;
 import am2.common.spell.SpellCaster;
 import am2.common.utils.NPCSpells;
 import net.minecraft.entity.EntityLivingBase;
-import thehippomaster.AnimationAPI.AIAnimation;
-import thehippomaster.AnimationAPI.IAnimatedEntity;
+import am2.common.animation.AIAnimation;
+import am2.common.animation.IAnimatedEntity;
 
 public class EntityAIProtect extends AIAnimation {
 

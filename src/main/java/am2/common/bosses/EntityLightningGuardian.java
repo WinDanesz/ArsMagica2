@@ -14,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.BossInfo.Color;
 import net.minecraft.world.World;
-import thehippomaster.AnimationAPI.IAnimatedEntity;
+import am2.common.animation.IAnimatedEntity;
 
 //
 

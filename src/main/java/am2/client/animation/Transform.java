@@ -1,4 +1,4 @@
-package thehippomaster.AnimationAPI.client;
+package am2.client.animation;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

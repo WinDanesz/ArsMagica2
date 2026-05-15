@@ -7,11 +7,11 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
-import thehippomaster.AnimationAPI.IAnimatedEntity;
-import thehippomaster.AnimationAPI.client.Animator;
+import am2.client.animation.Animator;
+import am2.common.animation.IAnimatedEntity;
 
 //
-//import thehippomaster.AnimationAPI.client.Animator;
+//import am2.client.animation.Animator;
 
 public class ModelLightningGuardian extends ModelBase {
     //fields

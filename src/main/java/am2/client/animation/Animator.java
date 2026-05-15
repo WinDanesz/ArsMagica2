@@ -1,12 +1,12 @@
-package thehippomaster.AnimationAPI.client;
+package am2.client.animation;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import thehippomaster.AnimationAPI.AnimationAPI;
-import thehippomaster.AnimationAPI.IAnimatedEntity;
+import am2.common.animation.AnimationAPI;
+import am2.common.animation.IAnimatedEntity;
 
 import java.util.HashMap;
 

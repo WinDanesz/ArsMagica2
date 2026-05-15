@@ -7,8 +7,8 @@ import am2.common.registry.AMSounds;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.SoundCategory;
-import thehippomaster.AnimationAPI.AIAnimation;
-import thehippomaster.AnimationAPI.IAnimatedEntity;
+import am2.common.animation.AIAnimation;
+import am2.common.animation.IAnimatedEntity;
 
 import java.util.List;
 

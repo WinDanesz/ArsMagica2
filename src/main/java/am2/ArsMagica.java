@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import am2.common.animation.AnimationAPI;
 
 import java.io.File;
 import java.util.Properties;
@@ -87,6 +88,7 @@ public class ArsMagica {
     public void init(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(instance);
         proxy.init();
+        AnimationAPI.init();
         CommonProxy.initOreDict();
         am2.common.advancement.AMAdvancementTriggers.register();
         config.init();
@@ -96,6 +98,7 @@ public class ArsMagica {
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit();
+        AnimationAPI.postInit();
         // Load spell recipe overrides after the spell registry is fully populated.
         spellRecipeConfig.reload();
         SpellPart.setOverrides(spellRecipeConfig);
