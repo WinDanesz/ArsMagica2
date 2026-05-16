@@ -254,7 +254,7 @@ public class CommonProxy implements IGuiHandler {
         particleManager = new ParticleManagerServer();
     }
 
-    public void showCompendiumToast() {
+    public void showCompendiumToast(String entryId) {
         // no-op server-side
     }
 

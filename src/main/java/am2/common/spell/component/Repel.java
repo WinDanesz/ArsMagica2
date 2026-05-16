@@ -42,7 +42,7 @@ public class Repel extends SpellComponent {
             if (target instanceof EntityLivingBase)
                 source = (EntityLivingBase) target;
 
-            List<Entity> ents = world.getEntitiesWithinAABB(Entity.class, source.getEntityBoundingBox().expand(2, 2, 2));
+            List<Entity> ents = world.getEntitiesWithinAABB(Entity.class, source.getEntityBoundingBox().grow(2, 2, 2));
 
             for (Entity e : ents) {
                 performRepel(world, caster, e);

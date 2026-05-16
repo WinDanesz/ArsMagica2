@@ -57,7 +57,7 @@ public class AbilityFulmination extends AbstractAffinityAbility {
             }
             //chance to supercharge nearby creepers
             if (lightningDepth >= ArsMagica.config.getAffinityFulminationMinDepth() && ent.getRNG().nextDouble() < ArsMagica.config.getAffinityFulminationLightningChance()) {
-                List<EntityCreeper> creepers = ent.world.getEntitiesWithinAABB(EntityCreeper.class, ent.getEntityBoundingBox().expand(5, 5, 5));
+                List<EntityCreeper> creepers = ent.world.getEntitiesWithinAABB(EntityCreeper.class, ent.getEntityBoundingBox().grow(5, 5, 5));
                 for (EntityCreeper creeper : creepers) {
                     try {
                         creeper.getDataManager().set((DataParameter<Boolean>) ReflectionHelper.findField(EntityCreeper.class, "POWERED", "field_184714_b").get(creeper), true);

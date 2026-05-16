@@ -75,7 +75,7 @@ public class EntityAIStatic extends AIAnimation {
 
     private void doStrike() {
         EntityLightningGuardian guardian = getEntity();
-        List<EntityLivingBase> entities = guardian.world.getEntitiesWithinAABB(EntityLivingBase.class, guardian.getEntityBoundingBox().expand(8, 3, 8));
+        List<EntityLivingBase> entities = guardian.world.getEntitiesWithinAABB(EntityLivingBase.class, guardian.getEntityBoundingBox().grow(8, 3, 8));
         for (EntityLivingBase e : entities)
             if (e != guardian)
                 e.attackEntityFrom(DamageSources.causeLightningDamage(guardian), 8);

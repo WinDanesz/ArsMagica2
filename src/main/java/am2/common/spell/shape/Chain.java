@@ -43,7 +43,7 @@ public class Chain extends SpellShape {
                 do {
                     targets.add((EntityLivingBase) e);
 
-                    List<EntityLivingBase> nearby = world.getEntitiesWithinAABB(EntityLivingBase.class, e.getEntityBoundingBox().expand(range, range, range));
+                    List<EntityLivingBase> nearby = world.getEntitiesWithinAABB(EntityLivingBase.class, e.getEntityBoundingBox().grow(range, range, range));
                     EntityLivingBase closest = null;
                     for (EntityLivingBase near : nearby) {
                         if (targets.contains(near) || near == caster) continue;
@@ -73,7 +73,7 @@ public class Chain extends SpellShape {
                 if (prevEntity == null)
                     spawnChainParticles(world, x, y, z, e.posX, e.posY + e.getEyeHeight(), e.posZ, spell);
                 else
-                    spawnChainParticles(world, prevEntity.posX, prevEntity.posY + e.getEyeHeight(), prevEntity.posZ, e.posX, e.posY + e.getEyeHeight(), e.posZ, spell);
+                    spawnChainParticles(world, prevEntity.posX, prevEntity.posY + prevEntity.getEyeHeight(), prevEntity.posZ, e.posX, e.posY + e.getEyeHeight(), e.posZ, spell);
             }
             prevEntity = e;
 

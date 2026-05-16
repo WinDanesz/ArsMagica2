@@ -211,7 +211,7 @@ public class EntityThrownRock extends EntityLiving {
             vec3d1 = new Vec3d(movingobjectposition.hitVec.x, movingobjectposition.hitVec.y, movingobjectposition.hitVec.z);
         }
         Entity entity = null;
-        List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().expand(motionX, motionY, motionZ).expand(1.0D, 1.0D, 1.0D));
+        List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().expand(motionX, motionY, motionZ).grow(1.0D, 1.0D, 1.0D));
         double d = 0.0D;
         for (int j = 0; j < list.size(); j++) {
             Entity entity1 = (Entity) list.get(j);
@@ -219,7 +219,7 @@ public class EntityThrownRock extends EntityLiving {
                 continue;
             }
             float f2 = 0.3F;
-            AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand(f2, f2, f2);
+            AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow(f2, f2, f2);
             RayTraceResult movingobjectposition1 = axisalignedbb.calculateIntercept(vec3d, vec3d1);
             if (movingobjectposition1 == null) {
                 continue;
@@ -265,7 +265,7 @@ public class EntityThrownRock extends EntityLiving {
 
         if (getIsShootingStar()) {
             AMNetHandler.INSTANCE.sendStarImpactToClients(posX, posY + ((movingobjectposition.typeOfHit == RayTraceResult.Type.ENTITY) ? -movingobjectposition.entityHit.getEyeHeight() : 1.5f), posZ, world, this.getSpell());
-            List<EntityLivingBase> ents = world.getEntitiesWithinAABB(EntityLivingBase.class, getEntityBoundingBox().expand(12, 5, 12));
+            List<EntityLivingBase> ents = world.getEntitiesWithinAABB(EntityLivingBase.class, getEntityBoundingBox().grow(12, 5, 12));
             this.posY++;
             for (EntityLivingBase e : ents) {
                 if (e == throwingEntity) continue;

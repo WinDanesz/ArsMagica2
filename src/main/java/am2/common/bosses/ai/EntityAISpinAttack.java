@@ -62,7 +62,7 @@ public class EntityAISpinAttack extends EntityAIBase {
     public void updateTask() {
         host.getLookHelper().setLookPositionWithEntity(target, 30, 30);
         host.getNavigator().tryMoveToEntityLiving(target, moveSpeed);
-        List<EntityLivingBase> nearbyEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(2, 2, 2));
+        List<EntityLivingBase> nearbyEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().grow(2, 2, 2));
         for (EntityLivingBase ent : nearbyEntities) {
             if (ent == host) continue;
             ent.attackEntityFrom(DamageSource.causeMobDamage(host), damage);

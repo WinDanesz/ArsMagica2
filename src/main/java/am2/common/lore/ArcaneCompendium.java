@@ -44,7 +44,7 @@ public class ArcaneCompendium implements IArcaneCompendium, ICapabilityProvider,
         if (!isUnlocked(name)) {
             compendium.add(name);
             syncCode |= SYNC_COMPENDIUM;
-            ArsMagica.proxy.showCompendiumToast();
+            ArsMagica.proxy.showCompendiumToast(name);
         }
     }
 

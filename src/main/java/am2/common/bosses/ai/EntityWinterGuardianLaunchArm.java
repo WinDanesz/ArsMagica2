@@ -30,7 +30,7 @@ public class EntityWinterGuardianLaunchArm extends EntityAIBase {
             target = host.getAttackTarget();
             return true;
         }
-        List<EntityLivingBase> entities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(20, 20, 20));
+        List<EntityLivingBase> entities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().grow(20, 20, 20));
         if (!entities.isEmpty()) {
             for (EntityLivingBase entity : entities) {
                 if (entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isCreativeMode) continue;

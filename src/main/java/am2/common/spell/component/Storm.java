@@ -68,7 +68,7 @@ public class Storm extends SpellComponent {
                     EntityLightningBolt bolt = new EntityLightningBolt(world, randPosX, posY, randPosZ, false);
                     world.addWeatherEffect(bolt);
                 } else if (random < 80) {
-                    List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, caster.getEntityBoundingBox().expand(xzradius, 10D, xzradius), IMob.MOB_SELECTOR);
+                    List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, caster.getEntityBoundingBox().grow(xzradius, 10D, xzradius), IMob.MOB_SELECTOR);
                     if (entities.size() <= 0) {
                         return;
                     }

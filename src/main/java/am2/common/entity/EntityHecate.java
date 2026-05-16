@@ -244,7 +244,7 @@ public class EntityHecate extends EntityZombie {
 
     private int getAverageNearbyPlayerMagicLevel() {
         if (this.world == null) return 0;
-        List<EntityPlayer> players = world.getEntitiesWithinAABB(EntityPlayer.class, this.getEntityBoundingBox().expand(250, 250, 250));
+        List<EntityPlayer> players = world.getEntitiesWithinAABB(EntityPlayer.class, this.getEntityBoundingBox().grow(250, 250, 250));
         if (players.isEmpty()) return 0;
         int avgLvl = 0;
         for (EntityPlayer player : players) {

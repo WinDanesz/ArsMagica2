@@ -142,7 +142,7 @@ public class EntityWinterGuardianArm extends EntityLiving {
             vec3d1 = new Vec3d(movingobjectposition.hitVec.x, movingobjectposition.hitVec.y, movingobjectposition.hitVec.z);
         }
         Entity entity = null;
-        List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().expand(motionX, motionY, motionZ).expand(1.0D, 1.0D, 1.0D));
+        List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().expand(motionX, motionY, motionZ).grow(1.0D, 1.0D, 1.0D));
         double d = 0.0D;
         for (int j = 0; j < list.size(); j++) {
             Entity entity1 = (Entity) list.get(j);
@@ -150,7 +150,7 @@ public class EntityWinterGuardianArm extends EntityLiving {
                 continue;
             }
             float f2 = 0.3F;
-            AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand(f2, f2, f2);
+            AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow(f2, f2, f2);
             RayTraceResult movingobjectposition1 = axisalignedbb.calculateIntercept(vec3d, vec3d1);
             if (movingobjectposition1 == null) {
                 continue;

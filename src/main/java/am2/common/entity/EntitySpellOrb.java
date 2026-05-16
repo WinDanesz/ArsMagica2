@@ -166,7 +166,7 @@ public class EntitySpellOrb extends Entity {
 
                 // Check for entity collisions
                 List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(this,
-                        getEntityBoundingBox().expand(0.5D, 0.5D, 0.5D));
+                        getEntityBoundingBox().grow(0.5D, 0.5D, 0.5D));
 
                 for (Entity entity : entities) {
                     if (entity instanceof EntityLivingBase && !entity.equals(caster)) {

@@ -104,7 +104,7 @@ public class EntityUtils {
                     targetWater, !targetWater, false);
             if (((entity.canBeCollidedWith()) || (nonCollide)) && mop == null) {
                 float f2 = Math.max(0.8F, entity.getCollisionBorderSize());
-                AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand(f2, f2, f2);
+                AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().grow(f2, f2, f2);
                 RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(vec3d, vec3d2);
                 if (axisalignedbb.contains(vec3d)) {
                     if ((0.0D < d2) || (d2 == 0.0D)) {

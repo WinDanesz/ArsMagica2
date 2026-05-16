@@ -70,7 +70,7 @@ public class EntityAIHurricane extends EntityAIBase {
                 }
             }
 
-            List<EntityLivingBase> nearbyEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(2, 2, 2));
+            List<EntityLivingBase> nearbyEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().grow(2, 2, 2));
             for (Iterator<EntityLivingBase> enti = nearbyEntities.iterator(); enti.hasNext(); ) {
                 EntityLivingBase ent = enti.next();
                 if (ent == host) continue;
@@ -101,7 +101,7 @@ public class EntityAIHurricane extends EntityAIBase {
     public void updateTask() {
         host.getLookHelper().setLookPositionWithEntity(target, 30, 30);
         //host.getNavigator().tryMoveToEntityLiving(target, moveSpeed);
-        List<EntityLivingBase> nearbyEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(6, 3, 6));
+        List<EntityLivingBase> nearbyEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().grow(6, 3, 6));
         for (EntityLivingBase ent : nearbyEntities) {
             if (ent == host) continue;
 

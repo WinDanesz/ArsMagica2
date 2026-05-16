@@ -158,7 +158,7 @@ public class EntityThrownSickle extends EntityLiving {
                 continue;
             }
             float f2 = 0.3F;
-            AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand(f2, f2, f2);
+            AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow(f2, f2, f2);
             RayTraceResult movingobjectposition1 = axisalignedbb.calculateIntercept(vec3d, vec3d1);
             if (movingobjectposition1 == null) {
                 continue;

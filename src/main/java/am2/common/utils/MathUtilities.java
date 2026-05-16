@@ -247,7 +247,7 @@ public class MathUtilities {
         Vec3d vec3d1 = entityplayer.getLookVec();
         Vec3d vec3d2 = vec3d.add(vec3d1.x * d, vec3d1.y * d, vec3d1.z * d);
         double f1 = collideRadius;
-        List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(entityplayer, entityplayer.getEntityBoundingBox().expand(vec3d1.x * d, vec3d1.y * d, vec3d1.z * d).expand(f1, f1, f1));
+        List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(entityplayer, entityplayer.getEntityBoundingBox().expand(vec3d1.x * d, vec3d1.y * d, vec3d1.z * d).grow(f1, f1, f1));
 
         double d2 = 0.0D;
         for (int i = 0; i < list.size(); i++) {
@@ -258,7 +258,7 @@ public class MathUtilities {
                     false);
             if (((entity.canBeCollidedWith()) || (nonCollide)) && mop == null) {
                 float f2 = Math.max(0.8F, entity.getCollisionBorderSize());
-                AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand(f2, f2, f2);
+                AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().grow(f2, f2, f2);
                 RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(vec3d, vec3d2);
                 if (axisalignedbb.contains(vec3d)) {
                     if ((0.0D < d2) || (d2 == 0.0D)) {

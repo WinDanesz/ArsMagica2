@@ -62,7 +62,7 @@ public class EntityManaVortex extends Entity {
         if (getTicksToExist() - this.ticksExisted <= 5 && !hasGoneBoom) {
             hasGoneBoom = true;
             if (!world.isRemote) {
-                List<EntityLivingBase> players = world.getEntitiesWithinAABB(EntityLivingBase.class, this.getEntityBoundingBox().expand(3 + Math.floor(this.ticksExisted / 50), 2, 3 + Math.floor(this.ticksExisted / 50)));
+                List<EntityLivingBase> players = world.getEntitiesWithinAABB(EntityLivingBase.class, this.getEntityBoundingBox().grow(3 + Math.floor(this.ticksExisted / 50), 2, 3 + Math.floor(this.ticksExisted / 50)));
                 float damage = this.dataManager.get(MANA_STOLEN) * 0.005f;
                 if (damage > 100)
                     damage = 100;
@@ -95,7 +95,7 @@ public class EntityManaVortex extends Entity {
 
         if (getTicksToExist() - this.ticksExisted > 30) {
             //get all players within 5 blocks
-            List<EntityLivingBase> players = world.getEntitiesWithinAABB(EntityLivingBase.class, this.getEntityBoundingBox().expand(3 + Math.floor(this.ticksExisted / 50), 2, 3 + Math.floor(this.ticksExisted / 50)));
+            List<EntityLivingBase> players = world.getEntitiesWithinAABB(EntityLivingBase.class, this.getEntityBoundingBox().grow(3 + Math.floor(this.ticksExisted / 50), 2, 3 + Math.floor(this.ticksExisted / 50)));
 
             // Fix memory leak: avoid unnecessary array conversion and reduce entity search frequency
             for (EntityLivingBase e : players) {

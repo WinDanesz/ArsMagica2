@@ -71,7 +71,7 @@ public class EntityAISmash extends EntityAIBase {
             if (!host.world.isRemote)
                 host.world.playSound(host.posX, host.posY, host.posZ, ((IArsMagicaBoss) host).getAttackSound(), SoundCategory.HOSTILE, 1.0f, 1.0f, false);
 
-            List<EntityLivingBase> aoeEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().expand(4, 2, 4));
+            List<EntityLivingBase> aoeEntities = host.world.getEntitiesWithinAABB(EntityLivingBase.class, host.getEntityBoundingBox().grow(4, 2, 4));
             for (EntityLivingBase ent : aoeEntities) {
                 if (ent == host) continue;
                 ent.attackEntityFrom(DamageSources.causeDamage(damageType, host, true), 8);

@@ -143,7 +143,7 @@ public class EntityFireElemental extends EntityMob {
     public void onUpdate() {
         int cookTargetID = dataManager.get(COOK_TARGET_ID);
         if (cookTargetID != 0) {
-            List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, this.getEntityBoundingBox().expand(cookRadius, cookRadius, cookRadius));
+            List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, this.getEntityBoundingBox().grow(cookRadius, cookRadius, cookRadius));
             EntityItem inanimate = null;
             for (EntityItem item : items) {
                 if (item.getEntityId() == cookTargetID) {

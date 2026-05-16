@@ -101,7 +101,7 @@ public class EntityWinterGuardian extends AM2Boss {
             spawnParticles();
         } else {
             if (this.ticksExisted % 100 == 0) {
-                List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, this.getEntityBoundingBox().expand(2, 2, 2));
+                List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, this.getEntityBoundingBox().grow(2, 2, 2));
                 for (EntityLivingBase entity : entities) {
                     if (entity == this)
                         continue;

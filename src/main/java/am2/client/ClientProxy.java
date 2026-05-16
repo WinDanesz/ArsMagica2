@@ -428,13 +428,29 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void showCompendiumToast() {
+    public void showCompendiumToast(String entryId) {
         Minecraft mc = Minecraft.getMinecraft();
+        // Look up the entry display name
+        am2.api.compendium.CompendiumEntry entry = am2.api.compendium.CompendiumCategory.getEntryByID(entryId);
+        if (entry == null) {
+            // Try matching by bare id, normalizing away underscores so camelCase ("unlockingPowers")
+            // matches snake_case XML ids ("unlocking_powers"), and vice versa.
+            String simpleName = entryId.contains(".") ? entryId.substring(entryId.lastIndexOf('.') + 1) : entryId;
+            String normalizedName = simpleName.replace("_", "").toLowerCase();
+            for (am2.api.compendium.CompendiumEntry e : am2.api.compendium.CompendiumCategory.getAllEntries()) {
+                String simpleEntry = e.getID().contains(".") ? e.getID().substring(e.getID().lastIndexOf('.') + 1) : e.getID();
+                if (simpleEntry.replace("_", "").toLowerCase().equals(normalizedName)) {
+                    entry = e;
+                    break;
+                }
+            }
+        }
+        if (entry == null) return; // No displayable compendium entry for this ID — skip the toast
         SystemToast.addOrUpdate(
                 mc.getToastGui(),
                 SystemToast.Type.TUTORIAL_HINT,
                 new net.minecraft.util.text.TextComponentTranslation("advancement.arsmagica2.compendium_data.title"),
-                new net.minecraft.util.text.TextComponentTranslation("advancement.arsmagica2.compendium_data.description")
+                new net.minecraft.util.text.TextComponentString(entry.getName())
         );
     }
 }
