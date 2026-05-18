@@ -106,6 +106,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
     private double anchorZ;
     private int anchorDimension = -512;
     private float anchorHealth;
+    private net.minecraft.nbt.NBTTagCompound anchorExtraData;
 
     private boolean glyphSet = false;
     private double glyphX;
@@ -432,6 +433,12 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 
     @Override
     public float getAnchorHealth() { return this.anchorHealth; }
+
+    @Override
+    public void setAnchorExtraData(net.minecraft.nbt.NBTTagCompound data) { this.anchorExtraData = data; }
+
+    @Override
+    public net.minecraft.nbt.NBTTagCompound getAnchorExtraData() { return this.anchorExtraData; }
 
     @Override
     public boolean hasGlyph() {

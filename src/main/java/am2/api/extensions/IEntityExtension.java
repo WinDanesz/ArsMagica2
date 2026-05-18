@@ -188,6 +188,8 @@ public interface IEntityExtension {
             am2tag.setDouble("AnchorZ", instance.getAnchorZ());
             am2tag.setInteger("AnchorDim", instance.getAnchorDimensionID());
             am2tag.setFloat("AnchorHealth", instance.getAnchorHealth());
+            if (instance.getAnchorExtraData() != null)
+                am2tag.setTag("AnchorExtra", instance.getAnchorExtraData());
             return compound;
         }
 
@@ -245,6 +247,8 @@ public interface IEntityExtension {
                     am2tag.getFloat("AnchorHealth")
                 );
             }
+            if (am2tag.hasKey("AnchorExtra"))
+                instance.setAnchorExtraData(am2tag.getCompoundTag("AnchorExtra"));
         }
     }
 
@@ -337,4 +341,9 @@ public interface IEntityExtension {
     int getAnchorDimensionID();
 
     float getAnchorHealth();
+
+    /** Stores additional anchor state: absorption, food stats, air level, and active potion effects. */
+    void setAnchorExtraData(net.minecraft.nbt.NBTTagCompound data);
+
+    net.minecraft.nbt.NBTTagCompound getAnchorExtraData();
 }

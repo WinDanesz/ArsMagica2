@@ -15,7 +15,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
@@ -26,6 +30,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -33,6 +38,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class PotionEffectHandler {
@@ -41,22 +47,68 @@ public class PotionEffectHandler {
     public void playerPreDeathEvent(LivingDeathEvent e) {
         PotionEffect effect = e.getEntityLiving().getActivePotionEffect(AMPotions.temporal_anchor);
         if (effect != null) {
-            e.getEntityLiving().removePotionEffect(AMPotions.temporal_anchor);
             e.setCanceled(true);
+            e.getEntityLiving().removePotionEffect(AMPotions.temporal_anchor);
+            restoreAnchor(e.getEntityLiving());
+        }
+    }
 
-            EntityLivingBase entity = e.getEntityLiving();
-            EntityExtension ext = EntityExtension.For(entity);
-            float restoreHealth;
-            if (ext != null && ext.getAnchorHealth() > 0) {
-                restoreHealth = ext.getAnchorHealth();
-                if (entity.dimension == ext.getAnchorDimensionID()) {
-                    entity.setPositionAndUpdate(ext.getAnchorX(), ext.getAnchorY(), ext.getAnchorZ());
-                }
-            } else {
-                restoreHealth = 1.0f;
+    @SubscribeEvent
+    public void onPotionExpiry(PotionEvent.PotionExpiryEvent event) {
+        if (event.getEntity().world.isRemote) return;
+        if (event.getPotionEffect() != null && event.getPotionEffect().getPotion() == AMPotions.temporal_anchor) {
+            restoreAnchor((EntityLivingBase) event.getEntity());
+        }
+    }
+
+    private void restoreAnchor(EntityLivingBase entity) {
+        EntityExtension ext = EntityExtension.For(entity);
+        if (ext == null || ext.getAnchorDimensionID() == -512) {
+            entity.setHealth(Math.max(entity.getHealth(), 1.0f));
+            return;
+        }
+
+        // Teleport back
+        if (entity.dimension == ext.getAnchorDimensionID()) {
+            entity.setPositionAndUpdate(ext.getAnchorX(), ext.getAnchorY(), ext.getAnchorZ());
+        } else {
+            entity.setPosition(ext.getAnchorX(), ext.getAnchorY(), ext.getAnchorZ());
+            DimensionUtilities.doDimensionTransfer(entity, ext.getAnchorDimensionID());
+        }
+
+        // Restore health
+        entity.setHealth(ext.getAnchorHealth() > 0 ? ext.getAnchorHealth() : 1.0f);
+        entity.hurtResistantTime = 20;
+        entity.motionX = 0;
+        entity.motionY = 0;
+        entity.motionZ = 0;
+        entity.fallDistance = 0;
+        entity.extinguish();
+
+        NBTTagCompound extra = ext.getAnchorExtraData();
+        if (extra != null) {
+            entity.setAbsorptionAmount(extra.getFloat("Absorption"));
+            entity.setAir(extra.getInteger("Air"));
+
+            if (entity instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer) entity;
+                if (extra.hasKey("FoodStats"))
+                    player.getFoodStats().readNBT(extra.getCompoundTag("FoodStats"));
             }
-            entity.setHealth(restoreHealth);
-            entity.hurtResistantTime = 20;
+
+            // Clear current effects then re-apply saved ones
+            List<Potion> toRemove = new ArrayList<>(entity.getActivePotionMap().keySet());
+            for (Potion p : toRemove)
+                entity.removePotionEffect(p);
+
+            if (extra.hasKey("ActiveEffects", 9)) {
+                NBTTagList list = extra.getTagList("ActiveEffects", 10);
+                for (int i = 0; i < list.tagCount(); i++) {
+                    PotionEffect restored = PotionEffect.readCustomPotionEffectFromNBT(list.getCompoundTagAt(i));
+                    if (restored != null)
+                        entity.addPotionEffect(restored);
+                }
+            }
         }
     }
 

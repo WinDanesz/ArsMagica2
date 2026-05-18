@@ -20,6 +20,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 
@@ -39,12 +41,34 @@ public class ChronoAnchor extends SpellComponent {
                     ((EntityLivingBase) target).removePotionEffect(AMPotions.temporal_anchor);
                 ((EntityLivingBase) target).addPotionEffect(new PotionEffect(AMPotions.temporal_anchor, duration, spell.getModifierCount(SpellModifiers.BUFF_POWER)));
                 EntityExtension ext = EntityExtension.For((EntityLivingBase) target);
-                if (ext != null)
+                if (ext != null) {
                     ext.setAnchor(target.posX, target.posY, target.posZ, target.dimension, ((EntityLivingBase) target).getHealth());
+                    ext.setAnchorExtraData(buildExtraData((EntityLivingBase) target));
+                }
                 return true;
             }
         }
         return false;
+    }
+
+    private static NBTTagCompound buildExtraData(EntityLivingBase entity) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setFloat("Absorption", entity.getAbsorptionAmount());
+        tag.setInteger("Air", entity.getAir());
+        tag.setBoolean("Burning", entity.isBurning());
+        if (entity instanceof net.minecraft.entity.player.EntityPlayer) {
+            net.minecraft.entity.player.EntityPlayer player = (net.minecraft.entity.player.EntityPlayer) entity;
+            NBTTagCompound foodTag = new NBTTagCompound();
+            player.getFoodStats().writeNBT(foodTag);
+            tag.setTag("FoodStats", foodTag);
+        }
+        NBTTagList effectList = new NBTTagList();
+        for (PotionEffect effect : entity.getActivePotionEffects()) {
+            if (effect.getPotion() == AMPotions.temporal_anchor) continue;
+            effectList.appendTag(effect.writeCustomPotionEffectToNBT(new NBTTagCompound()));
+        }
+        tag.setTag("ActiveEffects", effectList);
+        return tag;
     }
 
     @Override
