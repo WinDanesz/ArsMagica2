@@ -1,7 +1,7 @@
 package am2.common.items;
 
 import am2.common.entity.EntityAirSled;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -27,7 +27,7 @@ public class ItemAirSled extends Item {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        tooltip.add(I18n.format("am2.tooltip.air_sled"));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.air_sled"));
         super.addInformation(itemStack, world, tooltip, flag);
     }
 

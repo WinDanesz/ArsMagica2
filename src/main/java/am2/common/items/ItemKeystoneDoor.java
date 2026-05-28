@@ -3,7 +3,7 @@ package am2.common.items;
 import am2.common.registry.AMBlocks;
 import am2.common.registry.AMTabs;
 import net.minecraft.block.Block;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
@@ -33,11 +33,11 @@ public class ItemKeystoneDoor extends Item {
     public String getItemStackDisplayName(ItemStack stack) {
         switch (stack.getItemDamage()) {
             case KEYSTONE_DOOR:
-                return I18n.format("item.arsmagica2:keystone_door.name");
+                return I18n.translateToLocalFormatted("item.arsmagica2:keystone_door.name");
             case SPELL_SEALED_DOOR:
-                return I18n.format("item.arsmagica2:spell_sealed_door.name");
+                return I18n.translateToLocalFormatted("item.arsmagica2:spell_sealed_door.name");
             default:
-                return I18n.format("item.arsmagica2:unknown.name");
+                return I18n.translateToLocalFormatted("item.arsmagica2:unknown.name");
         }
     }
 

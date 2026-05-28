@@ -358,10 +358,10 @@ public final class EBWizardryCompatHandler {
         // Derive the locale-correct prefix for each line by formatting the
         // translation key with sentinel characters, then taking the part that
         // comes before the first sentinel.
-        String manaFmt = net.minecraft.client.resources.I18n.format("item.ebwizardry:wand.mana", "\u0000", "\u0001");
+        String manaFmt = net.minecraft.util.text.translation.I18n.translateToLocalFormatted("item.ebwizardry:wand.mana", "\u0000", "\u0001");
         String manaPrefix = manaFmt.split("[\u0000\u0001]")[0];
 
-        String durFmt = net.minecraft.client.resources.I18n.format("item.durability", "\u0000", "\u0001");
+        String durFmt = net.minecraft.util.text.translation.I18n.translateToLocalFormatted("item.durability", "\u0000", "\u0001");
         String durPrefix = durFmt.split("[\u0000\u0001]")[0];
 
         event.getToolTip().removeIf(line -> {

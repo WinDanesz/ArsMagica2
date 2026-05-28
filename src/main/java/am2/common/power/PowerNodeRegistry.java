@@ -3,7 +3,8 @@ package am2.common.power;
 import am2.ArsMagica;
 import am2.api.power.IPowerNode;
 import am2.common.LogHelper;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -112,11 +113,11 @@ public class PowerNodeRegistry {
      * @param destination The destination point
      * @return A localized message to return to the entity attempting to pair the nodes, either of success or why it failed.
      */
-    public String tryPairNodes(IPowerNode<?> powerSource, IPowerNode<?> destination) {
+    public ITextComponent tryPairNodes(IPowerNode<?> powerSource, IPowerNode<?> destination) {
         //some simple validation
 
         if (powerSource == destination) {
-            return I18n.format("am2.tooltip.nodePairToSelf");
+            return new TextComponentTranslation("am2.tooltip.nodePairToSelf");
         }
 
         //Can the power source provide any of the valid power types for the destination?
@@ -128,7 +129,7 @@ public class PowerNodeRegistry {
         }
         if (typesProvided.isEmpty()) {
             //no valid power types can be provided
-            return I18n.format("am2.tooltip.noSupportedPowertypes");
+            return new TextComponentTranslation("am2.tooltip.noSupportedPowertypes");
         }
 
         //set up vectors and calculate distance for pathing purposes
@@ -137,7 +138,7 @@ public class PowerNodeRegistry {
         double rawDist = sourceLocation.distanceSq(destLocation);
 
         if (rawDist > MAX_POWER_SEARCH_RADIUS) {
-            return I18n.format("am2.tooltip.nodesTooFar");
+            return new TextComponentTranslation("am2.tooltip.nodesTooFar");
         }
 
         //construct a list of all valid power types common between the source and destination
@@ -158,12 +159,12 @@ public class PowerNodeRegistry {
 
         //are the nodes too far apart?
         if (successes == 0) {
-            return I18n.format("am2.tooltip.noPathFound");
+            return new TextComponentTranslation("am2.tooltip.noPathFound");
         }
 
         if (successes == typesProvided.size())
-            return I18n.format("am2.tooltip.success");
-        return I18n.format("am2.tooltip.partialSuccess");
+            return new TextComponentTranslation("am2.tooltip.success");
+        return new TextComponentTranslation("am2.tooltip.partialSuccess");
     }
 
     /**

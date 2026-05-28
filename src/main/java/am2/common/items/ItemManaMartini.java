@@ -2,7 +2,7 @@ package am2.common.items;
 
 import am2.ArsMagica;
 import am2.common.registry.AMPotions;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -34,7 +34,7 @@ public class ItemManaMartini extends ItemFood {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(I18n.format("am2.tooltip.shaken"));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.shaken"));
         super.addInformation(stack, world, tooltip, flagIn);
     }
 }

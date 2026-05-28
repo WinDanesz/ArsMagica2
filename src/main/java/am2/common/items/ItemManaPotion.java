@@ -4,7 +4,7 @@ import am2.ArsMagica;
 import am2.common.extensions.EntityExtension;
 import am2.common.registry.AMItems;
 import am2.common.registry.AMPotions;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -114,10 +114,10 @@ public class ItemManaPotion extends Item {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(I18n.format("am2.tooltip.mana_restored", (int) getManaRestored()));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.mana_restored", (int) getManaRestored()));
         int regenLevel = getManaRegenLevel();
         int regenDuration = getManaRegenDuration() / 20;
-        tooltip.add(I18n.format("am2.tooltip.mana_regen_potion", regenLevel + 1, regenDuration));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.mana_regen_potion", regenLevel + 1, regenDuration));
     }
 
     @Override

@@ -8,7 +8,7 @@ import am2.api.items.IMultiTexturedItem;
 import am2.common.entity.EntityFlicker;
 import am2.common.registry.Affinities;
 import am2.common.utils.SpellUtils;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -34,10 +34,10 @@ public class ItemFlickerJar extends Item implements IMultiTexturedItem {
         int meta = stack.getItemDamage();
         String baseName;
         if (meta == (Affinities.none).getID())
-            return I18n.format("item.arsmagica2:flickerJar.name", I18n.format("am2.tooltip.empty"));
+            return I18n.translateToLocalFormatted("item.arsmagica2:flickerJar.name", I18n.translateToLocalFormatted("am2.tooltip.empty"));
         Affinity aff = SpellUtils.GetAffinityFromID(meta);
         assert aff != null;
-        baseName = I18n.format("item.arsmagica2:flickerJar.name", aff.getLocalizedName());
+        baseName = I18n.translateToLocalFormatted("item.arsmagica2:flickerJar.name", aff.getLocalizedName());
         return baseName;
     }
 

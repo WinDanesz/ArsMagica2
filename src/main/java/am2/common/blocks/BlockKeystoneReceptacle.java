@@ -11,7 +11,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,7 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 public class BlockKeystoneReceptacle extends BlockAMPowered {
@@ -119,7 +119,7 @@ public class BlockKeystoneReceptacle extends BlockAMPowered {
         IKeystoneLockable<?> lockable = (IKeystoneLockable<?>) world.getTileEntity(pos);
         if (KeystoneUtilities.instance.getKeyFromRunes(lockable.getRunesInKey()) != 0) {
             if (!world.isRemote)
-                player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.clearKey")));
+                player.sendMessage(new TextComponentTranslation("am2.tooltip.clearKey"));
             return false;
         }
 

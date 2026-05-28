@@ -7,7 +7,6 @@ import am2.api.items.armor.ImbuementApplicationTypes;
 import am2.common.extensions.AffinityData;
 import am2.common.items.AMArmor;
 import am2.common.registry.AMBlocks;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -130,8 +129,8 @@ public class ArmorEventHandler {
             // Remove vanilla's "Dyed" / "Color: #XXXXXX" line for AMArmor;
             // we re-add it below only when LSHIFT is held.
             if (stack.getItem() instanceof AMArmor && ((AMArmor) stack.getItem()).hasColor(stack)) {
-                String dyedText = I18n.format("item.dyed");
-                String colorPrefix = I18n.format("item.color", "").replace("#", "").trim();
+                String dyedText = net.minecraft.client.resources.I18n.format("item.dyed");
+                String colorPrefix = net.minecraft.client.resources.I18n.format("item.color", "").replace("#", "").trim();
                 event.getToolTip().removeIf(line -> {
                     String plain = net.minecraft.util.text.TextFormatting.getTextWithoutFormattingCodes(line);
                     return plain != null && (plain.equals(dyedText) || plain.startsWith(colorPrefix));
@@ -139,21 +138,21 @@ public class ArmorEventHandler {
             }
 
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-                event.getToolTip().add(I18n.format("am2.tooltip.armorxp", String.format("%.2f", xp)));
-                event.getToolTip().add(I18n.format("am2.tooltip.armorlevel", armorLevel));
+                event.getToolTip().add(net.minecraft.client.resources.I18n.format("am2.tooltip.armorxp", String.format("%.2f", xp)));
+                event.getToolTip().add(net.minecraft.client.resources.I18n.format("am2.tooltip.armorlevel", armorLevel));
                 if (effects.length > 0)
-                    event.getToolTip().add(I18n.format("am2.toolip.infusions"));
+                    event.getToolTip().add(net.minecraft.client.resources.I18n.format("am2.toolip.infusions"));
                 for (String s : effects) {
-                    event.getToolTip().add("-" + I18n.format("am2.tooltip." + s.replaceAll("arsmagica2:", "")));
+                    event.getToolTip().add("-" + net.minecraft.client.resources.I18n.format("am2.tooltip." + s.replaceAll("arsmagica2:", "")));
                 }
                 // Show color hex code for dyed AMArmor
                 if (stack.getItem() instanceof AMArmor && ((AMArmor) stack.getItem()).hasColor(stack)) {
                     int color = ((AMArmor) stack.getItem()).getColor(stack);
-                    event.getToolTip().add(I18n.format("item.color", String.format("#%06X", color)));
+                    event.getToolTip().add(net.minecraft.client.resources.I18n.format("item.color", String.format("#%06X", color)));
                 }
 
             } else {
-                event.getToolTip().add(I18n.format("am2.tooltip.shiftForDetails"));
+                event.getToolTip().add(net.minecraft.client.resources.I18n.format("am2.tooltip.shiftForDetails"));
             }
         } else if (stack.getItem() instanceof ItemBlock) {
             if (((ItemBlock) stack.getItem()).getBlock() == AMBlocks.mana_battery) {

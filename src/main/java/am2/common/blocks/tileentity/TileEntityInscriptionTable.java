@@ -797,7 +797,7 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
             sorted.putAll(affinityData);
             for (Affinity aff : sorted.keySet()) {
                 float pct = (float) sorted.get(aff) / (float) cpCount * 100f;
-                sb.append(String.format("%s: %.2f%%", aff.getLocalizedName(), pct));
+                sb.append(String.format("%s: %.2f%%", net.minecraft.util.text.translation.I18n.translateToLocal(aff.getTranslationKey()), pct));
                 sb.append("\n");
             }
             pages.addAll(Story.splitStoryPartIntoPages(sb.toString()));

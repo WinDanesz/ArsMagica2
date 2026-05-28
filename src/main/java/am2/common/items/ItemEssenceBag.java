@@ -3,7 +3,7 @@ package am2.common.items;
 import am2.ArsMagica;
 import am2.common.container.InventoryEssenceBag;
 import am2.common.defs.IDDefs;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -32,7 +32,7 @@ public class ItemEssenceBag extends Item {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        tooltip.add(I18n.format("am2.tooltip.rupees"));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.rupees"));
     }
 
     @Override

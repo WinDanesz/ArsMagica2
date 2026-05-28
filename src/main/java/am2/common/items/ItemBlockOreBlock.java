@@ -3,7 +3,7 @@ package am2.common.items;
 import am2.common.blocks.BlockAMOre.EnumOreType;
 import am2.common.blocks.BlockArsMagicaBlock.EnumBlockType;
 import net.minecraft.block.Block;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,6 +18,6 @@ public class ItemBlockOreBlock extends ItemBlockSubtypes {
     @Override
     @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack stack) {
-        return I18n.format("tile.arsmagica2:block_" + EnumBlockType.values()[MathHelper.clamp(stack.getItemDamage(), 0, EnumOreType.values().length - 1)].getName().toLowerCase() + ".name");
+        return I18n.translateToLocalFormatted("tile.arsmagica2:block_" + EnumBlockType.values()[MathHelper.clamp(stack.getItemDamage(), 0, EnumOreType.values().length - 1)].getName().toLowerCase() + ".name");
     }
 }

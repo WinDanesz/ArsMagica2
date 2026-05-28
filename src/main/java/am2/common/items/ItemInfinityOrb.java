@@ -10,7 +10,7 @@ import am2.common.extensions.SkillData;
 import am2.common.registry.AMTabs;
 import am2.common.utils.EntityUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -74,7 +74,7 @@ public class ItemInfinityOrb extends Item implements IMultiTexturedItem {
     public String getItemStackDisplayName(ItemStack stack) {
         SkillPoint point = SkillPointRegistry.getPointForTier(stack.getItemDamage());
         if (point == null) return "Unavailable Item";
-        return point.getChatColor() + I18n.format("item.arsmagica2:infinity_orb_" + point.toString().toLowerCase() + ".name");
+        return point.getChatColor() + I18n.translateToLocalFormatted("item.arsmagica2:infinity_orb_" + point.toString().toLowerCase() + ".name");
     }
 
     @Override
@@ -82,14 +82,14 @@ public class ItemInfinityOrb extends Item implements IMultiTexturedItem {
     public void addInformation(ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         SkillPoint point = SkillPointRegistry.getPointForTier(stack.getItemDamage());
         if (point == null) {
-            tooltip.add(I18n.format("am2.tooltip.infOrbConvert"));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.infOrbConvert"));
             return;
         }
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null && EntityExtension.For(player).getCurrentLevel() > 0) {
-            tooltip.add(I18n.format("am2.tooltip.infOrbUse", point.getChatColor() + point.getName()));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.infOrbUse", point.getChatColor() + point.getName()));
         } else {
-            tooltip.add(I18n.format("am2.tooltip.infOrbUnknown"));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.infOrbUnknown"));
         }
     }
 
@@ -108,7 +108,7 @@ public class ItemInfinityOrb extends Item implements IMultiTexturedItem {
             if (!player.world.isRemote)
                 SkillData.For(player).setSkillPoint(type, SkillData.For(player).getSkillPoint(type) + 1);
             if (player.world.isRemote) {
-                player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.infOrb" + type.toString())));
+                player.sendMessage(new TextComponentString(I18n.translateToLocalFormatted("am2.tooltip.infOrb" + type.toString())));
             }
             if (!player.capabilities.isCreativeMode)
                 stack.shrink(1);
@@ -118,7 +118,7 @@ public class ItemInfinityOrb extends Item implements IMultiTexturedItem {
         } else {
             if (player.world.isRemote) {
                 int message = player.world.rand.nextInt(10);
-                player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.infOrbFail" + message)));
+                player.sendMessage(new TextComponentString(I18n.translateToLocalFormatted("am2.tooltip.infOrbFail" + message)));
             }
         }
         return stack;

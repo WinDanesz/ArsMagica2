@@ -8,7 +8,7 @@ import am2.common.extensions.EntityExtension;
 import am2.common.registry.AMPotions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -49,7 +49,7 @@ public class ItemWinterGuardianArm extends Item {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        tooltip.add(I18n.format("am2.tooltip.winter_arm"));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.winter_arm"));
         super.addInformation(stack, world, tooltip, flag);
     }
 

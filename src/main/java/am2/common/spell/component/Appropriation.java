@@ -13,7 +13,7 @@ import am2.common.utils.DummyEntityPlayer;
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,7 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -117,7 +117,7 @@ public class Appropriation extends SpellComponent {
                         world.setBlockState(pos, state, 2);
                     } else {
                         if (!player.world.isRemote)
-                            player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.approError")));
+                            player.sendMessage(new TextComponentTranslation("am2.tooltip.approError"));
                         stack.getTagCompound().removeTag(storageKey);
                         return;
                     }

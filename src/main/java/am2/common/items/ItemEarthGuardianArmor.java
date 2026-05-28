@@ -5,7 +5,7 @@ import am2.common.armor.ArsMagicaArmorMaterial;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -44,8 +44,8 @@ public class ItemEarthGuardianArmor extends AMArmor {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        tooltip.add(I18n.format("am2.tooltip.earth_armor"));
-        tooltip.add(I18n.format("am2.tooltip.earth_armor_slow"));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.earth_armor"));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.earth_armor_slow"));
     }
 
     @Override

@@ -3,7 +3,7 @@ package am2.common.items;
 import am2.api.items.IMultiTexturedItem;
 import am2.common.extensions.EntityExtension;
 import am2.common.registry.AMItems;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -126,7 +126,7 @@ public class ItemManaPotionBundle extends Item implements IMultiTexturedItem {
         } else if (potion == AMItems.legendary_mana_potion) {
             tooltip.add("Legendary Mana Restoration");
         }
-        tooltip.add("" + getUses(stack.getItemDamage()) + " " + I18n.format("am2.tooltip.uses") + ".");
+        tooltip.add("" + getUses(stack.getItemDamage()) + " " + I18n.translateToLocalFormatted("am2.tooltip.uses") + ".");
     }
 
     @Override
@@ -145,17 +145,17 @@ public class ItemManaPotionBundle extends Item implements IMultiTexturedItem {
     public String getItemStackDisplayName(ItemStack stack) {
         Item potion = getPotion(stack.getItemDamage());
         if (potion == AMItems.lesser_mana_potion) {
-            return String.format("%s %s", I18n.format("item.arsmagica2:lesser_mana_potion.name"), I18n.format("item.arsmagica2:potion_bundle.name"));
+            return String.format("%s %s", I18n.translateToLocalFormatted("item.arsmagica2:lesser_mana_potion.name"), I18n.translateToLocalFormatted("item.arsmagica2:potion_bundle.name"));
         } else if (potion == AMItems.standard_mana_potion) {
-            return String.format("%s %s", I18n.format("item.arsmagica2:standard_mana_potion.name"), I18n.format("item.arsmagica2:potion_bundle.name"));
+            return String.format("%s %s", I18n.translateToLocalFormatted("item.arsmagica2:standard_mana_potion.name"), I18n.translateToLocalFormatted("item.arsmagica2:potion_bundle.name"));
         } else if (potion == AMItems.greater_mana_potion) {
-            return String.format("%s %s", I18n.format("item.arsmagica2:greater_mana_potion.name"), I18n.format("item.arsmagica2:potion_bundle.name"));
+            return String.format("%s %s", I18n.translateToLocalFormatted("item.arsmagica2:greater_mana_potion.name"), I18n.translateToLocalFormatted("item.arsmagica2:potion_bundle.name"));
         } else if (potion == AMItems.epic_mana_potion) {
-            return String.format("%s %s", I18n.format("item.arsmagica2:epic_mana_potion.name"), I18n.format("item.arsmagica2:potion_bundle.name"));
+            return String.format("%s %s", I18n.translateToLocalFormatted("item.arsmagica2:epic_mana_potion.name"), I18n.translateToLocalFormatted("item.arsmagica2:potion_bundle.name"));
         } else if (potion == AMItems.legendary_mana_potion) {
-            return String.format("%s %s", I18n.format("item.arsmagica2:legendary_mana_potion.name"), I18n.format("item.arsmagica2:potion_bundle.name"));
+            return String.format("%s %s", I18n.translateToLocalFormatted("item.arsmagica2:legendary_mana_potion.name"), I18n.translateToLocalFormatted("item.arsmagica2:potion_bundle.name"));
         }
-        return "? " + I18n.format("am2.items.bundle");
+        return "? " + I18n.translateToLocalFormatted("am2.items.bundle");
     }
 
     @Override

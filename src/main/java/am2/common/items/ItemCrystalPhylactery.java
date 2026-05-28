@@ -1,7 +1,7 @@
 package am2.common.items;
 
 import am2.ArsMagica;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -60,12 +60,12 @@ public class ItemCrystalPhylactery extends Item {
                 String registryKey = stack.getTagCompound().getString(TAG_SUMMON_TYPE);
                 String entityName = EntityList.getTranslationName(new ResourceLocation(registryKey));
                 if (entityName == null) entityName = new ResourceLocation(registryKey).getPath();
-                tooltip.add(I18n.format("am2.tooltip.phyEss", I18n.format("entity." + entityName + ".name")));
+                tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.phyEss", I18n.translateToLocalFormatted("entity." + entityName + ".name")));
             }
             float pct = stack.getTagCompound().getFloat(TAG_PERCENT_FILLED);
-            tooltip.add(I18n.format("am2.tooltip.pctFull", pct));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.pctFull", pct));
         } else {
-            tooltip.add(I18n.format("am2.tooltip.empty"));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.empty"));
         }
     }
 

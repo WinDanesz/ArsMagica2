@@ -3,7 +3,7 @@ package am2.common.items;
 import am2.common.armor.ArsMagicaArmorMaterial;
 import am2.common.registry.AMTabs;
 import com.google.common.collect.Multimap;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -106,7 +106,7 @@ public class AMArmor extends ItemArmor implements ISpecialArmor {
         if (isArmorBroken(stack)) {
             armorValue = 0;
         }
-        tooltip.add(I18n.format("attribute.modifier.equals.0", armorValue, I18n.format("attribute.name.generic.armor")));
+        tooltip.add(I18n.translateToLocalFormatted("attribute.modifier.equals.0", armorValue, I18n.translateToLocalFormatted("attribute.name.generic.armor")));
     }
 
     @Override

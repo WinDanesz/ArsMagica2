@@ -10,7 +10,7 @@ import am2.common.blocks.tileentity.TileEntityCrystalMarker;
 import am2.common.blocks.tileentity.TileEntityFlickerHabitat;
 import am2.common.blocks.tileentity.TileEntityParticleEmitter;
 import am2.common.power.PowerNodeRegistry;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +23,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -77,7 +77,7 @@ public class ItemCrystalWrench extends ItemArsMagicaRotated {
 
         int cMode = getMode(stack);
         if (te != null && !(te instanceof IPowerNode || te instanceof TileEntityParticleEmitter) && cMode == MODE_DISCONNECT) {
-            player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.wrongWrenchMode")));
+            player.sendMessage(new TextComponentTranslation("am2.tooltip.wrongWrenchMode"));
             return EnumActionResult.FAIL;
         }
 
@@ -130,11 +130,11 @@ public class ItemCrystalWrench extends ItemArsMagicaRotated {
 
             if (player.isSneaking()) {
                 stack.getTagCompound().setBoolean(KEEP_BINDING, true);
-                player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.wrenchStored.persistent",
-                        (int) destination.x, (int) destination.y, (int) destination.z)));
+                player.sendMessage(new TextComponentTranslation("am2.tooltip.wrenchStored.persistent",
+                        (int) destination.x, (int) destination.y, (int) destination.z));
             } else {
-                player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.wrenchStored",
-                        (int) destination.x, (int) destination.y, (int) destination.z)));
+                player.sendMessage(new TextComponentTranslation("am2.tooltip.wrenchStored",
+                        (int) destination.x, (int) destination.y, (int) destination.z));
             }
         } else {
             spawnLinkParticles(world, hitX, hitY, hitZ);
@@ -145,7 +145,7 @@ public class ItemCrystalWrench extends ItemArsMagicaRotated {
         AMVector3 source = AMVector3.readFromNBT(stack.getTagCompound().getCompoundTag(KEY_PAIRLOC));
         TileEntity sourceTE = world.getTileEntity(source.toBlockPos());
         if (sourceTE != null && sourceTE instanceof IPowerNode && !world.isRemote) {
-            player.sendMessage(new TextComponentString(PowerNodeRegistry.For(world).tryPairNodes((IPowerNode<?>) sourceTE, (IPowerNode<?>) te)));
+            player.sendMessage(PowerNodeRegistry.For(world).tryPairNodes((IPowerNode<?>) sourceTE, (IPowerNode<?>) te));
         } else if (world.isRemote) {
             spawnLinkParticles(world, pos.getX() + hitX, pos.getY() + hitY, pos.getZ() + hitZ);
         }
@@ -158,7 +158,7 @@ public class ItemCrystalWrench extends ItemArsMagicaRotated {
         if (world.isRemote) {
             spawnLinkParticles(player.world, hitX, hitY, hitZ, true);
         } else {
-            player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.disconnectPower")));
+            player.sendMessage(new TextComponentTranslation("am2.tooltip.disconnectPower"));
         }
     }
 
@@ -220,9 +220,9 @@ public class ItemCrystalWrench extends ItemArsMagicaRotated {
                 (stack.getTagCompound().hasKey(KEY_PAIRLOC) || stack.getTagCompound().hasKey(HAB_PAIRLOC));
 
         if (mode == MODE_DISCONNECT) {
-            tooltip.add(I18n.format("am2.tooltip.wrenchMode.disconnect"));
+            tooltip.add(net.minecraft.client.resources.I18n.format("am2.tooltip.wrenchMode.disconnect"));
         } else if (hasStoredLocation) {
-            tooltip.add(I18n.format("am2.tooltip.wrenchMode.stored"));
+            tooltip.add(net.minecraft.client.resources.I18n.format("am2.tooltip.wrenchMode.stored"));
 
             // Show the stored location coordinates
             AMVector3 storedLoc = null;
@@ -233,11 +233,11 @@ public class ItemCrystalWrench extends ItemArsMagicaRotated {
             }
 
             if (storedLoc != null) {
-                tooltip.add(I18n.format("am2.tooltip.wrenchMode.location",
+                tooltip.add(net.minecraft.client.resources.I18n.format("am2.tooltip.wrenchMode.location",
                         (int) storedLoc.x, (int) storedLoc.y, (int) storedLoc.z));
             }
         } else {
-            tooltip.add(I18n.format("am2.tooltip.wrenchMode.pair"));
+            tooltip.add(net.minecraft.client.resources.I18n.format("am2.tooltip.wrenchMode.pair"));
         }
 
         super.addInformation(stack, world, tooltip, flag);

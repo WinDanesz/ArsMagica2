@@ -15,7 +15,7 @@ import am2.common.registry.Affinities;
 import am2.common.utils.EntityUtils;
 import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.passive.EntityHorse;
@@ -29,7 +29,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -144,7 +144,7 @@ public class Summon extends SpellComponent {
                 }
             } else {
                 if (caster instanceof EntityPlayer) {
-                    ((EntityPlayer) caster).sendStatusMessage(new TextComponentString(I18n.format("am2.tooltip.noMoreSummons")), false);
+                    ((EntityPlayer) caster).sendStatusMessage(new TextComponentTranslation("am2.tooltip.noMoreSummons"), false);
                 }
             }
         }
@@ -165,7 +165,7 @@ public class Summon extends SpellComponent {
                 }
             } else {
                 if (caster instanceof EntityPlayer) {
-                    ((EntityPlayer) caster).sendStatusMessage(new TextComponentString(I18n.format("am2.tooltip.noMoreSummons")), false);
+                    ((EntityPlayer) caster).sendStatusMessage(new TextComponentTranslation("am2.tooltip.noMoreSummons"), false);
                 }
             }
         }

@@ -4,7 +4,7 @@ import am2.api.ArsMagicaAPI;
 import am2.api.flickers.AbstractFlickerFunctionality;
 import am2.api.items.IMultiTexturedItem;
 import am2.common.utils.SpellUtils;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -29,7 +29,7 @@ public class ItemFlickerFocus extends Item implements IMultiTexturedItem {
         int meta = stack.getItemDamage();
         AbstractFlickerFunctionality operator = SpellUtils.GetAbstractFlickerFunctionalityFromID(meta);
         if (operator == null) return "Trash";
-        return I18n.format("item.arsmagica2:FlickerFocusPrefix", I18n.format("item.arsmagica2:" + operator.getClass().getSimpleName() + ".name"));
+        return I18n.translateToLocalFormatted("item.arsmagica2:FlickerFocusPrefix", I18n.translateToLocalFormatted("item.arsmagica2:" + operator.getClass().getSimpleName() + ".name"));
     }
 
     @Override

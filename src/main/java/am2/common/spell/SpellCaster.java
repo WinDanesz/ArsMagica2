@@ -12,7 +12,7 @@ import am2.common.utils.AffinityShiftUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,7 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -134,8 +134,9 @@ public class SpellCaster implements ISpellCaster, ICapabilityProvider, ICapabili
             List<String> missingReagents = getMissingReagentNames(data, caster);
             if (!missingReagents.isEmpty()) {
                 if (caster instanceof EntityPlayer && !world.isRemote) {
-                    String msg = I18n.format("am2.tooltip.missingReagents") + String.join(", ", missingReagents);
-                    ((EntityPlayer) caster).sendStatusMessage(new TextComponentString(msg), true);
+                    TextComponentTranslation msg = new TextComponentTranslation("am2.tooltip.missingReagents");
+                    msg.appendText(String.join(", ", missingReagents));
+                    ((EntityPlayer) caster).sendStatusMessage(msg, true);
                 }
                 return false;
             }

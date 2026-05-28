@@ -1,7 +1,7 @@
 package am2.common.items;
 
 import am2.api.affinity.Affinity;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -25,7 +25,7 @@ public class ItemEssence extends Item {
     public String getItemStackDisplayName(ItemStack stack) {
         Affinity affinity = getAffinity();
         if (affinity != null) {
-            return I18n.format("item.arsmagica2:essence.name", affinity.getDisplayName());
+            return I18n.translateToLocalFormatted("item.arsmagica2:essence.name", affinity.getDisplayName());
         }
         return super.getItemStackDisplayName(stack);
     }

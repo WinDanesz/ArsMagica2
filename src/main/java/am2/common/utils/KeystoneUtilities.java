@@ -6,11 +6,11 @@ import am2.common.extensions.EntityExtension;
 import am2.common.items.ItemKeystone;
 import am2.common.items.ItemRune;
 import am2.common.registry.AMItems;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.ArrayList;
 
@@ -36,7 +36,7 @@ public class KeystoneUtilities {
                 }
                 player.sendMessage(new TextComponentString(combo));
             } else {
-                player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.noKeyPresent")));
+                player.sendMessage(new TextComponentTranslation("am2.tooltip.noKeyPresent"));
             }
             EntityExtension.For(player).isRecoveringKeystone = false;
             return true;
@@ -109,9 +109,9 @@ public class KeystoneUtilities {
         }
 
         if (accessMode == KeystoneAccessType.USE && !player.world.isRemote) {
-            player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.wrongKeystoneUse")));
+            player.sendMessage(new TextComponentTranslation("am2.tooltip.wrongKeystoneUse"));
         } else if (accessMode == KeystoneAccessType.BREAK && !player.world.isRemote) {
-            player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.wrongKeystoneBreak")));
+            player.sendMessage(new TextComponentTranslation("am2.tooltip.wrongKeystoneBreak"));
         }
         return false;
     }

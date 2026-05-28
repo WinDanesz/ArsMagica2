@@ -12,7 +12,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -126,7 +126,7 @@ public class BlockCrystalMarker extends BlockAMContainer {
 
             //input node?  Nothing more to do here than notify the player.
             if (operandType == META_IN) {
-                player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.noPriIn")));
+                player.sendMessage(new TextComponentTranslation("am2.tooltip.noPriIn"));
                 return false;
             }
 
@@ -153,10 +153,9 @@ public class BlockCrystalMarker extends BlockAMContainer {
 
                 //finally, notify the player of the new priority
                 player.sendMessage(
-                        new TextComponentString(String.format(
-                                I18n.format("am2.tooltip.priSet"),
-                                String.format("%d", crystalMarkerTE.getPriority()) //need to put this as a string, because for some reason %d doesn't work when used in a localized string, but %s does
-                        )));
+                        new TextComponentTranslation("am2.tooltip.priSet",
+                                String.format("%d", crystalMarkerTE.getPriority())
+                        ));
             }
 
             return false;
@@ -179,13 +178,13 @@ public class BlockCrystalMarker extends BlockAMContainer {
         if (te != null && te instanceof TileEntityCrystalMarker) {
             ((TileEntityCrystalMarker) te).setFacing(state.getValue(FACING));
 
-            IBlockState attachedTo = null;
-            double minx = 0;
-            double miny = 0;
-            double minz = 0;
-            double maxx = 1;
-            double maxy = 1;
-            double maxz = 1;
+            IBlockState attachedTo;
+            double minx;
+            double miny;
+            double minz;
+            double maxx;
+            double maxy;
+            double maxz;
 
             attachedTo = world.getBlockState(pos.offset(state.getValue(FACING)));
 

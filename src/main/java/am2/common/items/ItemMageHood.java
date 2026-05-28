@@ -4,7 +4,7 @@ import am2.client.utils.ModelLibrary;
 import am2.common.armor.ArsMagicaArmorMaterial;
 import am2.common.registry.AMItems;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -63,7 +63,7 @@ public class ItemMageHood extends AMArmor {
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         super.addInformation(stack, world, tooltip, flag);
         if (stack.getItem() == AMItems.mage_hood) {
-            tooltip.add(I18n.format("am2.tooltip.hood_toggle"));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.hood_toggle"));
         }
     }
 

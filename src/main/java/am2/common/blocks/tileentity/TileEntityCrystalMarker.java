@@ -4,7 +4,7 @@ import am2.api.math.AMVector3;
 import am2.common.blocks.BlockCrystalMarker;
 import am2.common.utils.InventoryUtilities;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -20,7 +20,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -412,7 +411,7 @@ public class TileEntityCrystalMarker extends TileEntity implements IInventory, I
                 if (setElementalAttuner)
                     this.setElementalAttuner(habLocation);
             } else {
-                player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.habitatToFar")));
+                player.sendMessage(new TextComponentTranslation("am2.tooltip.habitatToFar"));
             }
         }
     }

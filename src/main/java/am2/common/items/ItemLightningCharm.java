@@ -4,7 +4,7 @@ import am2.api.math.AMVector3;
 import am2.common.utils.MathUtilities;
 import baubles.api.BaubleType;
 import baubles.api.IBauble;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -124,9 +124,9 @@ public class ItemLightningCharm extends Item implements IBauble {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        tooltip.add(I18n.format("am2.tooltip.lightning_charm"));
-        tooltip.add(I18n.format(isActive(stack) ? "am2.tooltip.lightning_charm.active" : "am2.tooltip.lightning_charm.inactive"));
-        tooltip.add(I18n.format("am2.tooltip.lightning_charm.toggle_hint"));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.lightning_charm"));
+        tooltip.add(I18n.translateToLocalFormatted(isActive(stack) ? "am2.tooltip.lightning_charm.active" : "am2.tooltip.lightning_charm.inactive"));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.lightning_charm.toggle_hint"));
         super.addInformation(stack, world, tooltip, flag);
     }
 }

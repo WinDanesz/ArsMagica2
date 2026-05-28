@@ -1,7 +1,7 @@
 package am2.common.items;
 
 import am2.api.items.IMultiTexturedItem;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,23 +33,23 @@ public class ItemBindingCatalyst extends Item implements IMultiTexturedItem {
     public String getItemStackDisplayName(ItemStack stack) {
         int meta = stack.getItemDamage();
 
-        String baseName = I18n.format("item.arsmagica2:bindingCatalyst.name");
+        String baseName = I18n.translateToLocalFormatted("item.arsmagica2:bindingCatalyst.name");
 
         switch (meta) {
             case META_PICK:
-                return baseName + I18n.format("item.arsmagica2:bindingCatalystPick.name");
+                return baseName + I18n.translateToLocalFormatted("item.arsmagica2:bindingCatalystPick.name");
             case META_AXE:
-                return baseName + I18n.format("item.arsmagica2:bindingCatalystAxe.name");
+                return baseName + I18n.translateToLocalFormatted("item.arsmagica2:bindingCatalystAxe.name");
             case META_SWORD:
-                return baseName + I18n.format("item.arsmagica2:bindingCatalystSword.name");
+                return baseName + I18n.translateToLocalFormatted("item.arsmagica2:bindingCatalystSword.name");
             case META_SHOVEL:
-                return baseName + I18n.format("item.arsmagica2:bindingCatalystShovel.name");
+                return baseName + I18n.translateToLocalFormatted("item.arsmagica2:bindingCatalystShovel.name");
             case META_HOE:
-                return baseName + I18n.format("item.arsmagica2:bindingCatalystHoe.name");
+                return baseName + I18n.translateToLocalFormatted("item.arsmagica2:bindingCatalystHoe.name");
             case META_BOW:
-                return baseName + I18n.format("item.arsmagica2:bindingCatalystBow.name");
+                return baseName + I18n.translateToLocalFormatted("item.arsmagica2:bindingCatalystBow.name");
             case META_SHIELD:
-                return baseName + I18n.format("item.arsmagica2:bindingCatalystShield.name");
+                return baseName + I18n.translateToLocalFormatted("item.arsmagica2:bindingCatalystShield.name");
         }
         return baseName;
     }

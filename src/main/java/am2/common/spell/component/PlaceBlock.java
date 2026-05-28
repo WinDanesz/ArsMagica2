@@ -9,7 +9,7 @@ import am2.common.utils.InventoryUtilities;
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -63,11 +63,11 @@ public class PlaceBlock extends SpellComponent {
         NBTTagList tagList = spell.getSource().getTagCompound().getTagList("Lore", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < tagList.tagCount(); ++i) {
             String str = tagList.getStringTagAt(i);
-            if (str.startsWith(String.format(I18n.format("am2.tooltip.placeBlockSpell"), ""))) {
+            if (str.startsWith(String.format(I18n.translateToLocalFormatted("am2.tooltip.placeBlockSpell"), ""))) {
                 tagList.removeTag(i);
             }
         }
-        tagList.appendTag(new NBTTagString(String.format(I18n.format("am2.tooltip.placeBlockSpell"), blockStack.getDisplayName())));
+        tagList.appendTag(new NBTTagString(String.format(I18n.translateToLocalFormatted("am2.tooltip.placeBlockSpell"), blockStack.getDisplayName())));
 
         spell.getSource().getTagCompound().setTag("Lore", tagList);
     }

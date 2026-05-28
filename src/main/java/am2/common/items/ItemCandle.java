@@ -7,7 +7,7 @@ import am2.common.blocks.BlockInvisibleUtility;
 import am2.common.registry.AMBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -77,7 +77,7 @@ public class ItemCandle extends Item {
         // If already attuned, don't allow placing or any block interaction
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey("search_block")) {
             if (!worldIn.isRemote) {
-                playerIn.sendMessage(new TextComponentString(I18n.format("am2.tooltip.candlecantplace")));
+                playerIn.sendMessage(new TextComponentTranslation("am2.tooltip.candlecantplace"));
             }
             return EnumActionResult.FAIL;
         }
@@ -121,7 +121,7 @@ public class ItemCandle extends Item {
 //		if (!world.isRemote){
 //
 //			if (stack.hasTagCompound() && stack.getTagCompound().hasKey("search_block")){
-//				player.sendMessage(new ChatComponentText(I18n.format("am2.tooltip.candlecantplace")));
+//				player.sendMessage(new ChatComponentText(I18n.translateToLocalFormatted("am2.tooltip.candlecantplace")));
 //				return false;
 //			}
 //
@@ -251,7 +251,7 @@ public class ItemCandle extends Item {
     @Override
     @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack stack) {
-        String name = I18n.format("item.arsmagica2:warding_candle.name");
+        String name = net.minecraft.client.resources.I18n.format("item.arsmagica2:warding_candle.name");
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey("search_block")) {
             int stateId = stack.getTagCompound().getInteger("search_block");
             if (stateId != 0) {
@@ -264,13 +264,13 @@ public class ItemCandle extends Item {
                         name += " (" + state.getBlock().getLocalizedName() + ")";
                     }
                 } else {
-                    name += " (" + I18n.format("am2.tooltip.unattuned") + ")";
+                    name += " (" + net.minecraft.client.resources.I18n.format("am2.tooltip.unattuned") + ")";
                 }
             } else {
-                name += " (" + I18n.format("am2.tooltip.unattuned") + ")";
+                name += " (" + net.minecraft.client.resources.I18n.format("am2.tooltip.unattuned") + ")";
             }
         } else {
-            name += " (" + I18n.format("am2.tooltip.unattuned") + ")";
+            name += " (" + net.minecraft.client.resources.I18n.format("am2.tooltip.unattuned") + ")";
         }
 
         return name;

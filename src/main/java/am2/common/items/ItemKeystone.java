@@ -5,7 +5,7 @@ import am2.common.container.InventoryKeyStone;
 import am2.common.defs.IDDefs;
 import am2.common.registry.AMItems;
 import am2.common.utils.KeystoneUtilities;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -170,11 +170,11 @@ public class ItemKeystone extends Item {
     public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
         ItemStack[] items = getMyInventory(stack);
 
-        StringBuilder s = new StringBuilder(I18n.format("am2.tooltip.open"));
+        StringBuilder s = new StringBuilder(I18n.translateToLocalFormatted("am2.tooltip.open"));
         tooltip.add("\2477" + s);
 
         if (items.length > 0) {
-            s = new StringBuilder(I18n.format("am2.tooltip.runes") + ": ");
+            s = new StringBuilder(I18n.translateToLocalFormatted("am2.tooltip.runes") + ": ");
             tooltip.add("\2477" + s);
             s = new StringBuilder();
             for (int i = 0; i < KEYSTONE_INVENTORY_SIZE; ++i) {
@@ -185,7 +185,7 @@ public class ItemKeystone extends Item {
                     s.append(items[i].getDisplayName().replace("Rune", "").trim()).append(" ");
                 }
             }
-            if (s.toString().equals("")) s = new StringBuilder(I18n.format("am2.tooltip.none"));
+            if (s.toString().equals("")) s = new StringBuilder(I18n.translateToLocalFormatted("am2.tooltip.none"));
             tooltip.add("\2477" + s);
         }
     }

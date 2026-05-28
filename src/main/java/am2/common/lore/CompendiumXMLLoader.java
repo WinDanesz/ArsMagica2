@@ -14,7 +14,7 @@ import am2.common.registry.AMSkills;
 import am2.common.registry.CompendiumRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -1356,7 +1356,7 @@ public class CompendiumXMLLoader {
             // Extract and localize the key
             String key = text.substring(atIndex + 1, endIndex);
             if (!key.isEmpty()) {
-                String localized = I18n.format(key);
+                String localized = net.minecraft.client.resources.I18n.format(key);
                 result.append(localized);
             }
 

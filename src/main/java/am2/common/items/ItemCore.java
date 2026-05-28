@@ -2,7 +2,7 @@ package am2.common.items;
 
 import am2.ArsMagica;
 import am2.api.items.IMultiTexturedItem;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -34,7 +34,7 @@ public class ItemCore extends Item implements IMultiTexturedItem {
     @Override
     @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack stack) {
-        String name = I18n.format("item.arsmagica2:core." + (stack.getItemDamage() == META_BASE_CORE ? "base" : (stack.getItemDamage() == META_HIGH_CORE ? "high" : "pure")) + ".name");
+        String name = I18n.translateToLocalFormatted("item.arsmagica2:core." + (stack.getItemDamage() == META_BASE_CORE ? "base" : (stack.getItemDamage() == META_HIGH_CORE ? "high" : "pure")) + ".name");
         return name;
     }
 

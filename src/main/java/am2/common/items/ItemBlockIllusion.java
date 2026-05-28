@@ -2,7 +2,7 @@ package am2.common.items;
 
 import am2.common.blocks.BlockIllusionBlock.EnumIllusionType;
 import net.minecraft.block.Block;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
@@ -22,13 +22,13 @@ public class ItemBlockIllusion extends ItemBlockSubtypes {
     @Override
     @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack stack) {
-        return I18n.format("tile.arsmagica2:illusion_block_" + EnumIllusionType.values()[MathHelper.clamp(stack.getItemDamage(), 0, EnumIllusionType.values().length - 1)].getName().toLowerCase() + ".name");
+        return I18n.translateToLocalFormatted("tile.arsmagica2:illusion_block_" + EnumIllusionType.values()[MathHelper.clamp(stack.getItemDamage(), 0, EnumIllusionType.values().length - 1)].getName().toLowerCase() + ".name");
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         EnumIllusionType type = EnumIllusionType.values()[MathHelper.clamp(stack.getItemDamage(), 0, EnumIllusionType.values().length - 1)];
-        tooltip.add(I18n.format("item.arsmagica2:illusion_block_" + type.getName().toLowerCase() + ".tooltip"));
+        tooltip.add(I18n.translateToLocalFormatted("item.arsmagica2:illusion_block_" + type.getName().toLowerCase() + ".tooltip"));
     }
 }

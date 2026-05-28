@@ -4,7 +4,7 @@ import am2.common.blocks.tileentity.TileEntityInscriptionTable;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.items.ItemSpellBase;
 import am2.common.registry.AMItems;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
@@ -68,7 +68,7 @@ public class SlotInscriptionTable extends Slot {
             ItemStack stack2 = new ItemStack(Items.WRITTEN_BOOK);
             if (stack.hasTagCompound())
                 stack2.setTagCompound(stack.getTagCompound());
-            stack2.setStackDisplayName(I18n.format("am2.tooltip.unfinishedSpellRecipe"));
+            stack2.setStackDisplayName(I18n.translateToLocalFormatted("am2.tooltip.unfinishedSpellRecipe"));
             super.putStack(stack2);
         } else {
             super.putStack(stack);

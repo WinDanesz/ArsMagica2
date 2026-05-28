@@ -7,7 +7,7 @@ import am2.common.power.PowerTypes;
 import am2.common.registry.AMItems;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -44,7 +44,7 @@ public abstract class BlockAMPowered extends BlockAMContainer {
     }
 
     protected String getColorNameFromPowerType(PowerTypes type) {
-        return I18n.format("am2.gui.powerType" + type.name());
+        return I18n.translateToLocalFormatted("am2.gui.powerType" + type.name());
     }
 
     @Override

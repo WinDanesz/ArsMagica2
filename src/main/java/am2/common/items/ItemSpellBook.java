@@ -10,7 +10,7 @@ import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -91,9 +91,9 @@ public class ItemSpellBook extends Item implements IBauble {
 
         ItemStack activeSpell = getActiveItemStack(stack);
         if (!activeSpell.isEmpty()) {
-            return String.format("%s%s (%s%s)", colorPrefix, I18n.format("item.arsmagica2:spellbook.name"), activeSpell.getDisplayName(), colorPrefix);
+            return String.format("%s%s (%s%s)", colorPrefix, I18n.translateToLocalFormatted("item.arsmagica2:spellbook.name"), activeSpell.getDisplayName(), colorPrefix);
         }
-        return colorPrefix + I18n.format("item.arsmagica2:spellbook.name");
+        return colorPrefix + I18n.translateToLocalFormatted("item.arsmagica2:spellbook.name");
     }
 
     @Override
@@ -269,7 +269,7 @@ public class ItemSpellBook extends Item implements IBauble {
     public String GetActiveSpellName(ItemStack bookStack) {
         ItemStack stack = getActiveItemStack(bookStack);
         if (stack.isEmpty()) {
-            return I18n.format("am2.tooltip.none");
+            return I18n.translateToLocalFormatted("am2.tooltip.none");
         }
         return stack.getDisplayName();
     }
@@ -283,8 +283,8 @@ public class ItemSpellBook extends Item implements IBauble {
         }
         ItemSpellBase activeScroll = GetActiveScroll(stack);
 
-        String s = I18n.format("am2.tooltip.open");
-        String s2 = I18n.format("am2.tooltip.scroll");
+        String s = I18n.translateToLocalFormatted("am2.tooltip.open");
+        String s2 = I18n.translateToLocalFormatted("am2.tooltip.scroll");
         tooltip.add((new StringBuilder()).append("\2477").append(s).toString());
         tooltip.add((new StringBuilder()).append("\2477").append(s2).toString());
     }

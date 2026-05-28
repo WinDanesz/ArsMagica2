@@ -1,60 +1,81 @@
 package am2.client;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IImageBuffer;
-import net.minecraft.client.renderer.ImageBufferDownload;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.ITextureObject;
-import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.client.resources.SkinManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.io.File;
+import java.util.Map;
+import java.util.UUID;
 
 @SideOnly(Side.CLIENT)
 public class ShadowSkinHelper {
-    public static final ResourceLocation locationStevePng = new ResourceLocation("textures/entity/steve.png");
-    private ThreadDownloadImageData downloadImageSkin;
-    private ResourceLocation locationSkin;
+    public static final ResourceLocation locationStevePng = DefaultPlayerSkin.getDefaultSkinLegacy();
+    private ResourceLocation locationSkin = locationStevePng;
+    private String skinType = "default";
 
     public ResourceLocation getLocationSkin() {
         return this.locationSkin;
     }
 
+    public String getSkinType() {
+        return this.skinType;
+    }
+
     public ThreadDownloadImageData getTextureSkin() {
-        return this.downloadImageSkin;
+        ITextureObject texture = Minecraft.getMinecraft().getTextureManager().getTexture(this.locationSkin);
+        return texture instanceof ThreadDownloadImageData ? (ThreadDownloadImageData) texture : null;
     }
 
     public void setupCustomSkin(String mimicUser) {
-        if (!mimicUser.isEmpty()) {
-            this.locationSkin = getLocationSkin(mimicUser);
-            this.downloadImageSkin = getDownloadImageSkin(this.locationSkin, mimicUser);
-        }
-    }
+        String sanitizedUser = StringUtils.stripControlCodes(mimicUser);
 
-    public static ThreadDownloadImageData getDownloadImageSkin(ResourceLocation par0ResourceLocation, String par1Str) {
-        return getDownloadImage(par0ResourceLocation, getSkinUrl(par1Str), locationStevePng, new ImageBufferDownload());
-    }
-
-    private static ThreadDownloadImageData getDownloadImage(ResourceLocation par0ResourceLocation, String par1Str, ResourceLocation par2ResourceLocation, IImageBuffer par3IImageBuffer) {
-        TextureManager texturemanager = Minecraft.getMinecraft().getTextureManager();
-        Object object = texturemanager.getTexture(par0ResourceLocation);
-
-        if (object == null) {
-            object = new ThreadDownloadImageData((File) null, par1Str, par2ResourceLocation, par3IImageBuffer);
-            texturemanager.loadTexture(par0ResourceLocation, (ITextureObject) object);
+        if (sanitizedUser.isEmpty()) {
+            this.locationSkin = locationStevePng;
+            this.skinType = "default";
+            return;
         }
 
-        return (ThreadDownloadImageData) object;
-    }
+        GameProfile profile = TileEntitySkull.updateGameProfile(new GameProfile((UUID) null, sanitizedUser));
+        UUID playerUuid = EntityPlayer.getUUID(profile);
+        ResourceLocation resolvedSkin = DefaultPlayerSkin.getDefaultSkin(playerUuid);
+        String resolvedSkinType = DefaultPlayerSkin.getSkinType(playerUuid);
 
-    public static String getSkinUrl(String par0Str) {
-        return String.format("http://skins.minecraft.net/MinecraftSkins/%s.png", new Object[]{StringUtils.stripControlCodes(par0Str)});
-    }
+        if (profile.isComplete()) {
+            SkinManager skinManager = Minecraft.getMinecraft().getSkinManager();
+            Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> skins = skinManager.loadSkinFromCache(profile); 
 
-    public static ResourceLocation getLocationSkin(String par0Str) {
-        return new ResourceLocation("skins/" + StringUtils.stripControlCodes(par0Str));
+            if (skins.containsKey(MinecraftProfileTexture.Type.SKIN)) {
+                MinecraftProfileTexture skinTexture = skins.get(MinecraftProfileTexture.Type.SKIN);
+                resolvedSkin = skinManager.loadSkin(skinTexture, MinecraftProfileTexture.Type.SKIN);
+                String textureSkinType = skinTexture.getMetadata("model");
+                if (textureSkinType != null) {
+                    resolvedSkinType = textureSkinType;
+                }
+            } else {
+                skinManager.loadProfileTextures(profile, new SkinManager.SkinAvailableCallback() {
+                    @Override
+                    public void skinAvailable(MinecraftProfileTexture.Type typeIn, ResourceLocation location, MinecraftProfileTexture profileTexture) {
+                        if (typeIn == MinecraftProfileTexture.Type.SKIN) {
+                            ShadowSkinHelper.this.locationSkin = location;
+                            String textureSkinType = profileTexture.getMetadata("model");
+                            ShadowSkinHelper.this.skinType = textureSkinType != null ? textureSkinType : DefaultPlayerSkin.getSkinType(playerUuid);
+                        }
+                    }
+                }, true);
+            }
+        }
+
+        this.locationSkin = resolvedSkin;
+        this.skinType = resolvedSkinType;
     }
 }

@@ -7,7 +7,6 @@ import am2.common.power.PowerNodeRegistry;
 import am2.common.power.PowerTypes;
 import am2.common.registry.AMSkills;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,7 +18,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -125,15 +124,15 @@ public class ItemAttuningStaff extends Item {
 //		float chargeRemaining = stack.getTagCompound().getFloat(NBT_CHARGE);
 //		int chargesRemaining = (int)Math.ceil(chargeRemaining / chargeCost);
 //
-//		par3List.add(I18n.format("am2.tooltip.charge") + ": " + (int)chargeRemaining + " / " + maxCharge);
-//		par3List.add("" + chargesRemaining + " " + I18n.format("am2.tooltip.uses") + ".");
+//		par3List.add(I18n.translateToLocalFormatted("am2.tooltip.charge") + ": " + (int)chargeRemaining + " / " + maxCharge);
+//		par3List.add("" + chargesRemaining + " " + I18n.translateToLocalFormatted("am2.tooltip.uses") + ".");
 //	}
 
     @Override
     @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack par1ItemStack) {
         if (isMagiTechStaff()) {
-            return I18n.format("item.arsmagica2:attuning_staff.name");
+            return net.minecraft.client.resources.I18n.format("item.arsmagica2:attuning_staff.name");
         }
         String name = super.getItemStackDisplayName(par1ItemStack);
         if (par1ItemStack.hasTagCompound() && par1ItemStack.getTagCompound().hasKey(NBT_SPELL_NAME))
@@ -168,8 +167,8 @@ public class ItemAttuningStaff extends Item {
                         for (PowerTypes type : types) {
                             float power = PowerNodeRegistry.For(world).getPower((IPowerNode<?>) te, type);
                             player.sendMessage(
-                                    new TextComponentString(String.format(I18n.format("am2.tooltip.det_eth"),
-                                            type.getChatColor(), type.name(), "§f" + String.format("%.2f", power))));
+                                    new TextComponentTranslation("am2.tooltip.det_eth",
+                                            type.getChatColor(), type.name(), "§f" + String.format("%.2f", power)));
                         }
                     }
                     return EnumActionResult.SUCCESS;

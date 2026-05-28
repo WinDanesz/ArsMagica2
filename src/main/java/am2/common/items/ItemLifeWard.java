@@ -3,7 +3,7 @@ package am2.common.items;
 import am2.ArsMagica;
 import baubles.api.BaubleType;
 import baubles.api.IBauble;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -75,8 +75,8 @@ public class ItemLifeWard extends Item implements IBauble {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        tooltip.add(I18n.format("am2.tooltip.life_ward"));
-        tooltip.add(I18n.format("am2.tooltip.life_ward2"));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.life_ward"));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.life_ward2"));
         super.addInformation(stack, world, tooltip, flag);
     }
 

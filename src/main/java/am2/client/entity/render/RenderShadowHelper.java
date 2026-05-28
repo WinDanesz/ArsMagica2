@@ -1,16 +1,26 @@
 package am2.client.entity.render;
 
 import am2.common.entity.EntityShadowHelper;
-import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 public class RenderShadowHelper extends RenderBiped<EntityShadowHelper> {
+    private final ModelPlayer defaultModel;
+    private final ModelPlayer slimModel;
 
     public RenderShadowHelper(RenderManager manager) {
-        super(manager, new ModelBiped(), 0.5f);
+        super(manager, new ModelPlayer(0.0F, false), 0.5f);
+        this.defaultModel = (ModelPlayer) this.mainModel;
+        this.slimModel = new ModelPlayer(0.0F, true);
+    }
+
+    @Override
+    public void doRender(EntityShadowHelper entity, double x, double y, double z, float entityYaw, float partialTicks) {
+        this.mainModel = "slim".equals(entity.getSkinType()) ? this.slimModel : this.defaultModel;
+        super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
 
     @Override

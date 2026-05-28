@@ -1,7 +1,7 @@
 package am2.common.items;
 
 import am2.api.items.IBoundItem;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemShield;
 import net.minecraft.item.ItemStack;
@@ -36,6 +36,6 @@ public class ItemBoundShield extends ItemShield implements IBoundItem {
     @Override
     @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack stack) {
-        return I18n.format("item." + getRegistryName().toString() + ".name");
+        return I18n.translateToLocalFormatted("item." + getRegistryName().toString() + ".name");
     }
 }

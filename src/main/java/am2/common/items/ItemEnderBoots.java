@@ -2,7 +2,7 @@ package am2.common.items;
 
 import am2.common.armor.ArsMagicaArmorMaterial;
 import am2.common.extensions.EntityExtension;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -31,7 +31,7 @@ public class ItemEnderBoots extends AMArmor {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        tooltip.add(I18n.format("am2.tooltip.ender_boots"));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.ender_boots"));
         super.addInformation(stack, world, tooltip, flag);
     }
 }

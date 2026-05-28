@@ -172,7 +172,7 @@ public class EntityShadowHelper extends EntityLiving {
         }
 
         if (this.world.isRemote) {
-            if (this.getMimicUser() != lastDWString) {
+            if (!this.getMimicUser().equals(lastDWString)) {
                 lastDWString = getMimicUser();
                 this.skinHelper.setupCustomSkin(lastDWString);
             }
@@ -200,5 +200,10 @@ public class EntityShadowHelper extends EntityLiving {
 
     public ThreadDownloadImageData getTextureSkin() {
         return this.skinHelper.getTextureSkin();
+    }
+
+    public String getSkinType() {
+        if (this.skinHelper == null) return "default";
+        return this.skinHelper.getSkinType();
     }
 }

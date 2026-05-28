@@ -4,7 +4,7 @@ import am2.common.utils.EntityUtils;
 import baubles.api.BaubleType;
 import baubles.api.IBauble;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -38,16 +38,16 @@ public class ItemJournal extends Item implements IBauble {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         String owner = getOwner(stack);
         if (owner == null) {
-            tooltip.add(I18n.format("am2.tooltip.unowned"));
-            tooltip.add(I18n.format("am2.tooltip.journal_use"));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.unowned"));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.journal_use"));
             return;
         } else {
-            tooltip.add(I18n.format("am2.tooltip.journal_owner"));
-            tooltip.add(I18n.format("am2.tooltip.journal_owner_2", owner));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.journal_owner"));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.journal_owner_2", owner));
         }
 
         if (Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.getName().equals(owner)) {
-            tooltip.add(I18n.format("am2.tooltip.containedXP", getXPInJournal(stack)));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.containedXP", getXPInJournal(stack)));
         }
     }
 
@@ -59,7 +59,7 @@ public class ItemJournal extends Item implements IBauble {
             if (getOwner(stack) == null) {
                 setOwner(stack, player);
             } else if (!getOwner(stack).equals(player.getName())) {
-                player.sendMessage(new TextComponentString(I18n.format("am2.tooltip.notYourJournal")));
+                player.sendMessage(new TextComponentString(I18n.translateToLocalFormatted("am2.tooltip.notYourJournal")));
                 return super.onItemRightClick(world, player, hand);
             }
 

@@ -5,7 +5,7 @@ import am2.common.armor.ArsMagicaArmorMaterial;
 import baubles.api.BaubleType;
 import baubles.api.IBauble;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -46,7 +46,7 @@ public class ItemFireGuardianEars extends AMArmor implements IBauble {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        tooltip.add(I18n.format("am2.tooltip.fire_ears"));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.fire_ears"));
     }
 
     @Override

@@ -21,7 +21,7 @@ import am2.common.utils.DimensionUtilities;
 import am2.common.utils.KeystoneUtilities;
 import am2.common.utils.SelectionUtils;
 import com.google.common.collect.Sets;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +29,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -51,7 +51,7 @@ public class Recall extends SpellComponent implements IRitualInteraction {
 
         if (caster.isPotionActive(AMPotions.astral_distortion) || ((EntityLivingBase) target).isPotionActive(AMPotions.astral_distortion)) {
             if (caster instanceof EntityPlayer)
-                ((EntityPlayer) caster).sendMessage(new TextComponentString(I18n.format("am2.tooltip.cantTeleport")));
+                ((EntityPlayer) caster).sendMessage(new TextComponentTranslation("am2.tooltip.cantTeleport"));
             return false;
         }
         if (RitualShapeHelper.instance.matchesRitual(this, world, target.getPosition())) {
@@ -64,11 +64,11 @@ public class Recall extends SpellComponent implements IRitualInteraction {
         IEntityExtension casterProperties = EntityExtension.For(caster);
         if (casterProperties.getMarkDimensionID() == -512) {
             if (caster instanceof EntityPlayer && !world.isRemote)
-                ((EntityPlayer) caster).sendMessage(new TextComponentString(I18n.format("am2.tooltip.noMark")));
+                ((EntityPlayer) caster).sendMessage(new TextComponentTranslation("am2.tooltip.noMark"));
             return false;
         } else if (casterProperties.getMarkDimensionID() != caster.dimension) {
             if (caster instanceof EntityPlayer && !world.isRemote)
-                ((EntityPlayer) caster).sendMessage(new TextComponentString(I18n.format("am2.tooltip.diffDimMark")));
+                ((EntityPlayer) caster).sendMessage(new TextComponentTranslation("am2.tooltip.diffDimMark"));
             return false;
         }
         if (!world.isRemote) {
@@ -97,7 +97,7 @@ public class Recall extends SpellComponent implements IRitualInteraction {
             AMVector3 vector = ArsMagica.proxy.blocks.getNextKeystonePortalLocation(world, pos, false, key);
             if (vector == null || vector.equals(new AMVector3(pos))) {
                 if (caster instanceof EntityPlayer && !world.isRemote)
-                    ((EntityPlayer) caster).sendMessage(new TextComponentString(I18n.format("am2.tooltip.noMatchingGate")));
+                    ((EntityPlayer) caster).sendMessage(new TextComponentTranslation("am2.tooltip.noMatchingGate"));
                 return false;
             } else {
                 RitualShapeHelper.instance.consumeAllReagents(this, world, pos);
@@ -120,11 +120,11 @@ public class Recall extends SpellComponent implements IRitualInteraction {
 
             if (player == null) {
                 if (caster instanceof EntityPlayer && !world.isRemote)
-                    ((EntityPlayer) caster).sendMessage(new TextComponentString("am2.tooltip.noMatchingPlayer"));
+                    ((EntityPlayer) caster).sendMessage(new TextComponentTranslation("am2.tooltip.noMatchingPlayer"));
                 return false;
             } else if (player == caster) {
                 if (caster instanceof EntityPlayer && !world.isRemote)
-                    ((EntityPlayer) caster).sendMessage(new TextComponentString("am2.tooltip.cantSummonSelf"));
+                    ((EntityPlayer) caster).sendMessage(new TextComponentTranslation("am2.tooltip.cantSummonSelf"));
                 return false;
             } else {
                 RitualShapeHelper.instance.consumeAllReagents(this, world, pos);

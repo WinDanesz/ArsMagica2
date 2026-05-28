@@ -37,7 +37,7 @@ public class BlockInscriptionTable extends BlockAMSpecialRenderContainer {
         //setTextureFile(AMCore.proxy.getOverrideBlockTexturePath());
         this.setHardness(2.0f);
         this.setResistance(2.0f);
-        this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+        this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 0.9375f, 1.0f);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(LEFT, false).withProperty(TIER_1, false).withProperty(TIER_2, false).withProperty(TIER_3, false));
     }
 

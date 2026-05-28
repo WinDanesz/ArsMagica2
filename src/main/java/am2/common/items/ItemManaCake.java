@@ -2,7 +2,7 @@ package am2.common.items;
 
 import am2.ArsMagica;
 import am2.common.registry.AMPotions;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemFood;
@@ -29,7 +29,7 @@ public class ItemManaCake extends ItemFood {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(I18n.format("am2.tooltip.mana_regen_potion", 1, ArsMagica.config.getManaCakeRegenDuration() / 20));
+        tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.mana_regen_potion", 1, ArsMagica.config.getManaCakeRegenDuration() / 20));
     }
 
     @Override

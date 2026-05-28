@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -70,7 +70,7 @@ public class ItemCrystallizedEntity extends Item {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(TAG_ENTITY_NAME)) {
             String name = stack.getTagCompound().getString(TAG_ENTITY_NAME);
             String prefix = isVowel(name.charAt(0)) ? "an" : "a";
-            tooltip.add(I18n.format("am2.tooltip.crystallizedEntity", prefix, name));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.crystallizedEntity", prefix, name));
         }
     }
 

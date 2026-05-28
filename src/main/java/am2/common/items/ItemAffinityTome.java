@@ -5,7 +5,7 @@ import am2.api.affinity.Affinity;
 import am2.api.extensions.IAffinityData;
 import am2.common.extensions.AffinityData;
 import am2.common.registry.Affinities;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -65,7 +65,7 @@ public class ItemAffinityTome extends Item {
     public String getItemStackDisplayName(ItemStack stack) {
         Affinity affinity = getAffinity();
         if (affinity != null) {
-            return I18n.format("item.arsmagica2:affinity_tome.name", affinity.getDisplayName());
+            return I18n.translateToLocalFormatted("item.arsmagica2:affinity_tome.name", affinity.getDisplayName());
         }
         return super.getItemStackDisplayName(stack);
     }
@@ -81,9 +81,9 @@ public class ItemAffinityTome extends Item {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         Affinity affinity = getAffinity();
         if (affinity == Affinities.none) {
-            tooltip.add(I18n.format("am2.tooltip.affinity_tome_none"));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.affinity_tome_none"));
         } else {
-            tooltip.add(I18n.format("am2.tooltip.affinity_tome_boost"));
+            tooltip.add(I18n.translateToLocalFormatted("am2.tooltip.affinity_tome_boost"));
         }
     }
 }

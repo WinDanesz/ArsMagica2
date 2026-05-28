@@ -13,7 +13,7 @@ import am2.common.utils.EntityUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -168,7 +168,7 @@ public class ItemSpellBase extends Item {
                             ResourceLocation regName = part.getRegistryName();
                             if (regName == null) continue;
                             String locKey = "skill." + regName.toString() + ".name";
-                            String partName = I18n.format(locKey);
+                            String partName = I18n.translateToLocalFormatted(locKey);
                             String prefix;
                             if (part instanceof SpellShape) {
                                 prefix = "§6    [Shape] ";
