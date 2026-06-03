@@ -45,7 +45,7 @@ public class RenderSpellOrb extends Render<EntitySpellOrb> {
         GlStateManager.translate(d, d1, d2);
         GlStateManager.scale(0.5f, 0.5f, 0.5f);
         GlStateManager.rotate(180F - renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(-renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotate(-renderManager.playerViewX, Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F, 0.0F, 0.0F);
 
         renderIcon(sprite, renderColor);
 

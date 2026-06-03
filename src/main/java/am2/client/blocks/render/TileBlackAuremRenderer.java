@@ -34,7 +34,7 @@ public class TileBlackAuremRenderer extends TileEntitySpecialRenderer<TileEntity
     private void renderArsMagicaEffect(Tessellator tessellator, float offset, float scale) {
         if (offset != 0) {
             GL11.glRotatef(180 - Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
-            GL11.glRotatef(-Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+            GL11.glRotatef(-Minecraft.getMinecraft().getRenderManager().playerViewX, Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F, 0.0F, 0.0F);
         } else {
             GL11.glRotatef(35, 0, 1, 0);
             GL11.glTranslatef(0, -0.75f, 0);

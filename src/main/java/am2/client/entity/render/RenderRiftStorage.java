@@ -40,7 +40,7 @@ public class RenderRiftStorage extends Render<EntityRiftStorage> {
         GL11.glDisable(GL11.GL_LIGHTING);
 
         GL11.glRotatef(180F - renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(-renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-renderManager.playerViewX, Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F, 0.0F, 0.0F);
 
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
 

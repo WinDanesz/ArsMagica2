@@ -54,7 +54,7 @@ public class TileOtherworldAuraRenderer extends TileEntitySpecialRenderer<TileEn
         GlStateManager.pushMatrix();
         if (rotate) {
             GlStateManager.rotate(180F - Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
-            GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+            GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewX, Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F, 0.0F, 0.0F);
         } else {
             GlStateManager.translate(0, -0.25f, 0);
             GlStateManager.rotate(90, 0, 1, 0);
