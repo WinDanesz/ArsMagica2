@@ -110,7 +110,7 @@ public class RenderUtils {
         GL11.glTranslatef((float) x, (float) y, (float) z);
         GL11.glNormal3f(0.0F, 1.0F, 0.0F);
         GL11.glRotatef(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(Minecraft.getMinecraft().getRenderManager().playerViewX, Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F, 0.0F, 0.0F);
         GL11.glScalef(-f1, -f1, f1);
         GL11.glScalef(0.5f, 0.5f, 0.5f);
         GL11.glDisable(GL11.GL_LIGHTING);

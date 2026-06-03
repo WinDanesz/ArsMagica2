@@ -71,36 +71,12 @@ public class TileSeerStoneRenderer extends TileEntitySpecialRenderer<TileEntityS
 
         float f4 = 1.0F;
         float f5 = 0.5F;
-        float f6 = 0.25F;
+        float f6 = 0.5F;
 
         //tessellator.getBuffer().putBrightness4(15728864, 15728864, 15728864, 15728864);
 
-        //GL11.glRotatef(90, 0.0f, 1.0f, 0f);
-        //GL11.glRotatef(90, 0.0f, 1.0f, 0f);
-
-        switch (meta) {
-            case DOWN:
-                GlStateManager.translate(0.0f, -0.125f, 0.0f);
-                break;
-            case UP:
-                GlStateManager.translate(0.0f, -0.275f, 0.0f);
-                break;
-            case SOUTH:
-                GlStateManager.translate(0.0f, -0.2f, -0.275f);
-                break;
-            case NORTH:
-                GlStateManager.translate(0.0f, -0.2f, 0.275f);
-                break;
-            case EAST:
-                GlStateManager.translate(-0.02f, -0.2f, 0.0f);
-                break;
-            case WEST:
-                GlStateManager.translate(0.02f, -0.2f, 0.0f);
-                break;
-        }
-
         GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotate(Minecraft.getMinecraft().getRenderManager().playerViewX,  Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F, 0.0F, 0.0F);
 
         GlStateManager.rotate(180F, 1.0F, 0.0F, 0.0F);
         GlStateManager.rotate(180F, 0.0F, 0.0F, 1.0F);

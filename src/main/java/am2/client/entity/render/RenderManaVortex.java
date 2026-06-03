@@ -62,7 +62,7 @@ public class RenderManaVortex extends Render<EntityManaVortex> {
     private void renderArsMagicaEffect(Tessellator tessellator, int ticks, int life, float rotation, float scale, float percent) {
         GL11.glPushMatrix();
         GL11.glRotatef(180F - renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(-renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-renderManager.playerViewX, Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F, 0.0F, 0.0F);
 
         GL11.glColor4f(0.2f, 0.5f, 1.0f, 1.0f);
 
