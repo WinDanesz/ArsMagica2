@@ -18,19 +18,24 @@ public class AMItemStackRenderer extends TileEntityItemStackRenderer {
     private final Map<Item, RenderEntry> renderEntries = new HashMap<>();
 
     public AMItemStackRenderer() {
-        register(AMBlocks.celestial_prism, new TileEntityCelestialPrism(), 1.3f, -0.2D, -0.5D, 0.0D);
-        register(AMBlocks.obelisk, new TileEntityObelisk(), 1.3f, 0.1D, -0.2D, -0.3D);
-        register(AMBlocks.keystone_chest, new TileEntityKeystoneChest(), 1.6f, -0.15D, -0.15D, -0.15D);
+        register(AMBlocks.crafting_altar, new TileEntityCraftingAltar(), 1.7F);
+        register(AMBlocks.celestial_prism, new TileEntityCelestialPrism(), 1.4F, 0.0D, -0.25D, 0.0D);
+        register(AMBlocks.obelisk, new TileEntityObelisk(), 1.4F, 0.0D, -0.25D, 0.0D);
+        register(AMBlocks.keystone_chest, new TileEntityKeystoneChest(), 1.7F);
         register(AMBlocks.seer_stone, new TileEntitySeerStone());
-        register(AMBlocks.crystal_marker, new TileEntityCrystalMarker());
-        register(AMBlocks.keystone_receptacle, new TileEntityKeystoneReceptacle());
+        register(AMBlocks.crystal_marker, new TileEntityCrystalMarker(), 3.1F);
+        register(AMBlocks.keystone_receptacle, new TileEntityKeystoneReceptacle(), 1.0F);
         register(AMBlocks.arcane_reconstructor, new TileEntityArcaneReconstructor());
-        register(AMBlocks.summoner, new TileEntitySummoner());
-        register(AMBlocks.astral_barrier, new TileEntityAstralBarrier());
+        register(AMBlocks.summoner, new TileEntitySummoner(), 1.7F);
+        register(AMBlocks.astral_barrier, new TileEntityAstralBarrier(), 1.7F);
     }
 
     private void register(Block block, TileEntity tileEntity) {
-        register(block, tileEntity, 1.0f, 0.0D, 0.0D, 0.0D);
+        register(block, tileEntity, 1.0F);
+    }
+
+    private void register(Block block, TileEntity tileEntity, float scale) {
+        register(block, tileEntity, scale, 0.0D, 0.0D, 0.0D);
     }
 
     private void register(Block block, TileEntity tileEntity, float scale, double x, double y, double z) {
@@ -41,13 +46,13 @@ public class AMItemStackRenderer extends TileEntityItemStackRenderer {
     public void renderByItem(ItemStack itemStackIn, float partialTicks) {
         RenderEntry entry = renderEntries.get(itemStackIn.getItem());
         if (entry == null) return;
-
         GlStateManager.pushMatrix();
         GlStateManager.pushAttrib();
-        if (entry.scale != 1.0f) {
+        GlStateManager.translate(0.5F, 0.5F, 0.5F);
+        if(entry.scale != 1.0F) {
             GlStateManager.scale(entry.scale, entry.scale, entry.scale);
         }
-        TileEntityRendererDispatcher.instance.render(entry.tileEntity, entry.x, entry.y, entry.z, 0.0F, partialTicks);
+        TileEntityRendererDispatcher.instance.render(entry.tileEntity, entry.x - 0.5D, entry.y - 0.5D, entry.z - 0.5D, partialTicks);
         GlStateManager.popAttrib();
         GlStateManager.popMatrix();
     }

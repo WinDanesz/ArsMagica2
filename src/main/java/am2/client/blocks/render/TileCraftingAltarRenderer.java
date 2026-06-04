@@ -21,7 +21,6 @@ import static net.minecraft.client.renderer.texture.TextureMap.LOCATION_BLOCKS_T
 public class TileCraftingAltarRenderer extends TileEntitySpecialRenderer<TileEntityCraftingAltar> {
 
     private IBakedModel model;
-    private IBlockState prevState;
     private TextureAtlasSprite def;
     private TextureAtlasSprite runeStone;
 
@@ -33,7 +32,7 @@ public class TileCraftingAltarRenderer extends TileEntitySpecialRenderer<TileEnt
             def = SpellIconManager.INSTANCE.getSprite("caster_rune_side");
         if (runeStone == null)
             runeStone = SpellIconManager.INSTANCE.getSprite("rune_stone");
-        if (te.getMimicState() != prevState || model == null) {
+        if (model == null) {
             model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(te.getMimicState());
         }
         Minecraft.getMinecraft().profiler.endSection();
