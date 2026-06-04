@@ -67,12 +67,16 @@ public class BlockManaBattery extends BlockAMPowered {
         if (!stack.isEmpty()) {
             TileEntityManaBattery te = getTileEntity(worldIn, pos);
             if (stack.getTagCompound() != null) {
-                if (stack.getTagCompound().hasKey("mana_battery_charge") && stack.getTagCompound().hasKey("mana_battery_powertype"))
-                    PowerNodeRegistry.For(worldIn).setPower(te, PowerTypes.getByID(stack.getTagCompound().getInteger("mana_battery_powertype")), stack.getTagCompound().getFloat("mana_battery_charge"));
+                NBTTagCompound tag = stack.getTagCompound();
+                int powerTypeID = tag.getInteger("mana_battery_powertype");
+                if (powerTypeID > 0 && tag.hasKey("mana_battery_charge")) {
+                    PowerTypes power = PowerTypes.getByID(powerTypeID);
+                    PowerNodeRegistry.For(worldIn).setPower(te, power, tag.getFloat("mana_battery_charge"));
+                    te.setPowerType(power, false); // to instantly colorize block after placed
+                }
                 else
                     te.setPowerType(PowerTypes.NONE, false);
             }
-
         }
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
@@ -80,17 +84,19 @@ public class BlockManaBattery extends BlockAMPowered {
 
     @Override
     public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-        List<ItemStack> drops = new ArrayList<ItemStack>();
+        List<ItemStack> drops = new ArrayList<>();
         //Random rand = world instanceof World ? ((World)world).rand : RANDOM;
 
         ItemStack stack = new ItemStack(this, 1);
         drops.add(stack);
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileEntityManaBattery && !stack.isEmpty()) {
-            if (PowerNodeRegistry.For((World) world).getPower((TileEntityManaBattery) te, ((TileEntityManaBattery) te).getPowerType()) != 0.0F) {
+            TileEntityManaBattery battery = (TileEntityManaBattery) te;
+            float power = PowerNodeRegistry.For((World) world).getPower(battery, battery.getPowerType());
+            if (power > 0.0F) {
                 stack.setTagCompound(new NBTTagCompound());
-                stack.getTagCompound().setFloat("mana_battery_charge", PowerNodeRegistry.For((World) world).getPower((TileEntityManaBattery) te, ((TileEntityManaBattery) te).getPowerType()));
-                stack.getTagCompound().setInteger("mana_battery_powertype", ((TileEntityManaBattery) te).getPowerType().ID());
+                stack.getTagCompound().setFloat("mana_battery_charge", power);
+                stack.getTagCompound().setInteger("mana_battery_powertype", battery.getPowerType().ID());
             }
         }
         return drops;
@@ -140,23 +146,6 @@ public class BlockManaBattery extends BlockAMPowered {
             items.add(stack);
         }
     }
-
-//	@Override
-//	public int colorMultiplier(IBlockAccess blockAccess, int x, int y, int z){
-//		TileEntity te = blockAccess.getTileEntity(x, y, z);
-//		if (te instanceof TileEntityManaBattery){
-//			TileEntityManaBattery battery = (TileEntityManaBattery)te;
-//			if (battery.getPowerType() == PowerTypes.DARK)
-//				return 0x850e0e;
-//			else if (battery.getPowerType() == PowerTypes.LIGHT)
-//				return 0x61cfc3;
-//			else if (battery.getPowerType() == PowerTypes.NEUTRAL)
-//				return 0x2683d2;
-//			else
-//				return 0xFFFFFF;
-//		}
-//		return 0xFFFFFF;
-//	}
 
     @Override
     public BlockRenderLayer getRenderLayer() {
@@ -208,4 +197,5 @@ public class BlockManaBattery extends BlockAMPowered {
     public EnumBlockRenderType getRenderType(IBlockState state) {
         return EnumBlockRenderType.MODEL;
     }
+
 }
