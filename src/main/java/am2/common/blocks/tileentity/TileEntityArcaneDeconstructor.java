@@ -48,14 +48,10 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
     private static final int SYNC_DECONSTRUCTION_RECIPE = 0x2;
     private static final int SYNC_INVENTORY = 0x4;
 
-    private int particleCounter;
     private int syncCode = -1;
     private int current_deconstruction_time = 0; //how long have we been deconstructing something?
 
     private static final ArrayList<PowerTypes> validPowerTypes = Lists.newArrayList(PowerTypes.DARK);
-
-    @SideOnly(Side.CLIENT)
-    AMParticle radiant;
 
     private NonNullList<ItemStack> inventory;
     private ItemStack[] deconstructionRecipe;
@@ -80,46 +76,38 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
         super.update();
 
         if (world.isRemote) {
-            if (particleCounter == 0 || particleCounter++ > 1000) {
-                particleCounter = 1;
-                radiant = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "radiant", pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
-                if (radiant != null) {
-                    radiant.setMaxAge(1000);
-                    radiant.setRGBColorF(0.72f, 0.0510f, 0.1059f);
-                    radiant.setParticleScale(0.1f);
-                    radiant.AddParticleController(new ParticleHoldPosition(radiant, 1000, 1, false));
+            if (isActive()) {
+                if (world.rand.nextInt(2) == 0) {
+                    double cx = pos.getX() + 0.5;
+                    double cy = pos.getY() + 0.5;
+                    double cz = pos.getZ() + 0.5;
+                    double spread = 0.5;
+                    double sx = cx + (world.rand.nextDouble() - 0.5) * spread;
+                    double sy = cy + (world.rand.nextDouble() - 0.5) * spread;
+                    double sz = cz + (world.rand.nextDouble() - 0.5) * spread;
+                    AMParticle swirl = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "sparkle2", sx, sy, sz);
+                    if (swirl != null) {
+                        swirl.setMaxAge(30 + world.rand.nextInt(20));
+                        swirl.setRGBColorF(0.5f + world.rand.nextFloat() * 0.2f, 0.0f, 0.0f);
+                        swirl.setParticleScale(0.05f + world.rand.nextFloat() * 0.05f);
+                        swirl.AddParticleController(new ParticleOrbitPoint(swirl, cx, cy, cz, 1, false)
+                                .SetTargetDistance(0.1 + world.rand.nextDouble() * 0.15)
+                                .SetOrbitSpeed(0.08 + world.rand.nextDouble() * 0.04));
+                        swirl.AddParticleController(new ParticleFadeOut(swirl, 2, false).setFadeSpeed(0.03f));
+                    }
                 }
-            }
-            if (isActive() && world.rand.nextInt(2) == 0) {
-                double cx = pos.getX() + 0.5;
-                double cy = pos.getY() + 0.5;
-                double cz = pos.getZ() + 0.5;
-                double spread = 0.5;
-                double sx = cx + (world.rand.nextDouble() - 0.5) * spread;
-                double sy = cy + (world.rand.nextDouble() - 0.5) * spread;
-                double sz = cz + (world.rand.nextDouble() - 0.5) * spread;
-                AMParticle swirl = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "sparkle2", sx, sy, sz);
-                if (swirl != null) {
-                    swirl.setMaxAge(30 + world.rand.nextInt(20));
-                    swirl.setRGBColorF(0.5f + world.rand.nextFloat() * 0.2f, 0.0f, 0.0f);
-                    swirl.setParticleScale(0.05f + world.rand.nextFloat() * 0.05f);
-                    swirl.AddParticleController(new ParticleOrbitPoint(swirl, cx, cy, cz, 1, false)
-                            .SetTargetDistance(0.1 + world.rand.nextDouble() * 0.15)
-                            .SetOrbitSpeed(0.08 + world.rand.nextDouble() * 0.04));
-                    swirl.AddParticleController(new ParticleFadeOut(swirl, 2, false).setFadeSpeed(0.03f));
-                }
-            }
-            if (isActive() && !inventory.get(0).isEmpty() && world.rand.nextInt(4) == 0) {
-                double ix = pos.getX() + 0.5 + (world.rand.nextDouble() - 0.5) * 0.3;
-                double iy = pos.getY() + 0.55;
-                double iz = pos.getZ() + 0.5 + (world.rand.nextDouble() - 0.5) * 0.3;
-                AMParticle ember = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "sparkle2", ix, iy, iz);
-                if (ember != null) {
-                    ember.setMaxAge(15 + world.rand.nextInt(10));
-                    ember.setRGBColorF(0.6f + world.rand.nextFloat() * 0.3f, 0.0f, 0.0f);
-                    ember.setParticleScale(0.03f + world.rand.nextFloat() * 0.03f);
-                    ember.AddParticleController(new ParticleFloatUpward(ember, 0.06f, 0.02f, 1, false));
-                    ember.AddParticleController(new ParticleFadeOut(ember, 2, false).setFadeSpeed(0.05f));
+                if (!inventory.get(0).isEmpty() && world.rand.nextInt(4) == 0) {
+                    double ix = pos.getX() + 0.5 + (world.rand.nextDouble() - 0.5) * 0.3;
+                    double iy = pos.getY() + 0.55;
+                    double iz = pos.getZ() + 0.5 + (world.rand.nextDouble() - 0.5) * 0.3;
+                    AMParticle ember = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "sparkle2", ix, iy, iz);
+                    if (ember != null) {
+                        ember.setMaxAge(15 + world.rand.nextInt(10));
+                        ember.setRGBColorF(0.6f + world.rand.nextFloat() * 0.3f, 0.0f, 0.0f);
+                        ember.setParticleScale(0.03f + world.rand.nextFloat() * 0.03f);
+                        ember.AddParticleController(new ParticleFloatUpward(ember, 0.06f, 0.02f, 1, false));
+                        ember.AddParticleController(new ParticleFadeOut(ember, 2, false).setFadeSpeed(0.05f));
+                    }
                 }
             }
         } else {
