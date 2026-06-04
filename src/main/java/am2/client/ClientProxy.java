@@ -40,6 +40,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.toasts.SystemToast;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -243,22 +245,28 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init() {
         super.init();
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new CrystalPhylacteryColorizer(), AMItems.crystal_phylactery);
+        ItemColors itemColors = Minecraft.getMinecraft().getItemColors();
+        BlockColors blockColors = Minecraft.getMinecraft().getBlockColors();
+        itemColors.registerItemColorHandler(new CrystalPhylacteryColorizer(), AMItems.crystal_phylactery);
+        itemColors.registerItemColorHandler(new SpellBookColorizer(), AMItems.spellbook);
+        itemColors.registerItemColorHandler(new FlickerJarColorizer(), AMItems.flicker_jar);
+        itemColors.registerItemColorHandler(new ChalkArrowItemColorizer(), AMItems.colored_chalk);
         //Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new LostJournalColorizer(), AMItems.lost_journal);
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new SpellBookColorizer(), AMItems.spellbook);
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new FlickerJarColorizer(), AMItems.flicker_jar);
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ChalkArrowItemColorizer(), AMItems.colored_chalk);
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new ChalkArrowBlockColorizer(), AMBlocks.chalk_arrow);
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new MonoColorizer(0xFFFFFF), AMBlocks.witchwood_leaves);
+        itemColors.registerItemColorHandler(new ManaBatteryItemColorizer(), AMBlocks.mana_battery);
+
+        blockColors.registerBlockColorHandler(new ManaBatteryBlockColorizer(), AMBlocks.mana_battery);
+//        blockColors.registerBlockColorHandler(new CrystalMarkerColorizer(), AMBlocks.crystal_marker);
+        blockColors.registerBlockColorHandler(new ChalkArrowBlockColorizer(), AMBlocks.chalk_arrow);
+        blockColors.registerBlockColorHandler(new MonoColorizer(0xFFFFFF), AMBlocks.witchwood_leaves);
         // Delegate illusion block tinting to the mimic block so tinted blocks (grass, leaves, etc.) show correct biome colour
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(
+        blockColors.registerBlockColorHandler(
             (state, worldIn, pos, tintIndex) -> {
                 if (worldIn != null && pos != null) {
                     net.minecraft.tileentity.TileEntity te = worldIn.getTileEntity(pos);
                     if (te instanceof am2.common.blocks.tileentity.TileEntityIllusionBlock) {
                         IBlockState mimic = ((am2.common.blocks.tileentity.TileEntityIllusionBlock) te).getMimicBlock();
                         if (mimic != null && mimic.getBlock() != net.minecraft.init.Blocks.AIR) {
-                            return Minecraft.getMinecraft().getBlockColors().colorMultiplier(mimic, worldIn, pos, tintIndex);
+                            return blockColors.colorMultiplier(mimic, worldIn, pos, tintIndex);
                         }
                     }
                 }
@@ -267,7 +275,7 @@ public class ClientProxy extends CommonProxy {
             AMBlocks.illusion_block
         );
         ArmorColorizer armorColorizer = new ArmorColorizer();
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(armorColorizer,
+        itemColors.registerItemColorHandler(armorColorizer,
                 AMItems.mage_hood, AMItems.mage_robe, AMItems.mage_leggings, AMItems.mage_boots,
                 AMItems.battlemage_helmet, AMItems.battlemage_chestplate, AMItems.battlemage_leggings, AMItems.battlemage_boots);
     }
