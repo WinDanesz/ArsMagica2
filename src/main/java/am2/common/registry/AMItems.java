@@ -317,7 +317,7 @@ public final class AMItems {
         registerItemBlock(registry, AMBlocks.aum);
         registerItemBlock(registry, AMBlocks.tarma_root);
 
-        registerItemBlock(registry, AMBlocks.crafting_altar);
+        registerItemBlockBaked(registry, AMBlocks.crafting_altar);
         registerItemBlockBaked(registry, AMBlocks.obelisk);
         registerItemBlock(registry, AMBlocks.black_aurem);
         registerItemBlockBaked(registry, AMBlocks.celestial_prism);
