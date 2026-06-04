@@ -146,12 +146,13 @@ public class Grow extends SpellComponent {
 
     @Override
     public void spawnParticles(World world, double x, double y, double z, EntityLivingBase caster, Entity target, Random rand, int colorModifier) {
+        double dy = world.getBlockState(new BlockPos((int)x,(int)y,(int)z)).isNormalCube()? 0.5 : 0.0;
         for (int i = 0; i < 25; ++i) {
-            AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "plant", x + 0.5, y + 1, z + 0.5);
+            AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "plant", x, y + dy, z);
             if (particle != null) {
                 particle.addRandomOffset(1, 1, 1);
                 particle.AddParticleController(new ParticleFloatUpward(particle, 0, 0.1f, 1, false));
-                particle.AddParticleController(new ParticleOrbitPoint(particle, x + 0.5, y + 0.5, z + 0.5, 2, false).setIgnoreYCoordinate(true).SetOrbitSpeed(0.1f).SetTargetDistance(0.3f + rand.nextDouble() * 0.3));
+                particle.AddParticleController(new ParticleOrbitPoint(particle, x, y + dy, z, 2, false).setIgnoreYCoordinate(true).SetOrbitSpeed(0.1f).SetTargetDistance(0.3f + rand.nextDouble() * 0.3));
                 particle.AddParticleController(new ParticleFadeOut(particle, 1, false).setFadeSpeed(0.05f).setKillParticleOnFinish(true));
                 particle.setMaxAge(20);
                 particle.setParticleScale(0.1f);
