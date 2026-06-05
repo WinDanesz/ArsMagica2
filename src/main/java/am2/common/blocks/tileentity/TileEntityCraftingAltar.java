@@ -1741,4 +1741,10 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
     public void clean() {
         this.dirty = false;
     }
+
+    @Override
+    public boolean canRenderBreaking() {
+        return true;
+    }
+
 }

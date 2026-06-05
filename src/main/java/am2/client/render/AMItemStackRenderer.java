@@ -4,15 +4,12 @@ import am2.common.blocks.BlockCrystalMarker;
 import am2.common.blocks.tileentity.*;
 import am2.common.registry.AMBlocks;
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.datafix.walkers.ItemStackData;
 
 import java.util.HashMap;
 import java.util.Map;

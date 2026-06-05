@@ -5,6 +5,10 @@
         "textures": { "particle": "arsmagica2:blocks/caster_rune_side" }
     },
     "variants": {
-        "normal": [{}]
+        "normal": [{}],
+        "mimic": {
+            "true": {},
+            "false": {"model": "arsmagica2:crafting_altar"}
+        }
     }
 }
