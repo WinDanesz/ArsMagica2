@@ -3,7 +3,9 @@ package am2.common.blocks;
 import am2.common.blocks.tileentity.TileEntityCraftingAltar;
 import am2.common.registry.AMTabs;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -15,12 +17,41 @@ import net.minecraft.world.World;
 
 public class BlockCraftingAltar extends BlockAMPowered {
 
+    public static final PropertyBool MIMIC = PropertyBool.create("mimic");
+
     public BlockCraftingAltar() {
         super(Material.ROCK);
         setCreativeTab(AMTabs.AMBLOCKS);
         this.setHardness(1.5f);
         this.setResistance(10.0f);
         this.setHarvestLevel("pickaxe", 0);
+        setDefaultState(blockState.getBaseState().withProperty(MIMIC, false));
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, MIMIC);
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        TileEntity te = worldIn.getTileEntity(pos);
+        boolean mimic = false;
+        if (te instanceof TileEntityCraftingAltar) {
+            TileEntityCraftingAltar altar = (TileEntityCraftingAltar) te;
+            mimic = altar.isStructureValid() && altar.getMimicState() != null;
+        }
+        return state.withProperty(MIMIC, mimic);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(MIMIC) ? 1 : 0;
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(MIMIC, meta > 0);
     }
 
     @Override
@@ -97,4 +128,10 @@ public class BlockCraftingAltar extends BlockAMPowered {
     public boolean isNormalCube(IBlockState state) {
         return true;
     }
+
+    @Override
+    public boolean hasCustomBreakingProgress(IBlockState state) {
+        return true;
+    }
+
 }

@@ -256,4 +256,10 @@ public class BlockEverstone extends BlockAMPowered {
 
         return true;
     }
+
+    @Override
+    public boolean hasCustomBreakingProgress(IBlockState state) {
+        return true;
+    }
+
 }

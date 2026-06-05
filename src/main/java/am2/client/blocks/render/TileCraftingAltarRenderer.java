@@ -2,6 +2,8 @@ package am2.client.blocks.render;
 
 import am2.client.texture.SpellIconManager;
 import am2.common.blocks.tileentity.TileEntityCraftingAltar;
+import am2.common.blocks.tileentity.TileEntityEverstone;
+import am2.common.registry.AMBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -13,6 +15,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
@@ -20,120 +23,125 @@ import static net.minecraft.client.renderer.texture.TextureMap.LOCATION_BLOCKS_T
 
 public class TileCraftingAltarRenderer extends TileEntitySpecialRenderer<TileEntityCraftingAltar> {
 
-    private IBakedModel model;
-    private TextureAtlasSprite def;
     private TextureAtlasSprite runeStone;
 
     @Override
     public void render(TileEntityCraftingAltar te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         Minecraft.getMinecraft().profiler.startSection("crafting-altar");
         Minecraft.getMinecraft().profiler.startSection("definitions");
-        if (def == null)
-            def = SpellIconManager.INSTANCE.getSprite("caster_rune_side");
         if (runeStone == null)
             runeStone = SpellIconManager.INSTANCE.getSprite("rune_stone");
-        if (model == null) {
-            model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(te.getMimicState());
-        }
         Minecraft.getMinecraft().profiler.endSection();
+
         BlockPos pos = te.getPos();
-
-        GL11.glPushMatrix();
-        GlStateManager.disableLighting();
-
-        Tessellator t = Tessellator.getInstance();
-        GL11.glTranslated(x, y, z);
+        IBlockState state = te.isStructureValid() && te.getMimicState() != null ? te.getMimicState() : AMBlocks.crafting_altar.getDefaultState();
+        IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(state);
 
         Minecraft.getMinecraft().profiler.startSection("block-render");
-        if (te.isStructureValid() && te.getMimicState() != null) {
-            Minecraft.getMinecraft().profiler.startSection("pre-check");
-            GlStateManager.pushMatrix();
-            t.getBuffer().begin(7, DefaultVertexFormats.BLOCK);
-            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            GlStateManager.translate(-pos.getX(), -pos.getY(), -pos.getZ());
-            Minecraft.getMinecraft().renderEngine.bindTexture(LOCATION_BLOCKS_TEXTURE);
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            Minecraft.getMinecraft().profiler.endStartSection("buffering");
-            Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(Minecraft.getMinecraft().world, model, te.getMimicState(), pos, t.getBuffer(), false);
-            Minecraft.getMinecraft().profiler.endStartSection("drawing");
-            t.draw();
-            GlStateManager.popMatrix();
-            Minecraft.getMinecraft().profiler.endSection();
-        }
-        else {
-            Minecraft.getMinecraft().profiler.startSection("raw-render");
-            render(te, def);
-            Minecraft.getMinecraft().profiler.endSection();
-        }
-        Minecraft.getMinecraft().profiler.endSection();
+        Minecraft.getMinecraft().renderEngine.bindTexture(LOCATION_BLOCKS_TEXTURE);
+
+        GlStateManager.pushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
-        GL11.glPolygonOffset(-1.0f, -1.0f);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.85F);
-        render(te, runeStone);
-        GL11.glPolygonOffset(0.0f, 0.0f);
-        GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.translate(x, y, z);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-pos.getX(), -pos.getY(), -pos.getZ());
 
-        GL11.glDisable(GL11.GL_BLEND);
-        GlStateManager.enableLighting();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        Tessellator t = Tessellator.getInstance();
+        t.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        Minecraft.getMinecraft().profiler.endStartSection("buffering");
+        model = damageModel(model, te.getMimicState(), pos, destroyStage);
+        Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(Minecraft.getMinecraft().world, model, state, pos, t.getBuffer(), false);
+        Minecraft.getMinecraft().profiler.endStartSection("drawing");
+        t.draw();
 
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
+
+        renderRune(te);
+
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.popMatrix();
         Minecraft.getMinecraft().profiler.endSection();
     }
 
-    public void render(TileEntityCraftingAltar te, TextureAtlasSprite sprite) {
-        if (sprite != null)
-            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+    private static IBakedModel damageModel(IBakedModel model, IBlockState state, BlockPos pos, int destroyStage) {
+        if (state == null || destroyStage < 0)
+            return model;
+        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/destroy_stage_" + destroyStage);
+        return net.minecraftforge.client.ForgeHooksClient.getDamageModel(model, sprite, state, Minecraft.getMinecraft().world, pos);
+    }
+
+    public void renderRune(TileEntityCraftingAltar te) {
+        TextureAtlasSprite sprite = runeStone;
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+
+        Minecraft.getMinecraft().profiler.endStartSection("rune-render");
+
+        GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
+        GL11.glPolygonOffset(-1.0F, -1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         float minU = (sprite != null ? sprite.getMinU() : 0F);
         float maxU = (sprite != null ? sprite.getMaxU() : 1F);
         float minV = (sprite != null ? sprite.getMinV() : 0F);
         float maxV = (sprite != null ? sprite.getMaxV() : 1F);
 
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
         RenderHelper.disableStandardItemLighting();
 
         Tessellator t = Tessellator.getInstance();
+        final VertexFormat fmt = DefaultVertexFormats.POSITION_TEX;
+
         BufferBuilder b = t.getBuffer();
-        b.begin(7, DefaultVertexFormats.POSITION_TEX);
-        b.pos(0, 1, 0).tex(maxU, minV).endVertex();
-        b.pos(1, 1, 0).tex(minU, minV).endVertex();
-        b.pos(1, 0, 0).tex(minU, maxV).endVertex();
-        b.pos(0, 0, 0).tex(maxU, maxV).endVertex();
+        b.begin(GL11.GL_QUADS, fmt);
+        vertex(b,0, 1, 0, maxU, minV);
+        vertex(b,1, 1, 0, minU, minV);
+        vertex(b,1, 0, 0, minU, maxV);
+        vertex(b,0, 0, 0, maxU, maxV);
 
-        b.pos(1, 0, 1).tex(minU, maxV).endVertex();
-        b.pos(1, 1, 1).tex(minU, minV).endVertex();
-        b.pos(0, 1, 1).tex(maxU, minV).endVertex();
-        b.pos(0, 0, 1).tex(maxU, maxV).endVertex();
+        vertex(b,1, 0, 1, minU, maxV);
+        vertex(b,1, 1, 1, minU, minV);
+        vertex(b,0, 1, 1, maxU, minV);
+        vertex(b,0, 0, 1, maxU, maxV);
         t.draw();
 
-        b.begin(7, DefaultVertexFormats.POSITION_TEX);
-        b.pos(1, 0, 0).tex(maxU, maxV).endVertex();
-        b.pos(1, 0, 1).tex(maxU, minV).endVertex();
-        b.pos(0, 0, 1).tex(minU, minV).endVertex();
-        b.pos(0, 0, 0).tex(minU, maxV).endVertex();
+        b.begin(GL11.GL_QUADS, fmt);
+        vertex(b,1, 0, 0, maxU, maxV);
+        vertex(b,1, 0, 1, maxU, minV);
+        vertex(b,0, 0, 1, minU, minV);
+        vertex(b,0, 0, 0, minU, maxV);
 
-        b.pos(0, 1, 1).tex(minU, maxV).endVertex();
-        b.pos(1, 1, 1).tex(maxU, maxV).endVertex();
-        b.pos(1, 1, 0).tex(maxU, minV).endVertex();
-        b.pos(0, 1, 0).tex(minU, minV).endVertex();
+        vertex(b,0, 1, 1, minU, maxV);
+        vertex(b,1, 1, 1, maxU, maxV);
+        vertex(b,1, 1, 0, maxU, minV);
+        vertex(b,0, 1, 0, minU, minV);
         t.draw();
 
-        b.begin(7, DefaultVertexFormats.POSITION_TEX);
-        b.pos(1, 1, 0).tex(maxU, minV).endVertex();
-        b.pos(1, 1, 1).tex(minU, minV).endVertex();
-        b.pos(1, 0, 1).tex(minU, maxV).endVertex();
-        b.pos(1, 0, 0).tex(maxU, maxV).endVertex();
+        b.begin(GL11.GL_QUADS, fmt);
+        vertex(b,1, 1, 0, maxU, minV);
+        vertex(b,1, 1, 1, minU, minV);
+        vertex(b,1, 0, 1, minU, maxV);
+        vertex(b,1, 0, 0, maxU, maxV);
 
-        b.pos(0, 0, 1).tex(minU, maxV).endVertex();
-        b.pos(0, 1, 1).tex(minU, minV).endVertex();
-        b.pos(0, 1, 0).tex(maxU, minV).endVertex();
-        b.pos(0, 0, 0).tex(maxU, maxV).endVertex();
+        vertex(b,0, 0, 1, minU, maxV);
+        vertex(b,0, 1, 1, minU, minV);
+        vertex(b,0, 1, 0, maxU, minV);
+        vertex(b,0, 0, 0, maxU, maxV);
         t.draw();
 
         RenderHelper.enableStandardItemLighting();
-        GL11.glPopMatrix();
+        GL11.glPolygonOffset(0.0f, 0.0f);
+        GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
+        GL11.glDisable(GL11.GL_BLEND);
+
+        GlStateManager.popMatrix();
+    }
+
+    private void vertex(BufferBuilder b, double x, double y, double z, double u, double v) {
+        b.pos(x, y, z).tex(u, v).endVertex();
     }
 
 }
