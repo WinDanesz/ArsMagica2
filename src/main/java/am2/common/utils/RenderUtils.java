@@ -156,6 +156,7 @@ public class RenderUtils {
             fontrenderer.drawString(t, -fontrenderer.getStringWidth(t) / 2, dy, 0xFFFFFFFF);
             dy += charHeight + lineSpace;
         }
+        GlStateManager.disableAlpha();
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_BLEND);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
