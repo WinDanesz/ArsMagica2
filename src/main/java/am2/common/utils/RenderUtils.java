@@ -9,11 +9,13 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class RenderUtils {
@@ -102,42 +104,64 @@ public class RenderUtils {
         fractalLine2df((float) xStart, (float) yStart, (float) xEnd, (float) yEnd, (float) zLevel, color, displace, fractalDetail);
     }
 
-    public static void drawTextInWorldAtOffset(String text, double x, double y, double z, int color) {
+    public static void drawTextInWorldAtOffset(String text, double x, double y, double z) {
         FontRenderer fontrenderer = Minecraft.getMinecraft().fontRenderer;
+
+        final int charHeight = 9;
+        final int lineSpace = 2;
+        String[] texts = text.split("\n");
+        int textHalfWidth = Arrays.stream(texts).mapToInt(t -> fontrenderer.getStringWidth(t) / 2).max().orElse(0);
+        int lines = texts.length;
+        if (lines < 1) return;
+
+        int dy = -charHeight * (lines - 1);
+        if(lines > 1) {
+            dy -= lineSpace * (lines - 2);
+        }
+
         float f = 1.6F;
-        float f1 = 0.016666668F * f;
-        GL11.glPushMatrix();
-        GL11.glTranslatef((float) x, (float) y, (float) z);
-        GL11.glNormal3f(0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(Minecraft.getMinecraft().getRenderManager().playerViewX, Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F, 0.0F, 0.0F);
-        GL11.glScalef(-f1, -f1, f1);
-        GL11.glScalef(0.5f, 0.5f, 0.5f);
+        float f1 = 0.016666668F * f * 0.5F;
+//        GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_POLYGON_BIT| GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT);
+        GlStateManager.pushAttrib();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, z);
+        GlStateManager.glNormal3f(0.0F, 1.0F, 0.0F);
+        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+        GlStateManager.rotate(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(renderManager.playerViewX, Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F, 0.0F, 0.0F);
+        GlStateManager.scale(-f1, -f1, f1);
         GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDepthMask(false);
+        GlStateManager.depthMask(false);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        Tessellator tessellator = Tessellator.getInstance();
-        byte b0 = 0;
-
         GL11.glDisable(GL11.GL_TEXTURE_2D);
+
+        int Y = charHeight * lines + lineSpace * (lines - 1);
+        Tessellator tessellator = Tessellator.getInstance();
         tessellator.getBuffer().begin(7, DefaultVertexFormats.POSITION_COLOR);
-        int j = fontrenderer.getStringWidth(text) / 2;
-        tessellator.getBuffer().pos(-j - 1, -1 + b0, 0.0D).color(0.0F, 0.0F, 0.0F, 0.75F).endVertex();
-        tessellator.getBuffer().pos(-j - 1, 8 + b0, 0.0D).color(0.0F, 0.0F, 0.0F, 0.75F).endVertex();
-        tessellator.getBuffer().pos(j + 1, 8 + b0, 0.0D).color(0.0F, 0.0F, 0.0F, 0.75F).endVertex();
-        tessellator.getBuffer().pos(j + 1, -1 + b0, 0.0D).color(0.0F, 0.0F, 0.0F, 0.75F).endVertex();
+        tessellator.getBuffer().pos(-textHalfWidth - 1, -1 + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 0.75F).endVertex();
+        tessellator.getBuffer().pos(-textHalfWidth - 1, -1 + Y + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 0.75F).endVertex();
+        tessellator.getBuffer().pos(textHalfWidth + 1, -1 + Y + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 0.75F).endVertex();
+        tessellator.getBuffer().pos(textHalfWidth + 1, -1 + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 0.75F).endVertex();
         tessellator.draw();
+
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-        fontrenderer.drawString(text, -fontrenderer.getStringWidth(text) / 2, b0, 553648127);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(true);
-        fontrenderer.drawString(text, -fontrenderer.getStringWidth(text) / 2, b0, -1);
+        for(String t: texts) {
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GlStateManager.depthMask(false);
+            fontrenderer.drawString(t, -fontrenderer.getStringWidth(t) / 2, dy, 0x20FFFFFF);
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GlStateManager.depthMask(true);
+            fontrenderer.drawString(t, -fontrenderer.getStringWidth(t) / 2, dy, 0xFFFFFFFF);
+            dy += charHeight + lineSpace;
+        }
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_BLEND);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glPopMatrix();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+
+        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
     }
 
     public static void RenderRotatedModelGroup(TileEntity te, IBakedModel model, IBlockState defaultState, AMVector3 rotation) {

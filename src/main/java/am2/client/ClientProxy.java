@@ -60,10 +60,7 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static am2.common.defs.IDDefs.*;
 
@@ -344,7 +341,6 @@ public class ClientProxy extends CommonProxy {
     @SuppressWarnings("deprecation")
     @Override
     public void drawPowerOnBlockHighlight(EntityPlayer player, RayTraceResult target, float partialTicks) {
-
         ItemStack headStack = Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
         boolean hasGoggles = !headStack.isEmpty() &&
                 (headStack.getItem() == AMItems.magitech_goggles ||
@@ -354,32 +350,25 @@ public class ClientProxy extends CommonProxy {
             if (target == null || target.getBlockPos() == null)
                 return;
             TileEntity te = player.world.getTileEntity(target.getBlockPos());
-            if (te != null && te instanceof IPowerNode) {
-                ArsMagica.proxy.setTrackedLocation(new AMVector3(target.getBlockPos()));
-            } else {
-                ArsMagica.proxy.setTrackedLocation(AMVector3.zero());
-            }
-
+            ArsMagica.proxy.setTrackedLocation(te instanceof IPowerNode ? new AMVector3(target.getBlockPos()) : AMVector3.zero());
             if (ArsMagica.proxy.hasTrackedLocationSynced()) {
                 PowerNodeEntry data = ArsMagica.proxy.getTrackedData();
                 IBlockState state = player.world.getBlockState(target.getBlockPos());
                 Block block = state.getBlock();
                 float yOff = 0.5f;
-                if (data != null) {
-                    GlStateManager.pushAttrib();
-                    GlStateManager.disableLighting();
-                    for (PowerTypes type : ((IPowerNode<?>) te).getValidPowerTypes()) {
+                if (data != null && te instanceof IPowerNode<?>) {
+                    IPowerNode<?> node = (IPowerNode<?>) te;
+                    StringJoiner message = new StringJoiner("\n");
+                    for (PowerTypes type : node.getValidPowerTypes()) {
                         float pwr = data.getPower(type);
-                        float pct = pwr / ((IPowerNode<?>) te).getCapacity() * 100;
-                        RenderUtils.drawTextInWorldAtOffset(String.format("%s%.2f (%.2f%%)", type.getChatColor(), pwr, pct),
-                                target.getBlockPos().getX() - (player.prevPosX - (player.prevPosX - player.posX) * partialTicks) + 0.5f,
-                                target.getBlockPos().getY() + yOff - (player.prevPosY - (player.prevPosY - player.posY) * partialTicks) + block.getBoundingBox(state, player.world, target.getBlockPos()).maxY * 0.8f,
-                                target.getBlockPos().getZ() - (player.prevPosZ - (player.prevPosZ - player.posZ) * partialTicks) + 0.5f,
-                                0xFFFFFF);
-                        yOff += 0.12f;
+                        float pct = pwr / node.getCapacity() * 100;
+                        message.add(String.format("%s%.2f (%.2f%%)", type.getChatColor(), pwr, pct));
                     }
-                    GlStateManager.enableLighting();
-                    GlStateManager.popAttrib();
+                    RenderUtils.drawTextInWorldAtOffset(message.toString(),
+                            target.getBlockPos().getX() - (player.prevPosX - (player.prevPosX - player.posX) * partialTicks) + 0.5f,
+                            target.getBlockPos().getY() + yOff - (player.prevPosY - (player.prevPosY - player.posY) * partialTicks) + block.getBoundingBox(state, player.world, target.getBlockPos()).maxY * 0.8f,
+                            target.getBlockPos().getZ() - (player.prevPosZ - (player.prevPosZ - player.posZ) * partialTicks) + 0.5f
+                    );
                 }
             }
         }
