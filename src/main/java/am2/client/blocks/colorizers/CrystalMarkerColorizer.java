@@ -7,10 +7,14 @@ import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import javax.annotation.Nullable;
+
+// only used for particles for now
 public class CrystalMarkerColorizer implements IBlockColor {
+
     @Override
-    public int colorMultiplier(IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) {
-        try {
+    public int colorMultiplier(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int tintIndex) {
+        if (tintIndex == 0 && world != null && pos != null) {
             int meta = state.getValue(BlockCrystalMarker.TYPE);
             switch (meta) {
                 case BlockCrystalMarker.META_IN:
@@ -30,8 +34,8 @@ public class CrystalMarkerColorizer implements IBlockColor {
                 case BlockCrystalMarker.META_SPELL_EXPORT:
                     return RenderUtils.getColor(0.0f, 0.5f, 1.0f); //cyan
             }
-        } catch (Throwable t) {
         }
         return 0xAAAAAA;
     }
+
 }
