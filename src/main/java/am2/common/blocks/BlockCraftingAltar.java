@@ -20,7 +20,7 @@ public class BlockCraftingAltar extends BlockAMPowered {
         setCreativeTab(AMTabs.AMBLOCKS);
         this.setHardness(1.5f);
         this.setResistance(10.0f);
-        this.setHarvestLevel("pickaxe", 1);
+        this.setHarvestLevel("pickaxe", 0);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class BlockCraftingAltar extends BlockAMPowered {
 
     @Override
     public boolean isOpaqueCube(IBlockState state) {
-        return false;
+        return true;
     }
 
     @Override
@@ -80,22 +80,21 @@ public class BlockCraftingAltar extends BlockAMPowered {
 
     @Override
     public boolean isFullBlock(IBlockState state) {
-        return false;
+        return true;
     }
-
 
     @Override
     public boolean isFullCube(IBlockState state) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isBlockNormalCube(IBlockState state) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isNormalCube(IBlockState state) {
-        return false;
+        return true;
     }
 }
