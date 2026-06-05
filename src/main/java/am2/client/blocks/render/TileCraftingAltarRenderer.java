@@ -37,10 +37,13 @@ public class TileCraftingAltarRenderer extends TileEntitySpecialRenderer<TileEnt
         }
         Minecraft.getMinecraft().profiler.endSection();
         BlockPos pos = te.getPos();
+
         GL11.glPushMatrix();
+        GlStateManager.disableLighting();
+
         Tessellator t = Tessellator.getInstance();
         GL11.glTranslated(x, y, z);
-        RenderHelper.disableStandardItemLighting();
+
         Minecraft.getMinecraft().profiler.startSection("block-render");
         if (te.isStructureValid() && te.getMimicState() != null) {
             Minecraft.getMinecraft().profiler.startSection("pre-check");
@@ -56,21 +59,25 @@ public class TileCraftingAltarRenderer extends TileEntitySpecialRenderer<TileEnt
             t.draw();
             GlStateManager.popMatrix();
             Minecraft.getMinecraft().profiler.endSection();
-        } else {
+        }
+        else {
             Minecraft.getMinecraft().profiler.startSection("raw-render");
             render(te, def);
             Minecraft.getMinecraft().profiler.endSection();
         }
         Minecraft.getMinecraft().profiler.endSection();
-        GlStateManager.enableBlend();
+        GL11.glEnable(GL11.GL_BLEND);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
         GL11.glPolygonOffset(-1.0f, -1.0f);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.85F);
         render(te, runeStone);
         GL11.glPolygonOffset(0.0f, 0.0f);
         GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
-        GlStateManager.disableBlend();
-        RenderHelper.enableStandardItemLighting();
+
+        GL11.glDisable(GL11.GL_BLEND);
+        GlStateManager.enableLighting();
+
         GL11.glPopMatrix();
         Minecraft.getMinecraft().profiler.endSection();
     }
@@ -78,51 +85,52 @@ public class TileCraftingAltarRenderer extends TileEntitySpecialRenderer<TileEnt
     public void render(TileEntityCraftingAltar te, TextureAtlasSprite sprite) {
         if (sprite != null)
             Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+
         float minU = (sprite != null ? sprite.getMinU() : 0F);
         float maxU = (sprite != null ? sprite.getMaxU() : 1F);
         float minV = (sprite != null ? sprite.getMinV() : 0F);
         float maxV = (sprite != null ? sprite.getMaxV() : 1F);
-        //LogHelper.info(sprite);
+
         GL11.glPushMatrix();
         RenderHelper.disableStandardItemLighting();
-        //GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        buffer.pos(0, 1, 0).tex(maxU, minV).endVertex();
-        buffer.pos(1, 1, 0).tex(minU, minV).endVertex();
-        buffer.pos(1, 0, 0).tex(minU, maxV).endVertex();
-        buffer.pos(0, 0, 0).tex(maxU, maxV).endVertex();
 
-        buffer.pos(1, 0, 1).tex(minU, maxV).endVertex();
-        buffer.pos(1, 1, 1).tex(minU, minV).endVertex();
-        buffer.pos(0, 1, 1).tex(maxU, minV).endVertex();
-        buffer.pos(0, 0, 1).tex(maxU, maxV).endVertex();
-        tessellator.draw();
+        Tessellator t = Tessellator.getInstance();
+        BufferBuilder b = t.getBuffer();
+        b.begin(7, DefaultVertexFormats.POSITION_TEX);
+        b.pos(0, 1, 0).tex(maxU, minV).endVertex();
+        b.pos(1, 1, 0).tex(minU, minV).endVertex();
+        b.pos(1, 0, 0).tex(minU, maxV).endVertex();
+        b.pos(0, 0, 0).tex(maxU, maxV).endVertex();
 
-        buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        buffer.pos(1, 0, 0).tex(maxU, maxV).endVertex();
-        buffer.pos(1, 0, 1).tex(maxU, minV).endVertex();
-        buffer.pos(0, 0, 1).tex(minU, minV).endVertex();
-        buffer.pos(0, 0, 0).tex(minU, maxV).endVertex();
+        b.pos(1, 0, 1).tex(minU, maxV).endVertex();
+        b.pos(1, 1, 1).tex(minU, minV).endVertex();
+        b.pos(0, 1, 1).tex(maxU, minV).endVertex();
+        b.pos(0, 0, 1).tex(maxU, maxV).endVertex();
+        t.draw();
 
-        buffer.pos(0, 1, 1).tex(minU, maxV).endVertex();
-        buffer.pos(1, 1, 1).tex(maxU, maxV).endVertex();
-        buffer.pos(1, 1, 0).tex(maxU, minV).endVertex();
-        buffer.pos(0, 1, 0).tex(minU, minV).endVertex();
-        tessellator.draw();
+        b.begin(7, DefaultVertexFormats.POSITION_TEX);
+        b.pos(1, 0, 0).tex(maxU, maxV).endVertex();
+        b.pos(1, 0, 1).tex(maxU, minV).endVertex();
+        b.pos(0, 0, 1).tex(minU, minV).endVertex();
+        b.pos(0, 0, 0).tex(minU, maxV).endVertex();
 
-        buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        buffer.pos(1, 1, 0).tex(maxU, minV).endVertex();
-        buffer.pos(1, 1, 1).tex(minU, minV).endVertex();
-        buffer.pos(1, 0, 1).tex(minU, maxV).endVertex();
-        buffer.pos(1, 0, 0).tex(maxU, maxV).endVertex();
+        b.pos(0, 1, 1).tex(minU, maxV).endVertex();
+        b.pos(1, 1, 1).tex(maxU, maxV).endVertex();
+        b.pos(1, 1, 0).tex(maxU, minV).endVertex();
+        b.pos(0, 1, 0).tex(minU, minV).endVertex();
+        t.draw();
 
-        buffer.pos(0, 0, 1).tex(minU, maxV).endVertex();
-        buffer.pos(0, 1, 1).tex(minU, minV).endVertex();
-        buffer.pos(0, 1, 0).tex(maxU, minV).endVertex();
-        buffer.pos(0, 0, 0).tex(maxU, maxV).endVertex();
-        tessellator.draw();
+        b.begin(7, DefaultVertexFormats.POSITION_TEX);
+        b.pos(1, 1, 0).tex(maxU, minV).endVertex();
+        b.pos(1, 1, 1).tex(minU, minV).endVertex();
+        b.pos(1, 0, 1).tex(minU, maxV).endVertex();
+        b.pos(1, 0, 0).tex(maxU, maxV).endVertex();
+
+        b.pos(0, 0, 1).tex(minU, maxV).endVertex();
+        b.pos(0, 1, 1).tex(minU, minV).endVertex();
+        b.pos(0, 1, 0).tex(maxU, minV).endVertex();
+        b.pos(0, 0, 0).tex(maxU, maxV).endVertex();
+        t.draw();
 
         RenderHelper.enableStandardItemLighting();
         GL11.glPopMatrix();
