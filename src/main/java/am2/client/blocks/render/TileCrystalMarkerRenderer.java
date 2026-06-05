@@ -1,58 +1,41 @@
 package am2.client.blocks.render;
 
+import am2.client.utils.DirectOBJModel;
 import am2.common.blocks.BlockCrystalMarker;
 import am2.common.blocks.tileentity.TileEntityCrystalMarker;
-import am2.common.registry.AMBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.common.model.TRSRTransformation;
 import org.lwjgl.opengl.GL11;
 
 public class TileCrystalMarkerRenderer extends TileEntitySpecialRenderer<TileEntityCrystalMarker> {
-    private IModel model;
-    private IBakedModel bakedModel;
 
-    private IBakedModel getBakedModel() {
-        if (bakedModel == null) {
-            try {
-                model = ModelLoaderRegistry.getModel(new ResourceLocation("arsmagica2", "block/crystal_marker.obj"));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            bakedModel = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
-        }
-        return bakedModel;
-    }
+    private static final ResourceLocation TEXTURE = new ResourceLocation("arsmagica2", "textures/blocks/custom/crystalmarker.png");
+    private static final ResourceLocation OBJ_RESOURCE = new ResourceLocation("arsmagica2", "models/block/crystal_marker.obj");
 
+    private static final DirectOBJModel model = new DirectOBJModel(OBJ_RESOURCE);
 
     public TileCrystalMarkerRenderer() {
     }
 
     @Override
     public void render(TileEntityCrystalMarker tileentity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        EnumFacing facing = EnumFacing.UP;
-
-        if (tileentity.getWorld() != null) {
-            facing = tileentity.getFacing();
-            //facing = tileentity.getWorld().getBlockState(tileentity.getPos()).getValue(BlockCrystalMarker.FACING);
+        if (!model.isLoaded()) {
+            model.load();
         }
+        if (model.isEmpty()) return;
+
+        EnumFacing facing = tileentity.getFacing();
 
         GlStateManager.pushMatrix();
         GlStateManager.pushAttrib();//(GL11.GL_LIGHTING_BIT);
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        GlStateManager.disableLighting();
         GlStateManager.disableCull();
-        RenderHelper.disableStandardItemLighting();
+        GlStateManager.enableTexture2D();
+        Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
 
         if (tileentity.getPos() != BlockPos.ORIGIN) {
             switch (facing) {
@@ -82,18 +65,13 @@ public class TileCrystalMarkerRenderer extends TileEntitySpecialRenderer<TileEnt
             }
 
             GL11.glScalef(0.5f, 0.5f, 0.5f);
-        } else {
+        }
+        else {
             GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
             GL11.glRotated(180, 0, 1, 0);
         }
 
-        int blockType = 0;
-
-        if (tileentity.getWorld() != null && destroyStage != -10) {
-            blockType = tileentity.getWorld().getBlockState(tileentity.getPos()).getValue(BlockCrystalMarker.TYPE);
-        } else {
-            blockType = (int) partialTicks;
-        }
+        int blockType = tileentity.getMarkerType();
 
         // Apply color based on marker type
         switch (blockType) {
@@ -126,17 +104,12 @@ public class TileCrystalMarkerRenderer extends TileEntitySpecialRenderer<TileEnt
                 break;
         }
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-tileentity.getPos().getX(), -tileentity.getPos().getY(), -tileentity.getPos().getZ());
-        Tessellator tesselator = Tessellator.getInstance();
-        tesselator.getBuffer().begin(7, DefaultVertexFormats.BLOCK);
-        Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(getWorld(), getBakedModel(), AMBlocks.crystal_marker.getDefaultState().withProperty(BlockCrystalMarker.TYPE, blockType), tileentity.getPos(), tesselator.getBuffer(), false);
-        tesselator.draw();
-        GlStateManager.popMatrix();
+        model.render();
+
         // Reset color to white to avoid affecting subsequent renders
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
-        RenderHelper.enableStandardItemLighting();
         GlStateManager.popAttrib();
+        GlStateManager.enableLighting();
         GlStateManager.enableCull();
         GlStateManager.enableBlend();
         GlStateManager.popMatrix();

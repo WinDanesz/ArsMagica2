@@ -255,7 +255,7 @@ public class ClientProxy extends CommonProxy {
         itemColors.registerItemColorHandler(new ManaBatteryItemColorizer(), AMBlocks.mana_battery);
 
         blockColors.registerBlockColorHandler(new ManaBatteryBlockColorizer(), AMBlocks.mana_battery);
-//        blockColors.registerBlockColorHandler(new CrystalMarkerColorizer(), AMBlocks.crystal_marker);
+        blockColors.registerBlockColorHandler(new CrystalMarkerColorizer(), AMBlocks.crystal_marker);
         blockColors.registerBlockColorHandler(new ChalkArrowBlockColorizer(), AMBlocks.chalk_arrow);
         blockColors.registerBlockColorHandler(new MonoColorizer(0xFFFFFF), AMBlocks.witchwood_leaves);
         // Delegate illusion block tinting to the mimic block so tinted blocks (grass, leaves, etc.) show correct biome colour
