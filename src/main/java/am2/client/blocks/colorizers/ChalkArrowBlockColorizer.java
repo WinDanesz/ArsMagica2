@@ -1,4 +1,4 @@
-package am2.client.items.colorizers;
+package am2.client.blocks.colorizers;
 
 import am2.common.blocks.tileentity.TileEntityChalkArrow;
 import net.minecraft.block.state.IBlockState;
