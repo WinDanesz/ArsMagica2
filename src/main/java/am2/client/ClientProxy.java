@@ -170,7 +170,7 @@ public class ClientProxy extends CommonProxy {
         // Essence Conduit uses JSON model now, no TESR needed
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGroundRuneSpell.class, new TileRuneRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChalkArrow.class, new TileChalkArrowRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEverstone.class, new TileEverstoneRenderer());
+        // Everstone uses getActualState() swap, no TESR needed
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityArcaneReconstructor.class, new TileArcaneReconstructorRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityArcaneDeconstructor.class, new TileArcaneDeconstructorRenderer());
         // Illusion block now uses IExtendedBlockState + IBakedModel — no TESR needed
