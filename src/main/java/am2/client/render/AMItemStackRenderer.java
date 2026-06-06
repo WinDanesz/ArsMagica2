@@ -4,12 +4,20 @@ import am2.common.blocks.BlockCrystalMarker;
 import am2.common.blocks.tileentity.*;
 import am2.common.registry.AMBlocks;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.math.BlockPos;
+import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +28,7 @@ public class AMItemStackRenderer extends TileEntityItemStackRenderer {
     private final Map<ItemData, RenderEntry> renderEntries = new HashMap<>();
 
     public AMItemStackRenderer() {
-        register(data(AMBlocks.crafting_altar), new TileEntityCraftingAltar(), 1.7F);
+        register(data(AMBlocks.crafting_altar), new TileEntityCraftingAltar());
         register(data(AMBlocks.celestial_prism), new TileEntityCelestialPrism(), 1.4F, 0.0D, -0.25D, 0.0D);
         register(data(AMBlocks.obelisk), new TileEntityObelisk(), 1.4F, 0.0D, -0.25D, 0.0D);
         register(data(AMBlocks.keystone_chest), new TileEntityKeystoneChest(), 1.7F);
@@ -30,7 +38,7 @@ public class AMItemStackRenderer extends TileEntityItemStackRenderer {
         register(data(AMBlocks.summoner), new TileEntitySummoner(), 1.7F);
         register(data(AMBlocks.astral_barrier), new TileEntityAstralBarrier(), 1.7F);
         for (int i = 0; i < BlockCrystalMarker.crystalMarkerTypes.length; ++i)
-            register(data(AMBlocks.crystal_marker, i), new TileEntityCrystalMarker(i), 3.1F);
+            register(data(AMBlocks.crystal_marker, i), new TileEntityCrystalMarker(i), 3.1F); // probably bad solution for TE not having defining data, but will do for now
     }
 
     private ItemData data(Block block) {
@@ -61,9 +69,31 @@ public class AMItemStackRenderer extends TileEntityItemStackRenderer {
         GlStateManager.pushMatrix();
         GlStateManager.pushAttrib();
         GlStateManager.translate(0.5F, 0.5F, 0.5F);
+
         if(entry.scale != 1.0F) {
             GlStateManager.scale(entry.scale, entry.scale, entry.scale);
         }
+
+        // render block that rendered by minecraft, not TESR
+        Block block = Block.getBlockFromItem(stack.getItem());
+        if(block != Blocks.AIR) {
+            IBlockState state = block.getDefaultState();
+            if(EnumBlockRenderType.MODEL == state.getRenderType()) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(-0.5F, -0.5F, -0.5F);
+                RenderHelper.disableStandardItemLighting();
+                BlockRendererDispatcher r = Minecraft.getMinecraft().getBlockRendererDispatcher();
+                IBakedModel model = r.getModelForState(state);
+                Tessellator t = Tessellator.getInstance();
+                BufferBuilder b = t.getBuffer();
+                b.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+                r.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().world, model, state, new BlockPos(0,0,0), b, true);
+                t.draw();
+                RenderHelper.enableStandardItemLighting();
+                GlStateManager.popMatrix();
+            }
+        }
+
         TileEntityRendererDispatcher.instance.render(entry.tileEntity, entry.x - 0.5D, entry.y - 0.5D, entry.z - 0.5D, partialTicks);
         GlStateManager.popAttrib();
         GlStateManager.popMatrix();

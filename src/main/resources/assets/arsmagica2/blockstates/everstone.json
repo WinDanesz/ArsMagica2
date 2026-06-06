@@ -1,8 +1,16 @@
 {
+	"forge_marker": 1,
+	"defaults": {
+		"model": "arsmagica2:everstone"
+	},
     "variants": {
-		"has_facade=false,is_solid=false": { "model": "arsmagica2:everstone"},
-		"has_facade=false,is_solid=true": { "model": "arsmagica2:everstone"},
- 		"has_facade=true,is_solid=false": { "model": "arsmagica2:everstone"},
- 		"has_facade=true,is_solid=true": { "model": "arsmagica2:everstone"}
+		"is_solid": {
+			"true":  {},
+			"false": {}
+		},
+		"mimic": {
+			"true":  {},
+			"false": {}
+		}
      }
 }
