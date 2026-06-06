@@ -13,6 +13,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -98,7 +99,7 @@ public class ParticleRenderer {
 
     @SubscribeEvent
     public void onTickEnd(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
+        if (event.phase == TickEvent.Phase.END && !Minecraft.getMinecraft().isGamePaused()) {
             updateParticles();
         }
     }
@@ -234,17 +235,12 @@ public class ParticleRenderer {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
-        GL11.glDisable(32826 /*GL_RESCALE_NORMAL_EXT*/);
-
-        //GL11.glRotatef(180F - RenderManager.instance.playerViewY, 0.0F, 1.0F, 0.0F);
-        //GL11.glRotatef(-RenderManager.instance.playerViewX, 1.0F, 0.0F, 0.0F);
+        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 
         Tessellator tessellator = Tessellator.getInstance();
-        tessellator.getBuffer().begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+        tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 
         for (Particle particle : particles) {
-            //tessellator.setBrightness(particle.getBrightnessForRender(partialTicks));
-            //LogHelper.info("Rendering");
             particle.renderParticle(tessellator.getBuffer(), Minecraft.getMinecraft().getRenderViewEntity(), partialTicks, rotationX, rotationXZ, rotationZ, rotationYZ, rotationXY);
         }
 
