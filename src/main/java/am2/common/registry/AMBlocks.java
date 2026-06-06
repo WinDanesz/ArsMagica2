@@ -4,6 +4,7 @@ import am2.ArsMagica;
 import am2.common.blocks.*;
 import am2.common.blocks.tileentity.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.util.ResourceLocation;
@@ -29,11 +30,11 @@ public final class AMBlocks {
     public static final Block invisible_light = placeholder();
     public static final Block invisible_utility = placeholder();
 
-    public static final Block vinteum_ore = new BlockAMOre();
-    public static final Block chimerite_ore = new BlockAMOre();
-    public static final Block blue_topaz_ore = new BlockAMOre();
-    public static final Block moonstone_ore = new BlockAMOre();
-    public static final Block sunstone_ore = new BlockAMOre();
+    public static final Block vinteum_ore = new BlockAMOre(); // redstone
+    public static final Block chimerite_ore = new BlockAMOre(1); // lapis
+    public static final Block blue_topaz_ore = new BlockAMOre(0); // quartz
+    public static final Block moonstone_ore = new BlockAMOre(); // space emerald
+    public static final Block sunstone_ore = new BlockAMOre(3).setHardness(25.0F).setResistance(1000.0F); // hell emerald
 
     public static final Block vinteum_block = placeholder();
     public static final Block chimerite_block = placeholder();
@@ -131,11 +132,11 @@ public final class AMBlocks {
         registerBlock(registry, "moonstone_ore", moonstone_ore);
         registerBlock(registry, "sunstone_ore", sunstone_ore);
 
-        registerBlock(registry, "vinteum_block", new BlockArsMagicaBlock());
-        registerBlock(registry, "chimerite_block", new BlockArsMagicaBlock());
-        registerBlock(registry, "blue_topaz_block", new BlockArsMagicaBlock());
-        registerBlock(registry, "moonstone_block", new BlockArsMagicaBlock());
-        registerBlock(registry, "sunstone_block", new BlockArsMagicaBlock());
+        registerBlock(registry, "vinteum_block", new BlockAM(Material.IRON, "pickaxe", 2).setHardness(5.0F).setResistance(10.0F).setSoundType(SoundType.METAL)); // redstone
+        registerBlock(registry, "chimerite_block", new BlockAM(Material.IRON, "pickaxe", 1).setHardness(5.0F).setResistance(10.0F).setSoundType(SoundType.STONE)); // lapis
+        registerBlock(registry, "blue_topaz_block", new BlockAM(Material.ROCK, "pickaxe", 0).setHardness(0.8F).setSoundType(SoundType.STONE)); // quartz
+        registerBlock(registry, "moonstone_block", new BlockAM(Material.IRON, "pickaxe", 2).setHardness(5.0F).setResistance(20.0F).setSoundType(SoundType.METAL)); // space emerald
+        registerBlock(registry, "sunstone_block", new BlockAM(Material.IRON, "pickaxe", 2).setHardness(5.0F).setResistance(20.0F).setSoundType(SoundType.METAL)); // hell emerald
         registerBlock(registry, "block_mage_light", new BlockMageLight());
 
         registerBlock(registry, "witchwood_sapling", new BlockWitchwoodSapling());
@@ -180,8 +181,8 @@ public final class AMBlocks {
         registerBlock(registry, "otherworld_aura", new BlockOtherworldAura());
         registerBlock(registry, "particle_emitter", new BlockParticleEmitter());
         registerBlock(registry, "summoner", new BlockSummoner());
-        registerBlock(registry, "ice_effigy", new BlockEffigy(Material.ICE));
-        registerBlock(registry, "lightning_effigy", new BlockEffigy(Material.IRON));
+        registerBlock(registry, "ice_effigy", new BlockEffigy(Material.ICE), true); // TODO ?
+        registerBlock(registry, "lightning_effigy", new BlockEffigy(Material.IRON), true); // TODO ?
         registerBlock(registry, "mana_drain", new BlockManaDrain());
         registerBlock(registry, "phase_shift", new BlockPhaseShift());
         registerBlock(registry, "redstone_inlay", new BlockInlay(BlockInlay.TYPE_REDSTONE));

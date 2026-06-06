@@ -1,0 +1,17 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "arsmagica2:vinteum_dust"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:vinteum_block",
+    "count": 1
+  }
+}

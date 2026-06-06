@@ -1,6 +1,8 @@
 package am2.common.blocks;
 
+import am2.common.registry.AMTabs;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -19,8 +21,9 @@ public class BlockAM extends Block {
         super(material);
     }
 
-    public BlockAM(Material blockMaterialIn, MapColor blockMapColorIn) {
-        super(blockMaterialIn, blockMapColorIn);
+    public BlockAM(Material material, String harvestTool, int harvestLevel) {
+        this(material);
+        setHarvestLevel(harvestTool, harvestLevel);
     }
 
     public BlockAM registerAndName(ResourceLocation rl) {
@@ -50,6 +53,22 @@ public class BlockAM extends Block {
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return blockAABB;
+    }
+
+    // remove protected
+    public BlockAM setSoundType(SoundType sound) {
+        super.setSoundType(sound);
+        return this;
+    }
+
+    public BlockAM setHardness(float hardness) {
+        super.setHardness(hardness);
+        return this;
+    }
+
+    public BlockAM setResistance(float resistance) {
+        super.setResistance(resistance);
+        return this;
     }
 
 }

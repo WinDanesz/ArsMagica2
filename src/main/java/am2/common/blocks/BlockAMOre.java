@@ -14,11 +14,14 @@ import java.util.Random;
 public class BlockAMOre extends BlockAM {
 
     public BlockAMOre() {
+        this(2);
+    }
+
+    public BlockAMOre(int harvestLevel) {
         super(Material.ROCK);
         setHardness(3.0F);
         setResistance(5.0F);
-        setHarvestLevel("pickaxe", 2);
-        setCreativeTab(AMTabs.AMBLOCKS);
+        setHarvestLevel("pickaxe", harvestLevel);
     }
 
     /**
