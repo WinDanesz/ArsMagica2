@@ -4,6 +4,7 @@ import am2.ArsMagica;
 import am2.client.particles.AMParticle;
 import am2.client.particles.ParticleFadeOut;
 import am2.client.particles.ParticleMoveOnHeading;
+import am2.common.registry.AMLecternBooks;
 import am2.network.AMNetworkHandler;
 import am2.network.packets.PacketLecternSync;
 import net.minecraft.block.state.IBlockState;
@@ -136,9 +137,11 @@ public class TileEntityLectern extends TileEntityEnchantmentTable implements ITi
     }
 
     public boolean setStack(ItemStack stack) {
-        if (!stack.isEmpty()) {
+        if (AMLecternBooks.isVaild(stack))
             stack.setCount(1);
-        }
+        else if(stack == null || stack.isEmpty())
+            stack = ItemStack.EMPTY;
+        else return false;
         this.stack = stack;
         markDirty();
         if (!this.world.isRemote) {

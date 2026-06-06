@@ -219,6 +219,7 @@ public class AMConfig extends Configuration {
     private final String KEY_ManaDrainRatio = "mana_drain_ratio";
     private final String KEY_SavePowerOnWorldSave = "save_power_on_world_save";
     private final String KEY_MagicResistExtraDamageTypes = "magic_resist_extra_damage_types";
+    public static final String KEY_LecternBooks = "lectern_books";
     private final String KEY_ObeliskExtraFuels = "obelisk_extra_fuels";
     private final String KEY_ExtraAltarCaps = "extra_altar_caps";
     private final String KEY_ExtraAltarMain = "extra_altar_main";
@@ -728,6 +729,7 @@ public class AMConfig extends Configuration {
     private boolean ebwizMageTomeDrop;
     private double manaDrainRatio;
     private java.util.Set<String> magicResistExtraDamageTypes;
+    private String[] lecternBooks;
     private String[] obeliskExtraFuels;
     private String[] extraAltarCaps;
     private String[] extraAltarMain;
@@ -1299,6 +1301,13 @@ public class AMConfig extends Configuration {
                         + "beyond sources that already call setMagicDamage(). "
                         + "Use this to cover mods that add spell damage without flagging it as magic. "
                         + "Example entry: \"taint\" for Thaumcraft taint damage.").getStringList()));
+        this.lecternBooks = this.get(CATEGORY_INTEGRATION, this.KEY_LecternBooks,
+                new String[] {},
+                "Additional books that can be placed onto Lectern. "
+                + "Format: modid:item. "
+                + "Example: minecraft:book"
+        ).getStringList();
+
         this.obeliskExtraFuels = this.get(CATEGORY_GENERAL, this.KEY_ObeliskExtraFuels,
                 new String[] { "ebwizardry:magic_crystal=300" },
                 "Additional items that can be used as obelisk fuel. "
@@ -2525,6 +2534,10 @@ public class AMConfig extends Configuration {
 
     public boolean getBurnoutHungerDepletion() {
         return this.burnoutHungerDepletion;
+    }
+
+    public String[] getLecternBooks() {
+        return this.lecternBooks;
     }
 
     public String[] getObeliskExtraFuels() {

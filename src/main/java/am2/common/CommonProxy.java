@@ -227,6 +227,7 @@ public class CommonProxy implements IGuiHandler {
     public void init() {
         NPCSpells.init();
         EBWizardryCompatBootstrap.registerBookshelfInit();
+        AMLecternBooks.init();
     }
 
     public void postInit() {
