@@ -31,14 +31,15 @@ public class TileEntityEverstone extends TileEntity implements ITickable {
 
     public void setFacade(IBlockState facade) {
         this.facade = facade;
-
+        IBlockState current = world.getBlockState(pos);
         if (!world.isRemote) {
             List<EntityPlayerMP> players = world.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(pos).expand(64, 64, 64));
             for (EntityPlayerMP player : players) {
                 player.connection.sendPacket(getUpdatePacket());
             }
+
         }
-        world.markAndNotifyBlock(pos, world.getChunk(pos), world.getBlockState(pos), world.getBlockState(pos), 3);
+        world.markAndNotifyBlock(pos, world.getChunk(pos), current, facade, 3);
     }
 
     private void propagatePoweredByEverstone(boolean powered, ArrayList<BlockPos> completedUpdates) {

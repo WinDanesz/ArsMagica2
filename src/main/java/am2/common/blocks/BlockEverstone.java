@@ -101,12 +101,12 @@ public class BlockEverstone extends BlockAMPowered {
         return 10000f;
     }
 
-    private TileEntityEverstone getTE(IBlockAccess world, BlockPos pos) {
+    private static TileEntityEverstone getTE(IBlockAccess world, BlockPos pos) {
         if (world == null)
             return null;
 
         TileEntity te = world.getTileEntity(pos);
-        if (te == null)
+        if (!(te instanceof TileEntityEverstone))
             return null;
 
         return (TileEntityEverstone) te;
@@ -155,7 +155,7 @@ public class BlockEverstone extends BlockAMPowered {
 
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
-        if (state.getValue(IS_SOLID) && !state.getValue(HAS_FACADE))
+        if (state.getValue(IS_SOLID))
             return EnumBlockRenderType.MODEL;
         return EnumBlockRenderType.INVISIBLE;
     }
@@ -258,8 +258,10 @@ public class BlockEverstone extends BlockAMPowered {
     }
 
     @Override
-    public boolean hasCustomBreakingProgress(IBlockState state) {
-        return true;
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        // bye bye TESR
+        TileEntityEverstone te = getTE(worldIn, pos);
+        return te.isSolid() && te.getFacade() != null ? te.getFacade() : state;
     }
 
 }
