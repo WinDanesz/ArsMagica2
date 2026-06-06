@@ -10,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockAM extends Block {
@@ -36,9 +37,19 @@ public class BlockAM extends Block {
         return new ItemStack(this, 1, getMetaFromState(state));
     }
 
-    protected AxisAlignedBB boundingBox = new AxisAlignedBB(0, 0, 0, 1, 1, 1);
+    protected AxisAlignedBB blockAABB = FULL_BLOCK_AABB;
 
-    public void setBlockBounds(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd) {
-        boundingBox = new AxisAlignedBB(xStart, yStart, zStart, xEnd, yEnd, zEnd);
+    public void setBoundingBox(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd) {
+        setBoundingBox(new AxisAlignedBB(xStart, yStart, zStart, xEnd, yEnd, zEnd));
     }
+
+    public void setBoundingBox(AxisAlignedBB boundingBox) {
+        this.blockAABB = boundingBox;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return blockAABB;
+    }
+
 }

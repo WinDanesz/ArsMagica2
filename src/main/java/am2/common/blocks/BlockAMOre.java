@@ -13,21 +13,13 @@ import java.util.Random;
 
 public class BlockAMOre extends BlockAM {
 
-    public static final PropertyEnum<EnumOreType> ORE_TYPE = PropertyEnum.create("ore_type", EnumOreType.class);
-
     public BlockAMOre() {
         super(Material.ROCK);
-        //  setDefaultState(blockState.getBaseState().withProperty(ORE_TYPE, EnumOreType.VINTEUM));
         setHardness(3.0F);
         setResistance(5.0F);
         setHarvestLevel("pickaxe", 2);
         setCreativeTab(AMTabs.AMBLOCKS);
     }
-
-//	@Override
-//	public BlockStateContainer createBlockState() {
-//		return new BlockStateContainer(this, BlockArsMagicaOre.ORE_TYPE);
-//	}
 
     /**
      * Chimerite drops 1-5 ores
@@ -45,18 +37,6 @@ public class BlockAMOre extends BlockAM {
         return amount;
     }
 
-    //	@Override
-//	public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-//		for (int i = 0; i < EnumOreType.values().length; i++) {
-//			items.add(new ItemStack(this, 1, i));
-//		}
-//	}
-
-    //	@Override
-//	public int getMetaFromState(IBlockState state) {
-//		return state.getValue(ORE_TYPE).ordinal();
-//	}
-//
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
         if (this == AMBlocks.blue_topaz_ore) {
@@ -70,27 +50,6 @@ public class BlockAMOre extends BlockAM {
         }
         return super.getItemDropped(state, rand, fortune);
     }
-
-//	@Override
-//	public int damageDropped(IBlockState state) {
-//		EnumOreType type = state.getValue(ORE_TYPE);
-//		if (type == EnumOreType.VINTEUM)
-//			return EnumOreType.VINTEUM.ordinal();
-//		if (type == EnumOreType.CHIMERITE)
-//			return ItemOre.META_CHIMERITE;
-//		if (type == EnumOreType.BLUETOPAZ)
-//			return ItemOre.META_BLUE_TOPAZ;
-//		if (type == EnumOreType.MOONSTONE)
-//			return ItemOre.META_MOONSTONE;
-//		if (type == EnumOreType.SUNSTONE)
-//			return ItemOre.META_SUNSTONE;
-//		return super.damageDropped(state);
-//	}
-
-//	@Override
-//	public IBlockState getStateFromMeta(int meta) {
-//		return getDefaultState().withProperty(ORE_TYPE, EnumOreType.values()[MathHelper.clamp(meta, 0, EnumOreType.values().length - 1)]);
-//	}
 
     public enum EnumOreType implements IStringSerializable {
         VINTEUM,

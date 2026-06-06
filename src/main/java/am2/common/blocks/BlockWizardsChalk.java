@@ -19,15 +19,10 @@ import java.util.List;
 public class BlockWizardsChalk extends BlockAMSpecialRender {
 
     public static final PropertyInteger VARIANT = PropertyInteger.create("variant", 0, 15);
-    public static final AxisAlignedBB AABB = new AxisAlignedBB(0, 0, 0, 1, 0.02f, 1);
 
     public BlockWizardsChalk() {
         super(Material.CIRCUITS);
-    }
-
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return AABB;
+        setBoundingBox(0.0F, 0.0F, 0.0F, 1.0F, 0.02F, 1.0F);
     }
 
     @Override
@@ -52,7 +47,7 @@ public class BlockWizardsChalk extends BlockAMSpecialRender {
 
     @Override
     public float getAmbientOcclusionLightValue(IBlockState state) {
-        return 1.0f;
+        return 1.0F;
     }
 
     @Override
