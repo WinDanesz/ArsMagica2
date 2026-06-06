@@ -1,14 +1,13 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model": "arsmagica2:scaledown",
+        "model": "arsmagica2:crafting_altar",
         "textures": { "particle": "arsmagica2:blocks/caster_rune_side" }
     },
     "variants": {
-        "normal": [{}],
         "mimic": {
             "true": {},
-            "false": {"model": "arsmagica2:crafting_altar"}
+            "false": {}
         }
     }
 }

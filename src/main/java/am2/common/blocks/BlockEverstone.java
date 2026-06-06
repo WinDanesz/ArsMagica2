@@ -35,19 +35,26 @@ import java.util.List;
 
 public class BlockEverstone extends BlockAMPowered {
 
-    public static final PropertyBool HAS_FACADE = PropertyBool.create("has_facade");
     public static final PropertyBool IS_SOLID = PropertyBool.create("is_solid");
+    public static final PropertyBool MIMIC = PropertyBool.create("mimic");
 
     public BlockEverstone() {
         super(Material.ROCK);
         setHardness(3.0f);
         setResistance(3.0f);
-        setDefaultState(blockState.getBaseState().withProperty(HAS_FACADE, false).withProperty(IS_SOLID, true));
+        setDefaultState(blockState.getBaseState().withProperty(MIMIC, false).withProperty(IS_SOLID, true));
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, HAS_FACADE, IS_SOLID);
+        return new BlockStateContainer(this, MIMIC, IS_SOLID);
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        // bye bye TESR
+        TileEntityEverstone te = getTileEntity(worldIn, pos);
+        return te.isSolid() && te.getMimicState() != null ? te.getMimicState() : state;
     }
 
     @Override
@@ -68,8 +75,8 @@ public class BlockEverstone extends BlockAMPowered {
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
                                    boolean willHarvest) {
-        TileEntityEverstone everstone = getTE(world, pos);
-        if (everstone == null) {
+        TileEntityEverstone te = getTileEntity(world, pos);
+        if (te == null) {
             if (player.capabilities.isCreativeMode) {
                 world.setTileEntity(pos, null);
                 world.setBlockToAir(pos);
@@ -77,13 +84,12 @@ public class BlockEverstone extends BlockAMPowered {
             }
             return false;
         }
-        if (!player.capabilities.isCreativeMode)
-            everstone.onBreak();
         if (player.capabilities.isCreativeMode) {
             world.setTileEntity(pos, null);
             world.setBlockToAir(pos);
             return true;
         }
+        te.onBreak();
         return false;
     }
 
@@ -94,22 +100,11 @@ public class BlockEverstone extends BlockAMPowered {
 
     @Override
     public float getExplosionResistance(World world, BlockPos pos, Entity exploder, Explosion explosion) {
-        TileEntityEverstone everstone = getTE(world, pos);
-        if (everstone != null) {
-            everstone.onBreak();
+        TileEntityEverstone te = getTileEntity(world, pos);
+        if (te != null) {
+            te.onBreak();
         }
         return 10000f;
-    }
-
-    private static TileEntityEverstone getTE(IBlockAccess world, BlockPos pos) {
-        if (world == null)
-            return null;
-
-        TileEntity te = world.getTileEntity(pos);
-        if (!(te instanceof TileEntityEverstone))
-            return null;
-
-        return (TileEntityEverstone) te;
     }
 
     @SuppressWarnings("deprecation")
@@ -118,13 +113,13 @@ public class BlockEverstone extends BlockAMPowered {
                                     EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (player.getHeldItemMainhand() != null) {
             IBlockState block = null;
-            TileEntityEverstone everstone = getTE(world, pos);
-            if (everstone == null) return false;
+            TileEntityEverstone te = getTileEntity(world, pos);
+            if (te == null) return false;
 
             if (player.getHeldItemMainhand().getItem() == AMItems.crystal_wrench) {
                 if (!world.isRemote) {
-                    if (everstone.getFacade() != null) {
-                        everstone.setFacade(null);
+                    if (te.getMimicState() != null) {
+                        te.setMimicState(null);
                         return true;
                     } else {
                         world.setBlockToAir(pos);
@@ -139,8 +134,8 @@ public class BlockEverstone extends BlockAMPowered {
                 ItemBlock itemblock = (ItemBlock) player.getHeldItemMainhand().getItem();
                 block = itemblock.getBlock().getStateFromMeta(player.getHeldItemMainhand().getItemDamage());
             }
-            if (everstone.getFacade() == null && block != null) {
-                everstone.setFacade(block);
+            if (te.getMimicState() == null && block != null) {
+                te.setMimicState(block);
                 //world.notifyBlockOfStateChange(pos, this); todo
                 return true;
             }
@@ -163,7 +158,7 @@ public class BlockEverstone extends BlockAMPowered {
     @Nullable
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        TileEntityEverstone everstone = getTE(worldIn, pos);
+        TileEntityEverstone everstone = getTileEntity(worldIn, pos);
         if (everstone == null || everstone.isSolid())
             return super.getCollisionBoundingBox(blockState, worldIn, pos);
         return NULL_AABB;
@@ -172,7 +167,7 @@ public class BlockEverstone extends BlockAMPowered {
     @SuppressWarnings("deprecation")
     @Override
     public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
-        TileEntityEverstone everstone = getTE(worldIn, pos);
+        TileEntityEverstone everstone = getTileEntity(worldIn, pos);
         if (everstone == null || everstone.isSolid())
             return super.getSelectedBoundingBox(state, worldIn, pos);
         return new AxisAlignedBB(0, 0, 0, 0, 0, 0);
@@ -180,7 +175,7 @@ public class BlockEverstone extends BlockAMPowered {
 
     @Override
     public RayTraceResult collisionRayTrace(IBlockState blockStateIn, World worldIn, BlockPos pos, Vec3d start, Vec3d end) {
-        TileEntityEverstone everstone = getTE(worldIn, pos);
+        TileEntityEverstone everstone = getTileEntity(worldIn, pos);
         if (everstone != null && !everstone.isSolid()) {
             return null;
         }
@@ -189,7 +184,7 @@ public class BlockEverstone extends BlockAMPowered {
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        TileEntityEverstone everstone = getTE(source, pos);
+        TileEntityEverstone everstone = getTileEntity(source, pos);
         if (everstone == null || everstone.isSolid())
             return super.getBoundingBox(state, source, pos);
         return FULL_BLOCK_AABB;
@@ -197,16 +192,16 @@ public class BlockEverstone extends BlockAMPowered {
 
     @Override
     public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntityEverstone everstone = getTE(world, pos);
+        TileEntityEverstone everstone = getTileEntity(world, pos);
         if (everstone == null) return true;
         return everstone.isSolid();
     }
 
     @Override
     public float getBlockHardness(IBlockState blockState, World worldIn, BlockPos pos) {
-        TileEntityEverstone everstone = getTE(worldIn, pos);
-        if (everstone == null) return this.blockHardness;
-        IBlockState block = everstone.getFacade();
+        TileEntityEverstone te = getTileEntity(worldIn, pos);
+        if (te == null) return this.blockHardness;
+        IBlockState block = te.getMimicState();
         if (block == null || block == this) return this.blockHardness;
         return block.getBlockHardness(worldIn, pos);
     }
@@ -214,54 +209,58 @@ public class BlockEverstone extends BlockAMPowered {
     @Override
     @SideOnly(Side.CLIENT)
     public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager) {
-
-        TileEntityEverstone everstone = getTE(world, pos);
-
+        TileEntityEverstone te = getTileEntity(world, pos);
         for (int i = 0; i < 5 * ArsMagica.config.getGFXLevel(); ++i) {
             IBlockState block;
-            if (everstone == null || everstone.getFacade() == null) {
+            if (te == null || te.getMimicState() == null) {
                 block = this.getDefaultState();
             } else {
-                block = everstone.getFacade();
+                block = te.getMimicState();
                 if (block == null) block = this.getDefaultState();
             }
 
-            manager.addEffect(new ParticleDigging.Factory().createParticle(0, world,
+            manager.addEffect(new ParticleDigging.Factory().createParticle(
+                    0, world,
                     pos.getX() + world.rand.nextDouble(),
                     pos.getY() + world.rand.nextDouble(),
-                    pos.getZ() + world.rand.nextDouble(), 0, 0, 0, Block.getStateId(block)));
+                    pos.getZ() + world.rand.nextDouble(),
+                    0, 0, 0, Block.getStateId(block))
+            );
         }
 
         return true;
     }
 
-
     @Override
     @SideOnly(Side.CLIENT)
     public boolean addHitEffects(IBlockState state, World world, RayTraceResult target, ParticleManager manager) {
-        TileEntityEverstone everstone = getTE(world, target.getBlockPos());
+        TileEntityEverstone te = getTileEntity(world, target.getBlockPos());
         IBlockState block;
-        if (everstone == null || everstone.getFacade() == null) {
+        if (te == null || te.getMimicState() == null) {
             block = this.getDefaultState();
-        } else {
-            block = everstone.getFacade();
+        }
+        else {
+            block = te.getMimicState();
             if (block == null) block = this.getDefaultState();
         }
-
 
         manager.addEffect(new ParticleDigging.Factory().createParticle(0, world,
                 target.getBlockPos().getX() + world.rand.nextDouble(),
                 target.getBlockPos().getY() + world.rand.nextDouble(),
                 target.getBlockPos().getZ() + world.rand.nextDouble(), 0, 0, 0, Block.getStateId(block)));
-
         return true;
     }
 
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        // bye bye TESR
-        TileEntityEverstone te = getTE(worldIn, pos);
-        return te.isSolid() && te.getFacade() != null ? te.getFacade() : state;
+
+    public static TileEntityEverstone getTileEntity(IBlockAccess world, BlockPos pos) {
+        if (world == null)
+            return null;
+
+        TileEntity te = world.getTileEntity(pos);
+        if (!(te instanceof TileEntityEverstone))
+            return null;
+
+        return (TileEntityEverstone) te;
     }
 
 }

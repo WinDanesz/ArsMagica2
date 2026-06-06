@@ -157,6 +157,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void registerRenderers() {
+        // Altar uses JSON model for base, TESR for rune overlay
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCraftingAltar.class, new TileCraftingAltarRenderer());
         // Obelisk uses JSON model for base, TESR for animated runes overlay when active
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityObelisk.class, new TileObeliskRenderer());

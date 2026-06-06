@@ -35,23 +35,19 @@ public class BlockCraftingAltar extends BlockAMPowered {
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        TileEntity te = worldIn.getTileEntity(pos);
-        boolean mimic = false;
-        if (te instanceof TileEntityCraftingAltar) {
-            TileEntityCraftingAltar altar = (TileEntityCraftingAltar) te;
-            mimic = altar.isStructureValid() && altar.getMimicState() != null;
-        }
-        return state.withProperty(MIMIC, mimic);
+        // bye bye TESR
+        TileEntityCraftingAltar te = getTileEntity(worldIn, pos);
+        return te != null &&  te.isStructureValid() && te.getMimicState() != null ? te.getMimicState() : state;
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(MIMIC) ? 1 : 0;
+        return 0;
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(MIMIC, meta > 0);
+        return getDefaultState();
     }
 
     @Override
@@ -62,14 +58,9 @@ public class BlockCraftingAltar extends BlockAMPowered {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!worldIn.isRemote) {
-            TileEntity te = worldIn.getTileEntity(pos);
-            if (te instanceof TileEntityCraftingAltar) {
-                boolean valid = ((TileEntityCraftingAltar) te).isStructureValid();
-                if (valid) {
-                    playerIn.sendStatusMessage(new TextComponentTranslation("am2.tooltip.altarStructureValid"), true);
-                } else {
-                    playerIn.sendStatusMessage(new TextComponentTranslation("am2.tooltip.altarStructureInvalid"), true);
-                }
+            TileEntityCraftingAltar te = getTileEntity(worldIn, pos);
+            if (te != null) {
+                playerIn.sendStatusMessage(new TextComponentTranslation(te.isStructureValid() ? "am2.tooltip.altarStructureValid" : "am2.tooltip.altarStructureInvalid"), true);
             }
         }
         return super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
@@ -84,7 +75,7 @@ public class BlockCraftingAltar extends BlockAMPowered {
 
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+        return EnumBlockRenderType.MODEL;
     }
 
     @Override
@@ -93,11 +84,9 @@ public class BlockCraftingAltar extends BlockAMPowered {
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos,
-                                        EnumFacing side) {
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
         return true;
     }
-
 
     @Override
     public boolean isOpaqueCube(IBlockState state) {
@@ -120,18 +109,20 @@ public class BlockCraftingAltar extends BlockAMPowered {
     }
 
     @Override
-    public boolean isBlockNormalCube(IBlockState state) {
-        return true;
-    }
-
-    @Override
     public boolean isNormalCube(IBlockState state) {
         return true;
     }
 
-    @Override
-    public boolean hasCustomBreakingProgress(IBlockState state) {
-        return true;
+    public static TileEntityCraftingAltar getTileEntity(IBlockAccess world, BlockPos pos) {
+        if (world == null)
+            return null;
+
+        TileEntity te = world.getTileEntity(pos);
+        if (!(te instanceof TileEntityCraftingAltar))
+            return null;
+
+        return (TileEntityCraftingAltar) te;
     }
+
 
 }

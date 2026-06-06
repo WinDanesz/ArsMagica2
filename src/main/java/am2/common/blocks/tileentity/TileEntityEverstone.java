@@ -23,14 +23,14 @@ import java.util.List;
 public class TileEntityEverstone extends TileEntity implements ITickable {
 
     private int reconstructTimer = 0;
-    private IBlockState facade = null;
+    private IBlockState mimicState = null;
     private static final int reconstructMax = ArsMagica.config.getEverstoneRepairRate();
 
     private boolean poweredFromEverstone = false;
     private boolean poweredFromRedstone = false;
 
-    public void setFacade(IBlockState facade) {
-        this.facade = facade;
+    public void setMimicState(IBlockState mimicState) {
+        this.mimicState = mimicState;
         IBlockState current = world.getBlockState(pos);
         if (!world.isRemote) {
             List<EntityPlayerMP> players = world.getEntitiesWithinAABB(EntityPlayerMP.class, new AxisAlignedBB(pos).expand(64, 64, 64));
@@ -39,7 +39,7 @@ public class TileEntityEverstone extends TileEntity implements ITickable {
             }
 
         }
-        world.markAndNotifyBlock(pos, world.getChunk(pos), current, facade, 3);
+        world.markAndNotifyBlock(pos, world.getChunk(pos), current, mimicState, 3);
     }
 
     private void propagatePoweredByEverstone(boolean powered, ArrayList<BlockPos> completedUpdates) {
@@ -92,7 +92,7 @@ public class TileEntityEverstone extends TileEntity implements ITickable {
         }
 
         world.markAndNotifyBlock(pos, world.getChunk(pos), world.getBlockState(pos), world.getBlockState(pos), 3);
-        world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockEverstone.HAS_FACADE, getFacade() != null).withProperty(BlockEverstone.IS_SOLID, isSolid()), 2);
+        world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockEverstone.MIMIC, getMimicState() != null).withProperty(BlockEverstone.IS_SOLID, isSolid()), 2);
         if (reconstructTimer <= 0)
             return;
 
@@ -102,7 +102,7 @@ public class TileEntityEverstone extends TileEntity implements ITickable {
                 //world.scheduleBlockUpdateWithPriority(xCoord, yCoord, zCoord, BlocksCommonProxy.everstone.blockID, 0, 0);
                 world.markAndNotifyBlock(pos, world.getChunk(pos), world.getBlockState(pos), world.getBlockState(pos), 3);
                 if (reconstructTimer < reconstructMax - 20 && reconstructTimer > 20 && world.rand.nextInt(10) < 8) {
-                    ArsMagica.proxy.addDigParticle(world, pos, getFacade() == null ? AMBlocks.everstone.getDefaultState() : getFacade());
+                    ArsMagica.proxy.addDigParticle(world, pos, getMimicState() == null ? AMBlocks.everstone.getDefaultState() : getMimicState());
                 }
             }
         }
@@ -115,8 +115,8 @@ public class TileEntityEverstone extends TileEntity implements ITickable {
         return (int) (128 * ((float) (reconstructMax - reconstructTimer) / reconstructMax));
     }
 
-    public IBlockState getFacade() {
-        return facade;
+    public IBlockState getMimicState() {
+        return mimicState;
     }
 
     public boolean isSolid() {
@@ -147,7 +147,7 @@ public class TileEntityEverstone extends TileEntity implements ITickable {
     public void readFromNBT(NBTTagCompound par1nbtTagCompound) {
         super.readFromNBT(par1nbtTagCompound);
         if (par1nbtTagCompound.hasKey("facade")) {
-            this.facade = Block.getStateById(par1nbtTagCompound.getInteger("facade"));
+            this.mimicState = Block.getStateById(par1nbtTagCompound.getInteger("facade"));
         }
         this.poweredFromEverstone = par1nbtTagCompound.getBoolean("poweredFromEverstone");
         this.poweredFromRedstone = par1nbtTagCompound.getBoolean("poweredFromRedstone");
@@ -157,8 +157,8 @@ public class TileEntityEverstone extends TileEntity implements ITickable {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound par1nbtTagCompound) {
         super.writeToNBT(par1nbtTagCompound);
-        if (facade != null) {
-            par1nbtTagCompound.setInteger("facade", Block.getStateId(facade));
+        if (mimicState != null) {
+            par1nbtTagCompound.setInteger("facade", Block.getStateId(mimicState));
         }
         par1nbtTagCompound.setBoolean("poweredFromEverstone", poweredFromEverstone);
         par1nbtTagCompound.setBoolean("poweredFromRedstone", poweredFromRedstone);
