@@ -49,12 +49,12 @@ import java.util.Random;
 public class BlockInvisibleUtility extends BlockAM {
 
     public static final PropertyEnum<EnumInvisibleType> TYPE = PropertyEnum.create("type", EnumInvisibleType.class);
-    public static final AxisAlignedBB AABB = new AxisAlignedBB(0, 0, 0, 0.01f, 0.01f, 0.01f);
 
     public BlockInvisibleUtility() {
         super(Material.GLASS);
         this.setTickRandomly(true);
         this.setDefaultState(blockState.getBaseState().withProperty(TYPE, EnumInvisibleType.LOW_ILLUMINATED));
+        setBoundingBox(0, 0, 0, 0.01f, 0.01f, 0.01f);
     }
 
 
@@ -66,7 +66,7 @@ public class BlockInvisibleUtility extends BlockAM {
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         // Light blocks have no bounding box, collision blocks have full block bounds
-        return getType(state).type == EnumType.LIGHT ? AABB : FULL_BLOCK_AABB;
+        return getType(state).type == EnumType.LIGHT ? blockAABB : FULL_BLOCK_AABB;
     }
 
     @Override

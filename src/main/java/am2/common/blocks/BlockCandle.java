@@ -21,22 +21,11 @@ import java.util.Random;
 
 public class BlockCandle extends BlockAMSpecialRender {
 
-    public static final AxisAlignedBB AABB = new AxisAlignedBB(0.35f, 0f, 0.35f, 0.65f, 0.45f, 0.65f);
-
     public BlockCandle() {
         super(Material.WOOD);
         this.setHardness(1.0f);
         this.setResistance(1.0f);
-    }
-
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return AABB;
-    }
-
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        return AABB;
+        setBoundingBox(0.35f, 0f, 0.35f, 0.65f, 0.45f, 0.65f);
     }
 
     @Override

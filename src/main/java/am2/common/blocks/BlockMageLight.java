@@ -4,11 +4,14 @@ import am2.ArsMagica;
 import am2.client.particles.AMParticle;
 import am2.client.particles.ParticleFloatUpward;
 import am2.client.particles.ParticleGrow;
+import am2.client.particles.ParticleOrbitPoint;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -18,9 +21,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nullable;
@@ -29,85 +34,59 @@ import java.util.Random;
 
 public class BlockMageLight extends BlockAMSpecialRender {
 
-    public static final AxisAlignedBB AABB = new AxisAlignedBB(0.35f, 0.35f, 0.35f, 0.65f, 0.65f, 0.65f);
-    public static final PropertyEnum<EnumDyeColor> COLOR = PropertyEnum.<EnumDyeColor>create("color", EnumDyeColor.class);
-    private int color = 0xFFFFFF;
+    public static final PropertyEnum<EnumDyeColor> COLOR = PropertyEnum.create("color", EnumDyeColor.class);
 
     public BlockMageLight() {
         super(Material.CIRCUITS);
         this.setDefaultState(blockState.getBaseState().withProperty(COLOR, EnumDyeColor.WHITE));
-        //setBlockBounds(0.35f, 0.35f, 0.35f, 0.65f, 0.65f, 0.65f);
+        setBoundingBox(0.35f, 0.35f, 0.35f, 0.65f, 0.65f, 0.65f);
         this.setTickRandomly(true);
     }
 
-    @Override
-    public int tickRate(World par1World) {
-        return 20 - 5 * ArsMagica.config.getGFXLevel();
-    }
-
-    private void getRGBcolor(EnumDyeColor dye) {
-        switch (dye) {
-            case BLACK:
-                color = 0x191919;
-                break;
-            case RED:
-                color = 0x993333;
-                break;
-            case GREEN:
-                color = 0x667F33;
-                break;
-            case BROWN:
-                color = 0x664C33;
-                break;
-            case BLUE:
-                color = 0x334CB2;
-                break;
-            case PURPLE:
-                color = 0x7F3FB2;
-                break;
-            case CYAN:
-                color = 0x4C7F99;
-                break;
-            case SILVER:
-                color = 0x999999;
-                break;
-            case GRAY:
-                color = 0x4C4C4C;
-                break;
-            case PINK:
-                color = 0xF27FA5;
-                break;
-            case LIME:
-                color = 0x7FCC19;
-                break;
-            case YELLOW:
-                color = 0xE5E533;
-                break;
-            case LIGHT_BLUE:
-                color = 0x6699D8;
-                break;
-            case MAGENTA:
-                color = 0xB24CD8;
-                break;
-            case ORANGE:
-                color = 0xD87F33;
-                break;
-            default:
-                color = 0xFFFFFF;
-                break;
+    private EnumDyeColor getEnumDyeColorFromItemStack(ItemStack stack) {
+        if (stack.getItem() == Items.DYE) {
+            return EnumDyeColor.byMetadata(stack.getMetadata());
         }
+        int[] ids = OreDictionary.getOreIDs(stack);
+        for (int id : ids) {
+            List<ItemStack> ores = OreDictionary.getOres(OreDictionary.getOreName(id));
+            for (ItemStack s : ores) {
+                if (s.getItem() == Items.DYE) {
+                    return EnumDyeColor.byDyeDamage(s.getMetadata());
+                }
+            }
+        }
+        return null;
     }
 
     @Override
     public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
-        AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(worldIn, "sparkle", pos.getX() + 0.5 + (rand.nextDouble() * 0.2f - 0.1f), pos.getY() + 0.5, pos.getZ() + 0.5 + (rand.nextDouble() * 0.2f - 0.1f));
-        if (particle != null) {
-            particle.setIgnoreMaxAge(false);
-            particle.setMaxAge(10 + rand.nextInt(20));
-            particle.AddParticleController(new ParticleFloatUpward(particle, 0f, -0.01f, 1, false));
-            particle.AddParticleController(new ParticleGrow(particle, -0.005f, 1, false));
-            getRGBcolor(stateIn.getValue(COLOR));
-            particle.setRGBColorI(color);
+        if(!worldIn.isRemote) return;
+        AxisAlignedBB hitbox = getBoundingBox(stateIn, worldIn, pos);
+        int color = stateIn.getValue(COLOR).getColorValue();
+        final float speed = 0.01F;
+        for(int i = 0; i < 2 * ArsMagica.config.getGFXLevel(); ++i) {
+            double ry = rand.nextDouble();
+            double dx = (hitbox.maxX - hitbox.minX) * rand.nextDouble();
+            double dz = (hitbox.maxZ - hitbox.minZ) * rand.nextDouble();
+            double dy = (hitbox.maxY - hitbox.minY) * (1 - ry * ry);
+            float scale = 0.05F + 0.25F * rand.nextFloat();
+            int age = MathHelper.ceil(dy / speed);
+            AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(
+                    worldIn,
+                    "sparkle",
+                    pos.getX() + hitbox.minX + dx,
+                    pos.getY() + hitbox.minY + dy,
+                    pos.getZ() + hitbox.minZ + dz
+            );
+            if (particle != null) {
+                particle.setIgnoreMaxAge(false);
+                particle.setMaxAge(age);
+                particle.setParticleScale(scale);
+                particle.AddParticleController(new ParticleFloatUpward(particle, 0f, -speed, 1, false));
+                particle.AddParticleController(new ParticleGrow(particle, -scale * speed, 1, false));
+                particle.setRGBColorI(color);
+            }
         }
     }
 
@@ -116,26 +95,18 @@ public class BlockMageLight extends BlockAMSpecialRender {
         return EnumBlockRenderType.INVISIBLE;
     }
 
-
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
                                     EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        ItemStack heldItem = player.getHeldItem(hand);
-
-        if (!world.isRemote && heldItem != null) {
-
-            int[] ids = OreDictionary.getOreIDs(heldItem);
-            for (int id : ids) {
-                List<ItemStack> ores = OreDictionary.getOres(OreDictionary.getOreName(id));
-                for (ItemStack stack : ores) {
-                    if (stack.getItem() == Items.DYE) {
-                        //world.setBlockMetadataWithNotify(pos, heldItem.getItemDamage() % 15, 2);
-                        break;
-                    }
-                }
+        ItemStack stack = player.getHeldItem(hand);
+        if (!world.isRemote && stack != null && !stack.isEmpty()) {
+            EnumDyeColor dye = getEnumDyeColorFromItemStack(stack);
+            if(dye != null) {
+                world.setBlockState(pos, state.withProperty(COLOR, EnumDyeColor.byDyeDamage(dye.getMetadata())), 3);
+//                stack.splitStack(1);
+//                player.inventory.markDirty();
             }
         }
-
         return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 
@@ -145,20 +116,21 @@ public class BlockMageLight extends BlockAMSpecialRender {
     }
 
     @Override
+    public int getPackedLightmapCoords(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return super.getPackedLightmapCoords(state, source, pos);
+    }
+
+    @Override
     public int quantityDropped(Random random) {
         return 0;
     }
 
+    public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(-0.2, -0.2, -0.2, 0.2, 0.2, 0.2);
+
     @Nullable
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        // TODO Auto-generated method stub
-        return new AxisAlignedBB(-0.2, -0.2, -0.2, 0.2, 0.2, 0.2);
-    }
-
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return AABB;
+        return COLLISION_AABB;
     }
 
     @Override
@@ -185,4 +157,25 @@ public class BlockMageLight extends BlockAMSpecialRender {
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(COLOR, EnumDyeColor.byMetadata(meta));
     }
+
+    @Override
+    public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager) {
+        return true; // disable particles
+    }
+
+    @Override
+    public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, ParticleManager manager) {
+        return true; // disable particles
+    }
+
+    @Override
+    public boolean addLandingEffects(IBlockState state, WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
+        return true; // disable particles
+    }
+
+    @Override
+    public boolean addRunningEffects(IBlockState state, World world, BlockPos pos, Entity entity) {
+        return true; // disable particles
+    }
+
 }
