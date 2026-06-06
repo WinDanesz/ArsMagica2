@@ -1,0 +1,17 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "arsmagica2:blue_topaz"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:blue_topaz_block",
+    "count": 1
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "arsmagica2:sunstone"
+    }
+  },
+  "result": {
+    "item": "arsmagica2:sunstone_block",
+    "count": 1
+  }
+}

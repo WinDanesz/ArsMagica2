@@ -1,0 +1,12 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "item": "arsmagica2:blue_topaz_block"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:blue_topaz",
+    "count": 9
+  }
+}

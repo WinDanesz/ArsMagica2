@@ -1,0 +1,12 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "item": "arsmagica2:vinteum_block"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:vinteum_dust",
+    "count": 9
+  }
+}
