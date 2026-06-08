@@ -15,6 +15,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
@@ -54,7 +55,7 @@ public class EntityFlyingBook extends Entity {
 
 	public EntityFlyingBook(World worldIn) {
 		super(worldIn);
-		this.setSize(0.25f, 0.25f);
+		this.setSize(0.25f, 0.5f);
 		this.noClip = true;
 	}
 
@@ -122,7 +123,7 @@ public class EntityFlyingBook extends Entity {
 		}
 
 		// Client-side particles
-		if (this.world.isRemote) {
+		if (this.world.isRemote && !ArsMagica.config.NoGFX()) {
 			spawnFlightParticles();
 		}
 	}
@@ -287,46 +288,55 @@ public class EntityFlyingBook extends Entity {
 				particle.AddParticleController(new am2.client.particles.ParticleFloatUpward(
 						particle, 0, 0.02f, 1, false));
 			}
+			return;
 		}
-
+		int gfx = ArsMagica.config.getGFXLevel();
 		if (phase == PHASE_ENCHANTING) {
 			// Spawn white sparkle particles streaming from pool surface up to the book
 			float poolRadius = getPoolRadius();
 			double surfaceY = getTargetY() - 0.5; // liquid surface level
-			for (int i = 0; i < 3; i++) {
-				double angle = this.world.rand.nextDouble() * Math.PI * 2;
-				double dist = this.world.rand.nextDouble() * poolRadius;
-				double px = this.posX + Math.cos(angle) * dist;
-				double py = surfaceY + this.world.rand.nextDouble() * 0.3;
-				double pz = this.posZ + Math.sin(angle) * dist;
+			final float itemRadius = 0.15F;
 
-				am2.client.particles.AMParticle sparkle = (am2.client.particles.AMParticle)
-						ArsMagica.proxy.particleManager.spawn(this.world, "sparkle2", px, py, pz);
+			for (int i = 0; i < 4 * gfx; i++) {
+				float angle = 2F * this.world.rand.nextFloat() * (float)Math.PI;
+				float ex = MathHelper.cos(angle);
+				float ez = MathHelper.sin(angle);
+				float dist = (0.2F + 0.8F * this.world.rand.nextFloat()) * poolRadius;
+
+				double px = this.posX + ex * dist;
+				double pz = this.posZ + ez * dist;
+				double py = surfaceY + this.world.rand.nextDouble() * 0.1;
+
+				am2.client.particles.AMParticle sparkle = (am2.client.particles.AMParticle)  ArsMagica.proxy.particleManager.spawn(this.world, "sparkle2", px, py, pz);
 				if (sparkle != null) {
 					sparkle.setIgnoreMaxAge(true);
-					sparkle.setRGBColorF(1.0f, 1.0f, 1.0f);
-					sparkle.setRandomScale(0.02f, 0.06f);
+					sparkle.setRGBColorF(1.0F, 1.0F, 1.0F);
+					sparkle.setRandomScale(0.02F, 0.06F);
 					sparkle.AddParticleController(new am2.client.particles.ParticleApproachPoint(
-							sparkle, this.posX, this.posY, this.posZ, 0.04f, 0.15f, 1, false)
+							sparkle, this.posX + ex * itemRadius, this.posY + 0.25 + 0.25 * rand.nextDouble(), this.posZ + ez * itemRadius,
+							0.04F, itemRadius, 1, false)
 							.setKillParticleOnFinish(true));
 				}
 			}
+			return;
 		}
 
 		if (phase == PHASE_TRANSFORMING && this.ticksExisted % 2 == 0) {
 			// Burst of arcane symbols during the brief transform
-			double offsetX = (this.world.rand.nextDouble() - 0.5) * 0.5;
-			double offsetY = (this.world.rand.nextDouble() - 0.5) * 0.5;
-			double offsetZ = (this.world.rand.nextDouble() - 0.5) * 0.5;
+			for (int i = 0; i < gfx; i++) {
+				double offsetX = -1.0 + 2.0 * this.world.rand.nextDouble();
+				double offsetZ = -1.0 + 2.0 * this.world.rand.nextDouble();
+				double offsetY = -0.25 + this.world.rand.nextDouble();
 
-			am2.client.particles.AMParticle particle = (am2.client.particles.AMParticle)
-					ArsMagica.proxy.particleManager.spawn(this.world, "symbols",
-							this.posX + offsetX, this.posY + offsetY, this.posZ + offsetZ);
-			if (particle != null) {
-				particle.setIgnoreMaxAge(true);
-				particle.AddParticleController(new am2.client.particles.ParticleApproachEntity(
-						particle, this, 0.03f, 0.05f, 1, false).setKillParticleOnFinish(true));
-				particle.setRandomScale(0.05f, 0.12f);
+				am2.client.particles.AMParticle particle = (am2.client.particles.AMParticle)
+						ArsMagica.proxy.particleManager.spawn(this.world, "symbols",
+								this.posX + offsetX, this.posY + 0.5 * height + offsetY, this.posZ + offsetZ);
+				if (particle != null) {
+					particle.setIgnoreMaxAge(true);
+					particle.AddParticleController(new am2.client.particles.ParticleApproachEntity(
+							particle, this, 0.03f, 0.05f, 1, false).setKillParticleOnFinish(true));
+					particle.setRandomScale(0.05f, 0.12f);
+				}
 			}
 		}
 	}
