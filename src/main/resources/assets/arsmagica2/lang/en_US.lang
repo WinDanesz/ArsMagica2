@@ -201,7 +201,6 @@ item.arsmagica2\:bound_sword.name=Bound Sword
 item.arsmagica2\:bound_bow.name=Bound Bow
 item.arsmagica2\:bound_shield.name=Bound Shield
 item.arsmagica2\:flickerJar.name=%s Flicker Jar
-item.arsmagica2\:spell_component.name=Spell Component
 
 #Block Names
 tile.arsmagica2\:frost.name=Frost
@@ -334,6 +333,7 @@ key.am2.dark_vision=Toggle Dark Vision
 key.am2.spellbooknext=Next Spell
 key.am2.spellbookprev=Previous Spell
 key.am2.charmcast=Cast from Charm Slot
+skill.arsmagica2\:none.name=None
 skill.arsmagica2\:manaregen1.name=Mana Regen I
 skill.arsmagica2\:manaregen2.name=Mana Regen II
 skill.arsmagica2\:manaregen3.name=Mana Regen III

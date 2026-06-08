@@ -6,11 +6,14 @@ import am2.api.skill.SkillPoint;
 import am2.common.compat.ancientspellcraft.AncientSpellcraftCompatBootstrap;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.compat.potioncore.PotioncoreCompatBootstrap;
+import am2.common.items.ItemSpellComponent;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
@@ -345,7 +348,7 @@ public class AMSkills {
         registry.register(new Skill("channel", getShapeTexture("channel"), SkillPoint.GREEN_SKILL_POINT, 275, 345, SkillTrees.TREE_UTILITY, "arsmagica2:attract", "arsmagica2:telekinesis"));
         registry.register(new Skill("toggle", getShapeTexture("toggle"), SkillPoint.RED_SKILL_POINT, 315, 345, SkillTrees.TREE_UTILITY, "arsmagica2:channel"));
         registry.register(new Skill("radius", getModifierTexture("radius"), SkillPoint.RED_SKILL_POINT, 275, 390, SkillTrees.TREE_UTILITY, "arsmagica2:channel"));
-        registry.register(new Skill("channel_etherium", getComponentTexture("EtheriumChannel"), SkillPoint.GREEN_SKILL_POINT, 355, 390, SkillTrees.TREE_UTILITY, "arsmagica2:channel"));
+        registry.register(new Skill("channel_etherium", getComponentTexture("etherium_channel"), SkillPoint.GREEN_SKILL_POINT, 355, 390, SkillTrees.TREE_UTILITY, "arsmagica2:channel"));
         registry.register(new Skill("transplace", getComponentTexture("transplace"), SkillPoint.BLUE_SKILL_POINT, 185, 390, SkillTrees.TREE_UTILITY, "arsmagica2:blink"));
         registry.register(new Skill("phase_shift", getComponentTexture("phase_shift"), SkillPoint.RED_SKILL_POINT, 140, 390, SkillTrees.TREE_UTILITY, "arsmagica2:blink"));
         registry.register(new Skill("mark", getComponentTexture("mark"), SkillPoint.GREEN_SKILL_POINT, 155, 435, SkillTrees.TREE_UTILITY, "arsmagica2:transplace"));
@@ -376,6 +379,9 @@ public class AMSkills {
         if (PotioncoreCompatBootstrap.isLoaded()) {
             registry.register(new Skill("corrosion", getComponentTexture("corrosion"), SkillPoint.SILVER_POINT, 75, 450, SkillTrees.TREE_OFFENSE));
         }
+
+        Item spell_part = new ItemSpellComponent().setRegistryName(ArsMagica.MODID, "spell_part");
+        ForgeRegistries.ITEMS.register(spell_part);
 
         // No two skills in the same tree may have overlapping icons
         List<Skill> skillsWithTree = new ArrayList<>();

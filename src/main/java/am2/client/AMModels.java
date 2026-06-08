@@ -1,6 +1,9 @@
 package am2.client;
 
+import am2.api.ArsMagicaAPI;
+import am2.api.skill.Skill;
 import am2.client.blocks.render.IllusionBakedModel;
+import am2.client.texture.SpellIconManager;
 import am2.common.blocks.BlockIllusionBlock;
 import am2.ArsMagica;
 import am2.api.items.IMultiTexturedItem;
@@ -222,6 +225,20 @@ public final class AMModels {
 
             event.getModelRegistry().putObject(mrl, wrappedModel);
         }
+
+        for(Skill spellPart : ArsMagicaAPI.getSkillRegistry().getValuesCollection()) {
+            ResourceLocation icon = spellPart.getIcon();
+            if (icon == null)
+                continue;
+            ModelResourceLocation mrl = new ModelResourceLocation(spellPart.getRegistryName(), "inventory");
+            // Create a simple item layer model using ItemLayerModel
+            net.minecraftforge.client.model.ItemLayerModel layerModel = new net.minecraftforge.client.model.ItemLayerModel(com.google.common.collect.ImmutableList.of(spellPart.getIcon()));
+            net.minecraftforge.common.model.TRSRTransformation transform = net.minecraftforge.common.model.TRSRTransformation.identity();
+            IBakedModel bakedModel = layerModel.bake(transform, net.minecraft.client.renderer.vertex.DefaultVertexFormats.ITEM, location -> SpellIconManager.INSTANCE.getSprite(spellPart.getRegistryName().toString()));
+            // Wrap with SpellBakedModel for custom perspective handling
+            event.getModelRegistry().putObject(mrl, new am2.client.items.rendering.SpellBakedModel(bakedModel, net.minecraftforge.client.model.PerspectiveMapWrapper.getTransforms(transform)));
+        }
+        ModelLoader.setCustomMeshDefinition(AMItems.spell_part, new am2.client.items.rendering.SpellPartRenderer());
 
         // Wrap EBWiz element hand models in SpellBakedModel so SpellParticleRender
         // fires when these items are held, showing the affinity hand-glow animation.

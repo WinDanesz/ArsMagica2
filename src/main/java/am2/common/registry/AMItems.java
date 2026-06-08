@@ -37,7 +37,7 @@ public final class AMItems {
     public static final Item wooden_leg = placeholder();
     public static final Item deficit_crystal = placeholder();
     public static final Item workbench_upgrade = placeholder();
-    public static final Item spell_component = placeholder();
+    public static final Item spell_part = placeholder();
 
     public static final Item affinity_tome_none = placeholder();
     public static final Item affinity_tome_ender = placeholder();
@@ -251,7 +251,7 @@ public final class AMItems {
         registerItem(registry, "wooden_leg", ArsMagica.MODID, new Item());
         registerItem(registry, "deficit_crystal", ArsMagica.MODID, new Item());
         registerItem(registry, "workbench_upgrade", ArsMagica.MODID, new Item());
-        registerItem(registry, "spell_component", ArsMagica.MODID, new ItemSpellComponent(), true);
+//        registerItem(registry, "spell_component", ArsMagica.MODID, new ItemSpellComponent(), true);
 
         registerItem(registry, "inscription_upgrade", ArsMagica.MODID, new ItemInscriptionTableUpgrade());
         registerItem(registry, "mana_cake", ArsMagica.MODID, new ItemManaCake());

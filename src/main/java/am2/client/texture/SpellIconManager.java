@@ -26,7 +26,7 @@ public class SpellIconManager {
     public void init(TextureStitchEvent.Pre e) {
         sprites.clear();
         AMGuiIcons.instance.init(e.getMap());
-        for (Skill skill : ArsMagicaAPI.getSkillRegistry().getValues()) {
+        for (Skill skill : ArsMagicaAPI.getSkillRegistry().getValuesCollection()) {
             if (skill.getIcon() != null)
                 sprites.put(skill.getID(), e.getMap().registerSprite(skill.getIcon()));
         }

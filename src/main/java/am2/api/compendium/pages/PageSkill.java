@@ -33,7 +33,7 @@ public class PageSkill extends CompendiumPage<Skill> {
             AMGuiHelper.DrawIconAtXY(icon, cx, cy, zLevel, 16, 16, false);
         if (mouseX > cx && mouseX < cx + 16) {
             if (mouseY > cy && mouseY < cy + 16) {
-                renderItemToolTip(new ItemStack(AMItems.spell_component, 1, element.networkID()), mouseX, mouseY);
+                renderItemToolTip(new ItemStack(AMItems.spell_part, 1, element.networkID()), mouseX, mouseY);
             }
         }
         mc.renderEngine.bindTexture(new ResourceLocation("arsmagica2", "textures/gui/arcane_compendium_gui_extras.png"));

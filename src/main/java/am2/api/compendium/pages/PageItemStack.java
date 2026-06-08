@@ -224,7 +224,7 @@ public class PageItemStack extends CompendiumPage<ItemStack> {
             GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
             if (element.getItem() instanceof ItemEssence || element.getItem() == AMItems.deficit_crystal || element.getItem() == AMItems.core) {
                 this.drawTexturedModalRect_Classic(cx - 43, cy - 45, 367, 0, 105, 105, 70, 105);
-            } else if (element.getItem() == AMItems.spell_component) {
+            } else if (element.getItem() == AMItems.spell_part) {
                 //intentionally do nothing
             } else {
                 this.drawTexturedModalRect_Classic(cx - 43, cy - 43, 0, 0, 100, 100, 67, 95);

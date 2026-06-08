@@ -193,7 +193,7 @@ public abstract class CompendiumPage<E> {
 
             if (stack.getItem() instanceof ItemBlock) {
             } else {
-                if (stack.getItem() == AMItems.spell_component) {
+                if (stack.getItem() == AMItems.spell_part) {
                     list.clear();
                     Skill skill = Skill.byNetworkID(stack.getItemDamage());
                     if (skill == null)
