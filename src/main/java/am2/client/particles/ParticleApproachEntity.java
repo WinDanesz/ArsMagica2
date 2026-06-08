@@ -3,11 +3,13 @@ package am2.client.particles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 
 public class ParticleApproachEntity extends ParticleController {
 
     private final Entity target;
+    private final double height;
     private final double approachSpeed;
     private final double targetDistance;
 
@@ -16,51 +18,46 @@ public class ParticleApproachEntity extends ParticleController {
         this.target = approachEntity;
         this.approachSpeed = approachSpeed;
         this.targetDistance = targetDistance;
+        if (target instanceof EntityLiving) {
+            EntityLiving entityliving = (EntityLiving) target;
+            height = entityliving.getEyeHeight();
+        }
+        else if (target instanceof EntityItem) {
+            height = 0.5;
+        }
+        else {
+            height = target.height / 2.0;
+        }
     }
 
     @Override
     public void doUpdate() {
-
         if (target == null) {
             this.finish();
             return;
         }
 
-        double posX;
-        double posZ;
+        double posX = particle.getPosX();
+        double posZ = particle.getPosZ();
         double posY = particle.getPosY();
-        double angle;
 
-        double distanceToTarget = target.getDistanceSq(particle.getPosX(), particle.getPosY(), particle.getPosZ());
-        double deltaZ = target.posZ - particle.getPosZ();
-        double deltaX = target.posX - particle.getPosX();
-        angle = Math.atan2(deltaZ, deltaX);
+        double dx = target.posX - posX;
+        double dz = target.posZ - posZ;
+        double dy = target.posY + height - posY;
 
-        double radians = angle;
+        double d = dx * dx + dz * dz + dy * dy;
 
-        posX = particle.getPosX() + (approachSpeed * Math.cos(radians));
-        posZ = particle.getPosZ() + (approachSpeed * Math.sin(radians));
-        double deltaY;
-
-        if (target instanceof EntityLiving) {
-            EntityLiving entityliving = (EntityLiving) target;
-            deltaY = posY - (entityliving.posY + entityliving.getEyeHeight());
-        } else if (target instanceof EntityItem) {
-            deltaY = posY - target.posY;
-        } else {
-            deltaY = (target.getEntityBoundingBox().minY + target.getEntityBoundingBox().maxY) / 2D - posY;
-        }
-        double horizontalDistance = MathHelper.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-        float pitchRotation = (float) (-Math.atan2(deltaY, horizontalDistance));
-        double pitchRadians = pitchRotation;
-
-        posY = particle.getPosY() - (approachSpeed * Math.sin(pitchRadians));
-
-        if (distanceToTarget <= (targetDistance * targetDistance)) {
+        if (d < targetDistance) {
             this.finish();
-        } else {
-            particle.setPosition(posX, posY, posZ);
+            return;
         }
+        double angleRad = Math.atan2(dz, dx);
+        posX += approachSpeed * Math.cos(angleRad);
+        posZ += approachSpeed * Math.sin(angleRad);
+        double dxz = MathHelper.sqrt(dx * dx + dz * dz);
+        double pitchRad = Math.atan2(dy, dxz);
+        posY = particle.getPosY() + (approachSpeed * Math.sin(pitchRad));
+        particle.setPosition(posX, posY, posZ);
     }
 
     @Override

@@ -19,10 +19,14 @@ public class ParticleApproachPoint extends ParticleController {
     }
 
     private double getDistanceSqToPoint(double x, double y, double z) {
-        double var2 = particle.getPosX() - x;
-        double var4 = particle.getPosY() - y;
-        double var6 = particle.getPosZ() - z;
-        return var2 * var2 + var4 * var4 + var6 * var6;
+//        double dx = particle.getPosX() - x;
+//        double dz = particle.getPosZ() - z;
+//        if (ignoreYCoord) {
+//            return dx * dx + dz * dz;
+//        }
+//        double dy = particle.getPosY() - y;
+//        return dx * dx + dz * dz + dy * dy;
+        return 0.0D;
     }
 
     public ParticleApproachPoint setIgnoreYCoordinate(boolean ignore) {
@@ -32,40 +36,31 @@ public class ParticleApproachPoint extends ParticleController {
 
     @Override
     public void doUpdate() {
-
         double posX = particle.getPosX();
         double posZ = particle.getPosZ();
         double posY = particle.getPosY();
-        double angle;
 
-        double distanceToTarget = getDistanceSqToPoint(targetX, targetY, targetZ);
-        double deltaZ = targetZ - particle.getPosZ();
-        double deltaX = targetX - particle.getPosX();
-        if (Math.abs(deltaX) > targetDistance || Math.abs(deltaZ) > targetDistance) {
-            angle = Math.atan2(deltaZ, deltaX);
+        double dx = targetX - posX;
+        double dz = targetZ - posZ;
+        double dy = targetY - posY;
 
-            double radians = angle;
-
-            posX = particle.getPosX() + (approachSpeed * Math.cos(radians));
-            posZ = particle.getPosZ() + (approachSpeed * Math.sin(radians));
-
-        }
-
+        double d = dx * dx + dz * dz;
         if (!ignoreYCoord) {
-            double deltaY = posY - targetY;
-
-            double horizontalDistance = MathHelper.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-            float pitchRotation = (float) (-Math.atan2(deltaY, horizontalDistance));
-            double pitchRadians = pitchRotation;
-
-            posY = particle.getPosY() + (approachSpeed * Math.sin(pitchRadians));
+            d += dy * dy;
         }
 
-        if (distanceToTarget <= (targetDistance * targetDistance)) {
+        if (d < targetDistance) {
             this.finish();
-        } else {
-            particle.setPosition(posX, posY, posZ);
+            return;
         }
+
+        double angleRad = Math.atan2(dz, dx);
+        posX += approachSpeed * Math.cos(angleRad);
+        posZ += approachSpeed * Math.sin(angleRad);
+        double dxz = MathHelper.sqrt(dx * dx + dz * dz);
+        double pitchRad = Math.atan2(dy, dxz);
+        posY = particle.getPosY() + (approachSpeed * Math.sin(pitchRad));
+        particle.setPosition(posX, posY, posZ);
     }
 
     @Override
