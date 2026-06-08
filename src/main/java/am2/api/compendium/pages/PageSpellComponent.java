@@ -60,7 +60,7 @@ public class PageSpellComponent extends CompendiumPage<SpellPart> {
             if (mouseY > cy && mouseY < cy + 16) {
                 Skill skill = element.getSkill();
                 if (skill != null) {
-                    stackTip = new ItemStack(AMItems.spell_component, 1, skill.networkID());
+                    stackTip = new ItemStack(AMItems.spell_part, 1, skill.networkID());
                 }
                 tipX = mouseX;
                 tipY = mouseY;
@@ -115,7 +115,7 @@ public class PageSpellComponent extends CompendiumPage<SpellPart> {
                 if (mouseY > posY + yOffset && mouseY < posY + yOffset + 16) {
                     Skill skill = mod.getSkill();
                     if (skill != null) {
-                        stackTip = new ItemStack(AMItems.spell_component, 1, skill.networkID());
+                        stackTip = new ItemStack(AMItems.spell_part, 1, skill.networkID());
                     }
                     tipX = mouseX;
                     tipY = mouseY;

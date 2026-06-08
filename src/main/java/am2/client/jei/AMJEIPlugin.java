@@ -90,7 +90,7 @@ public class AMJEIPlugin implements IModPlugin {
 		}
 
 		// Hide internal items that should not appear in JEI
-		registry.getJeiHelpers().getIngredientBlacklist().addIngredientToBlacklist(new ItemStack(AMItems.spell_component));
+		registry.getJeiHelpers().getIngredientBlacklist().addIngredientToBlacklist(new ItemStack(AMItems.spell_part));
 
 	}
 }
