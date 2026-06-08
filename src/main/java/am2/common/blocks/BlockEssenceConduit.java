@@ -8,17 +8,27 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockEssenceConduit extends BlockAMPowered {
 
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
+    private static final AxisAlignedBB[] facingAABB = {
+            new AxisAlignedBB(0.25, 0.4375, 0.25, 0.75, 1.0, 0.75),
+            new AxisAlignedBB(0.25, 0.0, 0.25, 0.75, 0.5625, 0.75),
+            new AxisAlignedBB(0.25, 0.25, 0.4375, 0.75, 0.75, 1.0),
+            new AxisAlignedBB(0.25, 0.25, 0.0, 0.75, 0.75, 0.5625),
+            new AxisAlignedBB(0.4375, 0.25, 0.25, 1.0, 0.75, 0.75),
+            new AxisAlignedBB(0.0, 0.25, 0.25, 0.5625, 0.75, 0.75)
+    };
 
     public BlockEssenceConduit() {
         super(Material.CLOTH);
         setHardness(3.0f);
-        setBlockBounds(0.25f, 0.0f, 0.25f, 0.75f, 0.5625f, 0.75f);
+        boundingBox = facingAABB[1];
         setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.UP));
         // Enable JSON model rendering for the base (TESR will render the crystal on top)
         this.defaultRender = true;
@@ -47,5 +57,10 @@ public class BlockEssenceConduit extends BlockAMPowered {
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(FACING, EnumFacing.values()[meta]);
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return facingAABB[state.getValue(FACING).getIndex()];
     }
 }
