@@ -46,17 +46,6 @@ public class TileEntityLectern extends TileEntityEnchantmentTable implements ITi
     public void update() {
         if (world.isRemote) {
             updateBookRender();
-            if (!tooltipStack.isEmpty() && tickCount % 2 == 0) {
-                AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, "sparkle", pos.getX() + 0.5 + ((world.rand.nextDouble() * 0.2) - 0.1), pos.getY() + 1, pos.getZ() + 0.5 + ((world.rand.nextDouble() * 0.2) - 0.1));
-                if (particle != null) {
-                    particle.AddParticleController(new ParticleMoveOnHeading(particle, world.rand.nextDouble() * 360, -45 - world.rand.nextInt(90), 0.05f, 1, false));
-                    particle.AddParticleController(new ParticleFadeOut(particle, 2, false).setFadeSpeed(0.05f).setKillParticleOnFinish(true));
-                    particle.setIgnoreMaxAge(true);
-                    if (getOverpowered()) {
-                        particle.setRGBColorF(1.0f, 0.2f, 0.2f);
-                    }
-                }
-            }
         } else if (tickCount % 20 == 0) {
             IBlockState state = this.world.getBlockState(this.pos);
             //This is probably the fastest I can get it to go.
