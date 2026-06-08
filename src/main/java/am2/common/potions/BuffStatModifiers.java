@@ -2,7 +2,6 @@ package am2.common.potions;
 
 import am2.common.defs.IDDefs;
 import am2.common.registry.AMPotions;
-import am2.common.utils.ResourceUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -15,11 +14,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class BuffStatModifiers {
+
     public static final BuffStatModifiers instance = new BuffStatModifiers();
 
     public void applyStatModifiersBasedOnBuffs(EntityLivingBase entity) {
         //entangled
-        applyOrRemoveModifiersForBuff(entity, AMPotions.entangle, ResourceUtils.createHashMap(SharedMonsterAttributes.MOVEMENT_SPEED, entangled));
+        applyOrRemoveModifiersForBuff(entity, AMPotions.entangle, createHashMap(SharedMonsterAttributes.MOVEMENT_SPEED, entangled));
         //frost slow
         applyOrRemoveScalingModifiersForBuff(entity, AMPotions.frost_slow, SharedMonsterAttributes.MOVEMENT_SPEED, frostSlow_Diminished, frostSlow_Normal, frostSlow_Augmented);
         //fury
@@ -85,6 +85,12 @@ public class BuffStatModifiers {
                 inst.removeModifier(currentModifier);
             }
         }
+    }
+
+    public static <K, V> HashMap<K, V> createHashMap(K i, V j) {
+        HashMap<K, V> map = new HashMap<K, V>();
+        map.put(i, j);
+        return map;
     }
 
     //*  Fury  *//

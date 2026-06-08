@@ -6,7 +6,6 @@ import am2.api.skill.SkillPoint;
 import am2.common.compat.ancientspellcraft.AncientSpellcraftCompatBootstrap;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.compat.potioncore.PotioncoreCompatBootstrap;
-import am2.common.utils.ResourceUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
@@ -107,7 +106,7 @@ public class AMSkills {
     public static final Skill contingency_health = placeholder();
     public static final Skill rune = placeholder();
     public static final Skill rune_procs = placeholder();
-public static final Skill glyph = placeholder();
+    public static final Skill glyph = placeholder();
     public static final Skill speed = placeholder();
     public static final Skill reflect = placeholder();
     public static final Skill chrono_anchor = placeholder();
@@ -186,7 +185,6 @@ public static final Skill glyph = placeholder();
     // This is here because this class is already an event handler.
     @SubscribeEvent
     public static void createRegistry(RegistryEvent.NewRegistry event) {
-
         RegistryBuilder<Skill> builder = new RegistryBuilder<>();
         builder.setType(Skill.class);
         builder.setName(new ResourceLocation(ArsMagica.MODID, "skills"));
@@ -203,31 +201,28 @@ public static final Skill glyph = placeholder();
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<Skill> event) {
-
         IForgeRegistry<Skill> registry = event.getRegistry();
 
-        registry.register(new Skill("mana_regen_i", ResourceUtils.getSkillIcon("mana_regen_i"), SkillPoint.BLUE_SKILL_POINT, 275, 75, SkillTrees.TREE_TALENT));
-        registry.register(new Skill("mana_regen_ii", ResourceUtils.getSkillIcon("mana_regen_ii"), SkillPoint.GREEN_SKILL_POINT, 275, 120, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_i"));
-        registry.register(new Skill("mana_regen_iii", ResourceUtils.getSkillIcon("mana_regen_iii"), SkillPoint.RED_SKILL_POINT, 275, 165, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_ii"));
-        registry.register(new Skill("mage_posse_i", ResourceUtils.getSkillIcon("mage_band_i"), SkillPoint.GREEN_SKILL_POINT, 320, 120, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_ii"));
-        registry.register(new Skill("mage_posse_ii", ResourceUtils.getSkillIcon("mage_band_ii"), SkillPoint.RED_SKILL_POINT, 320, 165, SkillTrees.TREE_TALENT, "arsmagica2:mage_posse_i"));
-        registry.register(new Skill("spell_motion", ResourceUtils.getSkillIcon("spell_motion"), SkillPoint.GREEN_SKILL_POINT, 230, 120, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_ii"));
-        registry.register(new Skill("augmented_casting", ResourceUtils.getSkillIcon("augmented_casting"), SkillPoint.RED_SKILL_POINT, 230, 165, SkillTrees.TREE_TALENT, "arsmagica2:spell_motion"));
-        registry.register(new Skill("affinity_gains", ResourceUtils.getSkillIcon("affinity_gains"), SkillPoint.BLUE_SKILL_POINT, 365, 120, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_i"));
-        registry.register(new Skill("extra_summons", ResourceUtils.getSkillIcon("extra_summon"), SkillPoint.RED_SKILL_POINT, 230, 210, SkillTrees.TREE_TALENT, ArsMagica.config.getExtraSummonsMaxLevel(), "arsmagica2:augmented_casting"));
-        registry.register(new Skill("shield_overload", ResourceUtils.getSkillIcon("shield_overload"), SkillPoint.SILVER_POINT, 275, 210, SkillTrees.TREE_TALENT));
-
-
-        registry.register(new Skill("colour", ResourceUtils.getSkillIcon("colour"), SkillPoint.BLUE_SKILL_POINT, 230, 75, SkillTrees.TREE_TALENT));
-
+        // Dev
         registry.register(new Skill("none", null, null, 0, 0, null));
         registry.register(new Skill("melt_armor", null, null, 0, 0, null));
         registry.register(new Skill("nauseate", null, null, 0, 0, null));
         registry.register(new Skill("scramble_synapses", null, null, 0, 0, null));
-        //
-        //		SpellRegistry.registerSpellModifier("colour", getModifierTexture("Colour"), SkillPoint.BLUE_SKILL_POINT, new Colour(), SkillTrees.TREE_TALENT, 230, 75);
-        //
 
+        // Talent
+        registry.register(new Skill("mana_regen_i", getTalentTexture("mana_regen_i"), SkillPoint.BLUE_SKILL_POINT, 275, 75, SkillTrees.TREE_TALENT));
+        registry.register(new Skill("mana_regen_ii", getTalentTexture("mana_regen_ii"), SkillPoint.GREEN_SKILL_POINT, 275, 120, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_i"));
+        registry.register(new Skill("mana_regen_iii", getTalentTexture("mana_regen_iii"), SkillPoint.RED_SKILL_POINT, 275, 165, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_ii"));
+        registry.register(new Skill("mage_posse_i", getTalentTexture("mage_band_i"), SkillPoint.GREEN_SKILL_POINT, 320, 120, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_ii"));
+        registry.register(new Skill("mage_posse_ii", getTalentTexture("mage_band_ii"), SkillPoint.RED_SKILL_POINT, 320, 165, SkillTrees.TREE_TALENT, "arsmagica2:mage_posse_i"));
+        registry.register(new Skill("spell_motion", getTalentTexture("spell_motion"), SkillPoint.GREEN_SKILL_POINT, 230, 120, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_ii"));
+        registry.register(new Skill("augmented_casting", getTalentTexture("augmented_casting"), SkillPoint.RED_SKILL_POINT, 230, 165, SkillTrees.TREE_TALENT, "arsmagica2:spell_motion"));
+        registry.register(new Skill("affinity_gains", getTalentTexture("affinity_gains"), SkillPoint.BLUE_SKILL_POINT, 365, 120, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_i"));
+        registry.register(new Skill("extra_summons", getTalentTexture("extra_summon"), SkillPoint.RED_SKILL_POINT, 230, 210, SkillTrees.TREE_TALENT, ArsMagica.config.getExtraSummonsMaxLevel(), "arsmagica2:augmented_casting"));
+        registry.register(new Skill("shield_overload", getTalentTexture("shield_overload"), SkillPoint.SILVER_POINT, 275, 210, SkillTrees.TREE_TALENT));
+        registry.register(new Skill("colour", getModifierTexture("Colour"), SkillPoint.BLUE_SKILL_POINT, 230, 75, SkillTrees.TREE_TALENT));
+
+        // Offense
         registry.register(new Skill("projectile", getShapeTexture("projectile"), SkillPoint.BLUE_SKILL_POINT, 300, 45, SkillTrees.TREE_OFFENSE));
         registry.register(new Skill("orbs", getShapeTexture("orbs"), SkillPoint.RED_SKILL_POINT, 402, 225, SkillTrees.TREE_DEFENSE, "arsmagica2:zone"));
         registry.register(new Skill("cone", getShapeTexture("cone"), SkillPoint.RED_SKILL_POINT, 300, 360, SkillTrees.TREE_OFFENSE, "arsmagica2:damage"));
@@ -266,6 +261,8 @@ public static final Skill glyph = placeholder();
         registry.register(new Skill("fire_rain", getComponentTexture("fire_rain"), SkillPoint.SILVER_POINT, 75, 135, SkillTrees.TREE_OFFENSE));
         registry.register(new Skill("mana_blast", getComponentTexture("mana_blast"), SkillPoint.SILVER_POINT, 75, 180, SkillTrees.TREE_OFFENSE));
         registry.register(new Skill("dismembering", getModifierTexture("dismembering"), SkillPoint.SILVER_POINT, 75, 225, SkillTrees.TREE_OFFENSE));
+
+        // Defense
         registry.register(new Skill("self", getShapeTexture("self"), SkillPoint.BLUE_SKILL_POINT, 267, 45, SkillTrees.TREE_DEFENSE));
         registry.register(new Skill("leap", getComponentTexture("leap"), SkillPoint.BLUE_SKILL_POINT, 222, 90, SkillTrees.TREE_DEFENSE, "arsmagica2:self"));
         registry.register(new Skill("regeneration", getComponentTexture("regeneration"), SkillPoint.BLUE_SKILL_POINT, 357, 90, SkillTrees.TREE_DEFENSE, "arsmagica2:self"));
@@ -298,7 +295,7 @@ public static final Skill glyph = placeholder();
         registry.register(new Skill("contingency_health", getShapeTexture("contingency_health"), SkillPoint.RED_SKILL_POINT, 402, 270, SkillTrees.TREE_DEFENSE, "arsmagica2:shield"));
         registry.register(new Skill("rune", getShapeTexture("rune"), SkillPoint.GREEN_SKILL_POINT, 157, 315, SkillTrees.TREE_DEFENSE, "arsmagica2:accelerate", "arsmagica2:entangle"));
         registry.register(new Skill("rune_procs", getModifierTexture("rune_procs"), SkillPoint.GREEN_SKILL_POINT, 157, 360, SkillTrees.TREE_DEFENSE, "arsmagica2:rune"));
-registry.register(new Skill("glyph", getShapeTexture("glyph"), SkillPoint.GREEN_SKILL_POINT, 112, 360, SkillTrees.TREE_DEFENSE, "arsmagica2:rune"));
+        registry.register(new Skill("glyph", getShapeTexture("glyph"), SkillPoint.GREEN_SKILL_POINT, 112, 360, SkillTrees.TREE_DEFENSE, "arsmagica2:rune"));
         registry.register(new Skill("speed", getModifierTexture("speed"), SkillPoint.RED_SKILL_POINT, 202, 315, SkillTrees.TREE_DEFENSE, "arsmagica2:accelerate", "arsmagica2:flight"));
         registry.register(new Skill("reflect", getComponentTexture("reflect"), SkillPoint.RED_SKILL_POINT, 357, 315, SkillTrees.TREE_DEFENSE, "arsmagica2:shield"));
         registry.register(new Skill("chrono_anchor", getComponentTexture("chrono_anchor"), SkillPoint.RED_SKILL_POINT, 312, 315, SkillTrees.TREE_DEFENSE, "arsmagica2:reflect"));
@@ -308,6 +305,8 @@ registry.register(new Skill("glyph", getShapeTexture("glyph"), SkillPoint.GREEN_
         registry.register(new Skill("mana_link", getComponentTexture("mana_link"), SkillPoint.SILVER_POINT, 30, 45, SkillTrees.TREE_DEFENSE));
         registry.register(new Skill("mana_shield", getComponentTexture("mana_shield"), SkillPoint.SILVER_POINT, 30, 90, SkillTrees.TREE_DEFENSE));
         registry.register(new Skill("buff_power", getModifierTexture("buff_power"), SkillPoint.SILVER_POINT, 30, 135, SkillTrees.TREE_DEFENSE));
+
+        // Utility
         registry.register(new Skill("touch", getShapeTexture("touch"), SkillPoint.BLUE_SKILL_POINT, 275, 75, SkillTrees.TREE_UTILITY));
         registry.register(new Skill("dig", getComponentTexture("dig"), SkillPoint.BLUE_SKILL_POINT, 275, 120, SkillTrees.TREE_UTILITY, "arsmagica2:touch"));
         registry.register(new Skill("wizards_autumn", getComponentTexture("wizards_autumn"), SkillPoint.BLUE_SKILL_POINT, 315, 120, SkillTrees.TREE_UTILITY, "arsmagica2:dig"));
@@ -357,6 +356,7 @@ registry.register(new Skill("glyph", getShapeTexture("glyph"), SkillPoint.GREEN_
         registry.register(new Skill("daylight", getComponentTexture("daylight"), SkillPoint.SILVER_POINT, 75, 45, SkillTrees.TREE_UTILITY));
         registry.register(new Skill("moonrise", getComponentTexture("moonrise"), SkillPoint.SILVER_POINT, 75, 90, SkillTrees.TREE_UTILITY));
         registry.register(new Skill("prosperity", getModifierTexture("prosperity"), SkillPoint.SILVER_POINT, 75, 135, SkillTrees.TREE_UTILITY));
+
         // EBWiz-exclusive component – only registered when Electroblob's Wizardry is present.
         if (Loader.isModLoaded(EBWizardryCompatBootstrap.MODID)) {
             registry.register(new Skill("ebwiz_blast", getModifierTexture("ebwiz_blast"), SkillPoint.SILVER_POINT, 75, 270, SkillTrees.TREE_OFFENSE));
@@ -365,23 +365,34 @@ registry.register(new Skill("glyph", getShapeTexture("glyph"), SkillPoint.GREEN_
             registry.register(new Skill("conjure_block", getComponentTexture("conjure_block"), SkillPoint.GREEN_SKILL_POINT, 140, 93, SkillTrees.TREE_UTILITY, "arsmagica2:place_block"));
             registry.register(new Skill("metamorphosis", getComponentTexture("metamorphosis"), SkillPoint.GREEN_SKILL_POINT, 75, 315, SkillTrees.TREE_OFFENSE));
         }
+
         // AncientSpellcraft-exclusive components – only registered when both mods are present.
         if (AncientSpellcraftCompatBootstrap.isLoaded()) {
             registry.register(new Skill("shrinkage", getComponentTexture("shrinkage"), SkillPoint.SILVER_POINT, 75, 360, SkillTrees.TREE_OFFENSE));
             registry.register(new Skill("growth", getComponentTexture("growth"), SkillPoint.SILVER_POINT, 75, 405, SkillTrees.TREE_OFFENSE));
         }
+
         // PotionCore-exclusive skills – only registered when the mod is present.
         if (PotioncoreCompatBootstrap.isLoaded()) {
             registry.register(new Skill("corrosion", getComponentTexture("corrosion"), SkillPoint.SILVER_POINT, 75, 450, SkillTrees.TREE_OFFENSE));
         }
 
         // No two skills in the same tree may have overlapping icons
-        final int ICON_SIZE = 32;
         List<Skill> skillsWithTree = new ArrayList<>();
-        for (Skill s : registry.getValues()) {
+        for (Skill s : registry.getValuesCollection()) {
             if (s.getTree() != null) skillsWithTree.add(s);
         }
+        List<String> overlapping = getOverlapping(skillsWithTree);
+        if (!overlapping.isEmpty()) {
+           throw new IllegalStateException("[ArsMagica2] Occulus skill position overlap detected:\n  "
+                    + String.join("\n  ", overlapping));
+        }
+    }
+
+    private static List<String> getOverlapping(List<Skill> skillsWithTree) {
+        final int ICON_SIZE = 32;
         List<String> conflicts = new ArrayList<>();
+
         for (int i = 0; i < skillsWithTree.size(); i++) {
             Skill a = skillsWithTree.get(i);
             for (int j = i + 1; j < skillsWithTree.size(); j++) {
@@ -396,10 +407,7 @@ registry.register(new Skill("glyph", getShapeTexture("glyph"), SkillPoint.GREEN_
                 }
             }
         }
-        if (!conflicts.isEmpty()) {
-           throw new IllegalStateException("[ArsMagica2] Occulus skill position conflicts detected:\n  "
-                    + String.join("\n  ", conflicts));
-        }
+        return conflicts;
     }
 
     private static ResourceLocation getComponentTexture(String name) {
@@ -413,4 +421,9 @@ registry.register(new Skill("glyph", getShapeTexture("glyph"), SkillPoint.GREEN_
     private static ResourceLocation getModifierTexture(String name) {
         return new ResourceLocation(ArsMagica.MODID, "items/spells/modifiers/" + name);
     }
+
+    private static ResourceLocation getTalentTexture(String iconName) { // not sure why it called Skill if it's clearly stated in-game that it is indeed Talent
+        return new ResourceLocation(ArsMagica.MODID, "items/spells/skills/" + iconName);
+    }
+
 }

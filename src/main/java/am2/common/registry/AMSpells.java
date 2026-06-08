@@ -202,15 +202,18 @@ public class AMSpells {
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<SpellPart> event) {
-
         IForgeRegistry<SpellPart> registry = event.getRegistry();
 
+        // Dev
         SpellRegistryHelper.registerSpellShape(registry, "none", null, null, new MissingShape(), null, 0, 0);
         SpellRegistryHelper.registerSpellComponent(registry, "melt_armor", null, null, new MeltArmor(), null, 0, 0);
         SpellRegistryHelper.registerSpellComponent(registry, "nauseate", null, null, new Nauseate(), null, 0, 0);
         SpellRegistryHelper.registerSpellComponent(registry, "scramble_synapses", null, null, new ScrambleSynapses(), null, 0, 0);
 
-        //offense tree
+        // Talent
+        SpellRegistryHelper.registerSpellModifier(registry, "colour", getModifierTexture("Colour"), SkillPoint.BLUE_SKILL_POINT, new Colour(), SkillTrees.TREE_TALENT, 230, 75);
+
+        // Offense
         SpellRegistryHelper.registerSpellShape(registry, "projectile", getShapeTexture("Projectile"), SkillPoint.BLUE_SKILL_POINT, new Projectile(), SkillTrees.TREE_OFFENSE, 300, 45);
         SpellRegistryHelper.registerSpellComponent(registry, "physical_damage", getComponentTexture("PhysicalDamage"), SkillPoint.BLUE_SKILL_POINT, new PhysicalDamage(), SkillTrees.TREE_OFFENSE, 300, 90, "arsmagica2:projectile");
         SpellRegistryHelper.registerSpellModifier(registry, "gravity", getModifierTexture("Gravity"), SkillPoint.BLUE_SKILL_POINT, new Gravity(), SkillTrees.TREE_OFFENSE, 255, 70, "arsmagica2:projectile");
@@ -249,7 +252,8 @@ public class AMSpells {
         SpellRegistryHelper.registerSpellComponent(registry, "fire_rain", getComponentTexture("FireRain"), SkillPoint.SILVER_POINT, new FireRain(), SkillTrees.TREE_OFFENSE, 75, 135);
         SpellRegistryHelper.registerSpellComponent(registry, "mana_blast", getComponentTexture("ManaBlast"), SkillPoint.SILVER_POINT, new ManaBlast(), SkillTrees.TREE_OFFENSE, 75, 180);
         SpellRegistryHelper.registerSpellModifier(registry, "dismembering", getModifierTexture("Dismembering"), SkillPoint.SILVER_POINT, new Dismembering(), SkillTrees.TREE_OFFENSE, 75, 225);
-        //defense tree
+
+        // Defense
         SpellRegistryHelper.registerSpellShape(registry, "self", getShapeTexture("Self"), SkillPoint.BLUE_SKILL_POINT, new Self(), SkillTrees.TREE_DEFENSE, 267, 45);
         SpellRegistryHelper.registerSpellComponent(registry, "leap", getComponentTexture("Leap"), SkillPoint.BLUE_SKILL_POINT, new Leap(), SkillTrees.TREE_DEFENSE, 222, 90, "arsmagica2:self");
         SpellRegistryHelper.registerSpellComponent(registry, "regeneration", getComponentTexture("Regeneration"), SkillPoint.BLUE_SKILL_POINT, new Regeneration(), SkillTrees.TREE_DEFENSE, 357, 90, "arsmagica2:self");
@@ -292,7 +296,8 @@ public class AMSpells {
         SpellRegistryHelper.registerSpellComponent(registry, "mana_link", getComponentTexture("ManaLink"), SkillPoint.SILVER_POINT, new ManaLink(), SkillTrees.TREE_DEFENSE, 30, 45);
         SpellRegistryHelper.registerSpellComponent(registry, "mana_shield", getComponentTexture("ManaShield"), SkillPoint.SILVER_POINT, new ManaShield(), SkillTrees.TREE_DEFENSE, 30, 90);
         SpellRegistryHelper.registerSpellModifier(registry, "buff_power", getModifierTexture("BuffPower"), SkillPoint.SILVER_POINT, new BuffPower(), SkillTrees.TREE_DEFENSE, 30, 135);
-        //utility tree
+
+        // Utility
         SpellRegistryHelper.registerSpellShape(registry, "touch", getShapeTexture("Touch"), SkillPoint.BLUE_SKILL_POINT, new Touch(), SkillTrees.TREE_UTILITY, 275, 75);
         SpellRegistryHelper.registerSpellComponent(registry, "dig", getComponentTexture("Dig"), SkillPoint.BLUE_SKILL_POINT, new Dig(), SkillTrees.TREE_UTILITY, 275, 120, "arsmagica2:touch");
         SpellRegistryHelper.registerSpellComponent(registry, "wizards_autumn", getComponentTexture("WizardsAutumn"), SkillPoint.BLUE_SKILL_POINT, new WizardsAutumn(), SkillTrees.TREE_UTILITY, 315, 120, "arsmagica2:dig");
@@ -342,11 +347,10 @@ public class AMSpells {
         SpellRegistryHelper.registerSpellComponent(registry, "moonrise", getComponentTexture("Moonrise"), SkillPoint.SILVER_POINT, new Moonrise(), SkillTrees.TREE_UTILITY, 75, 90);
         SpellRegistryHelper.registerSpellModifier(registry, "prosperity", getModifierTexture("Prosperity"), SkillPoint.SILVER_POINT, new Prosperity(), SkillTrees.TREE_UTILITY, 75, 135);
         SpellRegistryHelper.registerSpellComponent(registry, "channel_etherium", getComponentTexture("EtheriumChannel"), SkillPoint.GREEN_SKILL_POINT, new EtheriumChannel(), SkillTrees.TREE_UTILITY, 355, 390, "arsmagica2:channel");
+
         EBWizardryCompatBootstrap.registerSpellParts(registry);
         AncientSpellcraftCompatBootstrap.registerSpellParts(registry);
         PotioncoreCompatBootstrap.registerSpellParts(registry);
-
-        SpellRegistryHelper.registerSpellModifier(registry, "colour", getModifierTexture("Colour"), SkillPoint.BLUE_SKILL_POINT, new Colour(), SkillTrees.TREE_TALENT, 230, 75);
 
         // Register components that should apply every tick when channeled
         SpellManager.registerChannelComponent((Class) Telekinesis.class);
