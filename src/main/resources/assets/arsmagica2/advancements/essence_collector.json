@@ -56,6 +56,5 @@
       "trigger": "minecraft:inventory_changed",
       "conditions": { "items": [{ "item": "arsmagica2:essence_arcane" }] }
     }
-  },
-  "requirements": [["has_fire", "has_water", "has_earth", "has_air", "has_ice", "has_lightning", "has_life", "has_nature", "has_ender", "has_arcane"]]
+  }
 }
