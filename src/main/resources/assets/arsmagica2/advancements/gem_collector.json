@@ -56,8 +56,5 @@
         ]
       }
     }
-  },
-  "requirements": [
-    ["has_chimerite", "has_blue_topaz", "has_moonstone", "has_sunstone"]
-  ]
+  }
 }
