@@ -32,6 +32,5 @@
       "trigger": "minecraft:inventory_changed",
       "conditions": { "items": [{ "item": "arsmagica2:mage_boots" }] }
     }
-  },
-  "requirements": [["has_hood", "has_robe", "has_leggings", "has_boots"]]
+  }
 }
