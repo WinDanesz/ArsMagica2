@@ -2,7 +2,6 @@ package am2.common.entity;
 
 import am2.ArsMagica;
 import am2.api.sources.DamageSourceLightning;
-import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.entity.ai.EntityAIFlyingWander;
 import am2.common.entity.ai.EntityAIRangedAttackSpell;
 import am2.common.extensions.EntityExtension;
@@ -46,7 +45,6 @@ public class EntityLightningElemental extends EntityMob {
 
     private void initAI() {
         this.tasks.addTask(2, new EntityAIRangedAttackSpell(this, 1.0f, 60, NPCSpells.getInstance().lightningElemental_attack));
-        EBWizardryCompatBootstrap.addArcAttackAI(this, 1, 80);
         this.tasks.addTask(3, new EntityAIAttackMelee(this, 1.0f, false));
         this.tasks.addTask(7, new EntityAIFlyingWander(this, 0.6, 10.0F));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));

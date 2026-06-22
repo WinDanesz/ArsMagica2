@@ -36,8 +36,6 @@ import net.minecraftforge.client.event.EntityViewRenderEvent;
 import am2.network.AMNetworkHandler;
 import am2.network.packets.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -476,19 +474,6 @@ public class EntityHandler {
         GlStateManager.setFogStart(fogStart);
         GlStateManager.setFogEnd(fogEnd);
         GlStateManager.enableFog();
-    }
-
-    /** Draws a dark translucent overlay to simulate reduced ambient light in the Witchwood biome. */
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.getType() != ElementType.ALL) return;
-        EntityPlayer player = Minecraft.getMinecraft().player;
-        if (player == null || !isInWitchwoodBiome(player)) return;
-
-        ScaledResolution res = event.getResolution();
-        // 40 % opacity black overlay — simulates a dimmer ambient light level.
-        Gui.drawRect(0, 0, res.getScaledWidth(), res.getScaledHeight(), 0x66000000);
     }
 
     @SubscribeEvent

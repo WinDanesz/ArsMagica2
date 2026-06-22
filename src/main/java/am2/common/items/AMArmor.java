@@ -3,7 +3,6 @@ package am2.common.items;
 import am2.common.armor.ArsMagicaArmorMaterial;
 import am2.common.registry.AMTabs;
 import com.google.common.collect.Multimap;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,6 +14,8 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.translation.I18n;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -100,21 +101,18 @@ public class AMArmor extends ItemArmor implements ISpecialArmor {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable net.minecraft.world.World world, List<String> tooltip, ITooltipFlag flag) {
-        int armorValue = GetDamageReduction();
-        if (isArmorBroken(stack)) {
-            armorValue = 0;
-        }
-        tooltip.add(I18n.translateToLocalFormatted("attribute.modifier.equals.0", armorValue, I18n.translateToLocalFormatted("attribute.name.generic.armor")));
-    }
-
-    @Override
     public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
         if (isArmorBroken(armor)) {
             return 0;
         }
         return GetDamageReduction();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+        int armorValue = isArmorBroken(stack) ? 0 : GetDamageReduction();
+        tooltip.add(I18n.translateToLocalFormatted("attribute.modifier.equals.0", armorValue, I18n.translateToLocal("attribute.name.generic.armor")));
     }
 
     @Override

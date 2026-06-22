@@ -259,6 +259,7 @@ public class CommonProxy implements IGuiHandler {
         // no-op server-side
     }
 
+
     public void addDeferredTargetSet(EntityLiving ent, EntityLivingBase target) {
         serverTickHandler.addDeferredTarget(ent, target);
     }
