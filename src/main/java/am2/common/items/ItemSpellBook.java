@@ -116,7 +116,9 @@ public class ItemSpellBook extends Item implements IBauble {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (player.isSneaking()) {
-            player.openGui(ArsMagica.instance, IDDefs.GUI_SPELL_BOOK, world, (int) player.posX, (int) player.posY, (int) player.posZ);
+            if (!world.isRemote) {
+                player.openGui(ArsMagica.instance, IDDefs.GUI_SPELL_BOOK, world, (int) player.posX, (int) player.posY, (int) player.posZ);
+            }
             return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
         }
 
@@ -164,7 +166,9 @@ public class ItemSpellBook extends Item implements IBauble {
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
         if (entityLiving.isSneaking() && entityLiving instanceof EntityPlayer) {
-            ((EntityPlayer) entityLiving).openGui(ArsMagica.instance, IDDefs.GUI_SPELL_BOOK, world, (int) entityLiving.posX, (int) entityLiving.posY, (int) entityLiving.posZ);
+            if (!world.isRemote) {
+                ((EntityPlayer) entityLiving).openGui(ArsMagica.instance, IDDefs.GUI_SPELL_BOOK, world, (int) entityLiving.posX, (int) entityLiving.posY, (int) entityLiving.posZ);
+            }
         } else {
             ItemStack currentSpellStack = getActiveItemStack(stack);
             if (!currentSpellStack.isEmpty()) {
@@ -257,6 +261,7 @@ public class ItemSpellBook extends Item implements IBauble {
 
     public static InventorySpellBook getInventory(ItemStack bookStack) {
         InventorySpellBook isb = new InventorySpellBook();
+        isb.setBagStack(bookStack);
         isb.SetInventoryContents(getMyInventory(bookStack));
         return isb;
     }

@@ -12,9 +12,14 @@ public class InventorySpellBook implements IInventory {
     public static int inventorySize = 40;
     public static int activeInventorySize = 8;
     private final NonNullList<ItemStack> inventoryContents;
+    private ItemStack bagStack;
 
     public InventorySpellBook() {
         inventoryContents = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+    }
+    
+    public void setBagStack(ItemStack stack) {
+        this.bagStack = stack;
     }
 
     @Override
@@ -74,6 +79,7 @@ public class InventorySpellBook implements IInventory {
             return ItemStack.EMPTY;
         } else {
             this.inventoryContents.set(index, ItemStack.EMPTY);
+            this.markDirty();
             return itemstack;
         }
     }
@@ -113,6 +119,11 @@ public class InventorySpellBook implements IInventory {
 
     @Override
     public void markDirty() {
+        if (this.bagStack != null && !this.bagStack.isEmpty() && this.bagStack.getItem() instanceof am2.common.items.ItemSpellBook) {
+            ItemStack[] items = new ItemStack[inventorySize];
+            for (int i = 0; i < inventorySize; i++) items[i] = inventoryContents.get(i);
+            ((am2.common.items.ItemSpellBook)this.bagStack.getItem()).updateStackTagCompound(this.bagStack, items);
+        }
     }
 
     @Override

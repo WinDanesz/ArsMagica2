@@ -111,13 +111,15 @@ public class ContainerSpellBook extends Container {
 
         if (!world.isRemote) {
             ItemStack spellBookItemStack = bookStack;
-            ItemSpellBook spellBook = (ItemSpellBook) spellBookItemStack.getItem();
-            ItemStack[] items = GetFullInventory();
-            spellBook.updateStackTagCompound(spellBookItemStack, items);
-            if (fromBaubles) {
-                ItemSpellBook.writeSpellBookToBaubles(entityplayer, spellBookItemStack);
-            } else {
-                entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, spellBookItemStack);
+            if (!spellBookItemStack.isEmpty() && spellBookItemStack.getItem() instanceof ItemSpellBook) {
+                ItemSpellBook spellBook = (ItemSpellBook) spellBookItemStack.getItem();
+                ItemStack[] items = GetFullInventory();
+                spellBook.updateStackTagCompound(spellBookItemStack, items);
+                if (fromBaubles) {
+                    ItemSpellBook.writeSpellBookToBaubles(entityplayer, spellBookItemStack);
+                } else if (entityplayer.getHeldItemMainhand() == spellBookItemStack) {
+                    entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, spellBookItemStack);
+                }
             }
         }
 
@@ -126,7 +128,11 @@ public class ContainerSpellBook extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer entityplayer) {
-        return spellBookStack.isUsableByPlayer(entityplayer);
+        if (bookStack.isEmpty()) return false;
+        if (fromBaubles) {
+            return spellBookStack.isUsableByPlayer(entityplayer);
+        }
+        return (entityplayer.getHeldItemMainhand() == bookStack || entityplayer.getHeldItemOffhand() == bookStack) && spellBookStack.isUsableByPlayer(entityplayer);
     }
 
     @Override

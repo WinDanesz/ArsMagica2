@@ -62,10 +62,14 @@ public class ContainerEssenceBag extends Container {
 
         if (!world.isRemote) {
             ItemStack essenceBagItemStack = bagStack;
-            ItemEssenceBag bag = (ItemEssenceBag) essenceBagItemStack.getItem();
-            ItemStack[] items = GetFullInventory();
-            bag.updateStackTagCompound(essenceBagItemStack, items);
-            entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, essenceBagItemStack);
+            if (!essenceBagItemStack.isEmpty() && essenceBagItemStack.getItem() instanceof ItemEssenceBag) {
+                ItemEssenceBag bag = (ItemEssenceBag) essenceBagItemStack.getItem();
+                ItemStack[] items = GetFullInventory();
+                bag.updateStackTagCompound(essenceBagItemStack, items);
+                if (entityplayer.getHeldItemMainhand() == essenceBagItemStack) {
+                    entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, essenceBagItemStack);
+                }
+            }
         }
 
         super.onContainerClosed(entityplayer);
@@ -73,7 +77,8 @@ public class ContainerEssenceBag extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer entityplayer) {
-        return essBagInventory.isUsableByPlayer(entityplayer);
+        if (bagStack.isEmpty()) return false;
+        return (entityplayer.getHeldItemMainhand() == bagStack || entityplayer.getHeldItemOffhand() == bagStack) && essBagInventory.isUsableByPlayer(entityplayer);
     }
 
     @Override
@@ -90,13 +95,17 @@ public class ContainerEssenceBag extends Container {
                 }
             } else if (i >= mainInventoryStart && i < actionBarStart) //range 27 - player inventory
             {
-                if (!mergeItemStack(itemstack1, actionBarStart, actionBarEnd, false)) {
-                    return ItemStack.EMPTY;
+                if (!mergeItemStack(itemstack1, 0, mainInventoryStart, false)) {
+                    if (!mergeItemStack(itemstack1, actionBarStart, actionBarEnd, false)) {
+                        return ItemStack.EMPTY;
+                    }
                 }
             } else if (i >= actionBarStart && i < actionBarEnd) //range 9 - player action bar
             {
-                if (!mergeItemStack(itemstack1, mainInventoryStart, actionBarStart - 1, false)) {
-                    return ItemStack.EMPTY;
+                if (!mergeItemStack(itemstack1, 0, mainInventoryStart, false)) {
+                    if (!mergeItemStack(itemstack1, mainInventoryStart, actionBarStart, false)) {
+                        return ItemStack.EMPTY;
+                    }
                 }
             } else if (!mergeItemStack(itemstack1, mainInventoryStart, actionBarEnd, false)) {
                 return ItemStack.EMPTY;

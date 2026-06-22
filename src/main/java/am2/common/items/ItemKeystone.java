@@ -99,7 +99,10 @@ public class ItemKeystone extends Item {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (player.isSneaking()) {
-            player.openGui(ArsMagica.instance, IDDefs.GUI_KEYSTONE, world, player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
+            if (!world.isRemote) {
+                player.openGui(ArsMagica.instance, IDDefs.GUI_KEYSTONE, world, player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
+            }
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
 
         return new ActionResult<>(EnumActionResult.PASS, stack);
@@ -231,6 +234,7 @@ public class ItemKeystone extends Item {
 
     public InventoryKeyStone getInventory(ItemStack keyStoneStack) {
         InventoryKeyStone iks = new InventoryKeyStone();
+        iks.setBagStack(keyStoneStack);
         iks.SetInventoryContents(getMyInventory(keyStoneStack));
         return iks;
     }

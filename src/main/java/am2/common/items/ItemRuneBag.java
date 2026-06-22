@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
@@ -25,7 +26,10 @@ public class ItemRuneBag extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (player.isSneaking()) {
-            player.openGui(ArsMagica.instance, IDDefs.GUI_RUNE_BAG, world, (int) player.posX, (int) player.posY, (int) player.posZ);
+            if (!world.isRemote) {
+                player.openGui(ArsMagica.instance, IDDefs.GUI_RUNE_BAG, world, (int) player.posX, (int) player.posY, (int) player.posZ);
+            }
+            return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
         }
         return super.onItemRightClick(world, player, hand);
     }
@@ -92,6 +96,7 @@ public class ItemRuneBag extends Item {
             return InventoryRuneBag.EMPTY;
         }
         InventoryRuneBag irb = new InventoryRuneBag();
+        irb.setBagStack(runeBagStack);
         irb.SetInventoryContents(readFromStackTagCompound(runeBagStack));
         return irb;
     }

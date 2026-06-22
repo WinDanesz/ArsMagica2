@@ -10,11 +10,16 @@ import net.minecraft.util.text.ITextComponent;
 public class InventoryRuneBag implements IInventory {
     public static final int inventorySize = 16;
     private final NonNullList<ItemStack> inventoryContents;
+    private ItemStack bagStack;
 
     public static final InventoryRuneBag EMPTY = new InventoryRuneBag();
 
     public InventoryRuneBag() {
         inventoryContents = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+    }
+    
+    public void setBagStack(ItemStack stack) {
+        this.bagStack = stack;
     }
 
     public void SetInventoryContents(ItemStack[] inventoryContents) {
@@ -74,6 +79,7 @@ public class InventoryRuneBag implements IInventory {
             return ItemStack.EMPTY;
         } else {
             this.inventoryContents.set(index, ItemStack.EMPTY);
+            this.markDirty();
             return itemstack;
         }
     }
@@ -113,6 +119,11 @@ public class InventoryRuneBag implements IInventory {
 
     @Override
     public void markDirty() {
+        if (this.bagStack != null && !this.bagStack.isEmpty() && this.bagStack.getItem() instanceof am2.common.items.ItemRuneBag) {
+            ItemStack[] items = new ItemStack[inventorySize];
+            for (int i = 0; i < inventorySize; i++) items[i] = inventoryContents.get(i);
+            ((am2.common.items.ItemRuneBag)this.bagStack.getItem()).UpdateStackTagCompound(this.bagStack, items);
+        }
     }
 
     @Override

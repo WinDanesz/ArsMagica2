@@ -10,9 +10,14 @@ import net.minecraft.util.text.ITextComponent;
 public class InventoryKeyStone implements IInventory {
     public static final int inventorySize = 3;
     private final NonNullList<ItemStack> inventoryContents;
+    private ItemStack bagStack;
 
     public InventoryKeyStone() {
         inventoryContents = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+    }
+    
+    public void setBagStack(ItemStack stack) {
+        this.bagStack = stack;
     }
 
     public void SetInventoryContents(ItemStack[] inventoryContents) {
@@ -95,6 +100,7 @@ public class InventoryKeyStone implements IInventory {
             return ItemStack.EMPTY;
         } else {
             this.inventoryContents.set(index, ItemStack.EMPTY);
+            this.markDirty();
             return itemstack;
         }
     }
@@ -111,6 +117,11 @@ public class InventoryKeyStone implements IInventory {
 
     @Override
     public void markDirty() {
+        if (this.bagStack != null && !this.bagStack.isEmpty() && this.bagStack.getItem() instanceof am2.common.items.ItemKeystone) {
+            ItemStack[] items = new ItemStack[inventorySize];
+            for (int i = 0; i < inventorySize; i++) items[i] = inventoryContents.get(i);
+            ((am2.common.items.ItemKeystone)this.bagStack.getItem()).UpdateStackTagCompound(this.bagStack, items);
+        }
     }
 
     @Override

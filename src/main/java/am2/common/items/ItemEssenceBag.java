@@ -38,8 +38,10 @@ public class ItemEssenceBag extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
         ItemStack itemStackIn = playerIn.getHeldItem(hand);
-        playerIn.openGui(ArsMagica.instance, IDDefs.GUI_ESSENCE_BAG, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
-        return new ActionResult<>(EnumActionResult.PASS, itemStackIn);
+        if (!worldIn.isRemote) {
+            playerIn.openGui(ArsMagica.instance, IDDefs.GUI_ESSENCE_BAG, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
+        }
+        return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
     }
 
     public void updateStackTagCompound(ItemStack itemStack, ItemStack[] values) {
@@ -88,6 +90,7 @@ public class ItemEssenceBag extends Item {
 
     public static InventoryEssenceBag getInventory(ItemStack essenceBagStack) {
         InventoryEssenceBag inventoryEssenceBag = new InventoryEssenceBag();
+        inventoryEssenceBag.setBagStack(essenceBagStack);
         inventoryEssenceBag.setInventoryContents(readFromStackTagCompound(essenceBagStack));
         return inventoryEssenceBag;
     }

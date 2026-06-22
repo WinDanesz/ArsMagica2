@@ -118,15 +118,22 @@ public class ContainerKeystone extends Container {
 
         if (!world.isRemote) {
             ItemStack keyStoneItemStack = keystoneStack;
-            ItemStack[] items = GetFullKeystoneInventory();
-            ((ItemKeystone) AMItems.keystone).UpdateStackTagCompound(keyStoneItemStack, items);
-            entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, keyStoneItemStack);
+            if (!keyStoneItemStack.isEmpty() && keyStoneItemStack.getItem() instanceof ItemKeystone) {
+                ItemStack[] items = GetFullKeystoneInventory();
+                ((ItemKeystone) AMItems.keystone).UpdateStackTagCompound(keyStoneItemStack, items);
+                if (entityplayer.getHeldItemMainhand() == keyStoneItemStack) {
+                    entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, keyStoneItemStack);
+                }
+            }
 
-            if (!runeBagStack.isEmpty()) {
+            if (!runeBagStack.isEmpty() && runeBagStack.getItem() instanceof ItemRuneBag) {
                 ItemStack runebagItemStack = runeBagStack;
-                items = GetFullRuneBagInventory();
+                ItemStack[] items = GetFullRuneBagInventory();
                 ((ItemRuneBag) AMItems.rune_bag).UpdateStackTagCompound(runebagItemStack, items);
-                entityplayer.inventory.setInventorySlotContents(InventoryUtilities.getInventorySlotIndexFor(entityplayer.inventory, AMItems.rune_bag), runebagItemStack);
+                int slotIndex = InventoryUtilities.getInventorySlotIndexFor(entityplayer.inventory, AMItems.rune_bag);
+                if (slotIndex != -1 && entityplayer.inventory.getStackInSlot(slotIndex) == runebagItemStack) {
+                    entityplayer.inventory.setInventorySlotContents(slotIndex, runebagItemStack);
+                }
             }
         }
 
@@ -135,7 +142,8 @@ public class ContainerKeystone extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer entityplayer) {
-        return keyStoneInventory.isUsableByPlayer(entityplayer);
+        if (keystoneStack.isEmpty()) return false;
+        return (entityplayer.getHeldItemMainhand() == keystoneStack || entityplayer.getHeldItemOffhand() == keystoneStack) && keyStoneInventory.isUsableByPlayer(entityplayer);
     }
 
     @Override
@@ -178,48 +186,22 @@ public class ContainerKeystone extends Container {
                         }
                     }
                 }
-                if (!mergeItemStack(itemstack1, PLAYER_INVENTORY_START, PLAYER_ACTION_BAR_END - 1, true)) {
+                if (!mergeItemStack(itemstack1, PLAYER_INVENTORY_START, PLAYER_ACTION_BAR_END, true)) {
                     return ItemStack.EMPTY;
                 }
             } else if (i >= PLAYER_INVENTORY_START && i < PLAYER_ACTION_BAR_START) //range 27 - player inventory
             {
-                if (itemstack.getItem() instanceof ItemRune) {
-                    for (int n = 0; n < PLAYER_INVENTORY_START; n++) {
-                        Slot runeSlot = (Slot) inventorySlots.get(n);
-                        if (runeSlot.getHasStack()) continue;
-
-                        runeSlot.putStack(new ItemStack(itemstack1.getItem(), 1, itemstack1.getItemDamage()));
-                        runeSlot.onSlotChanged();
-                        itemstack1.shrink(1);
-                        if (itemstack1.getCount() == 0) {
-                            slot.putStack(ItemStack.EMPTY);
-                            slot.onSlotChanged();
-                        }
+                if (!mergeItemStack(itemstack1, 0, PLAYER_INVENTORY_START, false)) {
+                    if (!mergeItemStack(itemstack1, PLAYER_ACTION_BAR_START, PLAYER_ACTION_BAR_END, false)) {
                         return ItemStack.EMPTY;
                     }
-                }
-                if (!mergeItemStack(itemstack1, PLAYER_ACTION_BAR_START, PLAYER_ACTION_BAR_END - 1, false)) {
-                    return ItemStack.EMPTY;
                 }
             } else if (i >= PLAYER_ACTION_BAR_START && i < PLAYER_ACTION_BAR_END) //range 9 - player action bar
             {
-                if (itemstack.getItem() instanceof ItemRune) {
-                    for (int n = 0; n < PLAYER_INVENTORY_START; n++) {
-                        Slot runeSlot = (Slot) inventorySlots.get(n);
-                        if (runeSlot.getHasStack()) continue;
-
-                        runeSlot.putStack(new ItemStack(itemstack1.getItem(), 1, itemstack1.getItemDamage()));
-                        runeSlot.onSlotChanged();
-                        itemstack1.shrink(1);
-                        if (itemstack1.getCount() == 0) {
-                            slot.putStack(ItemStack.EMPTY);
-                            slot.onSlotChanged();
-                        }
+                if (!mergeItemStack(itemstack1, 0, PLAYER_INVENTORY_START, false)) {
+                    if (!mergeItemStack(itemstack1, PLAYER_INVENTORY_START, PLAYER_ACTION_BAR_START, false)) {
                         return ItemStack.EMPTY;
                     }
-                }
-                if (!mergeItemStack(itemstack1, PLAYER_INVENTORY_START, PLAYER_ACTION_BAR_START, false)) {
-                    return ItemStack.EMPTY;
                 }
             } else if (!mergeItemStack(itemstack1, PLAYER_INVENTORY_START, PLAYER_ACTION_BAR_END, false)) {
                 return ItemStack.EMPTY;
