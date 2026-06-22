@@ -83,20 +83,29 @@ public class Disarm extends SpellComponent {
             return false;
 
         if (!world.isRemote) {
+            boolean droppedSomething = false;
             // Chance to also disarm offhand
             ItemStack offhand = target.getHeldItemOffhand();
             if (!offhand.isEmpty() && world.rand.nextInt(9) + 1 <= damage
                     && EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, offhand) <= 0) {
                 spawnDrop(world, target, offhand, false);
                 target.inventory.offHandInventory.set(0, ItemStack.EMPTY);
+                droppedSomething = true;
             }
 
             ItemStack mainhand = target.getHeldItemMainhand();
             if (!mainhand.isEmpty()) {
-                if (EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, mainhand) > 0)
+                if (EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, mainhand) > 0) {
+                    if (droppedSomething) target.closeScreen();
                     return true;
+                }
                 target.dropItem(true);
+                target.closeScreen();
                 return true;
+            }
+            
+            if (droppedSomething) {
+                target.closeScreen();
             }
         }
         return false;
