@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -137,12 +136,9 @@ public class LightningBolt extends Particle {
         AMVector3 playervec = new AMVector3(sinyaw * -cospitch, -cossinpitch / cosyaw, cosyaw * cospitch);
         float boltage = this.main.particleAge >= 0 ? this.main.particleAge / this.main.particleMaxAge : 0.0F;
         float mainalpha = 1.0F;
-        if (pass == 0)
-            mainalpha = (1.0F - boltage) * 0.9F;
-        else if (pass == 1)
-            mainalpha = 1.0F - boltage * 0.6F;
-        else
-            mainalpha = 1.0F - boltage * 0.3F;
+        if (pass == 0) mainalpha = (1.0F - boltage) * 0.9F;
+        else if (pass == 1) mainalpha = 1.0F - boltage * 0.6F;
+        else mainalpha = 1.0F - boltage * 0.3F;
         int renderlength = (int) ((this.main.particleAge + partialframe + (int) (this.main.length * 3.0F)) / (int) (this.main.length * 3.0F) * this.main.numsegments0);
         for (Iterator<Segment> iterator = this.main.segments.iterator(); iterator.hasNext(); ) {
             LightningBoltCommon.Segment rendersegment = iterator.next();
@@ -267,10 +263,6 @@ public class LightningBolt extends Particle {
         }
         worldRendererIn.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
         renderBolt(worldRendererIn, partialTicks, cosyaw, cospitch, sinyaw, cossinpitch, 0);
-//		try{
-//			tessellator.draw();
-//		}catch (Throwable t){
-//		}
 
         switch (this.type) {
             case 0:
@@ -319,18 +311,7 @@ public class LightningBolt extends Particle {
             this.particleBlue = (overrideColor & 0xFF) / 255.0f;
         }
 
-//		try{
-//			worldRendererIn.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-//		}catch (Throwable t){
-//			tessellator.draw();
-//			worldRendererIn.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-//		}
         renderBolt(worldRendererIn, partialTicks, cosyaw, cospitch, sinyaw, cossinpitch, 1);
-//		try{
-//			tessellator.draw();
-//		}catch (Throwable t){
-//		}
-
         switch (this.type) {
             case 0:
                 this.particleRed = 1.0F;
@@ -378,12 +359,6 @@ public class LightningBolt extends Particle {
             this.particleBlue = (overrideColor & 0xFF) / 255.0f;
         }
 
-//		try{
-//			worldRendererIn.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-//		}catch (Throwable t){
-//			tessellator.draw();
-//			worldRendererIn.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-//		}
         renderBolt(worldRendererIn, partialTicks, cosyaw, cospitch, sinyaw, cossinpitch, 2);
         tessellator.draw();
 
@@ -393,11 +368,12 @@ public class LightningBolt extends Particle {
         GL11.glPopMatrix();
 
         // Restore vanilla particle rendering state
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        Minecraft.getMinecraft().renderEngine.bindTexture(new net.minecraft.util.ResourceLocation("textures/particle/particles.png"));
         worldRendererIn.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
     }
 
-    public int getRenderPass() {
+    @Override
+    public int getFXLayer() {
         return 2;
     }
 }

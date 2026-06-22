@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
@@ -16,11 +15,11 @@ import java.util.Vector;
 
 public class AMRibbon extends Particle {
 
-    int NUMCURVES = 5;    //number of ribbonCurves per ribbon
-    int CURVERESOLUTION = 25; //lower -> faster
-    float RIBBONWIDTH = 2.25f;
-    float NOISESTEP = 0.005f;
-    float MAXSEPARATION = 2f;
+    int NUM_CURVES = 5;    //number of ribbonCurves per ribbon
+    int CURVE_RESOLUTION = 25; //lower -> faster
+    float RIBBON_WIDTH = 2.25f;
+    float NOISE_STEP = 0.005f;
+    float MAX_SEPARATION = 2f;
 
     PerlinNoise noise;
 
@@ -52,7 +51,7 @@ public class AMRibbon extends Particle {
         stepId = 0;
 
         ribbonTarget = new Vec3d(random(-movement, movement), random(-movement, movement), random(-movement, movement));
-        ribbonSeparation = lerp(-MAXSEPARATION, MAXSEPARATION, noise.noise1(noisePosn += NOISESTEP));
+        ribbonSeparation = lerp(-MAX_SEPARATION, MAX_SEPARATION, noise.noise1(noisePosn += NOISE_STEP));
 
         pts.addElement(getRandPt());
         pts.addElement(getRandPt());
@@ -95,7 +94,7 @@ public class AMRibbon extends Particle {
         GL11.glPopAttrib();
 
         // Restore vanilla particle rendering state
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        Minecraft.getMinecraft().renderEngine.bindTexture(new net.minecraft.util.ResourceLocation("textures/particle/particles.png"));
         par1Tessellator.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
     }
 
@@ -106,16 +105,16 @@ public class AMRibbon extends Particle {
 
     void draw() {
         ribbonTarget = new Vec3d(random(-movement, movement), random(-movement, movement), random(-movement, movement));
-        ribbonSeparation = lerp(-MAXSEPARATION, MAXSEPARATION, noise.noise1(noisePosn += NOISESTEP));
+        ribbonSeparation = lerp(-MAX_SEPARATION, MAX_SEPARATION, noise.noise1(noisePosn += NOISE_STEP));
         currentCurve.addSegment();
         int size = curves.size();
-        if (size > NUMCURVES - 1) {
+        if (size > NUM_CURVES - 1) {
             RibbonCurve c = (RibbonCurve) curves.get(0);
             c.removeSegment();
         }
         stepId++;
 
-        if (stepId > CURVERESOLUTION) addRibbonCurve();
+        if (stepId > CURVE_RESOLUTION) addRibbonCurve();
 
         //draw curves
         for (int i = 0; i < size; i++) {
@@ -140,27 +139,17 @@ public class AMRibbon extends Particle {
         Vec3d curPt = (Vec3d) pts.elementAt(pts.size() - 2);
         Vec3d lastPt = (Vec3d) pts.elementAt(pts.size() - 3);
 
-        Vec3d lastMidPt = new Vec3d((curPt.x + lastPt.x) / 2,
-                (curPt.y + lastPt.y) / 2,
-                (curPt.z + lastPt.z) / 2);
+        Vec3d lastMidPt = new Vec3d((curPt.x + lastPt.x) / 2, (curPt.y + lastPt.y) / 2, (curPt.z + lastPt.z) / 2);
 
-        Vec3d midPt = new Vec3d((curPt.x + nextPt.x) / 2,
-                (curPt.y + nextPt.y) / 2,
-                (curPt.z + nextPt.z) / 2);
-
-		/*float width = 0.00003F * (getRelativeViewVector(midPt).length()) * 1.5f;
-		if (width > 0.2f)
-			width = 0.2f;
-		if (width < 0.1f)
-			width = 0.1f;*/
+        Vec3d midPt = new Vec3d((curPt.x + nextPt.x) / 2, (curPt.y + nextPt.y) / 2, (curPt.z + nextPt.z) / 2);
 
         float width = 0.2f;
 
-        currentCurve = new RibbonCurve(lastMidPt, midPt, curPt, width, CURVERESOLUTION, ribbonColor);
+        currentCurve = new RibbonCurve(lastMidPt, midPt, curPt, width, CURVE_RESOLUTION, ribbonColor);
         curves.add(currentCurve);
 
         //remove old curves
-        if (curves.size() > NUMCURVES) {
+        if (curves.size() > NUM_CURVES) {
             curves.removeFirst();
         }
 
@@ -168,13 +157,9 @@ public class AMRibbon extends Particle {
 
     }
 
-//	private static Vec3d getRelativeViewVector(Vec3d pos){
-//		EntityPlayer renderentity = Minecraft.getMinecraft().player;
-//		return new Vec3d((float)renderentity.posX - pos.x, (float)renderentity.posY - pos.y, (float)renderentity.posZ - pos.z);
-//	}
-
     Vec3d getRandPt() {
-        return new Vec3d(ribbonTarget.x + random(-ribbonSeparation, ribbonSeparation),
+        return new Vec3d(
+                ribbonTarget.x + random(-ribbonSeparation, ribbonSeparation),
                 ribbonTarget.y + random(-ribbonSeparation, ribbonSeparation),
                 ribbonTarget.z + random(-ribbonSeparation, ribbonSeparation));
     }
