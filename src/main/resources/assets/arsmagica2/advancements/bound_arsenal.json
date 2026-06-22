@@ -44,6 +44,5 @@
       "trigger": "minecraft:inventory_changed",
       "conditions": { "items": [{ "item": "arsmagica2:bound_shield" }] }
     }
-  },
-  "requirements": [["has_sword", "has_axe", "has_pickaxe", "has_shovel", "has_hoe", "has_bow", "has_shield"]]
+  }
 }
