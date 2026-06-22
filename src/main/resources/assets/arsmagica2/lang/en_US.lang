@@ -971,6 +971,7 @@ am2.tooltip.wtrwalk=Water Walking
 am2.tooltip.infusions=Imbuements :
 am2.tooltip.missingReagents=You are missing some reagents : 
 
+am2.gui.empty=Empty
 am2.gui.XPNumeric=Numeric XP Value
 am2.gui.action=Action
 am2.gui.affinity=Affinity UI

@@ -140,10 +140,10 @@ public class RenderUtils {
         int Y = charHeight * lines + lineSpace * (lines - 1);
         Tessellator tessellator = Tessellator.getInstance();
         tessellator.getBuffer().begin(7, DefaultVertexFormats.POSITION_COLOR);
-        tessellator.getBuffer().pos(-textHalfWidth - 1, -1 + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 0.75F).endVertex();
-        tessellator.getBuffer().pos(-textHalfWidth - 1, -1 + Y + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 0.75F).endVertex();
-        tessellator.getBuffer().pos(textHalfWidth + 1, -1 + Y + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 0.75F).endVertex();
-        tessellator.getBuffer().pos(textHalfWidth + 1, -1 + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 0.75F).endVertex();
+        tessellator.getBuffer().pos(-textHalfWidth - 1, -1 + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 1.0F).endVertex();
+        tessellator.getBuffer().pos(-textHalfWidth - 1, -1 + Y + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 1.0F).endVertex();
+        tessellator.getBuffer().pos(textHalfWidth + 1, -1 + Y + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 1.0F).endVertex();
+        tessellator.getBuffer().pos(textHalfWidth + 1, -1 + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 1.0F).endVertex();
         tessellator.draw();
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);

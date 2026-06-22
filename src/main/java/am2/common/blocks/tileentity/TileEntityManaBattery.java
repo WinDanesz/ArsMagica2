@@ -23,6 +23,10 @@ public class TileEntityManaBattery extends TileEntityAMPower implements ITileEnt
         super(storageCapacity);
         active = false;
     }
+    
+    public int getClientEnergy() {
+        return prevEnergy;
+    }
 
     public PowerTypes getPowerType() {
         return outputPowerType;
@@ -57,16 +61,43 @@ public class TileEntityManaBattery extends TileEntityAMPower implements ITileEnt
             PowerTypes highest = PowerNodeRegistry.For(world).getHighestPowerType(this);
             float amt = PowerNodeRegistry.For(world).getPower(this, highest);
             if (amt > 0) {
+                boolean needsSync = false;
                 if (this.outputPowerType != highest) {
                     this.outputPowerType = highest;
+                    needsSync = true;
+                }
+                if (Math.abs(amt - prevEnergy) > storageCapacity * 0.05f) {
+                    prevEnergy = (int)amt;
+                    needsSync = true;
+                }
+                if (needsSync) {
+                    this.getWorld().checkLight(this.getPos());
                     this.getWorld().notifyBlockUpdate(this.getPos(), this.getWorld().getBlockState(getPos()), this.getWorld().getBlockState(getPos()), 3);
-                    //this.tickCounter = 0;
                 }
             } else {
+                boolean needsSync = false;
                 if (this.outputPowerType != PowerTypes.NONE) {
                     this.outputPowerType = PowerTypes.NONE;
+                    needsSync = true;
+                }
+                if (prevEnergy > 0) {
+                    prevEnergy = 0;
+                    needsSync = true;
+                }
+                if (needsSync) {
+                    this.getWorld().checkLight(this.getPos());
                     this.getWorld().notifyBlockUpdate(this.getPos(), this.getWorld().getBlockState(getPos()), this.getWorld().getBlockState(getPos()), 3);
-                    //this.tickCounter = 0;
+                }
+            }
+        } else {
+            if (this.getClientEnergy() > 0 && this.outputPowerType != PowerTypes.NONE) {
+                // Occasional particle based on how full it is
+                float fullness = (float)this.getClientEnergy() / this.getCapacity();
+                if (fullness >= 0.3f) {
+                    int chance = (int)(Math.max(10, (int)(100 - (fullness * 80))) * 1.5f); // between 15 (full) and 150 (empty)
+                    if (this.world.rand.nextInt(chance) == 0) {
+                        ArsMagica.proxy.spawnManaBatterySparkle(this);
+                    }
                 }
             }
         }
@@ -88,6 +119,7 @@ public class TileEntityManaBattery extends TileEntityAMPower implements ITileEnt
         super.writeToNBT(nbttagcompound);
         nbttagcompound.setBoolean("isActive", active);
         nbttagcompound.setInteger("outputType", outputPowerType.ID());
+        nbttagcompound.setInteger("clientEnergy", prevEnergy);
         return nbttagcompound;
     }
 
@@ -97,6 +129,8 @@ public class TileEntityManaBattery extends TileEntityAMPower implements ITileEnt
         active = nbttagcompound.getBoolean("isActive");
         if (nbttagcompound.hasKey("outputType"))
             outputPowerType = PowerTypes.getByID(nbttagcompound.getInteger("outputType"));
+        if (nbttagcompound.hasKey("clientEnergy"))
+            prevEnergy = nbttagcompound.getInteger("clientEnergy");
     }
 
     @Override
@@ -110,8 +144,13 @@ public class TileEntityManaBattery extends TileEntityAMPower implements ITileEnt
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt) {
+        int oldLight = this.world.getBlockState(this.getPos()).getLightValue(this.world, this.getPos());
         this.readFromNBT(pkt.getNbtCompound());
+        int newLight = this.world.getBlockState(this.getPos()).getLightValue(this.world, this.getPos());
+        if (oldLight != newLight) {
+            this.world.checkLight(this.getPos());
+        }
     }
 
     @Override

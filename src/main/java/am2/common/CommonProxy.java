@@ -340,6 +340,9 @@ public class CommonProxy implements IGuiHandler {
             this.totalFlickerCount = 0;
     }
 
+    public void spawnManaBatterySparkle(TileEntityManaBattery te) {
+    }
+
     public int getTotalFlickerCount() {
         return this.totalFlickerCount;
     }

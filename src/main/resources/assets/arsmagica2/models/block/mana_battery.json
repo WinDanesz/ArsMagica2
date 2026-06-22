@@ -1,34 +1,100 @@
 {
-	"parent": "block/block",
-    "textures": {
-        "all": "arsmagica2:blocks/mana_battery",
-        "particle": "arsmagica2:blocks/mana_battery",
-		"overlay": "arsmagica2:blocks/mana_battery_frame"
-    },
-	"elements": [
-	{
-		"from":[0, 0, 0],
-		"to":[16, 16, 16],
-		"faces": {
-			"down":{ "texture":"#all", "tintindex":0},
-			"up":{"texture":"#all", "tintindex":0},
-			"north":{"texture":"#all", "tintindex":0},
-			"south":{"texture":"#all", "tintindex":0},
-			"west":{"texture":"#all", "tintindex":0},
-			"east":{"texture":"#all", "tintindex":0}
-		}
+	"format_version": "1.9.0",
+	"credit": "Made by Foreck with Blockbench",
+	"texture_size": [64, 64],
+	"textures": {
+		"0": "arsmagica2:blocks/mana_battery",
+		"particle": "arsmagica2:blocks/mana_battery"
 	},
-	{
-		"from":[0, 0, 0],
-		"to":[16, 16, 16],
-		"faces": {
-			"down":{ "texture":"#overlay"},
-			"up":{"texture":"#overlay"},
-			"north":{"texture":"#overlay"},
-			"south":{"texture":"#overlay"},
-			"west":{"texture":"#overlay"},
-			"east":{"texture":"#overlay"}
+	"elements": [
+		{
+			"from": [3, 0, 3],
+			"to": [13, 12.8, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [3, 0, 3]},
+			"faces": {
+				"north": {"uv": [2.5, 8.75, 0, 11.95], "texture": "#0"},
+				"east": {"uv": [2.5, 8.75, 0, 11.95], "texture": "#0"},
+				"south": {"uv": [2.5, 8.75, 0, 11.95], "texture": "#0"},
+				"west": {"uv": [2.5, 8.75, 0, 11.95], "texture": "#0"},
+				"up": {"uv": [2.5, 9.75, 5, 12.25], "texture": "#0"},
+				"down": {"uv": [4.5, 13.5, 7, 16], "texture": "#0"}
+			}
+		},
+		{
+			"from": [3, 12.8, 3],
+			"to": [13, 16.8, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [3, 1.8, 3]},
+			"faces": {
+				"north": {"uv": [0, 7.75, 2.5, 8.75], "texture": "#0"},
+				"east": {"uv": [0, 7.75, 2.5, 8.75], "texture": "#0"},
+				"south": {"uv": [0, 7.75, 2.5, 8.75], "texture": "#0"},
+				"west": {"uv": [0, 7.75, 2.5, 8.75], "texture": "#0"}
+			}
+		},
+		{
+			"name": "cube inverted",
+			"from": [13, 16.8, 13],
+			"to": [3, 12.8, 3],
+			"rotation": {"angle": 0, "axis": "y", "origin": [3, 1.8, 3]},
+			"faces": {
+				"north": {"uv": [0, 8.75, 2.5, 7.75], "texture": "#0"},
+				"east": {"uv": [0, 8.75, 2.5, 7.75], "texture": "#0"},
+				"south": {"uv": [0, 8.75, 2.5, 7.75], "texture": "#0"},
+				"west": {"uv": [0, 8.75, 2.5, 7.75], "texture": "#0"}
+			}
+		},
+		{
+			"from": [3, 0, 3],
+			"to": [13, 7, 10],
+			"rotation": {"angle": -45, "axis": "x", "origin": [13, 0, 3]},
+			"faces": {
+				"north": {"uv": [0, 14.25, 2.5, 16], "texture": "#0"},
+				"east": {"uv": [2.5, 12.5, 4.25, 14.25], "rotation": 90, "texture": "#0"},
+				"west": {"uv": [2.5, 12.5, 4.25, 14.25], "texture": "#0"},
+				"up": {"uv": [0, 14.25, 2.5, 12.5], "texture": "#0"}
+			}
+		},
+		{
+			"from": [6, 0, 3],
+			"to": [13, 7, 13],
+			"rotation": {"angle": -45, "axis": "z", "origin": [13, 0, 13]},
+			"faces": {
+				"north": {"uv": [2.5, 12.5, 4.25, 14.25], "texture": "#0"},
+				"east": {"uv": [0, 14.25, 2.5, 16], "texture": "#0"},
+				"south": {"uv": [2.5, 12.5, 4.25, 14.25], "rotation": 90, "texture": "#0"},
+				"up": {"uv": [0, 14.25, 2.5, 12.5], "rotation": 90, "texture": "#0"}
+			}
+		},
+		{
+			"from": [3, 0, 6],
+			"to": [13, 7, 13],
+			"rotation": {"angle": 45, "axis": "x", "origin": [3, 0, 13]},
+			"faces": {
+				"east": {"uv": [2.5, 12.5, 4.25, 14.25], "texture": "#0"},
+				"south": {"uv": [0, 14.25, 2.5, 16], "texture": "#0"},
+				"west": {"uv": [2.5, 12.5, 4.25, 14.25], "rotation": 90, "texture": "#0"},
+				"up": {"uv": [0, 14.25, 2.5, 12.5], "rotation": 180, "texture": "#0"}
+			}
+		},
+		{
+			"from": [3, 0, 3],
+			"to": [10, 7, 13],
+			"rotation": {"angle": 45, "axis": "z", "origin": [3, 0, 3]},
+			"faces": {
+				"north": {"uv": [2.5, 12.5, 4.25, 14.25], "rotation": 90, "texture": "#0"},
+				"south": {"uv": [2.5, 12.5, 4.25, 14.25], "texture": "#0"},
+				"west": {"uv": [0, 14.25, 2.5, 16], "texture": "#0"},
+				"up": {"uv": [0, 14.25, 2.5, 12.5], "rotation": 270, "texture": "#0"}
+			}
 		}
-	}
+	],
+	"groups": [
+		0,
+		1,
+		2,
+		3,
+		4,
+		5,
+		6
 	]
 }

@@ -164,6 +164,7 @@ public class ClientProxy extends CommonProxy {
         // Celestial Prism uses OBJ model rendered via TESR
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCelestialPrism.class, new TileCelestialPrismRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBlackAurem.class, new TileBlackAuremRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityManaBattery.class, new TileManaBatteryRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLectern.class, new TileLecternRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityKeystoneReceptacle.class, new TileKeystoneReceptacleRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCrystalMarker.class, new TileCrystalMarkerRenderer());
@@ -360,15 +361,36 @@ public class ClientProxy extends CommonProxy {
                 if (data != null && te instanceof IPowerNode<?>) {
                     IPowerNode<?> node = (IPowerNode<?>) te;
                     StringJoiner message = new StringJoiner("\n");
-                    for (PowerTypes type : node.getValidPowerTypes()) {
-                        float pwr = data.getPower(type);
-                        float pct = pwr / node.getCapacity() * 100;
-                        message.add(String.format("%s%.2f (%.2f%%)", type.getChatColor(), pwr, pct));
+                    if (te instanceof TileEntityManaBattery) {
+                        PowerTypes type = ((TileEntityManaBattery)te).getPowerType();
+                        if (type != PowerTypes.NONE) {
+                            float pwr = data.getPower(type);
+                            float pct = pwr / node.getCapacity() * 100;
+                            message.add(String.format("%s%.2f (%.2f%%)", type.getChatColor(), pwr, pct));
+                        } else {
+                            message.add(I18n.format("am2.gui.empty"));
+                        }
+                    } else {
+                        for (PowerTypes type : node.getValidPowerTypes()) {
+                            float pwr = data.getPower(type);
+                            float pct = pwr / node.getCapacity() * 100;
+                            message.add(String.format("%s%.2f (%.2f%%)", type.getChatColor(), pwr, pct));
+                        }
                     }
+                    double pX = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
+                    double pY = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
+                    double pZ = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
+
+                    double bX = target.getBlockPos().getX() + 0.5;
+                    double bY = target.getBlockPos().getY() + 0.5;
+                    double bZ = target.getBlockPos().getZ() + 0.5;
+
+                    net.minecraft.util.math.Vec3d dir = new net.minecraft.util.math.Vec3d(pX - bX, (pY + player.getEyeHeight()) - bY, pZ - bZ).normalize().scale(0.5);
+
                     RenderUtils.drawTextInWorldAtOffset(message.toString(),
-                            target.getBlockPos().getX() - (player.prevPosX - (player.prevPosX - player.posX) * partialTicks) + 0.5f,
-                            target.getBlockPos().getY() + yOff - (player.prevPosY - (player.prevPosY - player.posY) * partialTicks) + block.getBoundingBox(state, player.world, target.getBlockPos()).maxY * 0.8f,
-                            target.getBlockPos().getZ() - (player.prevPosZ - (player.prevPosZ - player.posZ) * partialTicks) + 0.5f
+                            bX - pX + dir.x,
+                            target.getBlockPos().getY() + yOff - pY + block.getBoundingBox(state, player.world, target.getBlockPos()).maxY * 0.8f + dir.y,
+                            bZ - pZ + dir.z
                     );
                 }
             }
@@ -384,6 +406,42 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void flashManaBar() {
         AMGuiHelper.instance.flashManaBar();
+    }
+
+    @Override
+    public void spawnManaBatterySparkle(TileEntityManaBattery te) {
+        float fullness = (float)te.getClientEnergy() / te.getCapacity();
+        double rx1 = te.getWorld().rand.nextDouble() - 0.5;
+        double ry1 = te.getWorld().rand.nextDouble() - 0.5;
+        double rz1 = te.getWorld().rand.nextDouble() - 0.5;
+        double len1 = Math.sqrt(rx1*rx1 + ry1*ry1 + rz1*rz1);
+        double rad1 = 0.35 + te.getWorld().rand.nextDouble() * 0.15;
+        double x = te.getPos().getX() + 0.5 + (rx1 / len1) * rad1;
+        double y = te.getPos().getY() + 1.6 + (ry1 / len1) * rad1;
+        double z = te.getPos().getZ() + 0.5 + (rz1 / len1) * rad1;
+        
+        double rx2 = te.getWorld().rand.nextDouble() - 0.5;
+        double ry2 = te.getWorld().rand.nextDouble() - 0.5;
+        double rz2 = te.getWorld().rand.nextDouble() - 0.5;
+        double len2 = Math.sqrt(rx2*rx2 + ry2*ry2 + rz2*rz2);
+        double rad2 = 0.35 + te.getWorld().rand.nextDouble() * 0.15;
+        double tx = te.getPos().getX() + 0.5 + (rx2 / len2) * rad2;
+        double ty = te.getPos().getY() + 1.6 + (ry2 / len2) * rad2;
+        double tz = te.getPos().getZ() + 0.5 + (rz2 / len2) * rad2;
+        
+        Object particle = ArsMagica.proxy.particleManager.spawn(te.getWorld(), "lightning_machine", x, y, z, tx, ty, tz);
+        if (particle instanceof am2.client.particles.AMLineArc) {
+            am2.client.particles.AMLineArc p = (am2.client.particles.AMLineArc)particle;
+            PowerTypes type = te.getPowerType();
+            if (type == PowerTypes.LIGHT) {
+                p.setRBGColorF(0.85f, 0.95f, 1.0f); // Whiter
+            } else if (type == PowerTypes.NEUTRAL) {
+                p.setRBGColorF(0.15f, 0.3f, 0.9f); // Dark blue
+            } else if (type == PowerTypes.DARK) {
+                p.setRBGColorF(0.9f, 0.05f, 0.05f); // More red
+            }
+            p.setMaxAge((int)(5 + (fullness * 10)) + te.getWorld().rand.nextInt(5));
+        }
     }
 
     @Override

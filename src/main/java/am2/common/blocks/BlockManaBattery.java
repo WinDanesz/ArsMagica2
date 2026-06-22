@@ -198,4 +198,26 @@ public class BlockManaBattery extends BlockAMPowered {
         return EnumBlockRenderType.MODEL;
     }
 
+    @Override
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileEntityManaBattery) {
+            TileEntityManaBattery batt = (TileEntityManaBattery) te;
+            if (batt.getPowerType() != PowerTypes.NONE) {
+                float fullness = 0;
+                if (world instanceof World) {
+                    if (((World)world).isRemote) {
+                        fullness = (float)batt.getClientEnergy() / batt.getCapacity();
+                    } else {
+                        fullness = PowerNodeRegistry.For((World)world).getPower(batt, batt.getPowerType()) / batt.getCapacity();
+                    }
+                } else {
+                    fullness = (float)batt.getClientEnergy() / batt.getCapacity();
+                }
+                return (int)(7.0f * Math.max(0.0f, Math.min(1.0f, fullness)));
+            }
+        }
+        return 0;
+    }
+
 }
