@@ -107,6 +107,9 @@ public class PlayerTracker {
     }
 
     public void onPlayerDeath(EntityPlayer player) {
+        if (player.openContainer != null && player.openContainer != player.inventoryContainer) {
+            player.closeScreen();
+        }
         storeSoulboundItemsForRespawn(player);
     }
 
