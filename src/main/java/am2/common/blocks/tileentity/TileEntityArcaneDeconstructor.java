@@ -238,12 +238,12 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
     private ItemStack objectToItemStack(Object o) {
         ItemStack output = ItemStack.EMPTY;
         if (o instanceof ItemStack)
-            output = (ItemStack) o;
+            output = ((ItemStack) o).copy();
         else if (o instanceof Ingredient) {
             Ingredient ingredient = (Ingredient) o;
             ItemStack[] matchingStacks = ingredient.getMatchingStacks();
             if (matchingStacks.length > 0 && !matchingStacks[0].isEmpty())
-                output = matchingStacks[0];
+                output = matchingStacks[0].copy();
         } else if (o instanceof Item)
             output = new ItemStack((Item) o);
         else if (o instanceof Block)
