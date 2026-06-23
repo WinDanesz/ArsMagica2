@@ -356,13 +356,15 @@ public class AMIngameGUI extends Gui {
                             // Capability not yet synced to client; use the cached value baked into the tagCompound.
                             manaCost = spellStack.getTagCompound().getFloat(am2.common.items.ItemSpellBase.KEY_MANA_COST_CACHED);
                             IEntityExtension ext = EntityExtension.For(Minecraft.getMinecraft().player);
-                            if (ext != null) manaCost *= (1 + (ext.getCurrentBurnout() / ext.getMaxBurnout()));
+                            if (ext != null && ext.getMaxBurnout() > 0) manaCost *= (1 + (ext.getCurrentBurnout() / ext.getMaxBurnout()));
                         }
                         spellcost = (EntityExtension.For(Minecraft.getMinecraft().player).hasEnoughMana(manaCost) ? ChatFormatting.AQUA.toString() : ChatFormatting.DARK_RED.toString()) + " (" + (int) (manaCost) + ")";
                         spellcost += ChatFormatting.RESET.toString();
                     } else if (AMItems.ebwiz_spell_binding != null && spellStack.getItem() == AMItems.ebwiz_spell_binding) {
                         float manaCost = EBWizardryCompatBootstrap.getEBWizSpellBindingManaCost(spellStack, Minecraft.getMinecraft().player);
                         if (manaCost >= 0) {
+                            IEntityExtension ext = EntityExtension.For(Minecraft.getMinecraft().player);
+                            if (ext != null && ext.getMaxBurnout() > 0) manaCost *= (1 + (ext.getCurrentBurnout() / ext.getMaxBurnout()));
                             spellcost = (EntityExtension.For(Minecraft.getMinecraft().player).hasEnoughMana(manaCost) ? ChatFormatting.AQUA.toString() : ChatFormatting.DARK_RED.toString()) + " (" + (int) (manaCost) + ")";
                             spellcost += ChatFormatting.RESET.toString();
                         }
@@ -371,12 +373,16 @@ public class AMIngameGUI extends Gui {
             } else if (EBWizardryCompatBootstrap.isEBWizWand(curItem)) {
                 float manaCost = EBWizardryCompatBootstrap.getEBWizWandCurrentSpellManaCost(curItem, Minecraft.getMinecraft().player);
                 if (manaCost >= 0) {
+                    IEntityExtension ext = EntityExtension.For(Minecraft.getMinecraft().player);
+                    if (ext != null && ext.getMaxBurnout() > 0) manaCost *= (1 + (ext.getCurrentBurnout() / ext.getMaxBurnout()));
                     spellcost = (EntityExtension.For(Minecraft.getMinecraft().player).hasEnoughMana(manaCost) ? ChatFormatting.AQUA.toString() : ChatFormatting.DARK_RED.toString()) + " (" + (int) (manaCost) + ")";
                     spellcost += ChatFormatting.RESET.toString();
                 }
             } else if (AMItems.ebwiz_spell_binding != null && curItem.getItem() == AMItems.ebwiz_spell_binding) {
                 float manaCost = EBWizardryCompatBootstrap.getEBWizSpellBindingManaCost(curItem, Minecraft.getMinecraft().player);
                 if (manaCost >= 0) {
+                    IEntityExtension ext = EntityExtension.For(Minecraft.getMinecraft().player);
+                    if (ext != null && ext.getMaxBurnout() > 0) manaCost *= (1 + (ext.getCurrentBurnout() / ext.getMaxBurnout()));
                     spellcost = (EntityExtension.For(Minecraft.getMinecraft().player).hasEnoughMana(manaCost) ? ChatFormatting.AQUA.toString() : ChatFormatting.DARK_RED.toString()) + " (" + (int) (manaCost) + ")";
                     spellcost += ChatFormatting.RESET.toString();
                 }
