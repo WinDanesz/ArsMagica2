@@ -13,6 +13,8 @@ import am2.common.utils.DummyEntityPlayer;
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -80,6 +82,11 @@ public class Appropriation extends SpellComponent {
                 NBTTagCompound targetData = new NBTTagCompound();
                 target.writeToNBT(targetData);
 
+                if (isNBTTooDeepOrContains(targetData, storageKey, 0, 20)) {
+                    ((EntityPlayer) caster).sendMessage(new TextComponentTranslation("am2.tooltip.approTooComplex"));
+                    return false;
+                }
+
                 data.setTag("targetNBT", targetData);
 
                 originalSpellStack.getTagCompound().setTag(storageKey, data);
@@ -136,6 +143,25 @@ public class Appropriation extends SpellComponent {
 
             stack.getTagCompound().removeTag(storageKey);
         }
+    }
+
+    private static boolean isNBTTooDeepOrContains(NBTBase nbt, String key, int currentDepth, int maxDepth) {
+        if (currentDepth > maxDepth) return true;
+        if (nbt instanceof NBTTagCompound compound) {
+            if (compound.hasKey(key)) return true;
+            for (String k : compound.getKeySet()) {
+                if (isNBTTooDeepOrContains(compound.getTag(k), key, currentDepth + 1, maxDepth)) {
+                    return true;
+                }
+            }
+        } else if (nbt instanceof NBTTagList list) {
+            for (int i = 0; i < list.tagCount(); i++) {
+                if (isNBTTooDeepOrContains(list.get(i), key, currentDepth + 1, maxDepth)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -284,6 +310,12 @@ public class Appropriation extends SpellComponent {
                 if (te != null) {
                     NBTTagCompound teData = new NBTTagCompound();
                     te.writeToNBT(teData);
+
+                    if (isNBTTooDeepOrContains(teData, storageKey, 0, 20)) {
+                        ((EntityPlayer) caster).sendMessage(new TextComponentTranslation("am2.tooltip.approTooComplex"));
+                        return false;
+                    }
+
                     data.setTag("tileEntity", teData);
 
                     // remove tile entity first to prevent content dropping which is already saved in the NBT

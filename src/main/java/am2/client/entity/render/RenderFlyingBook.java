@@ -15,8 +15,8 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderFlyingBook extends Render<EntityFlyingBook> {
 
-	private static final ItemStack BOOK_STACK = new ItemStack(Items.BOOK);
-	private static final ItemStack COMPENDIUM_STACK = new ItemStack(AMItems.arcane_compendium);
+	private ItemStack bookStack = new ItemStack(Items.BOOK);
+	private ItemStack compendiumStack = new ItemStack(AMItems.arcane_compendium);
 
 	public RenderFlyingBook(RenderManager renderManager) {
 		super(renderManager);
@@ -58,7 +58,7 @@ public class RenderFlyingBook extends Render<EntityFlyingBook> {
 		GlStateManager.scale(scale, scale, scale);
 
 		// Show compendium model during transform phase
-		ItemStack stackToRender = (phase == EntityFlyingBook.PHASE_TRANSFORMING) ? COMPENDIUM_STACK : BOOK_STACK;
+		ItemStack stackToRender = (phase == EntityFlyingBook.PHASE_TRANSFORMING) ? compendiumStack : bookStack;
 
 		// Render the item
 		this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);

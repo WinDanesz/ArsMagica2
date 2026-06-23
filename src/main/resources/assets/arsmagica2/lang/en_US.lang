@@ -802,6 +802,7 @@ am2.tooltip.altarStructureValid=§aAltar structure is complete!§r
 am2.tooltip.altarStructureInvalid=§cAltar structure is incomplete!§r
 am2.tooltip.scroll=Use the scroll wheel while holding down SHIFT to change spells
 am2.tooltip.approError=Something went wrong restoring the block. This spell was likely a spell from an older version. The stored block has been cleared to prevent a crash, and the spell should work moving forward. Sorry!
+am2.tooltip.approTooComplex=The target  is too complex to be held by this spell.
 am2.tooltip.arcanespellbook=§3Gain the power of the magi of old.§f
 am2.tooltip.armorlevel=Armor XP Level: %s
 am2.tooltip.armorxp=Infused Experience: %s
