@@ -191,6 +191,7 @@ public class AMConfig extends Configuration {
     private final String KEY_BattlemageSetDamageMultiplier = "battlemage_set_damage_multiplier";
     private final String KEY_ArchmageSetDamageMultiplier = "archmage_set_damage_multiplier";
 
+    private final String KEY_EBWizCompatEnabled = "EBWiz_Compat_Enabled";
     private final String KEY_EBWizSpellsInSpellBook = "EBWiz_Spells_In_SpellBook";
     private final String KEY_EBWizManaCostMultiplier = "EBWiz_Mana_Cost_Multiplier";
     private final String KEY_EBWizDisableWandMana = "EBWiz_Disable_Wand_Mana";
@@ -701,6 +702,7 @@ public class AMConfig extends Configuration {
 
     private boolean oldXpCalculations;
     private boolean burnoutHungerDepletion;
+    private boolean ebwizcompatEnabled;
     private boolean ebwizSpellsInSpellBook;
     private float ebwizManaCostMultiplier;
     private boolean ebwizDisableWandMana;
@@ -1175,6 +1177,8 @@ public class AMConfig extends Configuration {
         this.lostArchiveFrequency = this.get(CATEGORY_WORLDGEN, this.KEY_LostArchiveFrequency, 300, "How rare Lost Archives are. Higher values = rarer. A value of N means a 1-in-N chance per chunk. Default: 300.").getInt(10);
         this.lostArchiveBiomeBlacklist = this.get(CATEGORY_WORLDGEN, this.KEY_LostArchiveBiomeBlacklist, new String[]{"NETHER", "END"}, "Blacklist of BiomeDictionary type names where Lost Archives will NOT spawn.").getStringList();
 
+        this.ebwizcompatEnabled = this.get(CATEGORY_INTEGRATION, this.KEY_EBWizCompatEnabled, true,
+                "If true, ArsMagica 2 will integrate with Electroblob's Wizardry. If false, all integration features are disabled.").getBoolean(true);
         this.ebwizSpellsInSpellBook = this.get(CATEGORY_INTEGRATION, this.KEY_EBWizSpellsInSpellBook, true,
                 "If true and Electroblob's Wizardry is installed, EBWiz spell books can be placed into AM2 spell book slots and cast using AM2 mana.").getBoolean(true);
         this.ebwizManaCostMultiplier = (float) this.get(CATEGORY_INTEGRATION, this.KEY_EBWizManaCostMultiplier, 10.0,
@@ -2550,6 +2554,10 @@ public class AMConfig extends Configuration {
 
     public String[] getExtraAltarMain() {
         return this.extraAltarMain;
+    }
+
+    public boolean getEbwizCompatEnabled() {
+        return ebwizcompatEnabled;
     }
 
     public boolean getEBWizSpellsInSpellBook() {

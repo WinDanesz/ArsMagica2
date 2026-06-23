@@ -246,7 +246,9 @@ public class CommonProxy implements IGuiHandler {
                 throw new IllegalStateException("Spell Part " + part.getRegistryName() + " is missing a skill, this would cause severe problems");
         }
         ArsMagica.disabledSkills.getDisabledSkills(true);
-        EBWizardryCompatBootstrap.register();
+        if (ArsMagica.config.getEbwizCompatEnabled()) {
+            EBWizardryCompatBootstrap.register();
+        }
         AncientSpellcraftCompatBootstrap.register();
         PotioncoreCompatBootstrap.register();
     }

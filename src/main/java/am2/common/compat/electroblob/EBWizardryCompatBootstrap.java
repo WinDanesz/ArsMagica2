@@ -41,12 +41,15 @@ public final class EBWizardryCompatBootstrap {
 
     private EBWizardryCompatBootstrap() {}
 
+    public static boolean isActive = false;
     /**
      * Registers the EBWiz compatibility handler if Electroblob's Wizardry is
      * present. Safe to call unconditionally – the check is performed here.
      */
     public static void register() {
+        if (!am2.ArsMagica.config.getEbwizCompatEnabled()) return;
         if (Loader.isModLoaded(MODID)) {
+            isActive = true;
             MinecraftForge.EVENT_BUS.register(new EBWizardryCompatHandler());
             registerCompendiumEntry();
             am2.common.entity.ai.selectors.SummonEntitySelector.ebwizValidator =
