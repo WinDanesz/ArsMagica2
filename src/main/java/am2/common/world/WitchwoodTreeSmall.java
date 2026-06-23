@@ -17,7 +17,7 @@ public class WitchwoodTreeSmall extends WorldGenAbstractTree {
     private final int minTreeHeight = 4;
 
     private final IBlockState logBlock = AMBlocks.witchwood_log.getDefaultState();
-    private final IBlockState leafBlock = AMBlocks.witchwood_leaves.getDefaultState();
+    private final IBlockState leafBlock = AMBlocks.witchwood_leaves.getDefaultState().withProperty(net.minecraft.block.BlockLeaves.CHECK_DECAY, false);
 
     // this function is copied from WorldGenTrees.java
     // variable names have been changed for readability, and some un-used parts (vine, cocoa generation) have been removed

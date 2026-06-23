@@ -2,6 +2,7 @@ package am2.common.world;
 
 import am2.common.registry.AMBlocks;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -202,15 +203,22 @@ public class WitchwoodTreeHuge extends WorldGenBigTree {
         return par1 >= 0 && par1 < this.leafDistanceLimit ? (par1 != 0 && par1 != this.leafDistanceLimit - 1 ? 3.0F : 2.0F) : -1.0F;
     }
 
-    /**
-     * Generates the leaves surrounding an individual entry in the leafNodes list.
-     */
     void generateLeafNode(int par1, int par2, int par3) {
         int l = par2;
 
         for (int i1 = par2 + this.leafDistanceLimit; l < i1; ++l) {
             float f = this.leafSize(l - par2);
-            this.genTreeLayer(par1, l, par3, f, 1, AMBlocks.witchwood_leaves.getDefaultState());
+            this.genTreeLayer(par1, l, par3, f, 1, AMBlocks.witchwood_leaves.getDefaultState().withProperty(BlockLeaves.CHECK_DECAY, false));
+        }
+
+        // Add lone logs to prevent leaves from despawning
+        BlockPos pos = new BlockPos(par1, par2, par3);
+        if (this.worldObj.isBlockLoaded(pos)) {
+            this.worldObj.setBlockState(pos, AMBlocks.witchwood_log.getDefaultState(), 2);
+        }
+        pos = new BlockPos(par1, par2 + 1, par3);
+        if (this.worldObj.isBlockLoaded(pos)) {
+            this.worldObj.setBlockState(pos, AMBlocks.witchwood_log.getDefaultState(), 2);
         }
     }
 
