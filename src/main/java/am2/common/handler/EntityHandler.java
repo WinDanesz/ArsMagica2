@@ -32,7 +32,6 @@ import am2.common.utils.EntityUtils;
 import am2.common.utils.InventoryUtilities;
 import am2.common.utils.MathUtilities;
 import am2.common.world.BiomeWitchwoodForest;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
 import am2.network.AMNetworkHandler;
 import am2.network.packets.*;
 import net.minecraft.client.Minecraft;
@@ -58,11 +57,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.MouseEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
@@ -329,19 +325,45 @@ public class EntityHandler {
         }
     }
 
-    private float getWitchwoodGroundFogFactor(Entity entity) {
+    private float getWitchwoodFogFactor(Entity entity) {
         if (!isInWitchwoodBiome(entity) || entity.isInWater()) return 0f;
 
-        // world.getHeight() returns the top of the tree canopy in forests, which breaks the
-        // height band check. Use the entity's own Y position as the ground reference instead –
-        // the player's feet are always at (or very close to) the terrain surface.
-        double groundY = entity.posY;
         double cameraY = entity.posY + entity.getEyeHeight();
-        double fogLayerHeight = 7.0;
-        if (cameraY > groundY + fogLayerHeight) return 0f;
+        double canopyY = getAverageWitchwoodCanopyHeight(entity);
+        double fadeStartAboveCanopy = 4.0;
+        double fadeRange = 20.0;
 
-        double normalizedHeight = (cameraY - groundY) / fogLayerHeight;
-        return (float) net.minecraft.util.math.MathHelper.clamp(1.0 - normalizedHeight, 0.0, 1.0);
+        double fadeStartY = canopyY + fadeStartAboveCanopy;
+        if (cameraY <= fadeStartY) return 1.0f;
+        if (cameraY >= fadeStartY + fadeRange) return 0.0f;
+
+        double normalized = (cameraY - fadeStartY) / fadeRange;
+        return (float) net.minecraft.util.math.MathHelper.clamp(1.0 - normalized, 0.0, 1.0);
+    }
+
+    private double getAverageWitchwoodCanopyHeight(Entity entity) {
+        int baseX = net.minecraft.util.math.MathHelper.floor(entity.posX);
+        int baseZ = net.minecraft.util.math.MathHelper.floor(entity.posZ);
+
+        int sampleCount = 0;
+        double total = 0;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                BlockPos samplePos = new BlockPos(baseX + dx * 4, 0, baseZ + dz * 4);
+                total += entity.world.getHeight(samplePos).getY();
+                sampleCount++;
+            }
+        }
+        return sampleCount == 0 ? entity.posY : total / sampleCount;
+    }
+
+    private float getWitchwoodFogEndDistance(Entity entity, float farPlane) {
+        float fogFactor = getWitchwoodFogFactor(entity);
+        if (fogFactor <= 0f) return -1f;
+
+        float maxFogEnd = Math.max(24.0f, farPlane * 0.95f);
+        float minFogEnd = 16.0f;
+        return minFogEnd + (maxFogEnd - minFogEnd) * (1.0f - fogFactor);
     }
 
     private boolean isInWitchwoodBiome(Entity entity) {
@@ -433,9 +455,9 @@ public class EntityHandler {
         if (!isInWitchwoodBiome(event.getEntity())) return;
         if (isUnderground(event.getEntity())) return;
 
-        float groundFactor = getWitchwoodGroundFogFactor(event.getEntity());
-        // Above the ground band, keep a fixed 30 % overcast tint to desaturate the sun.
-        float blend = Math.max(groundFactor * 0.80f, 0.30f);
+        float fogFactor = getWitchwoodFogFactor(event.getEntity());
+        if (fogFactor <= 0f) return;
+        float blend = fogFactor * 0.80f;
 
         float mistR = 0.18f, mistG = 0.11f, mistB = 0.10f;
         event.setRed(event.getRed()     * (1f - blend) + mistR * blend);
@@ -455,25 +477,32 @@ public class EntityHandler {
         if (!isInWitchwoodBiome(event.getEntity())) return;
         if (isUnderground(event.getEntity())) return;
 
-        float far = event.getFarPlaneDistance();
-        float groundFactor = getWitchwoodGroundFogFactor(event.getEntity());
-
-        // Mimic Blindness: use absolute block distances so the effect is the same at any
-        // render distance setting. Blindness itself uses 5.0f blocks; we use 16.0f for a
-        // slightly less claustrophobic biome-wide haze.
-        float fogEnd = 20.0f;
-        float fogStart = 0.0f;
-
-        // Near the ground the dense mist can be even shorter; take whichever is tighter.
-        if (groundFactor > 0f) {
-            float groundEnd = far * net.minecraft.util.math.MathHelper.clamp(1.0f - groundFactor * 0.973f, 0.0f, 1.0f);
-            fogEnd = Math.min(fogEnd, groundEnd);
-        }
+        float fogEnd = getWitchwoodFogEndDistance(event.getEntity(), event.getFarPlaneDistance());
+        if (fogEnd <= 0f) return;
+        float fogStart = Math.max(0.0f, fogEnd * 0.05f);
 
         GlStateManager.setFog(GlStateManager.FogMode.LINEAR);
         GlStateManager.setFogStart(fogStart);
         GlStateManager.setFogEnd(fogEnd);
         GlStateManager.enableFog();
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void onRenderLivingPre(RenderLivingEvent.Pre<?> event) {
+        Entity viewEntity = Minecraft.getMinecraft().getRenderViewEntity();
+        if (viewEntity == null) return;
+        if (!isInWitchwoodBiome(viewEntity) || isUnderground(viewEntity)) return;
+        if (event.getEntity() == viewEntity) return;
+
+        float farPlane = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16.0f;
+        float fogEnd = getWitchwoodFogEndDistance(viewEntity, farPlane);
+        if (fogEnd <= 0f) return;
+
+        double maxDistSq = fogEnd * fogEnd;
+        if (event.getEntity().getDistanceSq(viewEntity) > maxDistSq) {
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent
