@@ -3,7 +3,6 @@ package am2.common.compat.electroblob;
 import am2.ArsMagica;
 import am2.api.affinity.Affinity;
 import am2.api.extensions.IEntityExtension;
-import am2.common.LogHelper;
 import am2.common.compat.electroblob.item.ItemEBWizSpellBinding;
 import am2.common.compat.electroblob.spells.IceStatue;
 import am2.common.compat.electroblob.spells.Metamorphosis;
@@ -35,10 +34,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -70,8 +66,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class EBWizardryCompatHandler {
 
     // Double-supplier keeps ItemSpellBookEBWiz class resolution deferred until actual item creation.
-    private static final java.util.function.Supplier<java.util.function.Supplier<net.minecraft.item.Item>> SPELLBOOK_ITEM_FACTORY =
-            () -> am2.common.compat.electroblob.item.ItemSpellBookEBWiz::new;
+    private static final java.util.function.Supplier<java.util.function.Supplier<net.minecraft.item.Item>> SPELLBOOK_ITEM_FACTORY = () -> am2.common.compat.electroblob.item.ItemSpellBookEBWiz::new;
 
     /**
      * Returns the AM2 mana cost for the EBWiz spell bound in {@code stack},
@@ -97,9 +92,7 @@ public final class EBWizardryCompatHandler {
             // cost reductions (e.g. fire mage robes reducing fireball cost) are reflected.
             electroblob.wizardry.util.SpellModifiers modifiers = new electroblob.wizardry.util.SpellModifiers();
             modifiers.set(SpellModifiers.COST, 1.0f, false);
-            electroblob.wizardry.event.SpellCastEvent.Pre fakeEvent =
-                    new electroblob.wizardry.event.SpellCastEvent.Pre(
-                            electroblob.wizardry.event.SpellCastEvent.Source.WAND, spell, caster, modifiers);
+            electroblob.wizardry.event.SpellCastEvent.Pre fakeEvent = new electroblob.wizardry.event.SpellCastEvent.Pre(electroblob.wizardry.event.SpellCastEvent.Source.WAND, spell, caster, modifiers);
             electroblob.wizardry.item.ItemWizardArmour.onSpellCastPreEvent(fakeEvent);
             costMultiplier = modifiers.get(SpellModifiers.COST);
         }
@@ -126,12 +119,7 @@ public final class EBWizardryCompatHandler {
     public static int countSummonsFor(EntityLivingBase caster) {
         if (caster == null || caster.world == null) return 0;
         net.minecraft.util.math.AxisAlignedBB box = caster.getEntityBoundingBox().grow(SUMMON_SEARCH_RADIUS);
-        return caster.world.getEntitiesWithinAABB(
-                net.minecraft.entity.Entity.class,
-                box,
-                e -> e instanceof electroblob.wizardry.entity.living.ISummonedCreature
-                        && ((electroblob.wizardry.entity.living.ISummonedCreature) e).getCaster() == caster
-        ).size();
+        return caster.world.getEntitiesWithinAABB(net.minecraft.entity.Entity.class, box, e -> e instanceof electroblob.wizardry.entity.living.ISummonedCreature && ((electroblob.wizardry.entity.living.ISummonedCreature) e).getCaster() == caster).size();
     }
 
     /**
@@ -159,8 +147,7 @@ public final class EBWizardryCompatHandler {
         if (event.getWorld().isRemote) return;
         if (!(event.getEntity() instanceof electroblob.wizardry.entity.living.ISummonedCreature)) return;
 
-        electroblob.wizardry.entity.living.ISummonedCreature summon =
-                (electroblob.wizardry.entity.living.ISummonedCreature) event.getEntity();
+        electroblob.wizardry.entity.living.ISummonedCreature summon = (electroblob.wizardry.entity.living.ISummonedCreature) event.getEntity();
         EntityLivingBase caster = summon.getCaster();
         if (caster == null) return;
 
@@ -175,8 +162,7 @@ public final class EBWizardryCompatHandler {
             event.getEntity().setDead();
             event.setCanceled(true);
             if (caster instanceof net.minecraft.entity.player.EntityPlayer) {
-                ((net.minecraft.entity.player.EntityPlayer) caster).sendStatusMessage(
-                        new net.minecraft.util.text.TextComponentTranslation("am2.tooltip.noMoreSummons"), false);
+                ((net.minecraft.entity.player.EntityPlayer) caster).sendStatusMessage(new net.minecraft.util.text.TextComponentTranslation("am2.tooltip.noMoreSummons"), false);
             }
         }
     }
@@ -195,7 +181,7 @@ public final class EBWizardryCompatHandler {
      * mana the event is cancelled so the spell fails cleanly instead of
      * silently consuming wand mana as a free fallback.
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = net.minecraftforge.fml.common.eventhandler.EventPriority.LOWEST)
     public void onEBWizSpellCastPre(electroblob.wizardry.event.SpellCastEvent.Pre event) {
         if (event.isCanceled()) return;
 
@@ -225,9 +211,7 @@ public final class EBWizardryCompatHandler {
 
         // Scrolls have no wand-mana fallback of their own, so by default they
         // require AM2 mana (configurable via EBWiz_Scroll_Requires_Mana).
-        boolean requireAM2Mana = ArsMagica.config.getEBWizDisableWandMana()
-                || (event.getSource() == electroblob.wizardry.event.SpellCastEvent.Source.SCROLL
-                && ArsMagica.config.getEBWizScrollRequiresMana());
+        boolean requireAM2Mana = ArsMagica.config.getEBWizDisableWandMana() || (event.getSource() == electroblob.wizardry.event.SpellCastEvent.Source.SCROLL && ArsMagica.config.getEBWizScrollRequiresMana());
         if (requireAM2Mana) {
             // The spell can only proceed if the caster has enough AM2 mana;
             // otherwise cancel it outright.
@@ -258,6 +242,85 @@ public final class EBWizardryCompatHandler {
     }
 
     // -------------------------------------------------------------------------
+    // AM2 SpellCastEvent.Pre
+    // -------------------------------------------------------------------------
+
+    /**
+     * Intercepts AM2 spell-cast pre-events.
+     * Applies EBWiz wizard-armour cost reductions (e.g. pyromancer robes
+     * reducing the cost of fire spells) to AM2 spells based on their dominant
+     * affinity.
+     */
+    @SubscribeEvent
+    public void onAM2SpellCastPre(am2.api.event.SpellCastEvent.Pre event) {
+        if (event.entityLiving == null || event.spell == null) return;
+        event.manaCost *= getAM2SpellDiscount(event.entityLiving, event.spell);
+    }
+
+    /**
+     * Computes the AM2 spell-cost multiplier contributed by equipped EBWiz
+     * wizard armour for the given player and spell.
+     */
+    private static float getElementalCostReduction(electroblob.wizardry.item.ItemWizardArmour.ArmourClass armourClass) {
+        switch (armourClass) {
+            case WIZARD, WARLOCK:
+                return 0.1f;
+            case SAGE:
+                return 0.2f;
+            case BATTLEMAGE:
+                return 0.05f;
+            default:
+                return 0.0f;
+        }
+    }
+
+    public static float getAM2SpellDiscount(EntityLivingBase caster, am2.api.spell.SpellData data) {
+        if (caster == null || data == null) return 1.0f;
+        am2.api.affinity.Affinity dominantAffinity = data.getMainShift();
+        electroblob.wizardry.spell.Spell representative = spellForAffinity(dominantAffinity);
+        if (representative == null || representative == electroblob.wizardry.registry.Spells.none) {
+            return 1.0f;
+        }
+
+        float costModifier = 1.0f;
+        boolean hasSageSet = true;
+        boolean hasMana = true;
+        electroblob.wizardry.constants.Element setElement = null;
+
+        for (net.minecraft.inventory.EntityEquipmentSlot slot : electroblob.wizardry.util.InventoryUtils.ARMOUR_SLOTS) {
+            net.minecraft.item.ItemStack stack = caster.getItemStackFromSlot(slot);
+            if (stack.isEmpty() || !(stack.getItem() instanceof electroblob.wizardry.item.ItemWizardArmour)) {
+                hasSageSet = false;
+                hasMana = false;
+                continue;
+            }
+
+            electroblob.wizardry.item.ItemWizardArmour armour = (electroblob.wizardry.item.ItemWizardArmour) stack.getItem();
+            if (setElement == null) setElement = armour.element;
+            else if (setElement != armour.element) hasSageSet = false;
+
+            if (armour.armourClass != electroblob.wizardry.item.ItemWizardArmour.ArmourClass.SAGE) {
+                hasSageSet = false;
+            }
+
+            if (armour.isManaEmpty(stack)) {
+                hasMana = false;
+            }
+
+            if (representative.getElement() == armour.element) {
+                costModifier -= getElementalCostReduction(armour.armourClass);
+            }
+        }
+
+        if (hasSageSet && hasMana && setElement != null) {
+            if (representative.getElement() == setElement || representative.getElement() == electroblob.wizardry.constants.Element.MAGIC || representative.getElement() == electroblob.wizardry.constants.Element.HEALING) {
+                costModifier = Math.min(costModifier, 0.8f);
+            }
+        }
+
+        return Math.max(0.0f, costModifier);
+    }
+    // -------------------------------------------------------------------------
     // EBWiz SpellCastEvent.Post
     // -------------------------------------------------------------------------
 
@@ -277,10 +340,6 @@ public final class EBWizardryCompatHandler {
 
         IEntityExtension am2Data = EntityExtension.For(caster);
         if (am2Data == null) {
-            // AM2 capability disappeared between Pre and Post (should not happen
-            // under normal circumstances).  Log a warning so the issue is visible.
-            LogHelper.warn("AM2 EBWiz compat: AM2 entity data was null during Post for %s; "
-                    + "AM2 mana deduction skipped (%.1f mana lost).", caster.getName(), am2ManaCost);
             return;
         }
         am2Data.deductMana(am2ManaCost);
@@ -350,9 +409,34 @@ public final class EBWizardryCompatHandler {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onItemTooltip(ItemTooltipEvent event) {
-        if (!ArsMagica.config.getEBWizHideWandTooltip()) return;
         ItemStack stack = event.getItemStack();
         if (stack.isEmpty()) return;
+
+        if (stack.getItem() instanceof electroblob.wizardry.item.ItemWizardArmour) {
+            electroblob.wizardry.item.ItemWizardArmour armour = (electroblob.wizardry.item.ItemWizardArmour) stack.getItem();
+            java.util.List<am2.api.affinity.Affinity> buffs = new java.util.ArrayList<>();
+            for (am2.api.affinity.Affinity aff : am2.api.ArsMagicaAPI.getAffinityRegistry().getValuesCollection()) {
+                if (aff == am2.common.registry.Affinities.none) continue;
+                electroblob.wizardry.spell.Spell rep = spellForAffinity(aff);
+                if (rep != null && rep != electroblob.wizardry.registry.Spells.none) {
+                    if (rep.getElement() == armour.element) {
+                        buffs.add(aff);
+                    } else if (armour.armourClass == electroblob.wizardry.item.ItemWizardArmour.ArmourClass.SAGE && (rep.getElement() == electroblob.wizardry.constants.Element.MAGIC || rep.getElement() == electroblob.wizardry.constants.Element.HEALING)) {
+                        if (!buffs.contains(aff)) buffs.add(aff);
+                    }
+                }
+            }
+
+            if (!buffs.isEmpty()) {
+                event.getToolTip().add("");
+                event.getToolTip().add(net.minecraft.util.text.TextFormatting.DARK_AQUA + "AM2 Affinity Bonus:");
+                for (am2.api.affinity.Affinity aff : buffs) {
+                    event.getToolTip().add(net.minecraft.util.text.TextFormatting.GRAY + " - " + aff.getLocalizedName());
+                }
+            }
+        }
+
+        if (!ArsMagica.config.getEBWizHideWandTooltip()) return;
         if (!"electroblob.wizardry.item.ItemWand".equals(stack.getItem().getClass().getName())) return;
 
         // Derive the locale-correct prefix for each line by formatting the
@@ -387,8 +471,7 @@ public final class EBWizardryCompatHandler {
         if (stack.isEmpty()) return false;
         if (!ArsMagica.config.getEBWizSpellsInSpellBook()) return false;
         if (!Loader.isModLoaded(EBWizardryCompatBootstrap.MODID)) return false;
-        return "electroblob.wizardry.item.ItemSpellBook"
-                .equals(stack.getItem().getClass().getName());
+        return "electroblob.wizardry.item.ItemSpellBook".equals(stack.getItem().getClass().getName());
     }
 
     /**
@@ -403,15 +486,13 @@ public final class EBWizardryCompatHandler {
         if (id == null || !"ebwizardry".equals(id.getNamespace())) return false;
 
         if ("spell_book".equals(id.getPath())) {
-            net.minecraft.client.Minecraft.getMinecraft().displayGuiScreen(
-                    new electroblob.wizardry.client.gui.GuiSpellBook(stack));
+            net.minecraft.client.Minecraft.getMinecraft().displayGuiScreen(new electroblob.wizardry.client.gui.GuiSpellBook(stack));
             return true;
         }
 
         if ("wizard_handbook".equals(id.getPath())) {
             if (electroblob.wizardry.Wizardry.settings.loadHandbook) {
-                net.minecraft.client.Minecraft.getMinecraft().displayGuiScreen(
-                        new electroblob.wizardry.client.gui.handbook.GuiWizardHandbook());
+                net.minecraft.client.Minecraft.getMinecraft().displayGuiScreen(new electroblob.wizardry.client.gui.handbook.GuiWizardHandbook());
             }
             return true;
         }
@@ -432,8 +513,7 @@ public final class EBWizardryCompatHandler {
     public static ItemStack convertEBWizSpellBook(ItemStack stack) {
         if (!isEBWizSpellBookItem(stack)) return stack;
         // Safe to reference EBWiz classes here – EBWiz is confirmed loaded.
-        electroblob.wizardry.spell.Spell spell =
-                electroblob.wizardry.spell.Spell.byMetadata(stack.getMetadata());
+        electroblob.wizardry.spell.Spell spell = electroblob.wizardry.spell.Spell.byMetadata(stack.getMetadata());
         if (spell == null || spell == electroblob.wizardry.registry.Spells.none) return stack;
         return ItemEBWizSpellBinding.createForSpell(spell);
     }
@@ -464,8 +544,7 @@ public final class EBWizardryCompatHandler {
      */
     public static int getEBWizSpellBookEssenceCost(ItemStack stack) {
         if (!isEBWizSpellBookItem(stack)) return 0;
-        electroblob.wizardry.spell.Spell spell =
-                electroblob.wizardry.spell.Spell.byMetadata(stack.getMetadata());
+        electroblob.wizardry.spell.Spell spell = electroblob.wizardry.spell.Spell.byMetadata(stack.getMetadata());
         if (spell == null || spell == electroblob.wizardry.registry.Spells.none) return 0;
         electroblob.wizardry.constants.Tier tier = spell.getTier();
         int base = am2.ArsMagica.config != null ? am2.ArsMagica.config.getEBWizTranscriptionCostBase() : 500;
@@ -485,8 +564,7 @@ public final class EBWizardryCompatHandler {
      */
     public static String getEBWizSpellBookRegistryName(ItemStack stack) {
         if (!isEBWizSpellBookItem(stack)) return "";
-        electroblob.wizardry.spell.Spell spell =
-                electroblob.wizardry.spell.Spell.byMetadata(stack.getMetadata());
+        electroblob.wizardry.spell.Spell spell = electroblob.wizardry.spell.Spell.byMetadata(stack.getMetadata());
         if (spell == null || spell == electroblob.wizardry.registry.Spells.none) return "";
         return spell.getRegistryName().toString();
     }
@@ -497,8 +575,7 @@ public final class EBWizardryCompatHandler {
      */
     public static String getEBWizSpellBookDisplayName(ItemStack stack) {
         if (!isEBWizSpellBookItem(stack)) return "";
-        electroblob.wizardry.spell.Spell spell =
-                electroblob.wizardry.spell.Spell.byMetadata(stack.getMetadata());
+        electroblob.wizardry.spell.Spell spell = electroblob.wizardry.spell.Spell.byMetadata(stack.getMetadata());
         if (spell == null || spell == electroblob.wizardry.registry.Spells.none) return "";
         return spell.getDisplayName();
     }
@@ -520,13 +597,11 @@ public final class EBWizardryCompatHandler {
     public static List<AMConfig.WeightedAffinity> resolveWeights(electroblob.wizardry.spell.Spell spell) {
         // 1. Per-spell override
         if (spell.getRegistryName() != null) {
-            List<AMConfig.WeightedAffinity> override =
-                    ArsMagica.config.getEBWizSpellAffinityOverrides().get(spell.getRegistryName().toString());
+            List<AMConfig.WeightedAffinity> override = ArsMagica.config.getEBWizSpellAffinityOverrides().get(spell.getRegistryName().toString());
             if (override != null && !override.isEmpty()) return override;
         }
         // 2. Element default
-        List<AMConfig.WeightedAffinity> elementList =
-                ArsMagica.config.getEBWizElementAffinityMap().get(spell.getElement().name());
+        List<AMConfig.WeightedAffinity> elementList = ArsMagica.config.getEBWizElementAffinityMap().get(spell.getElement().name());
         if (elementList != null && !elementList.isEmpty()) return elementList;
         // 3. Final fallback
         return Collections.singletonList(new AMConfig.WeightedAffinity("arcane", 100f));
@@ -575,15 +650,9 @@ public final class EBWizardryCompatHandler {
             double ox = spread > 0 ? rand.nextDouble() * spread * 2 - spread : 0;
             double oy = spread > 0 ? rand.nextDouble() * spread : 0;
             double oz = spread > 0 ? rand.nextDouble() * spread * 2 - spread : 0;
-            electroblob.wizardry.util.ParticleBuilder.create(electroblob.wizardry.util.ParticleBuilder.Type.SNOW)
-                    .pos(x + ox, y + oy, z + oz)
-                    .vel(vx, vy, vz)
-                    .spawn(world);
+            electroblob.wizardry.util.ParticleBuilder.create(electroblob.wizardry.util.ParticleBuilder.Type.SNOW).pos(x + ox, y + oy, z + oz).vel(vx, vy, vz).spawn(world);
             if (i % 3 == 0) {
-                electroblob.wizardry.util.ParticleBuilder.create(electroblob.wizardry.util.ParticleBuilder.Type.ICE)
-                        .pos(x + ox, y + oy, z + oz)
-                        .vel(vx, vy, vz)
-                        .spawn(world);
+                electroblob.wizardry.util.ParticleBuilder.create(electroblob.wizardry.util.ParticleBuilder.Type.ICE).pos(x + ox, y + oy, z + oz).vel(vx, vy, vz).spawn(world);
             }
         }
     }
@@ -606,15 +675,8 @@ public final class EBWizardryCompatHandler {
      * Spawns one EBWiz {@code CLOUD} particle at the given position with the given velocity.
      * Intended for Witchwood ground mist. Only call from the compat package.
      */
-    public static void spawnMistCloudParticle(net.minecraft.world.World world, double x, double y, double z,
-                                              double vx, double vy, double vz, float scale, int lifetime) {
-        electroblob.wizardry.util.ParticleBuilder.create(electroblob.wizardry.util.ParticleBuilder.Type.CLOUD)
-                .pos(x, y, z)
-                .vel(vx, vy, vz)
-                .clr(0.82f, 0.85f, 0.92f)
-                .scale(scale)
-                .time(lifetime)
-                .spawn(world);
+    public static void spawnMistCloudParticle(net.minecraft.world.World world, double x, double y, double z, double vx, double vy, double vz, float scale, int lifetime) {
+        electroblob.wizardry.util.ParticleBuilder.create(electroblob.wizardry.util.ParticleBuilder.Type.CLOUD).pos(x, y, z).vel(vx, vy, vz).clr(0.82f, 0.85f, 0.92f).scale(scale).time(lifetime).spawn(world);
     }
 
     /**
@@ -637,8 +699,7 @@ public final class EBWizardryCompatHandler {
             ItemStack held = player.getHeldItem(hand);
             if (held.isEmpty()) continue;
             if (!(held.getItem() instanceof electroblob.wizardry.item.ItemWand)) continue;
-            int level = electroblob.wizardry.util.WandHelper.getUpgradeLevel(
-                    held, electroblob.wizardry.registry.WizardryItems.condenser_upgrade);
+            int level = electroblob.wizardry.util.WandHelper.getUpgradeLevel(held, electroblob.wizardry.registry.WizardryItems.condenser_upgrade);
             if (level > maxLevel) maxLevel = level;
         }
         if (maxLevel <= 0) return 0f;
@@ -652,8 +713,7 @@ public final class EBWizardryCompatHandler {
      * multiplying {@code regenTicks} (i.e. 20% faster AM2 mana regen).
      */
     public static float getRingCondensingRegenMultiplier(EntityPlayer player) {
-        if (electroblob.wizardry.item.ItemArtefact.isArtefactActive(
-                player, electroblob.wizardry.registry.WizardryItems.ring_condensing)) {
+        if (electroblob.wizardry.item.ItemArtefact.isArtefactActive(player, electroblob.wizardry.registry.WizardryItems.ring_condensing)) {
             return 0.20f;
         }
         return 0f;
@@ -664,8 +724,7 @@ public final class EBWizardryCompatHandler {
         net.minecraft.nbt.NBTTagCompound tag = book.getTagCompound();
         String spellName = tag.getString("EBWizSpell");
         if (spellName.isEmpty()) return ItemStack.EMPTY;
-        electroblob.wizardry.spell.Spell spell = electroblob.wizardry.spell.Spell.registry.getValue(
-                new net.minecraft.util.ResourceLocation(spellName));
+        electroblob.wizardry.spell.Spell spell = electroblob.wizardry.spell.Spell.registry.getValue(new net.minecraft.util.ResourceLocation(spellName));
         if (spell == null || spell == electroblob.wizardry.registry.Spells.none) return ItemStack.EMPTY;
         net.minecraft.item.ItemStack binding = ItemEBWizSpellBinding.createForSpell(spell);
         if (tag.hasKey("AM2Modifiers")) {
@@ -683,8 +742,7 @@ public final class EBWizardryCompatHandler {
     public static net.minecraft.item.Item createSpellBookItem() {
         try {
             return SPELLBOOK_ITEM_FACTORY.get().get();
-        } catch (Throwable t) {
-            LogHelper.warn("AM2 EBWiz compat: failed to create ItemSpellBookEBWiz, falling back to ItemSpellBook (%s)", t.toString());
+        } catch (Throwable ignored) {
         }
         return new am2.common.items.ItemSpellBook();
     }
@@ -695,31 +753,10 @@ public final class EBWizardryCompatHandler {
      * EBWiz is loaded, so direct EBWiz class references here are safe.
      */
     public static void registerSpellParts(net.minecraftforge.registries.IForgeRegistry<am2.api.spell.SpellPart> registry) {
-        am2.api.SpellRegistryHelper.registerSpellModifier(registry, "ebwiz_blast",
-                new net.minecraft.util.ResourceLocation(am2.ArsMagica.MODID, "items/spells/modifiers/ebwiz_blast"),
-                am2.api.skill.SkillPoint.SILVER_POINT,
-                new am2.common.spell.modifier.EBWizBlast(),
-                am2.common.registry.SkillTrees.TREE_OFFENSE, 75, 270);
-        am2.api.SpellRegistryHelper.registerSpellComponent(registry, "ice_statue",
-                new net.minecraft.util.ResourceLocation(am2.ArsMagica.MODID, "items/spells/components/ice_statue"),
-                am2.api.skill.SkillPoint.RED_SKILL_POINT,
-                new IceStatue(),
-                am2.common.registry.SkillTrees.TREE_OFFENSE, 75, 225);
-        am2.api.SpellRegistryHelper.registerSpellComponent(registry, "cobweb_spell",
-                new net.minecraft.util.ResourceLocation(am2.ArsMagica.MODID, "items/spells/components/cobweb_spell"),
-                am2.api.skill.SkillPoint.GREEN_SKILL_POINT,
-                new PlaceTemporaryBlock(
-                        electroblob.wizardry.registry.WizardryBlocks.vanishing_cobweb,
-                        400, 40,
-                        () -> com.google.common.collect.Sets.newHashSet(am2.common.registry.Affinities.nature),
-                        0.03f,
-                        net.minecraft.init.Blocks.WEB),
-                am2.common.registry.SkillTrees.TREE_DEFENSE, 132, 290, "arsmagica2:entangle");
-        am2.api.SpellRegistryHelper.registerSpellComponent(registry, "metamorphosis",
-                new net.minecraft.util.ResourceLocation(am2.ArsMagica.MODID, "items/spells/components/metamorphosis"),
-                am2.api.skill.SkillPoint.GREEN_SKILL_POINT,
-                new Metamorphosis(),
-                am2.common.registry.SkillTrees.TREE_OFFENSE, 75, 315);
+        am2.api.SpellRegistryHelper.registerSpellModifier(registry, "ebwiz_blast", new net.minecraft.util.ResourceLocation(am2.ArsMagica.MODID, "items/spells/modifiers/ebwiz_blast"), am2.api.skill.SkillPoint.SILVER_POINT, new am2.common.spell.modifier.EBWizBlast(), am2.common.registry.SkillTrees.TREE_OFFENSE, 75, 270);
+        am2.api.SpellRegistryHelper.registerSpellComponent(registry, "ice_statue", new net.minecraft.util.ResourceLocation(am2.ArsMagica.MODID, "items/spells/components/ice_statue"), am2.api.skill.SkillPoint.RED_SKILL_POINT, new IceStatue(), am2.common.registry.SkillTrees.TREE_OFFENSE, 75, 225);
+        am2.api.SpellRegistryHelper.registerSpellComponent(registry, "cobweb_spell", new net.minecraft.util.ResourceLocation(am2.ArsMagica.MODID, "items/spells/components/cobweb_spell"), am2.api.skill.SkillPoint.GREEN_SKILL_POINT, new PlaceTemporaryBlock(electroblob.wizardry.registry.WizardryBlocks.vanishing_cobweb, 400, 40, () -> com.google.common.collect.Sets.newHashSet(am2.common.registry.Affinities.nature), 0.03f, net.minecraft.init.Blocks.WEB), am2.common.registry.SkillTrees.TREE_DEFENSE, 132, 290, "arsmagica2:entangle");
+        am2.api.SpellRegistryHelper.registerSpellComponent(registry, "metamorphosis", new net.minecraft.util.ResourceLocation(am2.ArsMagica.MODID, "items/spells/components/metamorphosis"), am2.api.skill.SkillPoint.GREEN_SKILL_POINT, new Metamorphosis(), am2.common.registry.SkillTrees.TREE_OFFENSE, 75, 315);
     }
 
     /**
@@ -728,8 +765,7 @@ public final class EBWizardryCompatHandler {
      * confirming EBWiz is loaded, so referencing {@link ItemEBWizSpellBinding} here is safe.
      */
     public static void registerEBWizItems(net.minecraftforge.registries.IForgeRegistry<net.minecraft.item.Item> registry) {
-        am2.common.registry.AMItems.registerItem(registry, "ebwiz_spell_binding",
-                am2.ArsMagica.MODID, new ItemEBWizSpellBinding(), true);
+        am2.common.registry.AMItems.registerItem(registry, "ebwiz_spell_binding", am2.ArsMagica.MODID, new ItemEBWizSpellBinding(), true);
     }
 
     /**
@@ -748,152 +784,83 @@ public final class EBWizardryCompatHandler {
      * <p>Only called from {@link EBWizardryCompatBootstrap#getEBWizRecipeDefaults()} after
      * confirming EBWiz is loaded.
      */
-    public static java.util.Map<String, String[]> getEBWizRecipeDefaults() {
-        java.util.Map<String, String[]> map = new java.util.LinkedHashMap<>();
+    public static Map<String, String[]> getEBWizRecipeDefaults() {
+        Map<String, String[]> map = new LinkedHashMap<>();
 
         // ---- Fire (magic_crystal:1) ----------------------------------------
         // fire_rain uses 2x essence_fire in its recipe – not substituted.
-        map.put("arsmagica2:fire_damage",
-                r("ebwizardry:magic_crystal:1", "minecraft:flint_and_steel", "arsmagica2:vinteum_dust"));
-        map.put("arsmagica2:ignition",
-                r("ebwizardry:magic_crystal:1", "minecraft:flint_and_steel"));
-        map.put("arsmagica2:forge",
-                r("ebwizardry:magic_crystal:1", "minecraft:furnace"));
+        map.put("arsmagica2:fire_damage", r("ebwizardry:magic_crystal:1", "minecraft:flint_and_steel", "arsmagica2:vinteum_dust"));
+        map.put("arsmagica2:ignition", r("ebwizardry:magic_crystal:1", "minecraft:flint_and_steel"));
+        map.put("arsmagica2:forge", r("ebwizardry:magic_crystal:1", "minecraft:furnace"));
 
         // ---- Ice (magic_crystal:2) ------------------------------------------
         // blizzard uses 2x essence_ice in its recipe – not substituted.
-        map.put("arsmagica2:frost_damage",
-                r("ebwizardry:magic_crystal:2", "minecraft:snowball", "arsmagica2:blue_topaz"));
-        map.put("arsmagica2:freeze",
-                r("ebwizardry:magic_crystal:2", "minecraft:snow"));
-        map.put("arsmagica2:drown",
-                r("ebwizardry:magic_crystal:2", "ebwizardry:magic_crystal:2",
-                        "minecraft:water_bucket", "minecraft:string", "arsmagica2:blue_topaz"));
-        map.put("arsmagica2:create_water",
-                r("ebwizardry:magic_crystal:2", "minecraft:water_bucket"));
-        map.put("arsmagica2:water_breathing",
-                r("ebwizardry:magic_crystal:2", "minecraft:reeds"));
-        map.put("arsmagica2:swift_swim",
-                r("ebwizardry:magic_crystal:2", "minecraft:fish", "minecraft:fishing_rod"));
-        map.put("arsmagica2:watery_grave",
-                r("ebwizardry:magic_crystal:2", "minecraft:stone", "minecraft:leather_boots"));
+        map.put("arsmagica2:frost_damage", r("ebwizardry:magic_crystal:2", "minecraft:snowball", "arsmagica2:blue_topaz"));
+        map.put("arsmagica2:freeze", r("ebwizardry:magic_crystal:2", "minecraft:snow"));
+        map.put("arsmagica2:drown", r("ebwizardry:magic_crystal:2", "ebwizardry:magic_crystal:2", "minecraft:water_bucket", "minecraft:string", "arsmagica2:blue_topaz"));
+        map.put("arsmagica2:create_water", r("ebwizardry:magic_crystal:2", "minecraft:water_bucket"));
+        map.put("arsmagica2:water_breathing", r("ebwizardry:magic_crystal:2", "minecraft:reeds"));
+        map.put("arsmagica2:swift_swim", r("ebwizardry:magic_crystal:2", "minecraft:fish", "minecraft:fishing_rod"));
+        map.put("arsmagica2:watery_grave", r("ebwizardry:magic_crystal:2", "minecraft:stone", "minecraft:leather_boots"));
 
         // ---- Lightning (magic_crystal:3) ------------------------------------
-        map.put("arsmagica2:lightning_damage",
-                r("ebwizardry:magic_crystal:3", "minecraft:iron_ingot",
-                        "minecraft:stick", "arsmagica2:vinteum_dust"));
-        map.put("arsmagica2:storm",
-                r("ebwizardry:magic_crystal:3", "arsmagica2:blue_topaz", "minecraft:ghast_tear"));
+        map.put("arsmagica2:lightning_damage", r("ebwizardry:magic_crystal:3", "minecraft:iron_ingot", "minecraft:stick", "arsmagica2:vinteum_dust"));
+        map.put("arsmagica2:storm", r("ebwizardry:magic_crystal:3", "arsmagica2:blue_topaz", "minecraft:ghast_tear"));
 
         // ---- Necromancy (magic_crystal:4) -----------------------------------
-        map.put("arsmagica2:life_drain",
-                r("ebwizardry:magic_crystal:4", "arsmagica2:sunstone"));
-        map.put("arsmagica2:life_tap",
-                r("ebwizardry:magic_crystal:4", "arsmagica2:aum"));
+        map.put("arsmagica2:life_drain", r("ebwizardry:magic_crystal:4", "arsmagica2:sunstone"));
+        map.put("arsmagica2:life_tap", r("ebwizardry:magic_crystal:4", "arsmagica2:aum"));
 
         // ---- Earth (magic_crystal:5) ----------------------------------------
-        map.put("arsmagica2:entangle",
-                r("ebwizardry:magic_crystal:5", "minecraft:vine", "minecraft:slime_ball"));
-        map.put("arsmagica2:grow",
-                r("ebwizardry:magic_crystal:5", "minecraft:dye:15"));
-        map.put("arsmagica2:plant",
-                r("ebwizardry:magic_crystal:5", "minecraft:wheat_seeds",
-                        "minecraft:sapling:*", "minecraft:wheat_seeds"));
-        map.put("arsmagica2:physical_damage",
-                r("ebwizardry:magic_crystal:5", "minecraft:iron_sword"));
-        map.put("arsmagica2:knockback",
-                r("ebwizardry:magic_crystal:5", "minecraft:piston"));
-        map.put("arsmagica2:plow",
-                r("ebwizardry:magic_crystal:5", "minecraft:stone_hoe"));
-        map.put("arsmagica2:harvest_plants",
-                r("ebwizardry:magic_crystal:5", "minecraft:shears"));
-        map.put("arsmagica2:gravity_well",
-                r("ebwizardry:magic_crystal:5", "minecraft:string", "minecraft:stone"));
+        map.put("arsmagica2:entangle", r("ebwizardry:magic_crystal:5", "minecraft:vine", "minecraft:slime_ball"));
+        map.put("arsmagica2:grow", r("ebwizardry:magic_crystal:5", "minecraft:dye:15"));
+        map.put("arsmagica2:plant", r("ebwizardry:magic_crystal:5", "minecraft:wheat_seeds", "minecraft:sapling:*", "minecraft:wheat_seeds"));
+        map.put("arsmagica2:physical_damage", r("ebwizardry:magic_crystal:5", "minecraft:iron_sword"));
+        map.put("arsmagica2:knockback", r("ebwizardry:magic_crystal:5", "minecraft:piston"));
+        map.put("arsmagica2:plow", r("ebwizardry:magic_crystal:5", "minecraft:stone_hoe"));
+        map.put("arsmagica2:harvest_plants", r("ebwizardry:magic_crystal:5", "minecraft:shears"));
+        map.put("arsmagica2:gravity_well", r("ebwizardry:magic_crystal:5", "minecraft:string", "minecraft:stone"));
 
         // ---- Sorcery (magic_crystal:6) --------------------------------------
-        map.put("arsmagica2:blink",
-                r("ebwizardry:magic_crystal:6", "minecraft:ender_pearl"));
-        map.put("arsmagica2:random_teleport",
-                r("ebwizardry:magic_crystal:6", "minecraft:ender_pearl"));
-        map.put("arsmagica2:transplace",
-                r("ebwizardry:magic_crystal:6", "minecraft:compass",
-                        "ebwizardry:magic_crystal:6", "minecraft:ender_pearl"));
-        map.put("arsmagica2:recall",
-                r("ebwizardry:magic_crystal:6", "minecraft:compass",
-                        "minecraft:map", "minecraft:ender_pearl"));
-        map.put("arsmagica2:astral_distortion",
-                r("ebwizardry:magic_crystal:6", "minecraft:ender_eye"));
-        map.put("arsmagica2:flight",
-                r("ebwizardry:magic_crystal:6", "minecraft:nether_star", "minecraft:ghast_tear"));
-        map.put("arsmagica2:levitate",
-                r("ebwizardry:magic_crystal:6", "arsmagica2:tarma_root"));
-        map.put("arsmagica2:leap",
-                r("ebwizardry:magic_crystal:6", "minecraft:hopper"));
-        map.put("arsmagica2:slowfall",
-                r("ebwizardry:magic_crystal:6", "minecraft:feather"));
-        map.put("arsmagica2:fling",
-                r("ebwizardry:magic_crystal:6", "minecraft:piston"));
-        map.put("arsmagica2:rift",
-                r("ebwizardry:magic_crystal:6", "ebwizardry:magic_crystal",
-                        "minecraft:chest", "minecraft:ender_eye"));
-        map.put("arsmagica2:charm",
-                r("ebwizardry:magic_crystal:6", "arsmagica2:essence_life",
-                        "arsmagica2:crystal_phylactery"));
-        map.put("arsmagica2:invisibility",
-                r("ebwizardry:magic_crystal:6", "arsmagica2:chimerite",
-                        "ore:listAllpotionItem"));
-        map.put("arsmagica2:slow",
-                r("ebwizardry:magic_crystal:6", "minecraft:slime_ball"));
-        map.put("arsmagica2:haste",
-                r("ebwizardry:magic_crystal:6", "minecraft:redstone", "minecraft:glowstone_dust"));
-        map.put("arsmagica2:accelerate",
-                r("ebwizardry:magic_crystal:6", "minecraft:leather_boots", "minecraft:redstone"));
-        map.put("arsmagica2:mana_drain",
-                r("ebwizardry:magic_crystal:6", "arsmagica2:moonstone", "arsmagica2:vinteum_dust"));
-        map.put("arsmagica2:silence",
-                r("ebwizardry:magic_crystal:6", "arsmagica2:arcane_ash",
-                        "minecraft:jukebox", "ebwizardry:magic_crystal:6"));
-        map.put("arsmagica2:disarm",
-                r("ebwizardry:magic_crystal:6", "minecraft:iron_sword"));
-        map.put("arsmagica2:telekinesis",
-                r("ebwizardry:magic_crystal:6", "minecraft:sticky_piston", "minecraft:chest"));
+        map.put("arsmagica2:blink", r("ebwizardry:magic_crystal:6", "minecraft:ender_pearl"));
+        map.put("arsmagica2:random_teleport", r("ebwizardry:magic_crystal:6", "minecraft:ender_pearl"));
+        map.put("arsmagica2:transplace", r("ebwizardry:magic_crystal:6", "minecraft:compass", "ebwizardry:magic_crystal:6", "minecraft:ender_pearl"));
+        map.put("arsmagica2:recall", r("ebwizardry:magic_crystal:6", "minecraft:compass", "minecraft:map", "minecraft:ender_pearl"));
+        map.put("arsmagica2:astral_distortion", r("ebwizardry:magic_crystal:6", "minecraft:ender_eye"));
+        map.put("arsmagica2:flight", r("ebwizardry:magic_crystal:6", "minecraft:nether_star", "minecraft:ghast_tear"));
+        map.put("arsmagica2:levitate", r("ebwizardry:magic_crystal:6", "arsmagica2:tarma_root"));
+        map.put("arsmagica2:leap", r("ebwizardry:magic_crystal:6", "minecraft:hopper"));
+        map.put("arsmagica2:slowfall", r("ebwizardry:magic_crystal:6", "minecraft:feather"));
+        map.put("arsmagica2:fling", r("ebwizardry:magic_crystal:6", "minecraft:piston"));
+        map.put("arsmagica2:rift", r("ebwizardry:magic_crystal:6", "ebwizardry:magic_crystal", "minecraft:chest", "minecraft:ender_eye"));
+        map.put("arsmagica2:charm", r("ebwizardry:magic_crystal:6", "arsmagica2:essence_life", "arsmagica2:crystal_phylactery"));
+        map.put("arsmagica2:invisibility", r("ebwizardry:magic_crystal:6", "arsmagica2:chimerite", "ore:listAllpotionItem"));
+        map.put("arsmagica2:slow", r("ebwizardry:magic_crystal:6", "minecraft:slime_ball"));
+        map.put("arsmagica2:haste", r("ebwizardry:magic_crystal:6", "minecraft:redstone", "minecraft:glowstone_dust"));
+        map.put("arsmagica2:accelerate", r("ebwizardry:magic_crystal:6", "minecraft:leather_boots", "minecraft:redstone"));
+        map.put("arsmagica2:mana_drain", r("ebwizardry:magic_crystal:6", "arsmagica2:moonstone", "arsmagica2:vinteum_dust"));
+        map.put("arsmagica2:silence", r("ebwizardry:magic_crystal:6", "arsmagica2:arcane_ash", "minecraft:jukebox", "ebwizardry:magic_crystal:6"));
+        map.put("arsmagica2:disarm", r("ebwizardry:magic_crystal:6", "minecraft:iron_sword"));
+        map.put("arsmagica2:telekinesis", r("ebwizardry:magic_crystal:6", "minecraft:sticky_piston", "minecraft:chest"));
 
         // ---- Healing (magic_crystal:7) --------------------------------------
-        map.put("arsmagica2:heal",
-                r("ebwizardry:magic_crystal:7", "arsmagica2:aum"));
-        map.put("arsmagica2:regeneration",
-                r("ebwizardry:magic_crystal:7", "minecraft:golden_apple"));
-        map.put("arsmagica2:absorption",
-                r("ebwizardry:magic_crystal:7", "minecraft:golden_apple", "minecraft:shield"));
-        map.put("arsmagica2:night_vision",
-                r("ebwizardry:magic_crystal:7", "ore:listAllpotionItem"));
-        map.put("arsmagica2:true_sight",
-                r("ebwizardry:magic_crystal:7", "arsmagica2:chimerite", "minecraft:glass_pane"));
+        map.put("arsmagica2:heal", r("ebwizardry:magic_crystal:7", "arsmagica2:aum"));
+        map.put("arsmagica2:regeneration", r("ebwizardry:magic_crystal:7", "minecraft:golden_apple"));
+        map.put("arsmagica2:absorption", r("ebwizardry:magic_crystal:7", "minecraft:golden_apple", "minecraft:shield"));
+        map.put("arsmagica2:night_vision", r("ebwizardry:magic_crystal:7", "ore:listAllpotionItem"));
+        map.put("arsmagica2:true_sight", r("ebwizardry:magic_crystal:7", "arsmagica2:chimerite", "minecraft:glass_pane"));
 
         // ---- Magic / Arcane (magic_crystal:0) --------------------------------
         // falling_star uses 2x essence_arcane in its recipe – not substituted.
-        map.put("arsmagica2:magic_damage",
-                r("ebwizardry:magic_crystal", "minecraft:dye:4", "minecraft:book",
-                        "minecraft:stone_sword"));
-        map.put("arsmagica2:mana_blast",
-                r("ebwizardry:magic_crystal", "arsmagica2:mana_focus", "arsmagica2:greater_focus"));
-        map.put("arsmagica2:dispel",
-                r("ebwizardry:magic_crystal", "arsmagica2:arcane_ash",
-                        "arsmagica2:blue_topaz", "minecraft:milk_bucket"));
-        map.put("arsmagica2:light",
-                r("ebwizardry:magic_crystal", "arsmagica2:cerublossom",
-                        "minecraft:torch", "arsmagica2:vinteum_torch"));
-        map.put("arsmagica2:attract",
-                r("ebwizardry:magic_crystal", "minecraft:iron_ingot"));
-        map.put("arsmagica2:repel",
-                r("ebwizardry:magic_crystal", "minecraft:water_bucket"));
-        map.put("arsmagica2:shield",
-                r("ebwizardry:magic_crystal", "minecraft:iron_chestplate"));
-        map.put("arsmagica2:reflect",
-                r("ebwizardry:magic_crystal", "minecraft:glass", "minecraft:iron_block"));
-        map.put("arsmagica2:mana_shield",
-                r("ebwizardry:magic_crystal", "arsmagica2:mana_focus", "arsmagica2:battlemage_chestplate",
-                        "arsmagica2:mage_robe"));
+        map.put("arsmagica2:magic_damage", r("ebwizardry:magic_crystal", "minecraft:dye:4", "minecraft:book", "minecraft:stone_sword"));
+        map.put("arsmagica2:mana_blast", r("ebwizardry:magic_crystal", "arsmagica2:mana_focus", "arsmagica2:greater_focus"));
+        map.put("arsmagica2:dispel", r("ebwizardry:magic_crystal", "arsmagica2:arcane_ash", "arsmagica2:blue_topaz", "minecraft:milk_bucket"));
+        map.put("arsmagica2:light", r("ebwizardry:magic_crystal", "arsmagica2:cerublossom", "minecraft:torch", "arsmagica2:vinteum_torch"));
+        map.put("arsmagica2:attract", r("ebwizardry:magic_crystal", "minecraft:iron_ingot"));
+        map.put("arsmagica2:repel", r("ebwizardry:magic_crystal", "minecraft:water_bucket"));
+        map.put("arsmagica2:shield", r("ebwizardry:magic_crystal", "minecraft:iron_chestplate"));
+        map.put("arsmagica2:reflect", r("ebwizardry:magic_crystal", "minecraft:glass", "minecraft:iron_block"));
+        map.put("arsmagica2:mana_shield", r("ebwizardry:magic_crystal", "arsmagica2:mana_focus", "arsmagica2:battlemage_chestplate", "arsmagica2:mage_robe"));
 
         return map;
     }
@@ -931,41 +898,26 @@ public final class EBWizardryCompatHandler {
      * @param ratio  how much of the EBWiz potency excess carries over; {@code 0} disables
      * @return a multiplier ≥ {@code 1.0f} to apply to AM2 spell damage
      */
-    public static float computeArtefactPotencyMultiplier(net.minecraft.entity.player.EntityPlayer player, float ratio,
-                                                         @javax.annotation.Nullable am2.api.affinity.Affinity dominantAffinity) {
+    public static float computeArtefactPotencyMultiplier(net.minecraft.entity.player.EntityPlayer player, float ratio, @javax.annotation.Nullable am2.api.affinity.Affinity dominantAffinity) {
         electroblob.wizardry.util.SpellModifiers fakeModifiers = new electroblob.wizardry.util.SpellModifiers();
         fakeModifiers.set(electroblob.wizardry.util.SpellModifiers.POTENCY, 1.0f, false);
         electroblob.wizardry.spell.Spell representative = spellForAffinity(dominantAffinity);
-        electroblob.wizardry.event.SpellCastEvent.Pre fakeEvent =
-                new electroblob.wizardry.event.SpellCastEvent.Pre(
-                        electroblob.wizardry.event.SpellCastEvent.Source.WAND,
-                        representative,
-                        player,
-                        fakeModifiers);
+        electroblob.wizardry.event.SpellCastEvent.Pre fakeEvent = new electroblob.wizardry.event.SpellCastEvent.Pre(electroblob.wizardry.event.SpellCastEvent.Source.WAND, representative, player, fakeModifiers);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(fakeEvent);
         float potency = fakeModifiers.get(electroblob.wizardry.util.SpellModifiers.POTENCY);
         if (potency <= 1.0f) return 1.0f;
         return 1.0f + (potency - 1.0f) * ratio;
     }
 
-    private static electroblob.wizardry.spell.Spell spellForAffinity(
-            @javax.annotation.Nullable am2.api.affinity.Affinity affinity) {
-        if (affinity == null || affinity == Affinities.none)
-            return electroblob.wizardry.registry.Spells.magic_missile;
-        if (affinity == Affinities.fire)
-            return electroblob.wizardry.registry.Spells.fireball;
-        if (affinity == Affinities.ice)
-            return electroblob.wizardry.registry.Spells.ice_shard;
-        if (affinity == Affinities.lightning)
-            return electroblob.wizardry.registry.Spells.arc;
-        if (affinity == Affinities.earth)
-            return electroblob.wizardry.registry.Spells.dart;
-        if (affinity == Affinities.life)
-            return electroblob.wizardry.registry.Spells.heal;
-        if (affinity == Affinities.ender)
-            return Spells.summon_zombie;
-        if (affinity == Affinities.arcane)
-            return Spells.telekinesis;
+    private static electroblob.wizardry.spell.Spell spellForAffinity(@javax.annotation.Nullable am2.api.affinity.Affinity affinity) {
+        if (affinity == null || affinity == Affinities.none) return electroblob.wizardry.registry.Spells.magic_missile;
+        if (affinity == Affinities.fire) return electroblob.wizardry.registry.Spells.fireball;
+        if (affinity == Affinities.ice) return electroblob.wizardry.registry.Spells.ice_shard;
+        if (affinity == Affinities.lightning) return electroblob.wizardry.registry.Spells.arc;
+        if (affinity == Affinities.earth) return electroblob.wizardry.registry.Spells.dart;
+        if (affinity == Affinities.life) return electroblob.wizardry.registry.Spells.heal;
+        if (affinity == Affinities.ender) return Spells.summon_zombie;
+        if (affinity == Affinities.arcane) return Spells.telekinesis;
         // water, nature, arcane, ender, and air have no direct EBWiz element
         return electroblob.wizardry.registry.Spells.magic_missile;
     }
@@ -989,54 +941,22 @@ public final class EBWizardryCompatHandler {
      * is registered.
      */
     public static void registerBookshelfModelTextures() {
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.affinity_tome_ender,
-                new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_ender"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.affinity_tome_earth,
-                new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_earth"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.affinity_tome_fire,
-                new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_fire"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.affinity_tome_life,
-                new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_life"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.affinity_tome_nature,
-                new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_nature"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.affinity_tome_ice,
-                new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_ice"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.affinity_tome_lightning,
-                new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_lightning"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.affinity_tome_air,
-                new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_air"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.affinity_tome_water,
-                new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_water"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.affinity_tome_arcane,
-                new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_arcane"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.arcane_compendium,
-                new ResourceLocation("ebwizardry", "blocks/books_purple"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> AMItems.evil_book,
-                new ResourceLocation("ebwizardry", "blocks/books_purple"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> AMItems.journal,
-                new ResourceLocation("ebwizardry", "blocks/books_purple"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.spellbook,
-                new ResourceLocation("ebwizardry", "blocks/books_brown"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.arcane_spellbook,
-                new ResourceLocation("ebwizardry", "blocks/books_purple"));
-        BlockBookshelf.registerBookModelTexture(
-                () -> am2.common.registry.AMItems.affinity_tome_none,
-                new ResourceLocation("ebwizardry", "blocks/books_purple"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.affinity_tome_ender, new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_ender"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.affinity_tome_earth, new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_earth"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.affinity_tome_fire, new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_fire"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.affinity_tome_life, new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_life"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.affinity_tome_nature, new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_nature"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.affinity_tome_ice, new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_ice"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.affinity_tome_lightning, new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_lightning"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.affinity_tome_air, new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_air"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.affinity_tome_water, new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_water"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.affinity_tome_arcane, new ResourceLocation(ArsMagica.MODID, "blocks/books_affinity_tome_arcane"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.arcane_compendium, new ResourceLocation("ebwizardry", "blocks/books_purple"));
+        BlockBookshelf.registerBookModelTexture(() -> AMItems.evil_book, new ResourceLocation("ebwizardry", "blocks/books_purple"));
+        BlockBookshelf.registerBookModelTexture(() -> AMItems.journal, new ResourceLocation("ebwizardry", "blocks/books_purple"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.spellbook, new ResourceLocation("ebwizardry", "blocks/books_brown"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.arcane_spellbook, new ResourceLocation("ebwizardry", "blocks/books_purple"));
+        BlockBookshelf.registerBookModelTexture(() -> am2.common.registry.AMItems.affinity_tome_none, new ResourceLocation("ebwizardry", "blocks/books_purple"));
     }
 
     /**
@@ -1225,7 +1145,7 @@ public final class EBWizardryCompatHandler {
      * @return array of ItemStacks the player must throw in order; last is always spell_parchment
      */
     public static ItemStack[] getDiscoveryIngredients(int elementOrdinal, int tierOrdinal) {
-        java.util.List<ItemStack> list = new java.util.ArrayList<>();
+        List<ItemStack> list = new ArrayList<>();
         int crystalMeta = elementOrdinal; // element ordinal == magic_crystal metadata
 
         list.add(new ItemStack(AMItems.vinteum_dust));
@@ -1271,7 +1191,7 @@ public final class EBWizardryCompatHandler {
         electroblob.wizardry.constants.Tier tier = electroblob.wizardry.constants.Tier.values()[tierOrdinal];
         electroblob.wizardry.data.WizardData data = electroblob.wizardry.data.WizardData.get(player);
 
-        java.util.List<electroblob.wizardry.spell.Spell> candidates = new java.util.ArrayList<>();
+        List<electroblob.wizardry.spell.Spell> candidates = new ArrayList<>();
         for (electroblob.wizardry.spell.Spell spell : electroblob.wizardry.spell.Spell.getAllSpells()) {
             if (spell.getTier() != tier) continue;
             if (spell.getElement() != element) continue;
@@ -1290,8 +1210,7 @@ public final class EBWizardryCompatHandler {
      * Marks the spell in the given spell book stack as discovered in the player's WizardData.
      */
     public static void markSpellDiscovered(EntityPlayer player, ItemStack spellBookStack) {
-        electroblob.wizardry.spell.Spell spell =
-                electroblob.wizardry.spell.Spell.byMetadata(spellBookStack.getMetadata());
+        electroblob.wizardry.spell.Spell spell = electroblob.wizardry.spell.Spell.byMetadata(spellBookStack.getMetadata());
         if (spell == null || spell == electroblob.wizardry.registry.Spells.none) return;
         electroblob.wizardry.data.WizardData data = electroblob.wizardry.data.WizardData.get(player);
         if (data != null) data.discoverSpell(spell);

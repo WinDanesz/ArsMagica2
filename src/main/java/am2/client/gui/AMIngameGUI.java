@@ -14,6 +14,7 @@ import am2.client.texture.SpellIconManager;
 import am2.common.armor.ArmorHelper;
 import am2.common.blocks.BlockManaBattery;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
+import am2.common.compat.electroblob.EBWizardryCompatHandler;
 import am2.common.extensions.AffinityData;
 import am2.common.extensions.EntityExtension;
 import am2.common.items.ItemSpellBook;
@@ -357,6 +358,9 @@ public class AMIngameGUI extends Gui {
                             manaCost = spellStack.getTagCompound().getFloat(am2.common.items.ItemSpellBase.KEY_MANA_COST_CACHED);
                             IEntityExtension ext = EntityExtension.For(Minecraft.getMinecraft().player);
                             if (ext != null && ext.getMaxBurnout() > 0) manaCost *= (1 + (ext.getCurrentBurnout() / ext.getMaxBurnout()));
+                        }
+                        if (EBWizardryCompatBootstrap.isActive) {
+                            manaCost *= EBWizardryCompatHandler.getAM2SpellDiscount(Minecraft.getMinecraft().player, caster.createSpellData(spellStack));
                         }
                         spellcost = (EntityExtension.For(Minecraft.getMinecraft().player).hasEnoughMana(manaCost) ? ChatFormatting.AQUA.toString() : ChatFormatting.DARK_RED.toString()) + " (" + (int) (manaCost) + ")";
                         spellcost += ChatFormatting.RESET.toString();

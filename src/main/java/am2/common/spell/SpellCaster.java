@@ -127,10 +127,19 @@ public class SpellCaster implements ISpellCaster, ICapabilityProvider, ICapabili
         IEntityExtension ext = EntityExtension.For(caster);
         SpellData data = this.createSpellData(source);
         float manaCost = this.getManaCost(world, caster);
+
+        am2.common.LogHelper.info("[AM2Trace] cast() called on " + (world.isRemote ? "CLIENT" : "SERVER") + "! Original manaCost: " + manaCost + ". Player mana: " + ext.getCurrentMana());
+
+        SpellCastEvent.Pre preEvent = new SpellCastEvent.Pre(caster, data, manaCost);
+        if (MinecraftForge.EVENT_BUS.post(preEvent)) {
+            am2.common.LogHelper.info("[AM2Trace] Event cancelled!");
+            return false;
+        }
+        manaCost = preEvent.manaCost;
+
+        am2.common.LogHelper.info("[AM2Trace] After Pre event on " + (world.isRemote ? "CLIENT" : "SERVER") + ", manaCost: " + manaCost);
+
         if (ext.hasEnoughMana(manaCost)) {
-            SpellCastEvent.Pre preEvent = new SpellCastEvent.Pre(caster, data, manaCost);
-            if (MinecraftForge.EVENT_BUS.post(preEvent)) return false;
-            manaCost = preEvent.manaCost;
             List<String> missingReagents = getMissingReagentNames(data, caster);
             if (!missingReagents.isEmpty()) {
                 if (caster instanceof EntityPlayer && !world.isRemote) {

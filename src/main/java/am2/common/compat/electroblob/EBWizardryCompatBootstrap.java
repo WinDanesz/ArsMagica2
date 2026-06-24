@@ -3,7 +3,6 @@ package am2.common.compat.electroblob;
 import am2.ArsMagica;
 import am2.api.compendium.CompendiumCategory;
 import am2.api.compendium.CompendiumEntry;
-import am2.common.LogHelper;
 import am2.common.compat.electroblob.item.ItemEBWizSpellBinding;
 import am2.common.compat.electroblob.item.ItemSpellBookEBWiz;
 import am2.common.items.ItemSpellBook;
@@ -96,7 +95,6 @@ public final class EBWizardryCompatBootstrap {
                 return false;
             });
 
-            LogHelper.info("Electroblob's Wizardry detected – AM2 compatibility module loaded.");
         }
     }
 
@@ -296,7 +294,18 @@ public final class EBWizardryCompatBootstrap {
         if (spell == null || spell == electroblob.wizardry.registry.Spells.none) return -1f;
         float cost = spell.getCost() * ArsMagica.config.getEBWizManaCostMultiplier();
         if (caster != null) {
-            cost *= EBWizardryCompatHandler.getDisciplineCostMultiplier(caster, spell);
+            // We use a fake event container to run ItemWizardArmour's internal maths 
+            // without actually firing it on the Forge Event Bus. This ensures no side 
+            // effects are triggered by other mods during HUD rendering.
+            electroblob.wizardry.util.SpellModifiers fakeModifiers = new electroblob.wizardry.util.SpellModifiers();
+            fakeModifiers.set(electroblob.wizardry.util.SpellModifiers.COST, 1.0f, false);
+            electroblob.wizardry.event.SpellCastEvent.Pre fakeEvent =
+                    new electroblob.wizardry.event.SpellCastEvent.Pre(
+                            electroblob.wizardry.event.SpellCastEvent.Source.WAND, spell, caster, fakeModifiers);
+            electroblob.wizardry.item.ItemWizardArmour.onSpellCastPreEvent(fakeEvent);
+            float armourDiscount = fakeModifiers.get(electroblob.wizardry.util.SpellModifiers.COST);
+
+            cost *= EBWizardryCompatHandler.getDisciplineCostMultiplier(caster, spell) * armourDiscount;
         }
         return cost;
     }
@@ -306,7 +315,7 @@ public final class EBWizardryCompatBootstrap {
      * Safe to call unconditionally.
      */
     public static boolean isEBWizWand(ItemStack stack) {
-        if (!Loader.isModLoaded(MODID)) return false;
+         if (!Loader.isModLoaded(MODID)) return false;
         if (stack.isEmpty()) return false;
         return stack.getItem() instanceof electroblob.wizardry.item.ItemWand;
     }
