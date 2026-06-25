@@ -227,7 +227,7 @@ public class ParticleRenderer {
         float rotationXZ = ActiveRenderInfo.getRotationXZ();
 
         // save the old gl state
-        GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_ENABLE_BIT);
 
         // gl states/settings for drawing
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -236,15 +236,19 @@ public class ParticleRenderer {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        Minecraft.getMinecraft().entityRenderer.enableLightmap();
 
         Tessellator tessellator = Tessellator.getInstance();
-        tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 
         for (Particle particle : particles) {
             particle.renderParticle(tessellator.getBuffer(), Minecraft.getMinecraft().getRenderViewEntity(), partialTicks, rotationX, rotationXZ, rotationZ, rotationYZ, rotationXY);
         }
 
         tessellator.draw();
+
+        Minecraft.getMinecraft().entityRenderer.disableLightmap();
 
         // restore previous gl state
         GL11.glPopAttrib();
@@ -258,7 +262,7 @@ public class ParticleRenderer {
         float rotationXZ = ActiveRenderInfo.getRotationXZ();
 
         // save the old gl state
-        GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_ENABLE_BIT);
 
         // gl states/settings for drawing
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -267,20 +271,19 @@ public class ParticleRenderer {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
         GL11.glDisable(32826 /*GL_RESCALE_NORMAL_EXT*/);
-
-        //GL11.glRotatef(180F - RenderManager.instance.playerViewY, 0.0F, 1.0F, 0.0F);
-        //GL11.glRotatef(-RenderManager.instance.playerViewX, 1.0F, 0.0F, 0.0F);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        Minecraft.getMinecraft().entityRenderer.enableLightmap();
 
         Tessellator tessellator = Tessellator.getInstance();
-        //tessellator.getBuffer().begin(7, DefaultVertexFormats.POSITION_TEX);
+        tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 
         for (Particle particle : blocks) {
-            //tessellator.setBrightness(particle.getBrightnessForRender(partialTicks));
-
             particle.renderParticle(tessellator.getBuffer(), Minecraft.getMinecraft().getRenderViewEntity(), partialTicks, rotationX, rotationXZ, rotationZ, rotationYZ, rotationXY);
         }
 
-        //tessellator.draw();
+        tessellator.draw();
+
+        Minecraft.getMinecraft().entityRenderer.disableLightmap();
 
         // restore previous gl state
         GL11.glPopAttrib();
@@ -369,6 +372,8 @@ public class ParticleRenderer {
     private void renderBeams(float partialTicks) {
         if (beams.isEmpty()) return;
 
+        Minecraft.getMinecraft().entityRenderer.enableLightmap();
+
         float rotationX = ActiveRenderInfo.getRotationX();
         float rotationZ = ActiveRenderInfo.getRotationZ();
         float rotationYZ = ActiveRenderInfo.getRotationYZ();
@@ -384,5 +389,7 @@ public class ParticleRenderer {
                 // Silently handle exceptions
             }
         }
+
+        Minecraft.getMinecraft().entityRenderer.disableLightmap();
     }
 }

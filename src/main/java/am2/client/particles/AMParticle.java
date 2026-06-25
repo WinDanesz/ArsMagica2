@@ -30,19 +30,12 @@ public class AMParticle extends Particle {
     private float particleScaleY = 0.2f;
     private float particleScaleZ = 0.2f;
 
-    //	private int particleFrameCount;
-//	private final int maxFrames;
-//	private float uStep;
-//	private float vStep;
-//
-//	private String particleName;
-//
-//	private boolean doRender;
     private boolean isRadiant = false;
     private boolean isBreak = false;
     private boolean isAffectedByGravity = false;
     private boolean ignoreNoControllers = false;
     private boolean doVelocityUpdates = true;
+    private boolean ignoreLight = false;
 
     public static String[] particleTypes;
 
@@ -64,17 +57,11 @@ public class AMParticle extends Particle {
         particleMaxAge = 20 + rand.nextInt(20);
         controllers = new ArrayList<ParticleController>();
         comparer = new ControllerComparator();
-//		doRender = true;
-//		maxFrames = 1;
 
         this.particleGravity = 1;
 
         this.setRandomScale(0.1f, 0.3f);
     }
-
-//	public void setDoRender(boolean doRender){
-//		this.doRender = doRender;
-//	}
 
     public AMParticle setAffectedByGravity() {
         this.isAffectedByGravity = true;
@@ -88,6 +75,11 @@ public class AMParticle extends Particle {
 
     public void setNoVelocityUpdates() {
         this.doVelocityUpdates = false;
+    }
+
+    public AMParticle setIgnoreLight(boolean ignoreLight) {
+        this.ignoreLight = ignoreLight;
+        return this;
     }
 
     public boolean isRadiant() {
@@ -199,26 +191,7 @@ public class AMParticle extends Particle {
 
     @Override
     public int getBrightnessForRender(float par1) {
-        float f = (particleAge + par1) / particleMaxAge;
-
-        if (f < 0.0F) {
-            f = 0.0F;
-        }
-
-        if (f > 1.0F) {
-            f = 1.0F;
-        }
-
-        int i = super.getBrightnessForRender(par1);
-        int j = i & 0xff;
-        int k = i >> 16 & 0xff;
-        j += (int) (f * 15F * 16F);
-
-        if (j > 240) {
-            j = 240;
-        }
-
-        return j | k << 16;
+        return this.ignoreLight ? 15728880 : super.getBrightnessForRender(par1);
     }
 
     /**
@@ -296,10 +269,14 @@ public class AMParticle extends Particle {
             float max_u = this.particleTexture.getMaxU();
             float max_v = this.particleTexture.getMaxV();
 
-            buffer.pos(f11 - cosyaw * scaleFactorX - sinsinpitch * scaleFactorX, f12 - cospitch * scaleFactorY, f13 - sinyaw * scaleFactorZ - cossinpitch * scaleFactorZ).tex(max_u, max_v).color(this.GetParticleRed(), this.GetParticleGreen(), this.GetParticleBlue(), this.GetParticleAlpha()).endVertex();
-            buffer.pos(f11 - cosyaw * scaleFactorX + sinsinpitch * scaleFactorX, f12 + cospitch * scaleFactorY, f13 - sinyaw * scaleFactorZ + cossinpitch * scaleFactorZ).tex(max_u, min_v).color(this.GetParticleRed(), this.GetParticleGreen(), this.GetParticleBlue(), this.GetParticleAlpha()).endVertex();
-            buffer.pos(f11 + cosyaw * scaleFactorX + sinsinpitch * scaleFactorX, f12 + cospitch * scaleFactorY, f13 + sinyaw * scaleFactorZ + cossinpitch * scaleFactorZ).tex(min_u, min_v).color(this.GetParticleRed(), this.GetParticleGreen(), this.GetParticleBlue(), this.GetParticleAlpha()).endVertex();
-            buffer.pos(f11 + cosyaw * scaleFactorX - sinsinpitch * scaleFactorX, f12 - cospitch * scaleFactorY, f13 + sinyaw * scaleFactorZ - cossinpitch * scaleFactorZ).tex(min_u, max_v).color(this.GetParticleRed(), this.GetParticleGreen(), this.GetParticleBlue(), this.GetParticleAlpha()).endVertex();
+            int brightness = this.getBrightnessForRender(partialTicks);
+            int j = brightness >> 16 & 65535;
+            int k = brightness & 65535;
+
+            buffer.pos(f11 - cosyaw * scaleFactorX - sinsinpitch * scaleFactorX, f12 - cospitch * scaleFactorY, f13 - sinyaw * scaleFactorZ - cossinpitch * scaleFactorZ).tex(max_u, max_v).color(this.GetParticleRed(), this.GetParticleGreen(), this.GetParticleBlue(), this.GetParticleAlpha()).lightmap(j, k).endVertex();
+            buffer.pos(f11 - cosyaw * scaleFactorX + sinsinpitch * scaleFactorX, f12 + cospitch * scaleFactorY, f13 - sinyaw * scaleFactorZ + cossinpitch * scaleFactorZ).tex(max_u, min_v).color(this.GetParticleRed(), this.GetParticleGreen(), this.GetParticleBlue(), this.GetParticleAlpha()).lightmap(j, k).endVertex();
+            buffer.pos(f11 + cosyaw * scaleFactorX + sinsinpitch * scaleFactorX, f12 + cospitch * scaleFactorY, f13 + sinyaw * scaleFactorZ + cossinpitch * scaleFactorZ).tex(min_u, min_v).color(this.GetParticleRed(), this.GetParticleGreen(), this.GetParticleBlue(), this.GetParticleAlpha()).lightmap(j, k).endVertex();
+            buffer.pos(f11 + cosyaw * scaleFactorX - sinsinpitch * scaleFactorX, f12 - cospitch * scaleFactorY, f13 + sinyaw * scaleFactorZ - cossinpitch * scaleFactorZ).tex(min_u, max_v).color(this.GetParticleRed(), this.GetParticleGreen(), this.GetParticleBlue(), this.GetParticleAlpha()).lightmap(j, k).endVertex();
         }
     }
 
