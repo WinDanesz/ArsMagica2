@@ -188,10 +188,7 @@ public class SpellData {
     }
 
     public SpellCastResult applyComponentsToEntity(World world, EntityLivingBase caster, Entity target) {
-        // For single-stage spells: Projectile+Components in stage 0, exec=1 after execute(), look at stage 0 (exec-1)
-        // For multi-stage spells: Projectile in stage 0, Components in stage 1, exec=1 after execute(), look at stage 1 (exec)
-        // Try exec first (multi-stage), fall back to exec-1 (single-stage)
-        int componentStageIndex = exec < stages.size() ? exec : (exec > 0 ? exec - 1 : 0);
+        int componentStageIndex = exec > 0 ? exec - 1 : 0;
         if (componentStageIndex < 0 || componentStageIndex >= stages.size())
             return SpellCastResult.EFFECT_FAILED;
         List<SpellPart> parts = Lists.newArrayList(this.stages.get(componentStageIndex));
@@ -200,7 +197,7 @@ public class SpellData {
         boolean flag = false;
         boolean success = false;
         SpellShape shape = null;
-        for (SpellPart part : Lists.newArrayList(this.stages.get(exec > 0 ? exec - 1 : exec))) {
+        for (SpellPart part : Lists.newArrayList(this.stages.get(componentStageIndex))) {
             if (part instanceof SpellShape) {
                 if (shape != null)
                     return SpellCastResult.MALFORMED_SPELL_STACK;
@@ -228,10 +225,7 @@ public class SpellData {
     }
 
     public SpellCastResult applyComponentsToGround(World world, EntityLivingBase caster, BlockPos pos, EnumFacing facing, double x, double y, double z) {
-        // For single-stage spells: Projectile+Components in stage 0, exec=1 after execute(), look at stage 0 (exec-1)
-        // For multi-stage spells: Projectile in stage 0, Components in stage 1, exec=1 after execute(), look at stage 1 (exec)
-        // Try exec first (multi-stage), fall back to exec-1 (single-stage)
-        int componentStageIndex = exec < stages.size() ? exec : (exec > 0 ? exec - 1 : 0);
+        int componentStageIndex = exec > 0 ? exec - 1 : 0;
         if (componentStageIndex < 0 || componentStageIndex >= stages.size())
             return SpellCastResult.EFFECT_FAILED;
         List<SpellPart> parts = Lists.newArrayList(this.stages.get(componentStageIndex));
@@ -240,7 +234,7 @@ public class SpellData {
         boolean flag = false;
         boolean success = false;
         SpellShape shape = null;
-        for (SpellPart part : Lists.newArrayList(this.stages.get(exec > 0 ? exec - 1 : exec))) {
+        for (SpellPart part : Lists.newArrayList(this.stages.get(componentStageIndex))) {
             if (part instanceof SpellShape) {
                 if (shape != null)
                     return SpellCastResult.MALFORMED_SPELL_STACK;
