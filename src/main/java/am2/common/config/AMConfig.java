@@ -379,10 +379,12 @@ public class AMConfig extends Configuration {
     private final String KEY_SolarDurationBase = "solar_duration_base";
     private final String KEY_SolarHealingBase = "solar_healing_base";
     private final String KEY_SolarRangeBase = "solar_range_base";
+    private final String KEY_SolarManaCostMultiplier = "solar_mana_cost_multiplier";
     private final String KEY_LunarDamageBase = "lunar_damage_base";
     private final String KEY_LunarDurationBase = "lunar_duration_base";
     private final String KEY_LunarHealingBase = "lunar_healing_base";
     private final String KEY_LunarRangeBase = "lunar_range_base";
+    private final String KEY_LunarManaCostMultiplier = "lunar_mana_cost_multiplier";
     private final String KEY_DefaultBuffDuration = "default_buff_duration";
     private final String KEY_BuffPowerDurationBonus = "buff_power_duration_bonus";
     private final String KEY_HealCooldown = "heal_cooldown";
@@ -868,10 +870,12 @@ public class AMConfig extends Configuration {
     private float solarDurationBase;
     private float solarHealingBase;
     private float solarRangeBase;
+    private float solarManaCostMultiplier;
     private float lunarDamageBase;
     private float lunarDurationBase;
     private float lunarHealingBase;
     private float lunarRangeBase;
+    private float lunarManaCostMultiplier;
     private int defaultBuffDuration;
     private int buffPowerDurationBonus;
     private int healCooldown;
@@ -1489,14 +1493,16 @@ public class AMConfig extends Configuration {
         this.durationModifierValue = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_DurationModifierValue, 2.2, "Value returned by the Duration modifier per application. Default: 2.2").getDouble(2.2);
         this.gravityModifierValue = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_GravityModifierValue, -0.06, "Value returned by the Gravity modifier per application (negative = upward). Default: -0.06").getDouble(-0.06);
         this.piercingModifierValue = this.get(CATEGORY_SPELL_BALANCE, this.KEY_PiercingModifierValue, 2, "Number of extra pierces granted per Piercing modifier. Default: 2").getInt();
-        this.solarDamageBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_SolarDamageBase, 2.4, "Base damage value used by the Solar modifier's time-of-day formula. Default: 2.4").getDouble(2.4);
-        this.solarDurationBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_SolarDurationBase, 5.0, "Base duration value used by the Solar modifier's time-of-day formula. Default: 5.0").getDouble(5.0);
-        this.solarHealingBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_SolarHealingBase, 2.0, "Base healing value used by the Solar modifier's time-of-day formula. Default: 2.0").getDouble(2.0);
-        this.solarRangeBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_SolarRangeBase, 3.0, "Base range/radius value used by the Solar modifier's inverse lunar cycle formula. Default: 3.0").getDouble(3.0);
-        this.lunarDamageBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_LunarDamageBase, 2.4, "Base damage value used by the Lunar modifier's time-of-day formula. Default: 2.4").getDouble(2.4);
-        this.lunarDurationBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_LunarDurationBase, 5.0, "Base duration value used by the Lunar modifier's time-of-day formula. Default: 5.0").getDouble(5.0);
-        this.lunarHealingBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_LunarHealingBase, 2.0, "Base healing value used by the Lunar modifier's time-of-day formula. Default: 2.0").getDouble(2.0);
-        this.lunarRangeBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_LunarRangeBase, 3.0, "Base range/radius value used by the Lunar modifier's lunar cycle formula. Default: 3.0").getDouble(3.0);
+        this.solarDamageBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_SolarDamageBase, 3.0, "Base damage bonus returned by the Solar modifier at peak. Default: 3.0 (+30% of base ~10 damage)").getDouble(3.0);
+        this.solarDurationBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_SolarDurationBase, 1.3, "Duration multiplier returned by the Solar modifier at peak. Default: 1.3 (1.3x duration)").getDouble(1.3);
+        this.solarHealingBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_SolarHealingBase, 1.3, "Healing multiplier returned by the Solar modifier at peak. Default: 1.3 (1.3x healing)").getDouble(1.3);
+        this.solarRangeBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_SolarRangeBase, 3.0, "Base range/radius bonus returned by the Solar modifier at peak. Default: 3.0 (+3.0 range/radius)").getDouble(3.0);
+        this.solarManaCostMultiplier = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_SolarManaCostMultiplier, 1.4, "Mana cost multiplier per Solar modifier stack. Default: 1.4").getDouble(1.4);
+        this.lunarDamageBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_LunarDamageBase, 3.0, "Base damage bonus returned by the Lunar modifier at peak. Default: 3.0 (+30% of base ~10 damage)").getDouble(3.0);
+        this.lunarDurationBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_LunarDurationBase, 1.3, "Duration multiplier returned by the Lunar modifier at peak. Default: 1.3 (1.3x duration)").getDouble(1.3);
+        this.lunarHealingBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_LunarHealingBase, 1.3, "Healing multiplier returned by the Lunar modifier at peak. Default: 1.3 (1.3x healing)").getDouble(1.3);
+        this.lunarRangeBase = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_LunarRangeBase, 3.0, "Base range/radius bonus returned by the Lunar modifier at peak. Default: 3.0 (+3.0 range/radius)").getDouble(3.0);
+        this.lunarManaCostMultiplier = (float) this.get(CATEGORY_SPELL_BALANCE, this.KEY_LunarManaCostMultiplier, 1.4, "Mana cost multiplier per Lunar modifier stack. Default: 1.4").getDouble(1.4);
 
         // Spell Balance — Buff Durations
         this.defaultBuffDuration = this.get(CATEGORY_SPELL_BALANCE, this.KEY_DefaultBuffDuration, 600, "Base duration (ticks) for buff spell components before modifiers. Default: 600 (30 seconds)").getInt();
@@ -2842,10 +2848,12 @@ public class AMConfig extends Configuration {
     public float getSolarDurationBase() { return this.solarDurationBase; }
     public float getSolarHealingBase() { return this.solarHealingBase; }
     public float getSolarRangeBase() { return this.solarRangeBase; }
+    public float getSolarManaCostMultiplier() { return this.solarManaCostMultiplier; }
     public float getLunarDamageBase() { return this.lunarDamageBase; }
     public float getLunarDurationBase() { return this.lunarDurationBase; }
     public float getLunarHealingBase() { return this.lunarHealingBase; }
     public float getLunarRangeBase() { return this.lunarRangeBase; }
+    public float getLunarManaCostMultiplier() { return this.lunarManaCostMultiplier; }
 
     /** Spell Balance — Buff Durations **/
     public int getDefaultBuffDuration() { return this.defaultBuffDuration; }

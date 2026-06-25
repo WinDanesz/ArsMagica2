@@ -25,36 +25,46 @@ public class Lunar extends SpellModifier {
     @Override
     public float getModifier(SpellModifiers type, EntityLivingBase caster, Entity target, World world, NBTTagCompound metadata) {
         switch (type) {
-            case RANGE:
-                return modifyValueOnLunarCycle(world, ArsMagica.config.getLunarRangeBase());
-            case RADIUS:
-                return modifyValueOnLunarCycle(world, ArsMagica.config.getLunarRangeBase());
             case DAMAGE:
-                return modifyValueOnTime(world, ArsMagica.config.getLunarDamageBase());
-            case DURATION:
-                return modifyValueOnTime(world, ArsMagica.config.getLunarDurationBase());
+                return modifyValueOnTime(world, ArsMagica.config.getLunarDamageBase(), type);
             case HEALING:
-                return modifyValueOnTime(world, ArsMagica.config.getLunarHealingBase());
+                return modifyValueOnTime(world, ArsMagica.config.getLunarHealingBase(), type);
+            case RANGE:
+            case RADIUS:
+                return modifyValueOnLunarCycle(world, ArsMagica.config.getLunarRangeBase(), type);
+            case DURATION:
+                return modifyValueOnLunarCycle(world, ArsMagica.config.getLunarDurationBase(), type);
             default:
                 return 1.0f;
         }
     }
 
-    private float modifyValueOnTime(World world, float value) {
-        long x = world.provider.getWorldTime() % 24000;
-        float multiplierFromTime = (float) (Math.sin(((x / 4600f) * (x / 21000f) - 900f) * (180f / Math.PI)) * 3f) + 1;
-        if (multiplierFromTime < 0)
-            multiplierFromTime *= -0.5f;
-        return value * multiplierFromTime;
+    private float modifyValueOnTime(World world, float baseBonus, SpellModifiers type) {
+        long t = world.provider.getWorldTime() % 24000;
+        float neutral = (type == SpellModifiers.HEALING || type == SpellModifiers.DURATION) ? 1.0f : 0.0f;
+        if (t < 12000) {
+            return neutral;
+        }
+        float curve = (float) (Math.cos(((t - 18000L) / 6000.0) * Math.PI) + 1.0) * 0.5f;
+        if (type == SpellModifiers.HEALING || type == SpellModifiers.DURATION) {
+            return 1.0f + (baseBonus - 1.0f) * curve;
+        }
+        return baseBonus * curve;
     }
 
-    private float modifyValueOnLunarCycle(World world, float value) {
-        long boundedTime = world.provider.getWorldTime() % 24000;
-        int phase = 8 - world.provider.getMoonPhase(world.getWorldInfo().getWorldTime());
-        if (boundedTime > 12500 && boundedTime < 23500) {
-            return value + (phase / 2);
+    private float modifyValueOnLunarCycle(World world, float baseBonus, SpellModifiers type) {
+        long t = world.provider.getWorldTime() % 24000;
+        float neutral = (type == SpellModifiers.HEALING || type == SpellModifiers.DURATION) ? 1.0f : 0.0f;
+        if (t < 12000) {
+            return neutral;
         }
-        return Math.abs(value - 1);
+        int p = world.provider.getMoonPhase(world.getWorldInfo().getWorldTime());
+        int distFromFull = (p <= 4) ? p : (8 - p);
+        float phaseFactor = 1.0f - (distFromFull / 4.0f);
+        if (type == SpellModifiers.HEALING || type == SpellModifiers.DURATION) {
+            return 1.0f + (baseBonus - 1.0f) * phaseFactor;
+        }
+        return baseBonus * phaseFactor;
     }
 
     @Override
@@ -68,6 +78,6 @@ public class Lunar extends SpellModifier {
 
     @Override
     public float getManaCostMultiplier() {
-        return 4.0f;
+        return ArsMagica.config.getLunarManaCostMultiplier();
     }
 }
