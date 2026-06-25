@@ -72,7 +72,7 @@ public class Recall extends SpellComponent implements IRitualInteraction {
             return false;
         }
         if (!world.isRemote) {
-            ((EntityLivingBase) target).setPositionAndUpdate(casterProperties.getMarkX(), casterProperties.getMarkY(), casterProperties.getMarkZ());
+            ((EntityLivingBase) target).setPositionAndUpdate(casterProperties.getMarkX(), casterProperties.getMarkY() + 1, casterProperties.getMarkZ());
         }
         return true;
     }
