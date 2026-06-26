@@ -348,7 +348,7 @@ public final class AMItems {
 
         registerItemBlock(registry, AMBlocks.otherworld_aura);
         registerItemBlock(registry, AMBlocks.particle_emitter);
-        registerItemBlock(registry, AMBlocks.mana_drain);
+        registerItemBlock(registry, AMBlocks.mana_drain_block);
 
         registerItemBlock(registry, AMBlocks.liquid_essence_block);
 

@@ -1933,8 +1933,9 @@
 				Formed out of a core of stone, the Earth Guardian is a
 				hardy opponent that can withstand incredible amounts of
 				physical attacks. With whirling attacks and strength of
-				the earth itself, be prepared for a fight. !l
-				Recommended level: 25 !p To summon the Earth Guardian,
+				the earth itself, be prepared for a fight.
+                !l Recommended level: 25
+                !p To summon the Earth Guardian,
 				first build a 3x3 obsidian platform with a chiseled
 				stone brick at the centre. On top of the obsidian, build
 				an iron inlay ring. Off of each side, on the same level
@@ -1953,8 +1954,9 @@
 				a state of fluidity, making it able to shrug off attacks
 				occasionally. It is a trickster as well, flowing into
 				copies of itself and attacking from ambush if one is
-				fooled by the decoy. !l Recommended level: 10 !p The
-				water guardian can be summoned by creating a redstone
+				fooled by the decoy.
+                !l Recommended level: 10
+                !p The water guardian can be summoned by creating a redstone
 				inlay circle in any biome that is predominantly water.
 				Then, while raining, throw a boat and a bucket of water
 				into the circle as homage to the many ships lost at sea.
@@ -1968,6 +1970,7 @@
 				namesake. Surrounded by frigid winds that sap the
 				strength of all who near it, the Winter Guardian pummels
 				its frozen foes and shatters them with powerful strikes.
+                !l Recommended level: 75
 				!p To summon the Winter Guardian, seek out an area in
 				the grips of winter. Place a gold inlay circle on the
 				ground and build an effigy to the Winter Guardian in the
@@ -1986,8 +1989,9 @@
 				debuffs, prepare for a magical duel that will test your
 				counterspell knowledge. Protected by a powerful sigil,
 				the Arcane Guardian has as many tricks against melee
-				opponents as it does against ranged attackers. !l Recommended level: 45 !p To
-				summon the Arcane Guardian, first construct a Shrine of
+				opponents as it does against ranged attackers.
+                !l Recommended level: 45
+                !p To summon the Arcane Guardian, first construct a Shrine of
 				Knowledge. The shrine is 2 pillars of bookshelves, 3
 				high, with a lectern on the ground in between them
 				containing an Arcane Compendium. Place an iron inlay
@@ -2005,8 +2009,9 @@
 				into battle with one without some form of falling
 				protection. The Air Guardian is a powerful ranged
 				caster, but it requires a great deal of focus to finish
-				some of it's spells... !l Recommended level: 35 !p To
-				summon the Air Guardian, climb up well above the clouds
+				some of it's spells...
+                !l Recommended level: 35
+                !p To summon the Air Guardian, climb up well above the clouds
 				and build a platform (y 150 or higher). Build a gold
 				inlay ring on the platform and throw in an Air Essence.
 			</desc>
@@ -2021,7 +2026,8 @@
 				essence onto the coal and the fire
 				guardian will appear. Be warned though, it does not take kindly to
 				those that try to bring water to its domain. Be prepared
-				for a fight! !l Recommended level: 90
+				for a fight!
+                !l Recommended level: 90
 			</desc>
       <relatedEntries></relatedEntries>
     </boss>
@@ -2032,7 +2038,7 @@
     </boss>
     <boss id="boss_lightning_guardian">
       <name>Lightning Guardian</name>
-      <desc>The lightning guardian is as unpredictable as it is powerful.  It can fire bolts of lightning at extreme range, and has been known to mess with the synapses inside the brains of living creatures.  It has also on occasion been able to replicate an effect similar to telekinesis using massive amounts of concentrated static electricity, which leaves the unfortunate victim open to several other effects. !d To summon the lightning guardian, create a #5Gold Inlay Ring#0 and place a mana battery in the middle.  Then, place 2 iron bars on top, creating a lightning rod.  !d  Finally, wait for a storm. !d This guardian is capable of doing extreme damage in a short amount of time.  Make sure you are well protected.  Recommended Level: 70</desc>
+      <desc>The lightning guardian is as unpredictable as it is powerful.  It can fire bolts of lightning at extreme range, and has been known to mess with the synapses inside the brains of living creatures.  It has also on occasion been able to replicate an effect similar to telekinesis using massive amounts of concentrated static electricity, which leaves the unfortunate victim open to several other effects. !d To summon the lightning guardian, create a #5Gold Inlay Ring#0 and place a mana battery in the middle.  Then, place 2 iron bars on top, creating a lightning rod.  !d  Finally, wait for a storm. !d This guardian is capable of doing extreme damage in a short amount of time.  Make sure you are well protected.  !l Recommended Level: 70</desc>
       <relatedEntries></relatedEntries>
     </boss>
     <boss id="boss_ender_guardian">
@@ -2237,9 +2243,9 @@
     <block id="mana_battery">
       <name>Mana Battery</name>
       <desc>A frame of iron and gold infused with vinteum dust, capable of storing massive amounts of Etherium.  The battery always passively provides power to any device that has been linked to it as a source via a #9Crystal Wrench#0.
-			!p
+			!d
 			To charge the battery, first use a #9Crystal Wrench#0 to link a power source (such as an #9Obelisk#0 or a #9Draining Well#0) to the battery: right-click the source first, then the battery.  The source must be within 10 blocks.
-			!p
+			!d
 			Once linked, apply a #9strong redstone signal#0 to the battery.  While the signal is active, the battery will actively pull Etherium from its linked source.  Remove the redstone signal to stop charging and return the battery to output-only mode.</desc>
       <relatedEntries>obelisk,mana_drain,crystal_wrench,powerTypes,essenceconduit</relatedEntries>
     </block>
@@ -2397,11 +2403,11 @@
     <block id="mana_drain">
       <name>Draining Well</name>
       <desc>The Draining Well converts the mana of nearby entities standing inside its basin into #5Neutral Etherium#0.  Entities lose a small fraction of their mana each tick; if they have none left, they take damage instead.
-			!p
+			!d
 			Apply a strong #9redstone signal#0 to reverse the flow: the Well will return its stored etherium as mana to any #9player#0 standing inside the basin.  In this mode it no longer drains and can no longer act as a power provider.
-			!p
+			!d
 			To transfer the stored etherium to a #9Mana Battery#0 or other power consumer, use a #9Crystal Wrench#0 to link them: right-click the Draining Well first (without a redstone signal active), then right-click the destination.  The Draining Well will only provide power while there is no redstone signal - the link must be made in that state, or pairing will fail.
-			!p
+			!d
 			Requires a specific multiblock structure to function.</desc>
       <relatedEntries>mana_drain_block,magic_wall,powerTypes,mana_battery,crystal_wrench</relatedEntries>
     </block>

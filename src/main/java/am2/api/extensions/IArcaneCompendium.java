@@ -61,8 +61,8 @@ public interface IArcaneCompendium {
             for (CompendiumCategory categroy : CompendiumCategory.getCategories()) {
                 for (CompendiumEntry entry : categroy.getEntries()) {
                     NBTTagCompound tmp = new NBTTagCompound();
-                    tmp.setString("ID", entry.getID());
-                    tmp.setBoolean("Unlocked", instance.isUnlocked(entry.getID()));
+                    tmp.setString("ID", entry.getFullID());
+                    tmp.setBoolean("Unlocked", instance.isUnlocked(entry.getFullID()));
                     unlocks.appendTag(tmp);
                 }
             }

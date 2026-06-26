@@ -228,7 +228,7 @@ tile.arsmagica2:redstone_inlay.name=Красная инкрустрация
 tile.arsmagica2:flicker_habitat.name=Клетка для светлячков
 tile.arsmagica2:witchwood_stairs.name=Лестница из ведьминого дерева
 tile.arsmagica2:astral_barrier.name=Астральный барьер
-tile.arsmagica2:mana_drain.name=Иссушатель маны
+tile.arsmagica2:mana_drain_block.name=Иссушатель маны
 tile.arsmagica2:witchwood_slab.name=Плита из ведьминого дерева
 tile.arsmagica2:fluid_block_liquid_essence=Жидкая эссенция
 #endregion

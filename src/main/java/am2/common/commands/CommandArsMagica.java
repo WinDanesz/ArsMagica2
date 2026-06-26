@@ -156,7 +156,7 @@ public class CommandArsMagica extends CommandBase {
 
         if (args[1].equalsIgnoreCase("all")) {
             for (CompendiumEntry entry : CompendiumCategory.getAllEntries()) {
-                compendium.unlockEntry(entry.getID());
+                compendium.unlockEntry(entry.getFullID());
             }
             compendium.forceUpdate();
             notifyCommandListener(sender, this, "Unlocked all compendium entries for %s", player.getDisplayNameString());
@@ -181,7 +181,7 @@ public class CommandArsMagica extends CommandBase {
                 List<String> completions = new ArrayList<>();
                 completions.add("all");
                 for (CompendiumEntry entry : CompendiumCategory.getAllEntries()) {
-                    completions.add(entry.getID());
+                    completions.add(entry.getFullID());
                 }
                 return getListOfStringsMatchingLastWord(args, completions);
             }

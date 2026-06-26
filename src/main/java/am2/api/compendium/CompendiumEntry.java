@@ -59,6 +59,10 @@ public class CompendiumEntry {
     }
 
     public String getID() {
+        return id;
+    }
+
+    public String getFullID() {
         return category.getID() + "." + id;
     }
 
@@ -66,7 +70,7 @@ public class CompendiumEntry {
         if (customName != null) {
             return customName;
         }
-        return I18n.format("compendium." + this.getID() + ".name");
+        return I18n.format("compendium." + this.getFullID() + ".name");
     }
 
     public CompendiumEntry setName(String name) {
@@ -75,7 +79,7 @@ public class CompendiumEntry {
     }
 
     public String getDescription() {
-        return I18n.format("compendium." + this.getID() + ".desc");
+        return I18n.format("compendium." + this.getFullID() + ".desc");
     }
 
     public boolean isDefaultUnlocked() {

@@ -249,7 +249,7 @@ tile.arsmagica2:redstone_inlay.name=レッドストーンの象嵌
 tile.arsmagica2:flicker_habitat.name=フリッカー活動枠
 tile.arsmagica2:witchwood_stairs.name=ウィッチウッドの階段
 tile.arsmagica2:astral_barrier.name=霊体の障壁
-tile.arsmagica2:mana_drain.name=Draining Well
+tile.arsmagica2:mana_drain_block.name=Draining Well
 tile.arsmagica2:witchwood_slab.name=ウィッチウッドハーフブロック
 tile.arsmagica2:fluid_block_liquid_essence=液体エッセンス
 

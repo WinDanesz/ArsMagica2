@@ -23,8 +23,8 @@ public class Zone extends SpellShape {
     public SpellCastResult beginStackStage(SpellData spell, EntityLivingBase caster, EntityLivingBase target, World world, double x, double y, double z, EnumFacing side, boolean giveXP, int useCount) {
         if (world.isRemote) return SpellCastResult.SUCCESS;
         int radius = (int) spell.getModifiedValue(ArsMagica.config.getZoneDefaultRadius(), SpellModifiers.RADIUS, Operation.ADD, world, caster, target);
-        double gravity = spell.getModifiedValue(0, SpellModifiers.GRAVITY, Operation.ADD, world, caster, target);
-        int duration = (int) spell.getModifiedValue(ArsMagica.config.getZoneDefaultDuration(), SpellModifiers.DURATION, Operation.ADD, world, caster, target);
+        double gravity = spell.getModifiedValue(0.0, SpellModifiers.GRAVITY, Operation.ADD, world, caster, target);
+        int duration = (int) spell.getModifiedValue(ArsMagica.config.getZoneDefaultDuration(), SpellModifiers.DURATION, Operation.MULTIPLY, world, caster, target);
         EntitySpellEffect zone = new EntitySpellEffect(world);
         zone.setRadius(radius);
         zone.setTicksToExist(duration);

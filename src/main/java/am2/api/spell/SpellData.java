@@ -102,7 +102,7 @@ public class SpellData {
         double outValue = defaultValue;
         // Create a snapshot to avoid ConcurrentModificationException
         for (List<SpellPart> parts : Lists.newArrayList(stages)) {
-            for (SpellPart part : parts) {
+            for (SpellPart part : Lists.newArrayList(parts)) {
                 if (part instanceof SpellModifier) {
                     if (((SpellModifier) part).getAspectsModified().contains(mod)) {
                         outValue = operation.apply(outValue, (double) ((SpellModifier) part).getModifier(mod, caster, target, world, storedData));
@@ -113,8 +113,8 @@ public class SpellData {
         // Apply shape damage multiplier if this is a DAMAGE modifier
         if (mod == SpellModifiers.DAMAGE) {
             int shapeStageIndex = exec > 0 ? exec - 1 : 0;
-            if (shapeStageIndex >= 0 && shapeStageIndex < stages.size()) {
-                for (SpellPart part : stages.get(shapeStageIndex)) {
+            if (shapeStageIndex < stages.size()) {
+                for (SpellPart part : Lists.newArrayList(stages.get(shapeStageIndex))) {
                     if (part instanceof SpellShape) {
                         outValue *= ((SpellShape) part).damageMultiplier();
                         break;
@@ -191,7 +191,7 @@ public class SpellData {
         // For single-stage spells: Projectile+Components in stage 0, exec=1 after execute(), look at stage 0 (exec-1)
         // For multi-stage spells: Projectile in stage 0, Components in stage 1, exec=1 after execute(), look at stage 1 (exec)
         // Try exec first (multi-stage), fall back to exec-1 (single-stage)
-        int componentStageIndex = exec < stages.size() ? exec : (exec > 0 ? exec - 1 : 0);
+        int componentStageIndex = hasMoreStages() ? exec : (exec > 0 ? exec - 1 : 0);
         if (componentStageIndex < 0 || componentStageIndex >= stages.size())
             return SpellCastResult.EFFECT_FAILED;
         List<SpellPart> parts = Lists.newArrayList(this.stages.get(componentStageIndex));
@@ -231,7 +231,7 @@ public class SpellData {
         // For single-stage spells: Projectile+Components in stage 0, exec=1 after execute(), look at stage 0 (exec-1)
         // For multi-stage spells: Projectile in stage 0, Components in stage 1, exec=1 after execute(), look at stage 1 (exec)
         // Try exec first (multi-stage), fall back to exec-1 (single-stage)
-        int componentStageIndex = exec < stages.size() ? exec : (exec > 0 ? exec - 1 : 0);
+        int componentStageIndex = hasMoreStages() ? exec : (exec > 0 ? exec - 1 : 0);
         if (componentStageIndex < 0 || componentStageIndex >= stages.size())
             return SpellCastResult.EFFECT_FAILED;
         List<SpellPart> parts = Lists.newArrayList(this.stages.get(componentStageIndex));
@@ -401,8 +401,9 @@ public class SpellData {
     }
 
     public SpellData pop() {
-        exec++;
-        return this;
+        SpellData data = new SpellData(source, stages, new UUID(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits()), storedData);
+        data.exec = exec + 1;
+        return data;
     }
 
     /**
@@ -424,7 +425,7 @@ public class SpellData {
      * so execution starts from the actual effect stages (e.g. Touch + IceStatue).
      */
     public SpellData skipFirstStage() {
-        if (exec < stages.size()) exec++;
+        if (hasMoreStages()) exec++;
         return this;
     }
 
