@@ -9,11 +9,12 @@ import am2.common.defs.IDDefs;
 import am2.common.extensions.EntityExtension;
 import am2.common.extensions.SkillData;
 import am2.common.spell.SpellCaster;
+import am2.common.spell.component.PlaceBlock;
 import am2.common.utils.EntityUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -140,6 +141,17 @@ public class ItemSpellBase extends Item {
             manaCost = caster.getManaCost(player.world, player);
         }
         tooltip.add(String.format("Mana Cost : %.1f", manaCost));
+
+        // spell state data, can be summon stuff of place block stuff
+        if (tag != null) {
+            int placeBlockData = tag.getInteger(PlaceBlock.KEY_STATE);
+            if (placeBlockData != 0) {
+                IBlockState blockState = Block.getStateById(placeBlockData);
+                ItemStack blockStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
+                tooltip.add(net.minecraft.client.resources.I18n.format("am2.tooltip.placeBlockSpell", blockStack.getDisplayName()));
+            }
+        }
+
         if (flagIn.isAdvanced()) {
             if (tag != null && tag.hasKey("creatorName")) {
                 String creator = tag.getString("creatorName");
@@ -168,7 +180,7 @@ public class ItemSpellBase extends Item {
                             ResourceLocation regName = part.getRegistryName();
                             if (regName == null) continue;
                             String locKey = "skill." + regName.toString() + ".name";
-                            String partName = I18n.translateToLocalFormatted(locKey);
+                            String partName = net.minecraft.client.resources.I18n.format(locKey);
                             String prefix;
                             if (part instanceof SpellShape) {
                                 prefix = "§6    [Shape] ";
