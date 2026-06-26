@@ -90,7 +90,7 @@ public final class AMBlocks {
     public static final Block summoner = placeholder();
     public static final Block ice_effigy = placeholder();
     public static final Block lightning_effigy = placeholder();
-    public static final Block mana_drain = placeholder();
+    public static final Block mana_drain_block = placeholder();
     public static final Block phase_shift = placeholder();
     public static final Block witchwood_log = new BlockWitchwoodLog();
     public static final Block witchwood_leaves = new BlockWitchwoodLeaves();
@@ -183,7 +183,7 @@ public final class AMBlocks {
         registerBlock(registry, "summoner", new BlockSummoner());
         registerBlock(registry, "ice_effigy", new BlockEffigy(Material.ICE), true); // TODO ?
         registerBlock(registry, "lightning_effigy", new BlockEffigy(Material.IRON), true); // TODO ?
-        registerBlock(registry, "mana_drain", new BlockManaDrain());
+        registerBlock(registry, "mana_drain_block", new BlockManaDrain());
         registerBlock(registry, "phase_shift", new BlockPhaseShift());
         registerBlock(registry, "redstone_inlay", new BlockInlay(BlockInlay.TYPE_REDSTONE));
         registerBlock(registry, "iron_inlay", new BlockInlay(BlockInlay.TYPE_IRON));
@@ -246,7 +246,7 @@ public final class AMBlocks {
         GameRegistry.registerTileEntity(TileEntityLectern.class, new ResourceLocation(ArsMagica.MODID, "lectern"));
         GameRegistry.registerTileEntity(TileEntityMagiciansWorkbench.class, new ResourceLocation(ArsMagica.MODID, "magicians_workbench"));
         GameRegistry.registerTileEntity(TileEntityManaBattery.class, new ResourceLocation(ArsMagica.MODID, "mana_battery"));
-        GameRegistry.registerTileEntity(TileEntityManaDrain.class, new ResourceLocation(ArsMagica.MODID, "mana_drain"));
+        GameRegistry.registerTileEntity(TileEntityManaDrain.class, new ResourceLocation(ArsMagica.MODID, "mana_drain_block"));
         GameRegistry.registerTileEntity(TileEntityObelisk.class, new ResourceLocation(ArsMagica.MODID, "obelisk"));
         GameRegistry.registerTileEntity(TileEntityOcculus.class, new ResourceLocation(ArsMagica.MODID, "occulus"));
         GameRegistry.registerTileEntity(TileEntityOtherworldAura.class, new ResourceLocation(ArsMagica.MODID, "otherworld_aura"));

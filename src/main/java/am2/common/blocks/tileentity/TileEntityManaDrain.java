@@ -24,7 +24,7 @@ import java.util.List;
 
 public class TileEntityManaDrain extends TileEntityAMPower implements IMultiblockController {
 
-    private IMultiblock multiblock = new Multiblock("mana_drain");
+    private IMultiblock multiblock = new Multiblock("mana_drain_block");
 
     public TileEntityManaDrain() {
         super(ArsMagica.config.getCapacityManaDrain());
@@ -59,7 +59,7 @@ public class TileEntityManaDrain extends TileEntityAMPower implements IMultibloc
         caps.addBlock(new BlockPos(0, 3, -2));
         caps.addBlock(new BlockPos(0, 3, 2));
 
-        MultiblockGroup drain = new MultiblockGroup("drain", Lists.newArrayList(AMBlocks.mana_drain.getDefaultState()), true);
+        MultiblockGroup drain = new MultiblockGroup("drain", Lists.newArrayList(AMBlocks.mana_drain_block.getDefaultState()), true);
 
         drain.addBlock(BlockPos.ORIGIN);
 
