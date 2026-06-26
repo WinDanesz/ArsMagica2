@@ -191,7 +191,7 @@ public class SpellData {
         // For single-stage spells: Projectile+Components in stage 0, exec=1 after execute(), look at stage 0 (exec-1)
         // For multi-stage spells: Projectile in stage 0, Components in stage 1, exec=1 after execute(), look at stage 1 (exec)
         // Try exec first (multi-stage), fall back to exec-1 (single-stage)
-        int componentStageIndex = exec < stages.size() ? exec : (exec > 0 ? exec - 1 : 0);
+        int componentStageIndex = hasMoreStages() ? exec : (exec > 0 ? exec - 1 : 0);
         if (componentStageIndex < 0 || componentStageIndex >= stages.size())
             return SpellCastResult.EFFECT_FAILED;
         List<SpellPart> parts = Lists.newArrayList(this.stages.get(componentStageIndex));
@@ -231,7 +231,7 @@ public class SpellData {
         // For single-stage spells: Projectile+Components in stage 0, exec=1 after execute(), look at stage 0 (exec-1)
         // For multi-stage spells: Projectile in stage 0, Components in stage 1, exec=1 after execute(), look at stage 1 (exec)
         // Try exec first (multi-stage), fall back to exec-1 (single-stage)
-        int componentStageIndex = exec < stages.size() ? exec : (exec > 0 ? exec - 1 : 0);
+        int componentStageIndex = hasMoreStages() ? exec : (exec > 0 ? exec - 1 : 0);
         if (componentStageIndex < 0 || componentStageIndex >= stages.size())
             return SpellCastResult.EFFECT_FAILED;
         List<SpellPart> parts = Lists.newArrayList(this.stages.get(componentStageIndex));
@@ -401,8 +401,9 @@ public class SpellData {
     }
 
     public SpellData pop() {
-        exec++;
-        return this;
+        SpellData data = new SpellData(source, stages, new UUID(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits()), storedData);
+        data.exec = exec + 1;
+        return data;
     }
 
     /**
@@ -424,7 +425,7 @@ public class SpellData {
      * so execution starts from the actual effect stages (e.g. Touch + IceStatue).
      */
     public SpellData skipFirstStage() {
-        if (exec < stages.size()) exec++;
+        if (hasMoreStages()) exec++;
         return this;
     }
 

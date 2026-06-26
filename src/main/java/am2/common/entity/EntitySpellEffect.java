@@ -28,6 +28,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -166,11 +167,10 @@ public class EntitySpellEffect extends Entity {
     private void zoneUpdate() {
         if (this.world.isRemote) {
             if (!ArsMagica.config.NoGFX()) {
-                this.rotation += this.rotationSpeed;
-                this.rotation %= 360;
+                rotation += rotationSpeed;
+                rotation %= 360;
 
                 double dist = getRadius();
-                double _rotation = rotation;
 
                 if (spellStack == null) {
                     spellStack = getEffectStack();
@@ -183,22 +183,26 @@ public class EntitySpellEffect extends Entity {
                 int color = spellStack.getColor(world, null, null) & 0xFFFFFF;
 
                 boolean isIceZone = Affinities.ice.equals(spellStack.getMainShift());
-                if ((ArsMagica.config.FullGFX() && this.ticksExisted % 2 == 0) || this.ticksExisted % 8 == 0) {
-                    for (int i = 0; i < 4; ++i) {
-                        _rotation = (rotation + (90 * i)) % 360;
-                        double x = this.posX - Math.cos(3.141 / 180 * (_rotation)) * dist;
-                        double z = this.posZ - Math.sin(3.141 / 180 * (_rotation)) * dist;
+                int GFX = ArsMagica.config.getGFXLevel();
+                int freq = 8 / (GFX * GFX);
+                final int lifetime = 40;
+                final float speed = 2.0F / lifetime;
+                if (ticksExisted % freq == 0) {
+                    int sections = 4;
+                    double angle = 360.0 / sections;
+                    for (int i = 0; i < sections; ++i) {
+                        double da = ((rotation + (angle * i)) % 360) * Math.PI / 180.0;
+                        double x = posX - Math.cos(da) * dist;
+                        double z = posZ - Math.sin(da) * dist;
                         if (!isIceZone || !EBWizardryCompatBootstrap.spawnFrostParticles(world, x, posY, z, 1, rand, 0.15, 0.05)) {
-                            AMParticle effect = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, AMParticleDefs.getParticleForAffinity(spellStack.getMainShift()), x, posY, z);
-                            if (effect != null) {
-                                effect.setIgnoreMaxAge(false);
-                                effect.setMaxAge(20);
-                                effect.setParticleScale(0.15f);
-                                effect.setRGBColorI(color);
-                                effect.AddParticleController(new ParticleFloatUpward(effect, 0, 0.07f, 1, false));
-                                if (ArsMagica.config.LowGFX()) {
-                                    effect.AddParticleController(new ParticleOrbitPoint(effect, posX, posY, posZ, 2, false).setIgnoreYCoordinate(true).SetOrbitSpeed(0.05f).SetTargetDistance(dist).setRotateDirection(true));
-                                }
+                            AMParticle p = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, AMParticleDefs.getParticleForAffinity(spellStack.getMainShift()), x, posY, z);
+                            if (p != null) {
+                                p.setIgnoreMaxAge(false);
+                                p.setMaxAge(lifetime);
+                                p.setParticleScale(0.15f);
+                                p.setRGBColorI(color);
+                                p.AddParticleController(new ParticleFloatUpward(p, 0, speed, 1, false));
+                                p.AddParticleController(new ParticleShiftAlphaSquareExtrapolation(p,2, false) .setAlphaRange(1.0F, 0.1F).setAgeRange(0.75F, 1.0F));
                             }
                         }
                     }
@@ -248,16 +252,14 @@ public class EntitySpellEffect extends Entity {
                 if (e instanceof EntityLivingBase)
                     spellStack.copy().execute(world, dummycaster, (EntityLivingBase) e, e.posX, e.posY - 1, e.posZ, null);
             }
-            if (this.dataManager.get(WATCHER_GRAVITY) < 0 && !firstApply)
-                spellStack.copy().execute(world, dummycaster, null, posX, posY - 1, posZ, null);
-            else
-                spellStack.copy().execute(world, dummycaster, null, posX, posY, posZ, null);
+            int gravity = dataManager.get(WATCHER_GRAVITY) < 0 && !firstApply ? 1 : 0;
+            spellStack.copy().execute(world, dummycaster, null, posX, posY - gravity, posZ, null);
             firstApply = false;
-            for (float i = -radius; i <= radius; i++) {
-                for (int j = -3; j <= 3; j++) {
-                    Vec3d[] blocks = getAllBlockLocationsBetween(new Vec3d(posX + i, posY + j, posZ - radius), new Vec3d(posX + i, posY + j, posZ + radius));
-                    for (Vec3d vec : blocks) {
-                        spellStack.copy().pop().applyComponentsToGround(world, dummycaster, new BlockPos(vec), EnumFacing.UP, vec.x + 0.5, vec.y + 0.5, vec.z + 0.5);
+            final int height = 2;
+            for (int y = 0; y < height; ++y) {
+                for (float x = -radius; x <= radius; ++x) {
+                    for (float z = -radius; z <= radius; ++z) {
+                        spellStack.pop().applyComponentsToGround(world, dummycaster, new BlockPos(posX + x, posY + y, posZ + z), EnumFacing.UP, x + 0.5, y + 0.5, z + 0.5);
                     }
                 }
             }
@@ -331,7 +333,6 @@ public class EntitySpellEffect extends Entity {
                     return;
                 }
             }
-            spellStack = spellStack.copy();
 
             int color = spellStack.getColor(world, null, null) & 0xFFFFFF;
 
@@ -407,7 +408,6 @@ public class EntitySpellEffect extends Entity {
                     return;
                 }
             }
-            spellStack = spellStack.copy();
 
             double dist = getRadius();
 
@@ -541,7 +541,7 @@ public class EntitySpellEffect extends Entity {
 
             Vec3d[] vecs = getAllBlockLocationsBetween(a, b);
             for (Vec3d vec : vecs) {
-                spellStack.copy().pop().applyComponentsToGround(world, dummycaster, new BlockPos(vec), EnumFacing.UP, vec.x + 0.5, vec.y + 0.5, vec.z + 0.5);
+                spellStack.pop().applyComponentsToGround(world, dummycaster, new BlockPos(vec), EnumFacing.UP, vec.x + 0.5, vec.y + 0.5, vec.z + 0.5);
             }
         }
 
@@ -640,4 +640,47 @@ public class EntitySpellEffect extends Entity {
     public boolean canRoFIgnite() {
         return dataManager.get(WATCHER_ROF_IGNITE);
     }
+
+    private final static class ParticleShiftAlphaSquareExtrapolation extends ParticleController {
+
+        float fromAlpha = 1.0F;
+        float toAlpha = 0.0F;
+
+        float fromPartialAge = 0.0F;
+        float toPartialAge = 1.0F;
+
+        public ParticleShiftAlphaSquareExtrapolation(AMParticle particleEffect, int priority, boolean exclusive) {
+            super(particleEffect, priority, exclusive);
+        }
+
+        public ParticleShiftAlphaSquareExtrapolation setAlphaRange(float fromAlpha, float toAlpha) {
+            this.fromAlpha = fromAlpha;
+            this.toAlpha = toAlpha;
+            return this;
+        }
+
+        public ParticleShiftAlphaSquareExtrapolation setAgeRange(float fromPartialAge, float toPartialAge) {
+            this.fromPartialAge = fromPartialAge;
+            this.toPartialAge = toPartialAge;
+            return this;
+        }
+
+        @Override
+        public void doUpdate() {
+            if (!particle.isAlive() || particle.GetParticleMaxAge() <= 0) {
+                finish();
+                return;
+            }
+            float pt = MathHelper.clamp((float) particle.GetParticleAge() / particle.GetParticleMaxAge(), fromPartialAge, toPartialAge);
+            float t = (pt - fromPartialAge) / (toPartialAge - fromPartialAge);
+            t *= t;
+            particle.SetParticleAlpha(toAlpha * t + fromAlpha * (1.0F - t));
+        }
+
+        @Override
+        public ParticleController clone() {
+            return new ParticleShiftAlphaSquareExtrapolation(particle, priority, exclusive).setAlphaRange(fromAlpha, toAlpha).setAgeRange(fromPartialAge, toPartialAge);
+        }
+    }
+
 }
