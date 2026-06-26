@@ -102,7 +102,7 @@ public class SpellData {
         double outValue = defaultValue;
         // Create a snapshot to avoid ConcurrentModificationException
         for (List<SpellPart> parts : Lists.newArrayList(stages)) {
-            for (SpellPart part : parts) {
+            for (SpellPart part : Lists.newArrayList(parts)) {
                 if (part instanceof SpellModifier) {
                     if (((SpellModifier) part).getAspectsModified().contains(mod)) {
                         outValue = operation.apply(outValue, (double) ((SpellModifier) part).getModifier(mod, caster, target, world, storedData));
@@ -113,8 +113,8 @@ public class SpellData {
         // Apply shape damage multiplier if this is a DAMAGE modifier
         if (mod == SpellModifiers.DAMAGE) {
             int shapeStageIndex = exec > 0 ? exec - 1 : 0;
-            if (shapeStageIndex >= 0 && shapeStageIndex < stages.size()) {
-                for (SpellPart part : stages.get(shapeStageIndex)) {
+            if (shapeStageIndex < stages.size()) {
+                for (SpellPart part : Lists.newArrayList(stages.get(shapeStageIndex))) {
                     if (part instanceof SpellShape) {
                         outValue *= ((SpellShape) part).damageMultiplier();
                         break;
