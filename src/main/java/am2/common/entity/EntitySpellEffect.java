@@ -257,7 +257,7 @@ public class EntitySpellEffect extends Entity {
                 for (int j = -3; j <= 3; j++) {
                     Vec3d[] blocks = getAllBlockLocationsBetween(new Vec3d(posX + i, posY + j, posZ - radius), new Vec3d(posX + i, posY + j, posZ + radius));
                     for (Vec3d vec : blocks) {
-                        spellStack.pop().applyComponentsToGround(world, dummycaster, new BlockPos(vec), EnumFacing.UP, vec.x + 0.5, vec.y + 0.5, vec.z + 0.5);
+                        spellStack.copy().pop().applyComponentsToGround(world, dummycaster, new BlockPos(vec), EnumFacing.UP, vec.x + 0.5, vec.y + 0.5, vec.z + 0.5);
                     }
                 }
             }
