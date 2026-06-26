@@ -14,7 +14,6 @@ import am2.common.registry.AMSkills;
 import am2.common.registry.CompendiumRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -175,12 +174,7 @@ public class CompendiumXMLLoader {
             if (name != null) entry.setName(name);
 
             // Add description pages
-            if (desc != null) {
-                GenerateCompendiumLoreEvent event = new GenerateCompendiumLoreEvent(desc, id);
-                MinecraftForge.EVENT_BUS.post(event);
-                desc = event.lore;
-                addTextWithAutoPagination(entry, desc);
-            }
+            addTextWithAutoPagination(entry, desc);
 
             // Add the multiblock structure visual if present
             if (multiblock != null) {
@@ -238,12 +232,7 @@ public class CompendiumXMLLoader {
             if (name != null) entry.setName(name);
 
             // Add description pages
-            if (desc != null) {
-                String[] pages = desc.split("!p");
-                for (String page : pages) {
-                    addTextWithAutoPagination(entry, page);
-                }
-            }
+            addTextWithAutoPagination(entry, desc);
 
             // Add related entries
             if (relatedEntriesStr != null && !relatedEntriesStr.trim().isEmpty()) {
@@ -297,12 +286,7 @@ public class CompendiumXMLLoader {
             if (name != null) entry.setName(name);
 
             // Add description pages
-            if (desc != null) {
-                String[] pages = desc.split("!p");
-                for (String page : pages) {
-                    addTextWithAutoPagination(entry, page);
-                }
-            }
+            addTextWithAutoPagination(entry, desc);
 
             // Add the ritual shape as a page so it gets rendered
             if (ritualShape != null) {
@@ -366,9 +350,7 @@ public class CompendiumXMLLoader {
             if (name != null) entry.setName(name);
 
             // Add description pages
-            if (desc != null) {
-                addTextWithAutoPagination(entry, desc);
-            }
+            addTextWithAutoPagination(entry, desc);
 
             // Add the item to display
             ItemStack itemStack = resolveItemFromId(id);
@@ -426,9 +408,7 @@ public class CompendiumXMLLoader {
 
             // Add description pages - use parent desc as fallback if subitem has no description
             String descToUse = (desc != null && !desc.trim().isEmpty()) ? desc : parentDesc;
-            if (descToUse != null && !descToUse.trim().isEmpty()) {
-                addTextWithAutoPagination(entry, descToUse);
-            }
+            addTextWithAutoPagination(entry, descToUse);
 
             // Add the item to display
             ItemStack itemStack = resolveItemFromId(id);
@@ -493,9 +473,7 @@ public class CompendiumXMLLoader {
             if (name != null) entry.setName(name);
 
             // Add description pages
-            if (desc != null) {
-                addTextWithAutoPagination(entry, desc);
-            }
+            addTextWithAutoPagination(entry, desc);
 
             // Add the block to display
             ItemStack blockStack = resolveBlockFromId(id);
@@ -553,9 +531,7 @@ public class CompendiumXMLLoader {
 
             // Add description pages - use parent desc as fallback if subitem has no description
             String descToUse = (desc != null && !desc.trim().isEmpty()) ? desc : parentDesc;
-            if (descToUse != null && !descToUse.trim().isEmpty()) {
-                addTextWithAutoPagination(entry, descToUse);
-            }
+            addTextWithAutoPagination(entry, descToUse);
 
             // Add the block to display
             ItemStack blockStack = resolveBlockFromId(id);
@@ -610,9 +586,7 @@ public class CompendiumXMLLoader {
             if (name != null) entry.setName(name);
 
             // Add description pages
-            if (desc != null) {
-                addTextWithAutoPagination(entry, desc);
-            }
+            addTextWithAutoPagination(entry, desc);
 
             // Add the shape object itself
             if (shape != null) {
@@ -656,9 +630,7 @@ public class CompendiumXMLLoader {
             if (name != null) entry.setName(name);
 
             // Add description pages
-            if (desc != null) {
-                addTextWithAutoPagination(entry, desc);
-            }
+            addTextWithAutoPagination(entry, desc);
 
             // Add the component object itself
             if (component != null) {
@@ -702,9 +674,7 @@ public class CompendiumXMLLoader {
             if (name != null) entry.setName(name);
 
             // Add description pages
-            if (desc != null) {
-                addTextWithAutoPagination(entry, desc);
-            }
+            addTextWithAutoPagination(entry, desc);
 
             // Add the modifier object itself
             if (modifier != null) {
@@ -762,9 +732,8 @@ public class CompendiumXMLLoader {
             entry.setCategory(CompendiumCategory.TALENT);
             if (name != null) entry.setName(name);
             // Add description pages
-            if (desc != null) {
-                addTextWithAutoPagination(entry, desc);
-            }
+            addTextWithAutoPagination(entry, desc);
+
             // Add the skill object itself
             if (skill != null) {
                 entry.addObject(skill);
@@ -815,12 +784,7 @@ public class CompendiumXMLLoader {
             if (order != -1) entry.setOrder(order);
 
             // Add description pages - use !p for page breaks
-            if (desc != null) {
-                String[] pages = desc.split("!p");
-                for (String page : pages) {
-                    addTextWithAutoPagination(entry, page);
-                }
-            }
+            addTextWithAutoPagination(entry, desc);
 
             CompendiumRegistry.registerEntry(entry);
         } catch (Exception e) {
@@ -870,9 +834,7 @@ public class CompendiumXMLLoader {
             if (name != null) entry.setName(name);
 
             // Add description pages
-            if (desc != null) {
-                addTextWithAutoPagination(entry, desc);
-            }
+            addTextWithAutoPagination(entry, desc);
 
             // Add related entries
             if (relatedEntriesStr != null && !relatedEntriesStr.trim().isEmpty()) {
@@ -924,9 +886,7 @@ public class CompendiumXMLLoader {
 
             // Add description pages - use parent desc as fallback if subitem has no description
             String descToUse = (desc != null && !desc.trim().isEmpty()) ? desc : parentDesc;
-            if (descToUse != null && !descToUse.trim().isEmpty()) {
-                addTextWithAutoPagination(entry, descToUse);
-            }
+            addTextWithAutoPagination(entry, descToUse);
 
             // Add related entries
             if (relatedEntriesStr != null && !relatedEntriesStr.trim().isEmpty()) {
@@ -984,9 +944,7 @@ public class CompendiumXMLLoader {
             if (name != null) entry.setName(name);
 
             // Add description pages
-            if (desc != null) {
-                addTextWithAutoPagination(entry, desc);
-            }
+            addTextWithAutoPagination(entry, desc);
 
             // Add entity render page on the last page
             Class<? extends Entity> entityClass = resolveEntityClass(id);
@@ -1044,9 +1002,7 @@ public class CompendiumXMLLoader {
 
             // Add description pages - use parent desc as fallback if subitem has no description
             String descToUse = (desc != null && !desc.trim().isEmpty()) ? desc : parentDesc;
-            if (descToUse != null && !descToUse.trim().isEmpty()) {
-                addTextWithAutoPagination(entry, descToUse);
-            }
+            addTextWithAutoPagination(entry, descToUse);
 
             // Add entity render page on the last page
             Class<? extends Entity> entityClass = resolveEntityClass(id);
@@ -1100,9 +1056,7 @@ public class CompendiumXMLLoader {
             if (name != null) entry.setName(name);
 
             // Add description pages
-            if (desc != null) {
-                addTextWithAutoPagination(entry, desc);
-            }
+            addTextWithAutoPagination(entry, desc);
 
             // Add entity render page on the last page
             Class<? extends Entity> entityClass = resolveEntityClass(id);
@@ -1277,12 +1231,23 @@ public class CompendiumXMLLoader {
      * when getPages() is called.
      */
     private static void addTextWithAutoPagination(CompendiumEntry entry, String text) {
+        GenerateCompendiumLoreEvent event = new GenerateCompendiumLoreEvent(text, entry.getID());
+        MinecraftForge.EVENT_BUS.post(event);
+        text = event.lore;
+
         if (text == null || text.trim().isEmpty()) {
             return;
         }
 
-        String converted = convertDescriptionText(text);
-        entry.addObject(converted);
+        String[] pages = text.split("!p");
+        for (String page : pages) {
+            page = page.trim();
+            if (page.isEmpty()) {
+                return;
+            }
+            String converted = convertDescriptionText(page);
+            entry.addObject(converted);
+        }
     }
 
     /**

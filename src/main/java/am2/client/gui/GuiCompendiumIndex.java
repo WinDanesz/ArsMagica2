@@ -98,7 +98,7 @@ public class GuiCompendiumIndex extends GuiScreen {
                 if (sub.getParentsString().equals(category.getID())) {
                     boolean hasSubItems = false;
                     for (CompendiumEntry entry : sub.getEntries()) {
-                        if (entry.getRenderObject() == null || ArcaneCompendium.For(mc.player).isUnlocked(entry.getID())) {
+                        if (entry.getRenderObject() == null || ArcaneCompendium.For(mc.player).isUnlocked(entry.getFullID())) {
                             hasSubItems = true;
                             break;
                         }
@@ -133,7 +133,7 @@ public class GuiCompendiumIndex extends GuiScreen {
                 }
             });
             for (CompendiumEntry entry : sortedEntries) {
-                if (!mc.player.capabilities.isCreativeMode && entry.getRenderObject() != null && !ArcaneCompendium.For(mc.player).isUnlocked(entry.getID()))
+                if (!mc.player.capabilities.isCreativeMode && entry.getRenderObject() != null && !ArcaneCompendium.For(mc.player).isUnlocked(entry.getFullID()))
                     continue;
                 GuiButtonCompendiumLink link = new GuiButtonCompendiumLink(idCount++, buttonX, buttonY, fontRenderer, locPage, entry, null);
                 link.visible = entry.canBeDisplayed(category.getID()) && page == locPage;

@@ -29,7 +29,7 @@ public class LoreDefs {
         if (category != null) {
             category.addEntry(entry);
         } else {
-            LogHelper.warn("Attempted to register entry with no category: " + entry.getID());
+            LogHelper.warn("Attempted to register entry with no category: " + entry.getFullID());
         }
     }
 

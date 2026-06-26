@@ -128,11 +128,11 @@ public class ArcaneCompendium implements IArcaneCompendium, ICapabilityProvider,
             if (obj == null)
                 continue;
             else if (obj instanceof ItemStack && ((ItemStack) obj).isItemEqual(crafting))
-                unlockEntry(entry.getID());
+                unlockEntry(entry.getFullID());
             else if (obj instanceof Item && crafting.getItem() == obj)
-                unlockEntry(entry.getID());
+                unlockEntry(entry.getFullID());
             else if (obj instanceof Block && crafting.getItem() instanceof ItemBlock && ((ItemBlock) crafting.getItem()).getBlock() == obj)
-                unlockEntry(entry.getID());
+                unlockEntry(entry.getFullID());
         }
     }
 

@@ -137,7 +137,7 @@ public final class CompendiumCategory {
     public static CompendiumEntry getEntryByID(String id) {
         for (CompendiumCategory category : CompendiumCategory.getCategories()) {
             for (CompendiumEntry entry : category.getEntries()) {
-                if (entry.getID().equals(id))
+                if (entry.getFullID().equals(id))
                     return entry;
             }
         }

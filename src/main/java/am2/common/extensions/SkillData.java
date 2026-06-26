@@ -114,13 +114,13 @@ public class SkillData implements ISkillData, ICapabilityProvider, ICapabilitySe
                     SpellPart part = ArsMagicaAPI.getSpellRegistry().getValue(skill.getRegistryName());
                     for (Object obj : entry.getObjects()) {
                         if (obj == part) {
-                            ArcaneCompendium.For(this.player).unlockEntry(entry.getID());
+                            ArcaneCompendium.For(this.player).unlockEntry(entry.getFullID());
                         }
                     }
                 } else {
                     for (Object obj : entry.getObjects()) {
                         if (obj == skill) {
-                            ArcaneCompendium.For(this.player).unlockEntry(entry.getID());
+                            ArcaneCompendium.For(this.player).unlockEntry(entry.getFullID());
                         }
                     }
                 }

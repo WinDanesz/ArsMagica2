@@ -39,7 +39,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.toasts.SystemToast;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.resources.I18n;
@@ -494,7 +493,7 @@ public class ClientProxy extends CommonProxy {
             String simpleName = entryId.contains(".") ? entryId.substring(entryId.lastIndexOf('.') + 1) : entryId;
             String normalizedName = simpleName.replace("_", "").toLowerCase();
             for (am2.api.compendium.CompendiumEntry e : am2.api.compendium.CompendiumCategory.getAllEntries()) {
-                String simpleEntry = e.getID().contains(".") ? e.getID().substring(e.getID().lastIndexOf('.') + 1) : e.getID();
+                String simpleEntry = e.getFullID().contains(".") ? e.getFullID().substring(e.getFullID().lastIndexOf('.') + 1) : e.getFullID();
                 if (simpleEntry.replace("_", "").toLowerCase().equals(normalizedName)) {
                     entry = e;
                     break;
