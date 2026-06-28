@@ -105,6 +105,7 @@ public class RenderUtils {
     }
 
     public static void drawTextInWorldAtOffset(String text, double x, double y, double z) {
+        if (text == null || text.isEmpty()) return;
         FontRenderer fontrenderer = Minecraft.getMinecraft().fontRenderer;
 
         final int charHeight = 9;
