@@ -78,7 +78,7 @@ public class ItemFrameWatcher {
             for (int j = -radius; j <= radius; ++j) {
                 for (int k = -radius; k <= radius; ++k) {
 
-                    if (frame.world.getBlockState(frame.getPosition().add(i, j, k)).getBlock() == AMBlocks.liquid_essence.getBlock()) {
+                    if (CompendiumDiscoveryHandler.isPartOf2x2Pool(frame.world, frame.getPosition().add(i, j, k))) {
                         if (time == null) {
                             time = 0;
                         }

@@ -236,7 +236,7 @@ public class CompendiumDiscoveryHandler {
 					if (x * x + y * y + z * z > radiusSq) continue;
 
 					BlockPos pos = center.add(x, y, z);
-					if (world.getBlockState(pos).getBlock() == AMBlocks.liquid_essence.getBlock()) {
+					if (isPartOf2x2Pool(world, pos)) {
 						double distSq = center.distanceSq(pos);
 						if (distSq < nearestDistSq) {
 							nearestDistSq = distSq;
@@ -361,6 +361,48 @@ public class CompendiumDiscoveryHandler {
 		// Play short effect
 		world.playSound(null, bookItem.posX, bookItem.posY, bookItem.posZ,
 				AMSounds.CAST_ARCANE, SoundCategory.AMBIENT, 1.0f, 1.2f);
+
+		// Unlock compendium discovery advancements/results for player
+		EntityPlayer player = null;
+		if (bookItem.getThrower() != null && !bookItem.getThrower().isEmpty()) {
+			player = world.getPlayerEntityByName(bookItem.getThrower());
+		}
+		if (player == null) {
+			player = world.getClosestPlayerToEntity(bookItem, 16.0);
+		}
+		if (player != null) {
+			EntityExtension ext = EntityExtension.For(player);
+			if (ext != null && !ext.hasDiscoveredCompendium()) {
+				ext.setHasDiscoveredCompendium(true);
+				player.sendMessage(new TextComponentTranslation("arsmagica2.compendium.discovery.complete"));
+			}
+		}
+	}
+
+	/**
+	 * Checks if the given position is a Liquid Etherium block that is part of at least a 2x2 horizontal pool.
+	 */
+	public static boolean isPartOf2x2Pool(World world, BlockPos pos) {
+		if (world.getBlockState(pos).getBlock() != AMBlocks.liquid_essence.getBlock()) {
+			return false;
+		}
+		for (int dx = -1; dx <= 0; dx++) {
+			for (int dz = -1; dz <= 0; dz++) {
+				boolean allLiquid = true;
+				for (int sx = 0; sx <= 1; sx++) {
+					for (int sz = 0; sz <= 1; sz++) {
+						BlockPos checkPos = pos.add(dx + sx, 0, dz + sz);
+						if (world.getBlockState(checkPos).getBlock() != AMBlocks.liquid_essence.getBlock()) {
+							allLiquid = false;
+							break;
+						}
+					}
+					if (!allLiquid) break;
+				}
+				if (allLiquid) return true;
+			}
+		}
+		return false;
 	}
 
 	// ---- Cleanup for server shutdown / dimension unload ----
