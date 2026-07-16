@@ -391,4 +391,33 @@ public class SkillData implements ISkillData, ICapabilityProvider, ICapabilitySe
         this.syncCode = 0xFFFFFFFF;
     }
 
+    @Override
+    public void respec() {
+        for (Entry<Skill, Integer> entry : this.skills.entrySet()) {
+            Skill skill = entry.getKey();
+            Integer level = entry.getValue();
+            if (skill != null && level != null && level > 0) {
+                if (skill.getPoint() != null) {
+                    this.setSkillPoint(skill.getPoint(), this.getSkillPoint(skill.getPoint()) + level);
+                }
+                entry.setValue(0);
+            }
+        }
+        for (Discipline d : Discipline.values()) {
+            int discLevel = getDisciplineLevel(d);
+            if (discLevel > 0) {
+                for (int i = 0; i < discLevel; i++) {
+                    SkillPoint required = Discipline.getRequiredSkillPoint(i);
+                    if (required != null) {
+                        this.setSkillPoint(required, this.getSkillPoint(required) + 1);
+                    }
+                }
+                this.disciplineLevels.put(d.getName(), 0);
+            }
+            this.discoveryPointsSpent.put(d.getName(), 0);
+        }
+        this.syncCode |= SYNC_SKILLS | SYNC_SKILL_POINTS | SYNC_DISCIPLINES;
+        this.forceUpdate();
+    }
+
 }

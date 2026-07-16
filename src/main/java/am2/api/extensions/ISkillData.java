@@ -63,6 +63,8 @@ public interface ISkillData {
 
     public void forceUpdate();
 
+    public void respec();
+
 
     public static class Storage implements IStorage<ISkillData> {
 

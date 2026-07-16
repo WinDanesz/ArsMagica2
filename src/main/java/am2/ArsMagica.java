@@ -3,6 +3,7 @@ package am2;
 import am2.api.spell.SpellPart;
 import am2.common.CommonProxy;
 import am2.common.commands.CommandArsMagica;
+import am2.common.commands.CommandRespec;
 import am2.common.config.AMConfig;
 import am2.common.config.SpellPartConfig;
 import am2.common.config.SpellPartConfiguration;
@@ -107,6 +108,7 @@ public class ArsMagica {
     @EventHandler
     public void serverStartup(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandArsMagica());
+        event.registerServerCommand(new CommandRespec());
     }
 
     @SubscribeEvent

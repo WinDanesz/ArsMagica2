@@ -37,6 +37,11 @@ public class CommandArsMagica extends CommandBase {
     }
 
     @Override
+    public List<String> getAliases() {
+        return Lists.newArrayList("am2");
+    }
+
+    @Override
     public String getUsage(ICommandSender sender) {
         return "commands.am2.usage";
     }
@@ -73,6 +78,10 @@ public class CommandArsMagica extends CommandBase {
             handleInfuseXP(server, sender, args);
         } else if (args[0].equalsIgnoreCase("unlockcompendium")) {
             handleUnlockCompendium(server, sender, args);
+        } else if (args[0].equalsIgnoreCase("respec")) {
+            handleRespec(server, sender, args);
+        } else {
+            throw new WrongUsageException(getUsage(sender));
         }
     }
 
@@ -170,12 +179,27 @@ public class CommandArsMagica extends CommandBase {
         }
     }
 
+    private void handleRespec(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        if (args.length > 2) throw new WrongUsageException("/am respec [player]");
+        EntityPlayer player;
+        if (args.length == 2) {
+            Entity ent = getEntity(server, sender, args[1]);
+            if (!(ent instanceof EntityPlayer)) throw new CommandException("Target must be a player");
+            player = (EntityPlayer) ent;
+        } else {
+            player = getCommandSenderAsPlayer(sender);
+        }
+        SkillData.For(player).respec();
+        notifyCommandListener(sender, this, "Respec successful: returned all spent occulus points for %s", player.getDisplayNameString());
+    }
+
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1)
-            return getListOfStringsMatchingLastWord(args, Lists.newArrayList("magiclevel", "forcesync", "updatespells", "setmana", "infusexp", "unlockcompendium"));
+            return getListOfStringsMatchingLastWord(args, Lists.newArrayList("magiclevel", "forcesync", "updatespells", "setmana", "infusexp", "unlockcompendium", "respec"));
         else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("magiclevel")) return Collections.emptyList();
+            if (args[0].equalsIgnoreCase("respec")) return getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
+            else if (args[0].equalsIgnoreCase("magiclevel")) return Collections.emptyList();
             else if (args[0].equalsIgnoreCase("setmana")) return Collections.emptyList();
             else if (args[0].equalsIgnoreCase("unlockcompendium")) {
                 List<String> completions = new ArrayList<>();
