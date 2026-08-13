@@ -320,6 +320,9 @@ public class ClientTickHandler {
 
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
+        if (Minecraft.getMinecraft().player == null || Minecraft.getMinecraft().world == null)
+            return;
+
         if (event.phase == TickEvent.Phase.START) {
             GuiScreen guiscreen = Minecraft.getMinecraft().currentScreen;
             if (guiscreen != null) {
