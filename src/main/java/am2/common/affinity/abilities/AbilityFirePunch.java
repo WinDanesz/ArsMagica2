@@ -25,7 +25,7 @@ public class AbilityFirePunch extends AbstractAffinityAbility {
 
     @Override
     public void applyHurt(EntityPlayer player, LivingHurtEvent event, boolean isAttacker) {
-        if (isAttacker && !player.world.isRemote && player.getHeldItemMainhand() == null) {
+        if (isAttacker && !player.world.isRemote && player.getHeldItemMainhand().isEmpty()) {
             event.getEntityLiving().setFire(4);
             event.setAmount(event.getAmount() + 3);
         }
