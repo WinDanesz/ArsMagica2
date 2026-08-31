@@ -18,7 +18,11 @@
       "data": 10
     },
     "B": {
-      "item": "minecraft:potion"
+      "type": "minecraft:item_nbt",
+      "item": "minecraft:potion",
+      "nbt": {
+        "Potion": "minecraft:water"
+      }
     }
   },
   "result": {
