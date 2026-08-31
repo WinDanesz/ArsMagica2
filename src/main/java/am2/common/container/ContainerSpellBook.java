@@ -1,6 +1,5 @@
 package am2.common.container;
 
-import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.container.slot.SlotOneItemClassOnly;
 import am2.common.items.ItemSpellBase;
 import am2.common.items.ItemSpellBook;
@@ -18,36 +17,15 @@ public class ContainerSpellBook extends Container {
     public int specialSlotIndex = -1;
     private boolean fromBaubles;
 
-    /** Spell-book slot that also accepts EBWiz spell books (auto-converted on placement). */
+    /**
+     * Spell-book slot. Only accepts AM2 spell items ({@link ItemSpellBase}), which
+     * includes {@code ItemEBWizSpellBinding} once an EBWiz spell has been transcribed
+     * via the crafting altar or inscription table. Raw EBWiz {@code ItemSpellBook}s
+     * are intentionally not accepted here - they must go through spell crafting first.
+     */
     private static final class SpellBookSlot extends SlotOneItemClassOnly {
         SpellBookSlot(InventorySpellBook inv, int index, int x, int y) {
             super(inv, index, x, y, ItemSpellBase.class, 1);
-        }
-
-        @Override
-        public boolean isItemValid(ItemStack stack) {
-            return super.isItemValid(stack) || isSafeEBWizSpellBook(stack);
-        }
-
-        @Override
-        public void putStack(ItemStack stack) {
-            super.putStack(convertSafeEBWizSpellBook(stack));
-        }
-    }
-
-    private static boolean isSafeEBWizSpellBook(ItemStack stack) {
-        try {
-            return EBWizardryCompatBootstrap.isEBWizSpellBook(stack);
-        } catch (Throwable ignored) {
-            return false;
-        }
-    }
-
-    private static ItemStack convertSafeEBWizSpellBook(ItemStack stack) {
-        try {
-            return EBWizardryCompatBootstrap.convertEBWizSpellBook(stack);
-        } catch (Throwable ignored) {
-            return stack;
         }
     }
 
@@ -148,7 +126,7 @@ public class ContainerSpellBook extends Container {
                 }
             } else if (i >= 40 && i < 67) //range 27 - player inventory
             {
-                if (itemstack.getItem() instanceof ItemSpellBase || isSafeEBWizSpellBook(itemstack)) {
+                if (itemstack.getItem() instanceof ItemSpellBase) {
                     for (int n = 0; n < 40; n++) {
                         Slot scrollSlot = (Slot) inventorySlots.get(n);
                         if (scrollSlot.getHasStack()) continue;
@@ -170,7 +148,7 @@ public class ContainerSpellBook extends Container {
                 }
             } else if (i >= 67 && i < 76) //range 9 - player action bar
             {
-                if (itemstack.getItem() instanceof ItemSpellBase || isSafeEBWizSpellBook(itemstack)) {
+                if (itemstack.getItem() instanceof ItemSpellBase) {
                     for (int n = 0; n < 40; n++) {
                         Slot scrollSlot = (Slot) inventorySlots.get(n);
                         if (scrollSlot.getHasStack()) continue;
