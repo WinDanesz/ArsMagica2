@@ -10,9 +10,11 @@ import am2.api.extensions.ISkillData;
 import am2.api.skill.Skill;
 import am2.api.skill.SkillPoint;
 import am2.api.skill.SkillTree;
-import am2.client.gui.controls.GuiButtonSkillTree;
 import am2.client.gui.controls.GuiButtonDisciplinePlus;
+import am2.client.gui.controls.GuiButtonSkillTree;
 import am2.client.texture.SpellIconManager;
+import am2.common.affinity.abilities.AbilityRelocation;
+import am2.common.affinity.abilities.AbilityThunderPunch;
 import am2.common.extensions.AffinityData;
 import am2.common.extensions.SkillData;
 import am2.common.registry.Affinities;
@@ -33,10 +35,13 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -623,8 +628,8 @@ public class GuiOcculus extends GuiScreen {
 
                 int iconX = (int) (affDrawTextX + cX);
                 int iconY = (int) (affDrawTextY + cY);
-                net.minecraft.item.Item essenceItem = aff.getEssenceItem();
-                if (essenceItem != null && essenceItem != net.minecraft.init.Items.AIR) {
+                Item essenceItem = aff.getEssenceItem();
+                if (essenceItem != null && essenceItem != Items.AIR) {
                     RenderHelper.enableGUIStandardItemLighting();
                     GlStateManager.color(1, 1, 1, 1);
                     this.itemRender.renderItemAndEffectIntoGUI(new ItemStack(essenceItem), iconX, iconY);
@@ -651,6 +656,11 @@ public class GuiOcculus extends GuiScreen {
                             String advancedTooltip = "";
                             if (isShiftDown) {
                                 advancedTooltip = " (Min. : " + Math.round(ability.getMinimumDepth() * 100) + "%" + (ability.hasMax() ? (", Max. : " + Math.round(ability.getMaximumDepth() * 100) + "%") : "") + ")";
+                            }
+                            if (ability instanceof AbilityThunderPunch) {
+                                advancedTooltip += TextFormatting.GRAY.toString() + " [CD: " + (ArsMagica.config.getLightningAffinityThunderPunchCooldown() / 20) + "s]";
+                            } else if (ability instanceof AbilityRelocation) {
+                                advancedTooltip += TextFormatting.GRAY.toString() + " [CD: " + (ArsMagica.config.getEnderAffinityAbilityCooldown() / 20) + "s]";
                             }
                             drawString.add(TextFormatting.RESET.toString()
                                     + (ability.isEligible(player) ? TextFormatting.GREEN.toString()
@@ -718,9 +728,9 @@ public class GuiOcculus extends GuiScreen {
                     tooltip.add(TextFormatting.GOLD.toString() + I18n.format(d.getUnlocalizedName()));
                     tooltip.add(TextFormatting.GRAY + I18n.format("discipline.level") + ": " + TextFormatting.WHITE + level + "/" + Discipline.MAX_LEVEL);
                     tooltip.add(TextFormatting.GRAY + I18n.format("am2.gui.occulus.discovery_points", discoveryPoints > 0 ? TextFormatting.GREEN.toString() + discoveryPoints : TextFormatting.DARK_GRAY.toString() + discoveryPoints));
-                    if (net.minecraftforge.fml.common.Loader.isModLoaded("ebwizardry") && level > 0) {
-                        float costPct = am2.ArsMagica.config.getEBWizDisciplineCostReductionPerLevel();
-                        float potPct = am2.ArsMagica.config.getEBWizDisciplinePotencyBonusPerLevel();
+                    if (Loader.isModLoaded("ebwizardry") && level > 0) {
+                        float costPct = ArsMagica.config.getEBWizDisciplineCostReductionPerLevel();
+                        float potPct = ArsMagica.config.getEBWizDisciplinePotencyBonusPerLevel();
                         if (costPct > 0) tooltip.add(TextFormatting.BLUE + I18n.format("am2.gui.occulus.ebwiz_cost_reduction", String.format("%.1f", level * costPct)));
                         if (potPct > 0) tooltip.add(TextFormatting.RED + I18n.format("am2.gui.occulus.ebwiz_potency_bonus", String.format("%.1f", level * potPct)));
                     }
@@ -749,9 +759,9 @@ public class GuiOcculus extends GuiScreen {
                     tooltip.add(TextFormatting.GOLD.toString() + I18n.format(selectedDiscipline.getUnlocalizedName()));
                     tooltip.add(TextFormatting.GRAY + I18n.format("discipline.level") + ": " + TextFormatting.WHITE + level + "/" + Discipline.MAX_LEVEL);
                     tooltip.add(TextFormatting.GRAY + I18n.format("am2.gui.occulus.discovery_points", discoveryPoints > 0 ? TextFormatting.GREEN.toString() + discoveryPoints : TextFormatting.DARK_GRAY.toString() + discoveryPoints));
-                    if (net.minecraftforge.fml.common.Loader.isModLoaded("ebwizardry") && level > 0) {
-                        float costPct = am2.ArsMagica.config.getEBWizDisciplineCostReductionPerLevel();
-                        float potPct = am2.ArsMagica.config.getEBWizDisciplinePotencyBonusPerLevel();
+                    if (Loader.isModLoaded("ebwizardry") && level > 0) {
+                        float costPct = ArsMagica.config.getEBWizDisciplineCostReductionPerLevel();
+                        float potPct = ArsMagica.config.getEBWizDisciplinePotencyBonusPerLevel();
                         if (costPct > 0) tooltip.add(TextFormatting.BLUE + I18n.format("am2.gui.occulus.ebwiz_cost_reduction", String.format("%.1f", level * costPct)));
                         if (potPct > 0) tooltip.add(TextFormatting.RED + I18n.format("am2.gui.occulus.ebwiz_potency_bonus", String.format("%.1f", level * potPct)));
                     }

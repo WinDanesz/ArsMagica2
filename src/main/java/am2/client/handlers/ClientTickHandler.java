@@ -9,13 +9,13 @@ import am2.client.gui.AMGuiHelper;
 import am2.client.particles.AMLineArc;
 import am2.common.LogHelper;
 import am2.common.armor.ArmorHelper;
+import am2.common.blocks.tileentity.TileEntityIllusionBlock;
 import am2.common.bosses.BossSpawnHelper;
 import am2.common.extensions.EntityExtension;
 import am2.common.items.ItemSpellBase;
 import am2.common.items.ItemSpellBook;
 import am2.common.power.PowerNodeEntry;
 import am2.common.power.PowerTypes;
-import am2.common.blocks.tileentity.TileEntityIllusionBlock;
 import am2.common.registry.AMItems;
 import am2.common.registry.AMPotions;
 import am2.common.registry.ImbuementRegistry;
@@ -416,9 +416,9 @@ public class ClientTickHandler {
     }
 
     private void applyDeferredTargetSets() {
-        java.util.Iterator<java.util.Map.Entry<EntityLiving, EntityLivingBase>> it = targetsToSet.entrySet().iterator();
+        Iterator<Map.Entry<EntityLiving, EntityLivingBase>> it = targetsToSet.entrySet().iterator();
         while (it.hasNext()) {
-            java.util.Map.Entry<EntityLiving, EntityLivingBase> entry = it.next();
+            Map.Entry<EntityLiving, EntityLivingBase> entry = it.next();
             if (entry.getKey() != null && !entry.getKey().isDead)
                 entry.getKey().setAttackTarget(entry.getValue());
             it.remove();

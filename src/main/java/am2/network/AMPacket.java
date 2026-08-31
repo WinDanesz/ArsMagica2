@@ -1,6 +1,7 @@
 package am2.network;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -62,7 +63,7 @@ public abstract class AMPacket<REQ extends IMessage> implements IMessage, IMessa
     public IMessage onMessage(REQ message, MessageContext ctx) {
         if (ctx.side.isClient()) {
             // Schedule on client main thread
-            net.minecraft.client.Minecraft.getMinecraft().addScheduledTask(() -> handleClientSide(message, ctx));
+            Minecraft.getMinecraft().addScheduledTask(() -> handleClientSide(message, ctx));
         } else {
             // Schedule on server main thread
             // Null checks to handle disconnect edge cases

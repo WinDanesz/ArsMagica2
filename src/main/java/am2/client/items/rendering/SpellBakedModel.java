@@ -14,6 +14,7 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 import java.util.List;
 
 public class SpellBakedModel extends PerspectiveMapWrapper {
@@ -69,9 +70,9 @@ public class SpellBakedModel extends PerspectiveMapWrapper {
         // Apply custom scaling for dropped items on the ground
         if (cameraTransformType == TransformType.GROUND) {
             TRSRTransformation transform = new TRSRTransformation(
-                    new javax.vecmath.Vector3f(0, 0, 0),          // translation
+                    new Vector3f(0, 0, 0),          // translation
                     null,                                          // rotation (null = identity)
-                    new javax.vecmath.Vector3f(0.3f, 0.3f, 0.3f), // scale to 50%
+                    new Vector3f(0.3f, 0.3f, 0.3f), // scale to 50%
                     null                                           // right rotation
             );
             return Pair.of(this, transform.getMatrix());

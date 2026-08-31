@@ -1,5 +1,6 @@
 package am2.common.config;
 
+import am2.ArsMagica;
 import am2.api.ArsMagicaAPI;
 import am2.api.spell.*;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
@@ -7,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.HashMap;
@@ -40,7 +42,7 @@ public class SpellPartConfig extends Configuration implements ISpellPartOverride
     public static final String CATEGORY_REAGENTS         = "reagents";
     public static final String CATEGORY_MANA_COST_MULTIPLIERS = "mana_cost_multipliers";
 
-    private static final org.apache.logging.log4j.Logger LOGGER = am2.ArsMagica.LOGGER;
+    private static final Logger LOGGER = ArsMagica.LOGGER;
 
     // ---- in-memory caches (populated by reload()) ---------------------------
     private final Map<String, String[]> recipeOverrides   = new HashMap<>();

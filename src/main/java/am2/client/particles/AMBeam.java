@@ -267,7 +267,7 @@ public class AMBeam extends Particle implements IBeamParticle {
             GL11.glPopMatrix();
 
         } catch (Exception e) {
-            am2.ArsMagica.LOGGER.error("Exception caught: ", e);
+            ArsMagica.LOGGER.error("Exception caught: ", e);
             GL11.glPopMatrix(); // Ensure we pop the matrix even on error
         }
     }

@@ -1,5 +1,6 @@
 package am2.common.container;
 
+import am2.common.items.ItemEssenceBag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
@@ -117,10 +118,10 @@ public class InventoryEssenceBag implements IInventory {
 
     @Override
     public void markDirty() {
-        if (this.bagStack != null && !this.bagStack.isEmpty() && this.bagStack.getItem() instanceof am2.common.items.ItemEssenceBag) {
+        if (this.bagStack != null && !this.bagStack.isEmpty() && this.bagStack.getItem() instanceof ItemEssenceBag) {
             ItemStack[] items = new ItemStack[inventorySize];
             for (int i = 0; i < inventorySize; i++) items[i] = inventoryContents.get(i);
-            ((am2.common.items.ItemEssenceBag)this.bagStack.getItem()).updateStackTagCompound(this.bagStack, items);
+            ((ItemEssenceBag)this.bagStack.getItem()).updateStackTagCompound(this.bagStack, items);
         }
     }
 

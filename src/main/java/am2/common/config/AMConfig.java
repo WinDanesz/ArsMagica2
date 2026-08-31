@@ -734,7 +734,7 @@ public class AMConfig extends Configuration {
     private boolean ebwizElementalCrystalDrops;
     private boolean ebwizMageTomeDrop;
     private double manaDrainRatio;
-    private java.util.Set<String> magicResistExtraDamageTypes;
+    private Set<String> magicResistExtraDamageTypes;
     private String[] lecternBooks;
     private String[] obeliskExtraFuels;
     private String[] extraAltarCaps;
@@ -1306,7 +1306,7 @@ public class AMConfig extends Configuration {
                 "The conversion rate of mana to etherium in the Mana Drain. Default: 1.0 (1 mana = 1 neutral etherium)").getDouble(1.0);
         this.ebwizMageTomeDrop = this.get(CATEGORY_INTEGRATION, "EBWiz_Mage_Tome_Drop", true,
                 "If true and Electroblob's Wizardry is loaded, AM2 Dark Mages and Light Mages have a 10% chance to drop an Arcane Tome.").getBoolean(true);
-        this.magicResistExtraDamageTypes = new java.util.HashSet<>(java.util.Arrays.asList(
+        this.magicResistExtraDamageTypes = new HashSet<>(Arrays.asList(
                 this.get(CATEGORY_INTEGRATION, this.KEY_MagicResistExtraDamageTypes, new String[0],
                         "Additional damage-type strings (from DamageSource.getDamageType()) that the Magic Resist enchantment should protect against, "
                         + "beyond sources that already call setMagicDamage(). "
@@ -2681,7 +2681,7 @@ public class AMConfig extends Configuration {
         return this.ebwizMageTomeDrop;
     }
 
-    public java.util.Set<String> getMagicResistExtraDamageTypes() {
+    public Set<String> getMagicResistExtraDamageTypes() {
         return this.magicResistExtraDamageTypes;
     }
 

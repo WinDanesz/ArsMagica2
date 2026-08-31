@@ -29,8 +29,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -159,7 +159,7 @@ public class EntityLightMage extends EntityCreature {
             return;
         }
 
-        net.minecraft.entity.player.EntityPlayer nearest = this.world.getClosestPlayerToEntity(this, -1.0D);
+        EntityPlayer nearest = this.world.getClosestPlayerToEntity(this, -1.0D);
         if (nearest != null) {
             double dx = nearest.posX - this.posX;
             double dy = nearest.posY - this.posY;

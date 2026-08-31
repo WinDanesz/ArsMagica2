@@ -1,5 +1,6 @@
 package am2.common.bosses.ai;
 
+import am2.ArsMagica;
 import am2.common.bosses.BossActions;
 import am2.common.bosses.EntityLifeGuardian;
 import am2.common.bosses.IArsMagicaBoss;
@@ -80,7 +81,7 @@ public class EntityAISummonAllies extends EntityAIBase {
 
                     host.queued_minions.add(mob);
                 } catch (Throwable e) {
-                    am2.ArsMagica.LOGGER.error("Exception caught: ", e);
+                    ArsMagica.LOGGER.error("Exception caught: ", e);
                     return;
                 }
             }

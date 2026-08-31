@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 /**
  * Fired when a player's affinity depth is about to change.
  *
- * <p>This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.
+ * <p>This event is {@link Cancelable}.
  * Cancel it to prevent the affinity change entirely.</p>
  *
  * <p>The {@link #amount} field is mutable and can be adjusted by listeners

@@ -10,7 +10,6 @@ import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -27,11 +26,14 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -387,7 +389,7 @@ public class ItemSpellBook extends Item implements IBauble {
 
     @Optional.Method(modid = "baubles")
     private static ItemStack findSpellBookInBaubles(EntityPlayer player) {
-        net.minecraftforge.items.IItemHandler handler = BaublesApi.getBaublesHandler(player);
+        IItemHandler handler = BaublesApi.getBaublesHandler(player);
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
             if (!stack.isEmpty() && stack.getItem() instanceof ItemSpellBook) {
@@ -399,8 +401,8 @@ public class ItemSpellBook extends Item implements IBauble {
 
     @Optional.Method(modid = "baubles")
     private static void writeSpellBookToBaublesImpl(EntityPlayer player, ItemStack bookStack) {
-        net.minecraftforge.items.IItemHandlerModifiable handler =
-                (net.minecraftforge.items.IItemHandlerModifiable) BaublesApi.getBaublesHandler(player);
+        IItemHandlerModifiable handler =
+                (IItemHandlerModifiable) BaublesApi.getBaublesHandler(player);
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
             if (!stack.isEmpty() && stack.getItem() instanceof ItemSpellBook) {

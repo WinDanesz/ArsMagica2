@@ -1,26 +1,37 @@
 package am2.client;
 
+import am2.ArsMagica;
 import am2.api.ArsMagicaAPI;
+import am2.api.items.IMultiTexturedItem;
 import am2.api.skill.Skill;
 import am2.client.blocks.render.IllusionBakedModel;
-import am2.client.texture.SpellIconManager;
-import am2.common.blocks.BlockIllusionBlock;
-import am2.ArsMagica;
-import am2.api.items.IMultiTexturedItem;
 import am2.client.compat.electroblob.EBWizSpellBindingRenderer;
+import am2.client.items.rendering.SpellBakedModel;
+import am2.client.items.rendering.SpellBookBakedModel;
+import am2.client.items.rendering.SpellPartRenderer;
+import am2.client.items.rendering.SpellRenderer;
 import am2.client.render.AMItemStackRenderer;
 import am2.client.render.BakedItemModelWrapper;
+import am2.client.texture.SpellIconManager;
+import am2.common.blocks.BlockIllusionBlock;
 import am2.common.compat.electroblob.item.ItemEBWizSpellBinding;
 import am2.common.items.ItemBlockBaked;
+import am2.common.items.ItemBlockCrystalMarker;
 import am2.common.registry.AMBlocks;
 import am2.common.registry.AMItems;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,7 +39,10 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.PerspectiveMapWrapper;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -38,6 +52,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 @EventBusSubscriber(modid = ArsMagica.MODID, value = Side.CLIENT)
 public final class AMModels {
@@ -89,10 +104,10 @@ public final class AMModels {
 
                         }
                     }
-                } else if (item instanceof am2.common.items.ItemBlockCrystalMarker) {
+                } else if (item instanceof ItemBlockCrystalMarker) {
                     // Crystal Marker with metadata variants - use TESR for all variants
                     item.setTileEntityItemStackRenderer(new AMItemStackRenderer());
-                    ModelResourceLocation loc = new ModelResourceLocation(((am2.common.items.ItemBlockCrystalMarker) item).getBlock().getRegistryName().toString());
+                    ModelResourceLocation loc = new ModelResourceLocation(((ItemBlockCrystalMarker) item).getBlock().getRegistryName().toString());
                     // Register model for all metadata variants
                     for (int meta = 0; meta <= 8; meta++) {
                         ModelLoader.setCustomModelResourceLocation(item, meta, loc);
@@ -105,7 +120,7 @@ public final class AMModels {
                     ModelLoader.setCustomModelResourceLocation(item, 0, loc);
                     modelResourceLocationList.add(loc);
                 } else if (item == AMItems.spell) {
-                    ModelLoader.setCustomMeshDefinition(item, new am2.client.items.rendering.SpellRenderer());
+                    ModelLoader.setCustomMeshDefinition(item, new SpellRenderer());
                 } else if (AMItems.ebwiz_spell_binding != null && item == AMItems.ebwiz_spell_binding) {
                     // EBWiz spell binding:
                     // - In GUI (inventory): use builtin/entity so TEISR fires and draws the EBWiz spell's
@@ -204,24 +219,24 @@ public final class AMModels {
         }
 
         // Programmatically create and register spell icon models from textures
-        for (net.minecraft.util.ResourceLocation iconResource : am2.client.items.rendering.SpellRenderer.resources) {
+        for (ResourceLocation iconResource : SpellRenderer.resources) {
             ModelResourceLocation mrl = new ModelResourceLocation(iconResource, "inventory");
             // Create a simple item layer model using ItemLayerModel
-            com.google.common.collect.ImmutableList<net.minecraft.util.ResourceLocation> textures =
-                    com.google.common.collect.ImmutableList.of(new net.minecraft.util.ResourceLocation("arsmagica2", "items/" + iconResource.getPath()));
+            ImmutableList<ResourceLocation> textures =
+                    ImmutableList.of(new ResourceLocation("arsmagica2", "items/" + iconResource.getPath()));
 
-            net.minecraft.client.renderer.vertex.VertexFormat format = net.minecraft.client.renderer.vertex.DefaultVertexFormats.ITEM;
-            java.util.function.Function<net.minecraft.util.ResourceLocation, net.minecraft.client.renderer.texture.TextureAtlasSprite> textureGetter =
-                    location -> net.minecraft.client.Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+            VertexFormat format = DefaultVertexFormats.ITEM;
+            Function<ResourceLocation, TextureAtlasSprite> textureGetter =
+                    location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
 
-            net.minecraftforge.client.model.ItemLayerModel layerModel = new net.minecraftforge.client.model.ItemLayerModel(textures);
-            net.minecraftforge.common.model.TRSRTransformation transform = net.minecraftforge.common.model.TRSRTransformation.identity();
+            ItemLayerModel layerModel = new ItemLayerModel(textures);
+            TRSRTransformation transform = TRSRTransformation.identity();
             IBakedModel bakedModel = layerModel.bake(transform, format, textureGetter);
 
             // Wrap with SpellBakedModel for custom perspective handling
-            com.google.common.collect.ImmutableMap<net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType, net.minecraftforge.common.model.TRSRTransformation> transforms =
-                    net.minecraftforge.client.model.PerspectiveMapWrapper.getTransforms(transform);
-            IBakedModel wrappedModel = new am2.client.items.rendering.SpellBakedModel(bakedModel, transforms);
+            ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms =
+                    PerspectiveMapWrapper.getTransforms(transform);
+            IBakedModel wrappedModel = new SpellBakedModel(bakedModel, transforms);
 
             event.getModelRegistry().putObject(mrl, wrappedModel);
         }
@@ -232,13 +247,13 @@ public final class AMModels {
                 continue;
             ModelResourceLocation mrl = new ModelResourceLocation(spellPart.getRegistryName(), "inventory");
             // Create a simple item layer model using ItemLayerModel
-            net.minecraftforge.client.model.ItemLayerModel layerModel = new net.minecraftforge.client.model.ItemLayerModel(com.google.common.collect.ImmutableList.of(spellPart.getIcon()));
-            net.minecraftforge.common.model.TRSRTransformation transform = net.minecraftforge.common.model.TRSRTransformation.identity();
-            IBakedModel bakedModel = layerModel.bake(transform, net.minecraft.client.renderer.vertex.DefaultVertexFormats.ITEM, location -> SpellIconManager.INSTANCE.getSprite(spellPart.getRegistryName().toString()));
+            ItemLayerModel layerModel = new ItemLayerModel(ImmutableList.of(spellPart.getIcon()));
+            TRSRTransformation transform = TRSRTransformation.identity();
+            IBakedModel bakedModel = layerModel.bake(transform, DefaultVertexFormats.ITEM, location -> SpellIconManager.INSTANCE.getSprite(spellPart.getRegistryName().toString()));
             // Wrap with SpellBakedModel for custom perspective handling
-            event.getModelRegistry().putObject(mrl, new am2.client.items.rendering.SpellBakedModel(bakedModel, net.minecraftforge.client.model.PerspectiveMapWrapper.getTransforms(transform)));
+            event.getModelRegistry().putObject(mrl, new SpellBakedModel(bakedModel, PerspectiveMapWrapper.getTransforms(transform)));
         }
-        ModelLoader.setCustomMeshDefinition(AMItems.spell_part, new am2.client.items.rendering.SpellPartRenderer());
+        ModelLoader.setCustomMeshDefinition(AMItems.spell_part, new SpellPartRenderer());
 
         // Wrap EBWiz element hand models in SpellBakedModel so SpellParticleRender
         // fires when these items are held, showing the affinity hand-glow animation.
@@ -248,12 +263,12 @@ public final class AMModels {
                         new ResourceLocation(ArsMagica.MODID, name), "inventory");
                 IBakedModel base = event.getModelRegistry().getObject(mrl);
                 if (base != null) {
-                    com.google.common.collect.ImmutableMap<net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType,
-                            net.minecraftforge.common.model.TRSRTransformation> transforms =
-                            net.minecraftforge.client.model.PerspectiveMapWrapper.getTransforms(
-                                    net.minecraftforge.common.model.TRSRTransformation.identity());
+                    ImmutableMap<ItemCameraTransforms.TransformType,
+                            TRSRTransformation> transforms =
+                            PerspectiveMapWrapper.getTransforms(
+                                    TRSRTransformation.identity());
                     event.getModelRegistry().putObject(mrl,
-                            new am2.client.items.rendering.SpellBakedModel(base, transforms));
+                            new SpellBakedModel(base, transforms));
                 }
             }
         }
@@ -266,7 +281,7 @@ public final class AMModels {
                         mrl.toString().equals("arsmagica2:arcane_spellbook#inventory")) {
                     IBakedModel originalModel = event.getModelRegistry().getObject(mrl);
                     event.getModelRegistry().putObject(mrl,
-                            new am2.client.items.rendering.SpellBookBakedModel(originalModel, event.getModelRegistry()));
+                            new SpellBookBakedModel(originalModel, event.getModelRegistry()));
                 }
             }
         }

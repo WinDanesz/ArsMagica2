@@ -1,5 +1,6 @@
 package am2.api.compendium.pages;
 
+import am2.ArsMagica;
 import am2.api.blocks.IMultiblock;
 import am2.api.compendium.wrapper.StackMapWrapper;
 import am2.api.rituals.IRitualInteraction;
@@ -15,6 +16,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemBlock;
@@ -68,7 +70,7 @@ public abstract class CompendiumPage<E> {
         try {
             renderPage(posX, posY, mouseX, mouseY);
         } catch (Throwable t) {
-            am2.ArsMagica.LOGGER.error("CompendiumPage.render exception caught: ", t);
+            ArsMagica.LOGGER.error("CompendiumPage.render exception caught: ", t);
         }
         GlStateManager.enableAlpha();
         GlStateManager.popMatrix();
@@ -201,15 +203,15 @@ public abstract class CompendiumPage<E> {
                     list.add(skill.getName());
                 } else if (stack.getItem() == AMItems.etherium) {
                     list.clear();
-                    list.add(stack.getCount() + " " + net.minecraft.client.resources.I18n.format("item.arsmagica2:etherium.name"));
+                    list.add(stack.getCount() + " " + I18n.format("item.arsmagica2:etherium.name"));
                     ArrayList<String> subList = new ArrayList<>();
                     for (PowerTypes type : PowerTypes.all()) {
                         if ((stack.getItemDamage() & type.ID()) == type.ID()) {
-                            subList.add(type.getChatColor() + net.minecraft.client.resources.I18n.format("etherium." + type.name() + ".name"));
+                            subList.add(type.getChatColor() + I18n.format("etherium." + type.name() + ".name"));
                         }
                     }
                     if (subList.size() == PowerTypes.all().size()) {
-                        list.add(TextFormatting.GRAY.toString() + net.minecraft.client.resources.I18n.format("etherium.any.name"));
+                        list.add(TextFormatting.GRAY.toString() + I18n.format("etherium.any.name"));
                     } else {
                         list.addAll(subList);
                     }
@@ -252,7 +254,7 @@ public abstract class CompendiumPage<E> {
                     return constructor.newInstance(element);
                 } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException |
                          IllegalArgumentException | InvocationTargetException e) {
-                    am2.ArsMagica.LOGGER.error("Exception caught: ", e);
+                    ArsMagica.LOGGER.error("Exception caught: ", e);
                 }
             }
         }

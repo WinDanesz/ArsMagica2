@@ -1,10 +1,12 @@
 package am2.client.utils;
 
+import am2.ArsMagica;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ public class DirectOBJModel {
         if(loaded) return;
         loaded = true;
         try (
-                java.io.InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream();
+                InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"))
         ) {
             String line;
@@ -58,7 +60,7 @@ public class DirectOBJModel {
                 }
             }
         } catch (Exception e) {
-            am2.ArsMagica.LOGGER.error(resourceLocation.toString() + " failed to load: ", e);
+            ArsMagica.LOGGER.error(resourceLocation.toString() + " failed to load: ", e);
         }
     }
 

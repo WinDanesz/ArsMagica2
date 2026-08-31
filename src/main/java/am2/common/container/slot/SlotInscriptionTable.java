@@ -4,12 +4,12 @@ import am2.common.blocks.tileentity.TileEntityInscriptionTable;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.items.ItemSpellBase;
 import am2.common.registry.AMItems;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.translation.I18n;
 
 public class SlotInscriptionTable extends Slot {
 

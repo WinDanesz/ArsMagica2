@@ -2,19 +2,25 @@ package am2.client;
 
 import am2.ArsMagica;
 import am2.api.blocks.IKeystoneLockable;
+import am2.api.compendium.CompendiumCategory;
+import am2.api.compendium.CompendiumEntry;
 import am2.api.extensions.ISpellCaster;
 import am2.api.math.AMVector3;
 import am2.api.power.IPowerNode;
 import am2.api.spell.SpellPart;
+import am2.client.blocks.colorizers.ChalkArrowBlockColorizer;
+import am2.client.blocks.colorizers.CrystalMarkerColorizer;
+import am2.client.blocks.colorizers.ManaBatteryBlockColorizer;
+import am2.client.blocks.colorizers.MonoColorizer;
 import am2.client.blocks.render.*;
 import am2.client.commands.ConfigureAMUICommand;
 import am2.client.gui.*;
 import am2.client.handlers.ClientTickHandler;
 import am2.client.items.colorizers.*;
-import am2.client.blocks.colorizers.*;
 import am2.client.models.ArsMagicaModelLoader;
 import am2.client.models.CullfaceModelLoader;
 import am2.client.models.SpecialRenderModelLoader;
+import am2.client.particles.AMLineArc;
 import am2.client.particles.AMParticleIcons;
 import am2.client.particles.ParticleManagerClient;
 import am2.client.texture.SpellIconManager;
@@ -39,12 +45,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.toasts.SystemToast;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -52,7 +58,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -261,10 +270,10 @@ public class ClientProxy extends CommonProxy {
         blockColors.registerBlockColorHandler(
             (state, worldIn, pos, tintIndex) -> {
                 if (worldIn != null && pos != null) {
-                    net.minecraft.tileentity.TileEntity te = worldIn.getTileEntity(pos);
-                    if (te instanceof am2.common.blocks.tileentity.TileEntityIllusionBlock) {
-                        IBlockState mimic = ((am2.common.blocks.tileentity.TileEntityIllusionBlock) te).getMimicBlock();
-                        if (mimic != null && mimic.getBlock() != net.minecraft.init.Blocks.AIR) {
+                    TileEntity te = worldIn.getTileEntity(pos);
+                    if (te instanceof TileEntityIllusionBlock) {
+                        IBlockState mimic = ((TileEntityIllusionBlock) te).getMimicBlock();
+                        if (mimic != null && mimic.getBlock() != Blocks.AIR) {
                             return blockColors.colorMultiplier(mimic, worldIn, pos, tintIndex);
                         }
                     }
@@ -385,7 +394,7 @@ public class ClientProxy extends CommonProxy {
                     double bY = target.getBlockPos().getY() + 0.5;
                     double bZ = target.getBlockPos().getZ() + 0.5;
 
-                    net.minecraft.util.math.Vec3d dir = new net.minecraft.util.math.Vec3d(pX - bX, (pY + player.getEyeHeight()) - bY, pZ - bZ).normalize().scale(0.5);
+                    Vec3d dir = new Vec3d(pX - bX, (pY + player.getEyeHeight()) - bY, pZ - bZ).normalize().scale(0.5);
 
                     RenderUtils.drawTextInWorldAtOffset(message.toString(),
                             bX - pX + dir.x,
@@ -430,8 +439,8 @@ public class ClientProxy extends CommonProxy {
         double tz = te.getPos().getZ() + 0.5 + (rz2 / len2) * rad2;
         
         Object particle = ArsMagica.proxy.particleManager.spawn(te.getWorld(), "lightning_machine", x, y, z, tx, ty, tz);
-        if (particle instanceof am2.client.particles.AMLineArc) {
-            am2.client.particles.AMLineArc p = (am2.client.particles.AMLineArc)particle;
+        if (particle instanceof AMLineArc) {
+            AMLineArc p = (AMLineArc)particle;
             PowerTypes type = te.getPowerType();
             if (type == PowerTypes.LIGHT) {
                 p.setRBGColorF(0.85f, 0.95f, 1.0f); // Whiter
@@ -487,13 +496,13 @@ public class ClientProxy extends CommonProxy {
     public void showCompendiumToast(String entryId) {
         Minecraft mc = Minecraft.getMinecraft();
         // Look up the entry display name
-        am2.api.compendium.CompendiumEntry entry = am2.api.compendium.CompendiumCategory.getEntryByID(entryId);
+        CompendiumEntry entry = CompendiumCategory.getEntryByID(entryId);
         if (entry == null) {
             // Try matching by bare id, normalizing away underscores so camelCase ("unlockingPowers")
             // matches snake_case XML ids ("unlocking_powers"), and vice versa.
             String simpleName = entryId.contains(".") ? entryId.substring(entryId.lastIndexOf('.') + 1) : entryId;
             String normalizedName = simpleName.replace("_", "").toLowerCase();
-            for (am2.api.compendium.CompendiumEntry e : am2.api.compendium.CompendiumCategory.getAllEntries()) {
+            for (CompendiumEntry e : CompendiumCategory.getAllEntries()) {
                 String simpleEntry = e.getID().contains(".") ? e.getID().substring(e.getID().lastIndexOf('.') + 1) : e.getID();
                 if (simpleEntry.replace("_", "").toLowerCase().equals(normalizedName)) {
                     entry = e;
@@ -505,8 +514,8 @@ public class ClientProxy extends CommonProxy {
         SystemToast.addOrUpdate(
                 mc.getToastGui(),
                 SystemToast.Type.TUTORIAL_HINT,
-                new net.minecraft.util.text.TextComponentTranslation("advancement.arsmagica2.compendium_data.title"),
-                new net.minecraft.util.text.TextComponentString(entry.getName())
+                new TextComponentTranslation("advancement.arsmagica2.compendium_data.title"),
+                new TextComponentString(entry.getName())
         );
     }
 }

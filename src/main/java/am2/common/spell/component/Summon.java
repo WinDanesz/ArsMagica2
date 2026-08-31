@@ -1,5 +1,6 @@
 package am2.common.spell.component;
 
+import am2.ArsMagica;
 import am2.api.affinity.Affinity;
 import am2.api.extensions.ISpellCaster;
 import am2.api.spell.Operation;
@@ -14,8 +15,8 @@ import am2.common.registry.AMItems;
 import am2.common.registry.Affinities;
 import am2.common.utils.EntityUtils;
 import com.google.common.collect.Sets;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.passive.EntityHorse;
@@ -43,7 +44,7 @@ public class Summon extends SpellComponent {
         ResourceLocation key = getSummonType(spell);
         Entity spawned = EntityList.createEntityByIDFromName(key, world);
         if (!(spawned instanceof EntityLiving)) {
-            am2.ArsMagica.LOGGER.error("Summon: entity '{}' is not an EntityLiving", key);
+            ArsMagica.LOGGER.error("Summon: entity '{}' is not an EntityLiving", key);
             return null;
         }
         EntityLiving entity = (EntityLiving) spawned;
@@ -226,7 +227,7 @@ public class Summon extends SpellComponent {
             BlockPos testPos = pos.offset(direction, i);
             IBlockState state = world.getBlockState(testPos);
 
-            if(state.getCollisionBoundingBox(world, testPos) != net.minecraft.block.Block.NULL_AABB){
+            if(state.getCollisionBoundingBox(world, testPos) != Block.NULL_AABB){
                 // Because the loop now short-circuits, this must be closer than the previous surface found
                 int coord;
                 switch (direction.getAxis()) {

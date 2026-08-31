@@ -5,7 +5,9 @@ import am2.client.particles.AMParticle;
 import am2.client.particles.ParticleOrbitEntity;
 import am2.common.bosses.BossSpawnHelper;
 import am2.common.registry.AMLoot;
+import net.minecraft.block.Block;
 import net.minecraft.block.IGrowable;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -127,8 +129,8 @@ public class EntityDryad extends EntityCreature {
                 int dy = world.rand.nextInt(radius * 2 + 1) - radius;
                 int dz = world.rand.nextInt(radius * 2 + 1) - radius;
                 BlockPos pos = origin.add(dx, dy, dz);
-                net.minecraft.block.state.IBlockState state = world.getBlockState(pos);
-                net.minecraft.block.Block block = state.getBlock();
+                IBlockState state = world.getBlockState(pos);
+                Block block = state.getBlock();
                 if (block instanceof IGrowable) {
                     IGrowable growable = (IGrowable) block;
                     if (growable.canGrow(world, pos, state, false) && growable.canUseBonemeal(world, world.rand, pos, state)) {

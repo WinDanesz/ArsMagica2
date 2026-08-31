@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  *   <li>{@link EventPotionLoaded} – fired when a potion effect is loaded from NBT.</li>
  * </ul></p>
  *
- * <p>Posted on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
+ * <p>Posted on {@link MinecraftForge#EVENT_BUS}.</p>
  */
 public class PotionEvent extends Event {
 

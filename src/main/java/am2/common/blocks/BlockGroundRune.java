@@ -5,6 +5,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -147,8 +148,8 @@ public abstract class BlockGroundRune extends BlockAMContainer {
     }
 
     @Override
-    public net.minecraft.util.EnumBlockRenderType getRenderType(IBlockState state) {
-        return net.minecraft.util.EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override

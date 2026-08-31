@@ -7,11 +7,13 @@ import am2.common.blocks.BlockInvisibleUtility;
 import am2.common.registry.AMBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,7 +22,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -39,7 +41,7 @@ public class ItemCandle extends Item {
 
         // Property override for proximity-based candle model
         // 0 = unattuned/far, 0.5 = within 15 blocks (blue), 1.0 = within 5 blocks (red)
-        this.addPropertyOverride(new ResourceLocation(ArsMagica.MODID, "proximity"), new net.minecraft.item.IItemPropertyGetter() {
+        this.addPropertyOverride(new ResourceLocation(ArsMagica.MODID, "proximity"), new IItemPropertyGetter() {
             @Override
             @SideOnly(Side.CLIENT)
             public float apply(ItemStack stack, World worldIn, EntityLivingBase entityIn) {
@@ -167,7 +169,7 @@ public class ItemCandle extends Item {
     }
 
     public void search(EntityPlayer player, ItemStack stack, World world, BlockPos pos, IBlockState state) {
-        if (state == null || state.getBlock() == net.minecraft.init.Blocks.AIR) return;
+        if (state == null || state.getBlock() == Blocks.AIR) return;
 
         boolean found = false;
         int closestProximity = 0; // 0 = far, 1 = within 15, 2 = within 5
@@ -251,12 +253,12 @@ public class ItemCandle extends Item {
     @Override
     @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack stack) {
-        String name = net.minecraft.client.resources.I18n.format("item.arsmagica2:warding_candle.name");
+        String name = I18n.format("item.arsmagica2:warding_candle.name");
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey("search_block")) {
             int stateId = stack.getTagCompound().getInteger("search_block");
             if (stateId != 0) {
                 IBlockState state = Block.getStateById(stateId);
-                if (state != null && state.getBlock() != net.minecraft.init.Blocks.AIR) {
+                if (state != null && state.getBlock() != Blocks.AIR) {
                     ItemStack blockStack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
                     if (!blockStack.isEmpty()) {
                         name += " (" + blockStack.getDisplayName() + ")";
@@ -264,13 +266,13 @@ public class ItemCandle extends Item {
                         name += " (" + state.getBlock().getLocalizedName() + ")";
                     }
                 } else {
-                    name += " (" + net.minecraft.client.resources.I18n.format("am2.tooltip.unattuned") + ")";
+                    name += " (" + I18n.format("am2.tooltip.unattuned") + ")";
                 }
             } else {
-                name += " (" + net.minecraft.client.resources.I18n.format("am2.tooltip.unattuned") + ")";
+                name += " (" + I18n.format("am2.tooltip.unattuned") + ")";
             }
         } else {
-            name += " (" + net.minecraft.client.resources.I18n.format("am2.tooltip.unattuned") + ")";
+            name += " (" + I18n.format("am2.tooltip.unattuned") + ")";
         }
 
         return name;

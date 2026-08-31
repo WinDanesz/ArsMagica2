@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -100,7 +101,7 @@ public class EntityBroom extends EntityCreature {
             moveCounter += 0.3f;
             moveRotation = (float) Math.sin(moveCounter) - (float) Math.sin((moveCounter - 1));
             if (((int) (moveCounter)) % 6 == 0) {
-                world.playSound(null, this.posX, this.posY, this.posZ, SoundEvents.BLOCK_GRASS_STEP, net.minecraft.util.SoundCategory.NEUTRAL, 0.6f, world.rand.nextFloat());
+                world.playSound(null, this.posX, this.posY, this.posZ, SoundEvents.BLOCK_GRASS_STEP, SoundCategory.NEUTRAL, 0.6f, world.rand.nextFloat());
             }
         } else {
             moveCounter = 3.14f / 2f;

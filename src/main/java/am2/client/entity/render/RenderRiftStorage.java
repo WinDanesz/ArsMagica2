@@ -1,5 +1,6 @@
 package am2.client.entity.render;
 
+import am2.ArsMagica;
 import am2.common.entity.EntityRiftStorage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
@@ -90,7 +91,7 @@ public class RenderRiftStorage extends Render<EntityRiftStorage> {
         try {
             renderRift(entity, d, d1, d2, f, f1);
         } catch (Exception e) {
-            am2.ArsMagica.LOGGER.error("RenderRiftStorage.render exception caught: ", e);
+            ArsMagica.LOGGER.error("RenderRiftStorage.render exception caught: ", e);
             Tessellator.getInstance().draw();
         }
     }

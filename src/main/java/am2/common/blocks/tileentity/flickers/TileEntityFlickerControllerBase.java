@@ -8,6 +8,7 @@ import am2.common.blocks.tileentity.TileEntityFlickerHabitat;
 import am2.common.power.PowerNodeRegistry;
 import am2.common.power.PowerTypes;
 import am2.common.registry.AMItems;
+import am2.common.utils.SpellUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -42,7 +43,7 @@ public class TileEntityFlickerControllerBase extends TileEntityAMPower implement
     public void updateOperator(ItemStack stack) {
         if (stack.isEmpty() || stack.getItem() != AMItems.flicker_focus)
             return;
-        setOperator(am2.common.utils.SpellUtils.GetAbstractFlickerFunctionalityFromID(stack.getItemDamage()));
+        setOperator(SpellUtils.GetAbstractFlickerFunctionalityFromID(stack.getItemDamage()));
     }
 
     public void scanForNearbyUpgrades() {

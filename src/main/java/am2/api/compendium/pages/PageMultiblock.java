@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
@@ -120,7 +121,7 @@ public class PageMultiblock extends CompendiumPage<IMultiblock> {
             stackTip = stack;
         });
         GlStateManager.popMatrix();
-        if (stackTip != null && stackTip.getItem() != net.minecraft.init.Items.AIR)
+        if (stackTip != null && stackTip.getItem() != Items.AIR)
             renderItemToolTip(stackTip, mouseX, mouseY);
         GlStateManager.popAttrib();
         GlStateManager.popMatrix();

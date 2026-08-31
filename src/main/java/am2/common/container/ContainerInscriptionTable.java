@@ -190,6 +190,10 @@ public class ContainerInscriptionTable extends Container {
         return table.getCurrentRecipe().contains(part);
     }
 
+    public boolean shapeIsAlreadyUsed(SpellPart part) {
+        return table.shapeIsAlreadyUsed(part);
+    }
+
     public SpellPart getRecipeItemAt(int index) {
         return table.getCurrentRecipe().get(index);
     }

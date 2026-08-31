@@ -51,10 +51,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.*;
@@ -132,6 +129,11 @@ public class EntityHandler {
             living.getAttributeMap().registerAttribute(ArsMagicaAPI.maxBurnoutBonus);
             living.getAttributeMap().registerAttribute(ArsMagicaAPI.maxManaBonus);
             living.getAttributeMap().registerAttribute(ArsMagicaAPI.xpGainModifier);
+            living.getAttributeMap().registerAttribute(ArsMagicaAPI.maxSummons);
+            living.getAttributeMap().registerAttribute(ArsMagicaAPI.spellDamageMultiplier);
+            living.getAttributeMap().registerAttribute(ArsMagicaAPI.manaCostMultiplier);
+            living.getAttributeMap().registerAttribute(ArsMagicaAPI.burnoutGenerationMultiplier);
+            living.getAttributeMap().registerAttribute(ArsMagicaAPI.affinityGainModifier);
         }
     }
 
@@ -338,12 +340,12 @@ public class EntityHandler {
         if (cameraY >= fadeStartY + fadeRange) return 0.0f;
 
         double normalized = (cameraY - fadeStartY) / fadeRange;
-        return (float) net.minecraft.util.math.MathHelper.clamp(1.0 - normalized, 0.0, 1.0);
+        return (float) MathHelper.clamp(1.0 - normalized, 0.0, 1.0);
     }
 
     private double getAverageWitchwoodCanopyHeight(Entity entity) {
-        int baseX = net.minecraft.util.math.MathHelper.floor(entity.posX);
-        int baseZ = net.minecraft.util.math.MathHelper.floor(entity.posZ);
+        int baseX = MathHelper.floor(entity.posX);
+        int baseZ = MathHelper.floor(entity.posZ);
 
         int sampleCount = 0;
         double total = 0;

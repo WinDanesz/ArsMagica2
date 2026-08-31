@@ -44,6 +44,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.UUID;
 
 public class EntityExtension implements IEntityExtension, ICapabilityProvider, ICapabilitySerializable<NBTBase> {
 
@@ -106,14 +107,14 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
     private double anchorZ;
     private int anchorDimension = -512;
     private float anchorHealth;
-    private net.minecraft.nbt.NBTTagCompound anchorExtraData;
+    private NBTTagCompound anchorExtraData;
 
     private boolean glyphSet = false;
     private double glyphX;
     private double glyphY;
     private double glyphZ;
-    private net.minecraft.nbt.NBTTagCompound glyphSpell = null;
-    private java.util.UUID glyphEntityId = null;
+    private NBTTagCompound glyphSpell = null;
+    private UUID glyphEntityId = null;
 
     private float currentMana;
     private float currentFatigue;
@@ -435,10 +436,10 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
     public float getAnchorHealth() { return this.anchorHealth; }
 
     @Override
-    public void setAnchorExtraData(net.minecraft.nbt.NBTTagCompound data) { this.anchorExtraData = data; }
+    public void setAnchorExtraData(NBTTagCompound data) { this.anchorExtraData = data; }
 
     @Override
-    public net.minecraft.nbt.NBTTagCompound getAnchorExtraData() { return this.anchorExtraData; }
+    public NBTTagCompound getAnchorExtraData() { return this.anchorExtraData; }
 
     @Override
     public boolean hasGlyph() {
@@ -476,22 +477,22 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
     }
 
     @Override
-    public void setGlyphEntity(java.util.UUID entityId) {
+    public void setGlyphEntity(UUID entityId) {
         this.glyphEntityId = entityId;
     }
 
     @Override
-    public java.util.UUID getGlyphEntityId() {
+    public UUID getGlyphEntityId() {
         return this.glyphEntityId;
     }
 
     @Override
-    public void setGlyphSpell(net.minecraft.nbt.NBTTagCompound tag) {
+    public void setGlyphSpell(NBTTagCompound tag) {
         this.glyphSpell = tag;
     }
 
     @Override
-    public net.minecraft.nbt.NBTTagCompound getGlyphSpell() {
+    public NBTTagCompound getGlyphSpell() {
         return this.glyphSpell;
     }
 
@@ -587,9 +588,21 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 
     @Override
     public int getMaxSummons() {
-        if (!(this.entity instanceof EntityPlayer)) return 3;
-        ISkillData skills = SkillData.For(this.entity);
-        return 1 + skills.getSkillLevel(AMSkills.extra_summons.getID());
+        int baseSummons = 1;
+        if (!(this.entity instanceof EntityPlayer)) {
+            baseSummons = 3;
+        } else {
+            ISkillData skills = SkillData.For(this.entity);
+            if (skills != null) {
+                baseSummons += skills.getSkillLevel(AMSkills.extra_summons.getID());
+            }
+        }
+        
+        if (this.entity != null && this.entity.getAttributeMap() != null && this.entity.getAttributeMap().getAttributeInstance(ArsMagicaAPI.maxSummons) != null) {
+            baseSummons += (int) this.entity.getAttributeMap().getAttributeInstance(ArsMagicaAPI.maxSummons).getAttributeValue();
+        }
+        
+        return baseSummons;
     }
 
     @Override

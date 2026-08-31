@@ -31,6 +31,7 @@ import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 public class SpecialRenderModelLoader implements ICustomModelLoader {
 
@@ -105,7 +106,7 @@ public class SpecialRenderModelLoader implements ICustomModelLoader {
         }
 
         @Override
-        public IBakedModel bake(IModelState state, VertexFormat format, java.util.function.Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+        public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
             return new SpecialRenderModelLoader.Baked();
         }
 

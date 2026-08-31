@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.util.ResourceLocation;
@@ -260,7 +261,7 @@ public class PageItemStack extends CompendiumPage<ItemStack> {
                     recipeHeight = ((ShapedRecipes) recipe).recipeHeight;
                     // Convert Ingredients to List<ItemStack> for rendering
                     craftingComponents = new ArrayList<>();
-                    for (net.minecraft.item.crafting.Ingredient ingredient : ((ShapedRecipes) recipe).getIngredients()) {
+                    for (Ingredient ingredient : ((ShapedRecipes) recipe).getIngredients()) {
                         if (ingredient.getMatchingStacks().length > 0) {
                             craftingComponents.add(Arrays.asList(ingredient.getMatchingStacks()));
                         } else {
@@ -273,7 +274,7 @@ public class PageItemStack extends CompendiumPage<ItemStack> {
 
                     // Convert Ingredients to List<ItemStack> for rendering
                     craftingComponents = new ArrayList<>();
-                    for (net.minecraft.item.crafting.Ingredient ingredient : ((ShapedOreRecipe) recipe).getIngredients()) {
+                    for (Ingredient ingredient : ((ShapedOreRecipe) recipe).getIngredients()) {
                         if (ingredient.getMatchingStacks().length > 0) {
                             craftingComponents.add(Arrays.asList(ingredient.getMatchingStacks()));
                         } else {
@@ -286,7 +287,7 @@ public class PageItemStack extends CompendiumPage<ItemStack> {
 
                     // Convert Ingredients to List<ItemStack> for rendering
                     craftingComponents = new ArrayList<>();
-                    for (net.minecraft.item.crafting.Ingredient ingredient : ((ShapelessRecipes) recipe).getIngredients()) {
+                    for (Ingredient ingredient : ((ShapelessRecipes) recipe).getIngredients()) {
                         if (ingredient.getMatchingStacks().length > 0) {
                             craftingComponents.add(Arrays.asList(ingredient.getMatchingStacks()));
                         } else {
@@ -299,7 +300,7 @@ public class PageItemStack extends CompendiumPage<ItemStack> {
 
                     // Convert Ingredients to List<ItemStack> for rendering
                     craftingComponents = new ArrayList<>();
-                    for (net.minecraft.item.crafting.Ingredient ingredient : ((ShapelessOreRecipe) recipe).getIngredients()) {
+                    for (Ingredient ingredient : ((ShapelessOreRecipe) recipe).getIngredients()) {
                         if (ingredient.getMatchingStacks().length > 0) {
                             craftingComponents.add(Arrays.asList(ingredient.getMatchingStacks()));
                         } else {

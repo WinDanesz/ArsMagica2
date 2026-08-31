@@ -6,11 +6,13 @@ import am2.api.spell.Operation;
 import am2.api.spell.SpellData;
 import am2.api.spell.SpellModifiers;
 import am2.client.particles.AMParticle;
+import am2.common.blocks.BlockSpellSealedDoor;
 import am2.common.registry.AMItems;
 import am2.common.registry.Affinities;
 import am2.common.utils.NBTUtils;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -200,8 +202,8 @@ public class EntitySpellProjectile extends Entity {
             // ── Determine which hit to process (entity vs. block – pick the closer one) ──
             boolean solidBlockHit = false;
             if (mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK) {
-                net.minecraft.block.Block hitBlock = world.getBlockState(mop.getBlockPos()).getBlock();
-                boolean isSpellSealedDoor = hitBlock instanceof am2.common.blocks.BlockSpellSealedDoor;
+                Block hitBlock = world.getBlockState(mop.getBlockPos()).getBlock();
+                boolean isSpellSealedDoor = hitBlock instanceof BlockSpellSealedDoor;
                 solidBlockHit = isSpellSealedDoor
                         || hitBlock.isSideSolid(world.getBlockState(mop.getBlockPos()), world, mop.getBlockPos(), mop.sideHit)
                         || targetWater();

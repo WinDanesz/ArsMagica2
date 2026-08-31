@@ -1,6 +1,10 @@
 package am2.common.entity;
 
 import am2.ArsMagica;
+import am2.client.particles.AMParticle;
+import am2.client.particles.ParticleApproachEntity;
+import am2.client.particles.ParticleApproachPoint;
+import am2.client.particles.ParticleFloatUpward;
 import am2.common.extensions.EntityExtension;
 import am2.common.registry.AMItems;
 import am2.common.registry.AMSounds;
@@ -277,7 +281,7 @@ public class EntityFlyingBook extends Entity {
 			double offsetY = (this.world.rand.nextDouble() - 0.5) * 0.3;
 			double offsetZ = (this.world.rand.nextDouble() - 0.5) * 0.3;
 
-			am2.client.particles.AMParticle particle = (am2.client.particles.AMParticle)
+			AMParticle particle = (AMParticle)
 					ArsMagica.proxy.particleManager.spawn(this.world, "arcane",
 							this.posX + offsetX, this.posY + offsetY, this.posZ + offsetZ);
 			if (particle != null) {
@@ -285,7 +289,7 @@ public class EntityFlyingBook extends Entity {
 				particle.setRGBColorF(0.8f + this.world.rand.nextFloat() * 0.2f,
 						0.8f + this.world.rand.nextFloat() * 0.2f, 1.0f);
 				particle.setRandomScale(0.03f, 0.08f);
-				particle.AddParticleController(new am2.client.particles.ParticleFloatUpward(
+				particle.AddParticleController(new ParticleFloatUpward(
 						particle, 0, 0.02f, 1, false));
 			}
 			return;
@@ -307,12 +311,12 @@ public class EntityFlyingBook extends Entity {
 				double pz = this.posZ + ez * dist;
 				double py = surfaceY + this.world.rand.nextDouble() * 0.1;
 
-				am2.client.particles.AMParticle sparkle = (am2.client.particles.AMParticle)  ArsMagica.proxy.particleManager.spawn(this.world, "sparkle2", px, py, pz);
+				AMParticle sparkle = (AMParticle)  ArsMagica.proxy.particleManager.spawn(this.world, "sparkle2", px, py, pz);
 				if (sparkle != null) {
 					sparkle.setIgnoreMaxAge(true);
 					sparkle.setRGBColorF(1.0F, 1.0F, 1.0F);
 					sparkle.setRandomScale(0.02F, 0.06F);
-					sparkle.AddParticleController(new am2.client.particles.ParticleApproachPoint(
+					sparkle.AddParticleController(new ParticleApproachPoint(
 							sparkle, this.posX + ex * itemRadius, this.posY + 0.25 + 0.25 * rand.nextDouble(), this.posZ + ez * itemRadius,
 							0.04F, itemRadius, 1, false)
 							.setKillParticleOnFinish(true));
@@ -328,12 +332,12 @@ public class EntityFlyingBook extends Entity {
 				double offsetZ = -1.0 + 2.0 * this.world.rand.nextDouble();
 				double offsetY = -0.25 + this.world.rand.nextDouble();
 
-				am2.client.particles.AMParticle particle = (am2.client.particles.AMParticle)
+				AMParticle particle = (AMParticle)
 						ArsMagica.proxy.particleManager.spawn(this.world, "symbols",
 								this.posX + offsetX, this.posY + 0.5 * height + offsetY, this.posZ + offsetZ);
 				if (particle != null) {
 					particle.setIgnoreMaxAge(true);
-					particle.AddParticleController(new am2.client.particles.ParticleApproachEntity(
+					particle.AddParticleController(new ParticleApproachEntity(
 							particle, this, 0.03f, 0.05f, 1, false).setKillParticleOnFinish(true));
 					particle.setRandomScale(0.05f, 0.12f);
 				}

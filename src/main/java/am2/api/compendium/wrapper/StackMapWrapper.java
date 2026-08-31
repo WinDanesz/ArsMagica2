@@ -1,6 +1,7 @@
 package am2.api.compendium.wrapper;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -74,6 +75,6 @@ public class StackMapWrapper {
     }
 
     public String getLocalizedName() {
-        return net.minecraft.client.resources.I18n.format(getUnlocalizedName());
+        return I18n.format(getUnlocalizedName());
     }
 }

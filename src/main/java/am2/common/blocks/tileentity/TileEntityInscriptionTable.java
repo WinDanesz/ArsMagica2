@@ -13,6 +13,7 @@ import am2.common.blocks.BlockInscriptionTable;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.compat.electroblob.item.ItemEBWizSpellBinding;
 import am2.common.container.ContainerInscriptionTable;
+import am2.common.items.ItemSpellBase;
 import am2.common.lore.Story;
 import am2.common.packet.AMDataReader;
 import am2.common.packet.AMDataWriter;
@@ -52,6 +53,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
@@ -577,11 +579,11 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
                         if (!finalBinding.isEmpty()) {
                             this.setInventorySlotContents(0, finalBinding);
                             this.markDirty();
-                            player.sendMessage(new net.minecraft.util.text.TextComponentString(
+                            player.sendMessage(new TextComponentString(
                                     "In creative mode the spell item is created instantly, without the recipe book"));
                             LogHelper.info("Creative mode: directly created EBWiz spell binding from book");
                         } else {
-                            player.sendMessage(new net.minecraft.util.text.TextComponentString(
+                            player.sendMessage(new TextComponentString(
                                     "\u00a7c[Creative] Failed to convert EBWiz spell book into a binding item."));
                             LogHelper.warn("Creative mode: failed to convert EBWiz spell book to binding item");
                         }
@@ -664,7 +666,7 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
                 caster.setShapeGroups(shapeGroups);
                 // Write mana cost into the regular tagCompound so it is always synced
                 // to the client automatically (capabilities are not synced by default).
-                stack.getTagCompound().setFloat(am2.common.items.ItemSpellBase.KEY_MANA_COST_CACHED,
+                stack.getTagCompound().setFloat(ItemSpellBase.KEY_MANA_COST_CACHED,
                         caster.getBaseManaCost(caster.getCurrentShapeGroup()));
             }
 
@@ -829,7 +831,7 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
             sorted.putAll(affinityData);
             for (Affinity aff : sorted.keySet()) {
                 float pct = (float) sorted.get(aff) / (float) cpCount * 100f;
-                sb.append(String.format("%s: %.2f%%", net.minecraft.util.text.translation.I18n.translateToLocal(aff.getTranslationKey()), pct));
+                sb.append(String.format("%s: %.2f%%", I18n.translateToLocal(aff.getTranslationKey()), pct));
                 sb.append("\n");
             }
             pages.addAll(Story.splitStoryPartIntoPages(sb.toString()));
@@ -1123,12 +1125,12 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
             StringBuilder matSb = new StringBuilder();
             matSb.append("Required at Altar:\n\n");
             // Aggregate by display name
-            java.util.LinkedHashMap<String, Integer> matMap = new java.util.LinkedHashMap<>();
+            LinkedHashMap<String, Integer> matMap = new LinkedHashMap<>();
             for (ItemStack s : componentRecipeList) {
                 String key = s.getDisplayName();
                 matMap.put(key, matMap.getOrDefault(key, 0) + s.getCount());
             }
-            for (java.util.Map.Entry<String, Integer> entry : matMap.entrySet()) {
+            for (Map.Entry<String, Integer> entry : matMap.entrySet()) {
                 matSb.append(entry.getValue()).append(" x ").append(entry.getKey()).append("\n");
             }
             matSb.append("\n1 x Blank Rune");

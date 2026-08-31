@@ -368,7 +368,7 @@ public class LightningBolt extends Particle {
         GL11.glPopMatrix();
 
         // Restore vanilla particle rendering state
-        Minecraft.getMinecraft().renderEngine.bindTexture(new net.minecraft.util.ResourceLocation("textures/particle/particles.png"));
+        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/particle/particles.png"));
         worldRendererIn.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
     }
 

@@ -6,6 +6,7 @@ import am2.api.flickers.AbstractFlickerFunctionality;
 import am2.common.ObeliskFuelHelper;
 import am2.common.recipe.RecipeArmorDye;
 import am2.common.recipe.RecipeSpellBookDye;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -98,7 +99,7 @@ public class AMRecipes {
             }
             ResourceLocation rl = new ResourceLocation(parts[0], parts[1]);
             Item item = ForgeRegistries.ITEMS.getValue(rl);
-            if (item == null || item == net.minecraft.init.Items.AIR) {
+            if (item == null || item == Items.AIR) {
                 LOGGER.info("Obelisk extra fuel item '{}' not found (mod not loaded?). Skipping.", rl);
                 continue;
             }

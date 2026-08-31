@@ -3,6 +3,7 @@ package am2.common.bosses;
 import am2.ArsMagica;
 import am2.client.particles.AMParticle;
 import am2.client.particles.ParticleHoldPosition;
+import am2.common.animation.IAnimatedEntity;
 import am2.common.bosses.ai.*;
 import am2.common.extensions.EntityExtension;
 import am2.common.registry.AMLoot;
@@ -14,7 +15,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.BossInfo.Color;
 import net.minecraft.world.World;
-import am2.common.animation.IAnimatedEntity;
 
 //
 

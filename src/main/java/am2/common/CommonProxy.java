@@ -25,7 +25,6 @@ import am2.common.items.ItemKeystone;
 import am2.common.items.ItemRuneBag;
 import am2.common.items.ItemSpellBook;
 import am2.common.lore.CompendiumUnlockHandler;
-import am2.common.network.SeventhSanctum;
 import am2.common.power.PowerNodeCache;
 import am2.common.power.PowerNodeEntry;
 import am2.common.power.PowerTypes;
@@ -183,7 +182,6 @@ public class CommonProxy implements IGuiHandler {
 
         ForgeChunkManager.setForcedChunkLoadingCallback(ArsMagica.instance, AMChunkLoader.INSTANCE);
         NetworkRegistry.INSTANCE.registerGuiHandler(ArsMagica.instance, this);
-        SeventhSanctum.instance.init();
 
         initHandlers();
         ArsMagica.config.init();

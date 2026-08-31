@@ -7,6 +7,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.entity.monster.IMob;
 
+import java.util.function.BiPredicate;
+
 /**
  * Target selector for player-faction AM2 summons.
  *
@@ -22,7 +24,7 @@ public class SummonEntitySelector implements Predicate<EntityLivingBase> {
      * Set by {@code EBWizardryCompatBootstrap.register()} when EBWiz is loaded.
      * Signature mirrors {@code AllyDesignationSystem.isValidTarget(attacker, target)}.
      */
-    public static java.util.function.BiPredicate<Entity, Entity> ebwizValidator = null;
+    public static BiPredicate<Entity, Entity> ebwizValidator = null;
 
     private final EntityLivingBase owner;
 

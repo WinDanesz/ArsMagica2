@@ -28,6 +28,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -369,7 +370,7 @@ public class EntityUtils {
 
     /**
      * Resizes an entity's bounding box via reflection, calling the obfuscated {@code setSize}
-     * method on {@link net.minecraft.entity.Entity}. Does nothing if the dimensions are
+     * method on {@link Entity}. Does nothing if the dimensions are
      * unchanged or if the reflected method cannot be found.
      *
      * @param entityliving the entity to resize
@@ -381,9 +382,9 @@ public class EntityUtils {
             return;
         if (ptrSetSize == null) {
             try {
-                ptrSetSize = net.minecraftforge.fml.relauncher.ReflectionHelper.findMethod(Entity.class, "setSize", "func_70105_a", float.class, float.class);
+                ptrSetSize = ReflectionHelper.findMethod(Entity.class, "setSize", "func_70105_a", float.class, float.class);
             } catch (Throwable t) {
-                am2.ArsMagica.LOGGER.error("Failed to find setSize method on Entity: ", t);
+                ArsMagica.LOGGER.error("Failed to find setSize method on Entity: ", t);
                 return;
             }
         }
@@ -393,7 +394,7 @@ public class EntityUtils {
                 ptrSetSize.invoke(entityliving, width, height);
                 //entityliving.yOffset = entityliving.height * 0.8f;
             } catch (Throwable t) {
-                am2.ArsMagica.LOGGER.error("Failed to invoke setSize method on Entity: ", t);
+                ArsMagica.LOGGER.error("Failed to invoke setSize method on Entity: ", t);
                 return;
             }
         }

@@ -3,6 +3,7 @@ package am2.common.bosses;
 import am2.ArsMagica;
 import am2.api.DamageSources;
 import am2.api.math.AMVector3;
+import am2.common.animation.IAnimatedEntity;
 import am2.common.bosses.ai.*;
 import am2.common.registry.AMLoot;
 import am2.common.registry.AMPotions;
@@ -22,7 +23,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.BossInfo.Color;
 import net.minecraft.world.World;
-import am2.common.animation.IAnimatedEntity;
 
 public class EntityEnderGuardian extends AM2Boss implements IAnimatedEntity {
 

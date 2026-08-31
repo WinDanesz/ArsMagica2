@@ -13,9 +13,6 @@ import am2.common.utils.DummyEntityPlayer;
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +20,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -31,7 +30,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.world.BlockEvent;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -112,7 +113,7 @@ public class Appropriation extends SpellComponent {
                         ent.setPosition(hitX, hitY, hitZ);
                         world.spawnEntity(ent);
                     } catch (Throwable t) {
-                        am2.ArsMagica.LOGGER.error("Exception caught: ", t);
+                        ArsMagica.LOGGER.error("Exception caught: ", t);
                     }
                 } else if (type.equals("block")) {
                     //String blockName = storageCompound.getString("blockName");
@@ -240,9 +241,9 @@ public class Appropriation extends SpellComponent {
                         newNBT = spell.getStoredData().copy();
                     }
 
-                    net.minecraftforge.event.world.BlockEvent.PlaceEvent placeEvent = null;
+                    BlockEvent.PlaceEvent placeEvent = null;
                     @SuppressWarnings("unchecked")
-                    List<net.minecraftforge.common.util.BlockSnapshot> blockSnapshots = (List<net.minecraftforge.common.util.BlockSnapshot>) world.capturedBlockSnapshots.clone();
+                    List<BlockSnapshot> blockSnapshots = (List<BlockSnapshot>) world.capturedBlockSnapshots.clone();
                     world.capturedBlockSnapshots.clear();
 
                     // restore original item data for event
@@ -257,7 +258,7 @@ public class Appropriation extends SpellComponent {
 
                     if (placeEvent != null && (placeEvent.isCanceled())) {
                         // revert back all captured blocks
-                        for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : blockSnapshots) {
+                        for (BlockSnapshot blocksnapshot : blockSnapshots) {
                             world.restoringBlockSnapshots = true;
                             blocksnapshot.restore(true, false);
                             world.restoringBlockSnapshots = false;
@@ -269,7 +270,7 @@ public class Appropriation extends SpellComponent {
                             spell.setStoredData(newNBT);
                         }
 
-                        for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : blockSnapshots) {
+                        for (BlockSnapshot blocksnapshot : blockSnapshots) {
                             BlockPos pos = blocksnapshot.getPos();
                             int updateFlag = blocksnapshot.getFlag();
                             IBlockState oldBlock = blocksnapshot.getReplacedBlock();
@@ -322,7 +323,7 @@ public class Appropriation extends SpellComponent {
                     try {
                         world.removeTileEntity(blockPos);
                     } catch (Throwable exception) {
-                        am2.ArsMagica.LOGGER.error("Exception caught: ", exception);
+                        ArsMagica.LOGGER.error("Exception caught: ", exception);
                     }
                 }
 

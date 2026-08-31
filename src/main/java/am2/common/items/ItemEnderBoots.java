@@ -2,11 +2,11 @@ package am2.common.items;
 
 import am2.common.armor.ArsMagicaArmorMaterial;
 import am2.common.extensions.EntityExtension;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;

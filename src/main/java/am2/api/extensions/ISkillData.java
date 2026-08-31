@@ -4,6 +4,7 @@ import am2.api.SkillPointRegistry;
 import am2.api.skill.Skill;
 import am2.api.skill.SkillPoint;
 import am2.common.extensions.SkillData;
+import am2.common.skill.Discipline;
 import am2.common.utils.NBTUtils;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,8 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
-
-import am2.common.skill.Discipline;
 
 public interface ISkillData {
 

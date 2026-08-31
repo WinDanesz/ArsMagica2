@@ -3,7 +3,6 @@ package am2.common.items;
 import am2.ArsMagica;
 import am2.common.container.InventoryEssenceBag;
 import am2.common.defs.IDDefs;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -12,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -78,7 +78,7 @@ public class ItemEssenceBag extends Item {
             }
             int stacksize = itemStack.getTagCompound().getInteger("essencebagstacksize" + i);
             String itemName = itemStack.getTagCompound().getString("essencebagitem" + i);
-            net.minecraft.item.Item essenceItem = net.minecraft.item.Item.getByNameOrId(itemName);
+            Item essenceItem = Item.getByNameOrId(itemName);
             if (essenceItem != null) {
                 items[i] = new ItemStack(essenceItem, stacksize);
             } else {

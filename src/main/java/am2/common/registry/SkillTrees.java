@@ -5,18 +5,19 @@ import am2.api.ArsMagicaAPI;
 import am2.api.SkillPointRegistry;
 import am2.api.SkillTreeRegistry;
 import am2.api.skill.SkillPoint;
+import am2.api.skill.SkillTree;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 
 public class SkillTrees {
 
-    public static final am2.api.skill.SkillTree TREE_OFFENSE = new am2.api.skill.SkillTree("offense", new ResourceLocation(ArsMagica.MODID, "textures/occulus/offense.png"), new ResourceLocation(ArsMagica.MODID, "textures/icons/offense.png"));
-    public static final am2.api.skill.SkillTree TREE_DEFENSE = new am2.api.skill.SkillTree("defense", new ResourceLocation(ArsMagica.MODID, "textures/occulus/defense.png"), new ResourceLocation(ArsMagica.MODID, "textures/icons/defense.png"));
-    public static final am2.api.skill.SkillTree TREE_UTILITY = new am2.api.skill.SkillTree("utility", new ResourceLocation(ArsMagica.MODID, "textures/occulus/utility.png"), new ResourceLocation(ArsMagica.MODID, "textures/icons/utility.png"));
-    public static final am2.api.skill.SkillTree TREE_AFFINITY = new am2.api.skill.SkillTree("affinity", new ResourceLocation(ArsMagica.MODID, "textures/occulus/affinity.png"), new ResourceLocation(ArsMagica.MODID, "textures/icons/affinity.png")).disableRender("affinity");
-    public static final am2.api.skill.SkillTree TREE_TALENT = new am2.api.skill.SkillTree("talent", new ResourceLocation(ArsMagica.MODID, "textures/occulus/talent.png"), new ResourceLocation(ArsMagica.MODID, "textures/icons/talent.png"));
-    public static final am2.api.skill.SkillTree TREE_DISCIPLINE = new am2.api.skill.SkillTree("discipline", new ResourceLocation(ArsMagica.MODID, "textures/occulus/disciplines.png"), new ResourceLocation(ArsMagica.MODID, "textures/icons/discipline.png"));
+    public static final SkillTree TREE_OFFENSE = new SkillTree("offense", new ResourceLocation(ArsMagica.MODID, "textures/occulus/offense.png"), new ResourceLocation(ArsMagica.MODID, "textures/icons/offense.png"));
+    public static final SkillTree TREE_DEFENSE = new SkillTree("defense", new ResourceLocation(ArsMagica.MODID, "textures/occulus/defense.png"), new ResourceLocation(ArsMagica.MODID, "textures/icons/defense.png"));
+    public static final SkillTree TREE_UTILITY = new SkillTree("utility", new ResourceLocation(ArsMagica.MODID, "textures/occulus/utility.png"), new ResourceLocation(ArsMagica.MODID, "textures/icons/utility.png"));
+    public static final SkillTree TREE_AFFINITY = new SkillTree("affinity", new ResourceLocation(ArsMagica.MODID, "textures/occulus/affinity.png"), new ResourceLocation(ArsMagica.MODID, "textures/icons/affinity.png")).disableRender("affinity");
+    public static final SkillTree TREE_TALENT = new SkillTree("talent", new ResourceLocation(ArsMagica.MODID, "textures/occulus/talent.png"), new ResourceLocation(ArsMagica.MODID, "textures/icons/talent.png"));
+    public static final SkillTree TREE_DISCIPLINE = new SkillTree("discipline", new ResourceLocation(ArsMagica.MODID, "textures/occulus/disciplines.png"), new ResourceLocation(ArsMagica.MODID, "textures/icons/discipline.png"));
 
     private SkillTrees() {
     } // no instances

@@ -2,7 +2,9 @@ package am2.common.world;
 
 import am2.common.registry.AMBlocks;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockSapling;
+import net.minecraft.block.BlockVine;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -17,7 +19,7 @@ public class WitchwoodTreeSmall extends WorldGenAbstractTree {
     private final int minTreeHeight = 4;
 
     private final IBlockState logBlock = AMBlocks.witchwood_log.getDefaultState();
-    private final IBlockState leafBlock = AMBlocks.witchwood_leaves.getDefaultState().withProperty(net.minecraft.block.BlockLeaves.CHECK_DECAY, false);
+    private final IBlockState leafBlock = AMBlocks.witchwood_leaves.getDefaultState().withProperty(BlockLeaves.CHECK_DECAY, false);
 
     // this function is copied from WorldGenTrees.java
     // variable names have been changed for readability, and some un-used parts (vine, cocoa generation) have been removed
@@ -92,10 +94,10 @@ public class WitchwoodTreeSmall extends WorldGenAbstractTree {
                         if (block.getBlock().isAir(block, world, pos.add(0, j, 0)) || block.getBlock().isLeaves(block, world, pos.add(0, j, 0))) {
                             this.setBlockAndNotifyAdequately(world, pos.add(0, j, 0), logBlock);
                             
-                            if (random.nextInt(3) == 0 && world.isAirBlock(pos.add(-1, j, 0))) world.setBlockState(pos.add(-1, j, 0), Blocks.VINE.getDefaultState().withProperty(net.minecraft.block.BlockVine.EAST, true), 2);
-                            if (random.nextInt(3) == 0 && world.isAirBlock(pos.add(1, j, 0))) world.setBlockState(pos.add(1, j, 0), Blocks.VINE.getDefaultState().withProperty(net.minecraft.block.BlockVine.WEST, true), 2);
-                            if (random.nextInt(3) == 0 && world.isAirBlock(pos.add(0, j, -1))) world.setBlockState(pos.add(0, j, -1), Blocks.VINE.getDefaultState().withProperty(net.minecraft.block.BlockVine.SOUTH, true), 2);
-                            if (random.nextInt(3) == 0 && world.isAirBlock(pos.add(0, j, 1))) world.setBlockState(pos.add(0, j, 1), Blocks.VINE.getDefaultState().withProperty(net.minecraft.block.BlockVine.NORTH, true), 2);
+                            if (random.nextInt(3) == 0 && world.isAirBlock(pos.add(-1, j, 0))) world.setBlockState(pos.add(-1, j, 0), Blocks.VINE.getDefaultState().withProperty(BlockVine.EAST, true), 2);
+                            if (random.nextInt(3) == 0 && world.isAirBlock(pos.add(1, j, 0))) world.setBlockState(pos.add(1, j, 0), Blocks.VINE.getDefaultState().withProperty(BlockVine.WEST, true), 2);
+                            if (random.nextInt(3) == 0 && world.isAirBlock(pos.add(0, j, -1))) world.setBlockState(pos.add(0, j, -1), Blocks.VINE.getDefaultState().withProperty(BlockVine.SOUTH, true), 2);
+                            if (random.nextInt(3) == 0 && world.isAirBlock(pos.add(0, j, 1))) world.setBlockState(pos.add(0, j, 1), Blocks.VINE.getDefaultState().withProperty(BlockVine.NORTH, true), 2);
                         }
                     }
 

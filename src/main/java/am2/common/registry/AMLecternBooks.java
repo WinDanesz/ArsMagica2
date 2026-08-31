@@ -1,7 +1,6 @@
 package am2.common.registry;
 
 import am2.ArsMagica;
-import am2.common.ObeliskFuelHelper;
 import am2.common.config.AMConfig;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -79,7 +78,7 @@ public final class AMLecternBooks {
 
         ResourceLocation rl = new ResourceLocation(modid, itemid);
         Item item = ForgeRegistries.ITEMS.getValue(rl);
-        if (item == null || item == net.minecraft.init.Items.AIR) {
+        if (item == null || item == Items.AIR) {
             LOGGER.info("Item '{}' in {} not found (mod not loaded?). Skipping.", rl, configLabel);
             return null;
         }

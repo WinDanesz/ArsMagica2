@@ -38,6 +38,7 @@ fluid.liquid_essence=Liquid Essence
 #Item Names
 
 item.arsmagica2\:affinity_tome.name=Affinity Tome: %s
+item.arsmagica2\:ebwiz_spell_binding.name=Unidentified Spell
 item.arsmagica2\:essence.name=%s Essence
 item.arsmagica2\:vinteum_dust.name=Vinteum Dust
 item.arsmagica2\:purified_vinteum_dust.name=Purified Vinteum Dust

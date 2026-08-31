@@ -1,5 +1,7 @@
 package am2.common.power;
 
+import am2.ArsMagica;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -234,7 +236,7 @@ public abstract class AStar<T> {
                 expand(p);
             }
         } catch (Exception e) {
-            am2.ArsMagica.LOGGER.error("AStar.compute exception caught: ", e);
+            ArsMagica.LOGGER.error("AStar.compute exception caught: ", e);
         }
         return null;
 

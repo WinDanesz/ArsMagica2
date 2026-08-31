@@ -212,7 +212,7 @@ public class TileEntityInertSpawner extends TileEntityAMPower implements ISidedI
                             try {
                                 entity = (EntityLiving) clazz.getConstructor(World.class).newInstance(world);
                             } catch (Throwable t) {
-                                am2.ArsMagica.LOGGER.error("Exception caught: ", t);
+                                ArsMagica.LOGGER.error("Exception caught: ", t);
                                 return;
                             }
                             if (entity == null)

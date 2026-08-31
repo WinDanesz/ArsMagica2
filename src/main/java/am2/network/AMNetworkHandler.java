@@ -1,6 +1,7 @@
 package am2.network;
 
 import am2.common.network.packets.MessageTEUpdate;
+import am2.network.packets.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -35,105 +36,68 @@ public class AMNetworkHandler {
 
         // Server-bound packets (Client -> Server)
         // Player actions
-        registerPacket(am2.network.packets.PacketTKDistanceSync.class,
-                am2.network.packets.PacketTKDistanceSync.class, Side.SERVER);
-        registerPacket(am2.network.packets.PacketAbilityToggle.class,
-                am2.network.packets.PacketAbilityToggle.class, Side.SERVER);
-        registerPacket(am2.network.packets.PacketPlayerFlip.class,
-                am2.network.packets.PacketPlayerFlip.class, Side.SERVER);
-        registerPacket(am2.network.packets.PacketOcculusUnlock.class,
-                am2.network.packets.PacketOcculusUnlock.class, Side.SERVER);
-        registerPacket(am2.network.packets.PacketDisciplineLevelUp.class,
-                am2.network.packets.PacketDisciplineLevelUp.class, Side.SERVER);
-        registerPacket(am2.network.packets.PacketKeyAbilityPress.class,
-                am2.network.packets.PacketKeyAbilityPress.class, Side.SERVER);
+        registerPacket(PacketTKDistanceSync.class, PacketTKDistanceSync.class, Side.SERVER);
+        registerPacket(PacketAbilityToggle.class, PacketAbilityToggle.class, Side.SERVER);
+        registerPacket(PacketPlayerFlip.class, PacketPlayerFlip.class, Side.SERVER);
+        registerPacket(PacketOcculusUnlock.class, PacketOcculusUnlock.class, Side.SERVER);
+        registerPacket(PacketDisciplineLevelUp.class, PacketDisciplineLevelUp.class, Side.SERVER);
+        registerPacket(PacketKeyAbilityPress.class, PacketKeyAbilityPress.class, Side.SERVER);
 
         // Spell system
-        registerPacket(am2.network.packets.PacketSpellCustomize.class,
-                am2.network.packets.PacketSpellCustomize.class, Side.SERVER);
-        registerPacket(am2.network.packets.PacketSpellbookSlotChange.class,
-                am2.network.packets.PacketSpellbookSlotChange.class, Side.SERVER);
-        registerPacket(am2.network.packets.PacketSpellShapeGroupChange.class,
-                am2.network.packets.PacketSpellShapeGroupChange.class, Side.SERVER);
-        registerPacket(am2.network.packets.PacketCharmCast.class,
-                am2.network.packets.PacketCharmCast.class, Side.SERVER);
+        registerPacket(PacketSpellCustomize.class, PacketSpellCustomize.class, Side.SERVER);
+        registerPacket(PacketSpellbookSlotChange.class, PacketSpellbookSlotChange.class, Side.SERVER);
+        registerPacket(PacketSpellShapeGroupChange.class, PacketSpellShapeGroupChange.class, Side.SERVER);
+        registerPacket(PacketCharmCast.class, PacketCharmCast.class, Side.SERVER);
 
         // Keystone and armor
-        registerPacket(am2.network.packets.PacketSaveKeystoneCombo.class,
-                am2.network.packets.PacketSaveKeystoneCombo.class, Side.SERVER);
-        registerPacket(am2.network.packets.PacketSetKeystoneCombo.class,
-                am2.network.packets.PacketSetKeystoneCombo.class, Side.SERVER);
-        registerPacket(am2.network.packets.PacketImbueArmor.class,
-                am2.network.packets.PacketImbueArmor.class, Side.SERVER);
+        registerPacket(PacketSaveKeystoneCombo.class, PacketSaveKeystoneCombo.class, Side.SERVER);
+        registerPacket(PacketSetKeystoneCombo.class, PacketSetKeystoneCombo.class, Side.SERVER);
+        registerPacket(PacketImbueArmor.class, PacketImbueArmor.class, Side.SERVER);
 
         // Workbench
-        registerPacket(am2.network.packets.PacketWorkbenchLockRecipe.class,
-                am2.network.packets.PacketWorkbenchLockRecipe.class, Side.SERVER);
-        registerPacket(am2.network.packets.PacketWorkbenchSetRecipe.class,
-                am2.network.packets.PacketWorkbenchSetRecipe.class, Side.SERVER);
+        registerPacket(PacketWorkbenchLockRecipe.class, PacketWorkbenchLockRecipe.class, Side.SERVER);
+        registerPacket(PacketWorkbenchSetRecipe.class, PacketWorkbenchSetRecipe.class, Side.SERVER);
 
         // TileEntity updates (server-bound)
-        registerPacket(am2.network.packets.PacketInscriptionTableUpdate.class,
-                am2.network.packets.PacketInscriptionTableUpdate.class, Side.SERVER);
-        registerPacket(am2.network.packets.PacketParticleEmitterUpdate.class,
-                am2.network.packets.PacketParticleEmitterUpdate.class, Side.SERVER);
+        registerPacket(PacketInscriptionTableUpdate.class, PacketInscriptionTableUpdate.class, Side.SERVER);
+        registerPacket(PacketParticleEmitterUpdate.class, PacketParticleEmitterUpdate.class, Side.SERVER);
 
         // Power paths (server-bound)
-        registerPacket(am2.network.packets.PacketRequestPowerPaths.class,
-                am2.network.packets.PacketRequestPowerPaths.class, Side.SERVER);
+        registerPacket(PacketRequestPowerPaths.class, PacketRequestPowerPaths.class, Side.SERVER);
 
         // Client-bound packets (Server -> Client)
         // Player sync
-        registerPacket(am2.network.packets.PacketVelocityAdd.class,
-                am2.network.packets.PacketVelocityAdd.class, Side.CLIENT);
-        registerPacket(am2.network.packets.PacketPlayerLogin.class,
-                am2.network.packets.PacketPlayerLogin.class, Side.CLIENT);
-        registerPacket(am2.network.packets.PacketSyncWorldName.class,
-                am2.network.packets.PacketSyncWorldName.class, Side.CLIENT);
+        registerPacket(PacketVelocityAdd.class, PacketVelocityAdd.class, Side.CLIENT);
+        registerPacket(PacketPlayerLogin.class, PacketPlayerLogin.class, Side.CLIENT);
+        registerPacket(PacketSyncWorldName.class, PacketSyncWorldName.class, Side.CLIENT);
 
         // Data sync
-        registerPacket(am2.network.packets.PacketSyncAffinityData.class,
-                am2.network.packets.PacketSyncAffinityData.class, Side.CLIENT);
-        registerPacket(am2.network.packets.PacketSyncSkillData.class,
-                am2.network.packets.PacketSyncSkillData.class, Side.CLIENT);
-        registerPacket(am2.network.packets.PacketSyncCompendium.class,
-                am2.network.packets.PacketSyncCompendium.class, Side.CLIENT);
-        registerPacket(am2.network.packets.PacketSyncExtendedProps.class,
-                am2.network.packets.PacketSyncExtendedProps.class, Side.CLIENT);
+        registerPacket(PacketSyncAffinityData.class, PacketSyncAffinityData.class, Side.CLIENT);
+        registerPacket(PacketSyncSkillData.class, PacketSyncSkillData.class, Side.CLIENT);
+        registerPacket(PacketSyncCompendium.class, PacketSyncCompendium.class, Side.CLIENT);
+        registerPacket(PacketSyncExtendedProps.class, PacketSyncExtendedProps.class, Side.CLIENT);
 
         // Visual effects
-        registerPacket(am2.network.packets.PacketFlashArmorPiece.class,
-                am2.network.packets.PacketFlashArmorPiece.class, Side.CLIENT);
+        registerPacket(PacketFlashArmorPiece.class, PacketFlashArmorPiece.class, Side.CLIENT);
 
         // TileEntity sync (client-bound)
-        registerPacket(am2.network.packets.PacketCraftingAltarSync.class,
-                am2.network.packets.PacketCraftingAltarSync.class, Side.CLIENT);
-        registerPacket(am2.network.packets.PacketLecternSync.class,
-                am2.network.packets.PacketLecternSync.class, Side.CLIENT);
-        registerPacket(am2.network.packets.PacketCalefactorSync.class,
-                am2.network.packets.PacketCalefactorSync.class, Side.CLIENT);
-        registerPacket(am2.network.packets.PacketObeliskSync.class,
-                am2.network.packets.PacketObeliskSync.class, Side.CLIENT);
-        registerPacket(am2.network.packets.PacketArcaneDeconstructorSync.class,
-                am2.network.packets.PacketArcaneDeconstructorSync.class, Side.CLIENT);
+        registerPacket(PacketCraftingAltarSync.class, PacketCraftingAltarSync.class, Side.CLIENT);
+        registerPacket(PacketLecternSync.class, PacketLecternSync.class, Side.CLIENT);
+        registerPacket(PacketCalefactorSync.class, PacketCalefactorSync.class, Side.CLIENT);
+        registerPacket(PacketObeliskSync.class, PacketObeliskSync.class, Side.CLIENT);
+        registerPacket(PacketArcaneDeconstructorSync.class, PacketArcaneDeconstructorSync.class, Side.CLIENT);
 
         // Power and mana (client-bound)
-        registerPacket(am2.network.packets.PacketPowerPathResponse.class,
-                am2.network.packets.PacketPowerPathResponse.class, Side.CLIENT);
-        registerPacket(am2.network.packets.PacketManaLinkUpdate.class,
-                am2.network.packets.PacketManaLinkUpdate.class, Side.CLIENT);
+        registerPacket(PacketPowerPathResponse.class, PacketPowerPathResponse.class, Side.CLIENT);
+        registerPacket(PacketManaLinkUpdate.class, PacketManaLinkUpdate.class, Side.CLIENT);
 
         // Boss and visual effects (client-bound)
-        registerPacket(am2.network.packets.PacketEntityActionUpdate.class,
-                am2.network.packets.PacketEntityActionUpdate.class, Side.CLIENT);
-        registerPacket(am2.network.packets.PacketHecateDeath.class,
-                am2.network.packets.PacketHecateDeath.class, Side.CLIENT);
-        registerPacket(am2.network.packets.PacketStarFall.class,
-                am2.network.packets.PacketStarFall.class, Side.CLIENT);
+        registerPacket(PacketEntityActionUpdate.class, PacketEntityActionUpdate.class, Side.CLIENT);
+        registerPacket(PacketHecateDeath.class, PacketHecateDeath.class, Side.CLIENT);
+        registerPacket(PacketStarFall.class, PacketStarFall.class, Side.CLIENT);
 
         // Particle effects (client-bound)
-        registerPacket(am2.network.packets.PacketParticleSpawnSpecial.class,
-                am2.network.packets.PacketParticleSpawnSpecial.class, Side.CLIENT);
+        registerPacket(PacketParticleSpawnSpecial.class, PacketParticleSpawnSpecial.class, Side.CLIENT);
 
         // Legacy packets (previously on separate channels)
         registerPacket(MessageTEUpdate.MessageHolder.class, MessageTEUpdate.class, Side.CLIENT);
@@ -146,8 +110,7 @@ public class AMNetworkHandler {
      * @param message The packet message class
      * @param side    The side to register on (CLIENT or SERVER)
      */
-    private static <REQ extends IMessage, REPLY extends IMessage> void registerPacket(
-            Class<? extends IMessageHandler<REQ, REPLY>> packet, Class<REQ> message, Side side) {
+    private static <REQ extends IMessage, REPLY extends IMessage> void registerPacket(Class<? extends IMessageHandler<REQ, REPLY>> packet, Class<REQ> message, Side side) {
         if (side == Side.CLIENT) {
             INSTANCE.registerMessage(packet, message, packetId, Side.CLIENT);
         } else if (side == Side.SERVER) {

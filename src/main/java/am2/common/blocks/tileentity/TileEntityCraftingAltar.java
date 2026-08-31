@@ -4,8 +4,8 @@ import am2.ArsMagica;
 import am2.api.CraftingAltarMaterials;
 import am2.api.SpellRegistryHelper;
 import am2.api.blocks.*;
-import am2.api.extensions.ISpellCaster;
 import am2.api.extensions.ISkillData;
+import am2.api.extensions.ISpellCaster;
 import am2.api.power.IPowerNode;
 import am2.api.spell.SpellPart;
 import am2.client.particles.AMParticle;
@@ -16,12 +16,14 @@ import am2.common.blocks.BlockLectern;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.compat.electroblob.item.ItemEBWizSpellBinding;
 import am2.common.extensions.SkillData;
+import am2.common.items.ItemSpellBase;
 import am2.common.packet.AMDataReader;
 import am2.common.packet.AMDataWriter;
 import am2.common.power.PowerNodeRegistry;
 import am2.common.power.PowerTypes;
 import am2.common.registry.AMBlocks;
 import am2.common.registry.AMItems;
+import am2.common.registry.AMSounds;
 import am2.common.skill.Discipline;
 import am2.common.spell.SpellCaster;
 import am2.common.spell.component.Summon;
@@ -29,11 +31,9 @@ import am2.common.spell.shape.Binding;
 import am2.common.utils.KeyValuePair;
 import am2.common.utils.NBTUtils;
 import am2.common.utils.SpellUtils;
-import am2.common.registry.AMSounds;
 import am2.network.AMNetworkHandler;
 import am2.network.packets.PacketCraftingAltarSync;
 import com.google.common.collect.Lists;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockLever.EnumOrientation;
@@ -42,7 +42,9 @@ import net.minecraft.block.BlockStairs.EnumHalf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -52,8 +54,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
@@ -596,7 +600,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
             }
             List<EntityItem> components = lookForValidItems();
             ItemStack stack = getNextPlannedItem();
-            if (stack != null) for (EntityItem item : components) {
+            if (stack != null && stack != ItemStack.EMPTY) for (EntityItem item : components) {
                 if (item.isDead) continue;
                 ItemStack entityItemStack = item.getItem();
                 // Etherium items must be handled exclusively by the power-network mechanism
@@ -658,7 +662,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
                     } else {
                         lectern.setNeedsBook(true);
                     }
-                } else if (lecternStack.getItem() == net.minecraft.init.Items.WRITABLE_BOOK
+                } else if (lecternStack.getItem() == Items.WRITABLE_BOOK
                         && EBWizardryCompatBootstrap.isDiscoveryRitualEnabled()) {
                     // Writable book on lectern, discovery enabled: show blank_rune hint to start
                     lectern.setTooltipStack(new ItemStack(AMItems.blank_rune));
@@ -780,7 +784,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
             writer.add(pos.getZ());
             writer.add(COMPONENT_ADDED);
             writer.add(stack);
-            AMNetworkHandler.getNetwork().sendToAllAround(new PacketCraftingAltarSync(pos, writer.generate()), new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 32));
+            AMNetworkHandler.getNetwork().sendToAllAround(new PacketCraftingAltarSync(pos, writer.generate()), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 32));
         }
 
         if (matchCurrentRecipe()) {
@@ -1016,7 +1020,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
         if (podiumLocation == null) return false;
         TileEntityLectern lectern = (TileEntityLectern) world.getTileEntity(pos.add(podiumLocation));
         if (lectern == null || !lectern.hasStack()) return false;
-        return lectern.getStack().getItem() == net.minecraft.init.Items.WRITABLE_BOOK;
+        return lectern.getStack().getItem() == Items.WRITABLE_BOOK;
     }
 
     /**
@@ -1030,13 +1034,13 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
             {
                 // Cycle through element items using ticksExisted
                 ItemStack[] elementHints = {
-                        new ItemStack(net.minecraft.init.Items.COAL, 1, 1),          // charcoal = FIRE
-                        new ItemStack(net.minecraft.init.Items.SNOWBALL),             // ICE
-                        new ItemStack(net.minecraft.init.Items.REDSTONE),             // LIGHTNING
-                        new ItemStack(net.minecraft.init.Items.BONE),                 // NECROMANCY
-                        new ItemStack(net.minecraft.init.Blocks.STONE, 1, 1),         // granite = EARTH
-                        new ItemStack(am2.common.registry.AMBlocks.cerublossom),      // SORCERY
-                        new ItemStack(am2.common.registry.AMBlocks.aum),              // HEALING
+                        new ItemStack(Items.COAL, 1, 1),          // charcoal = FIRE
+                        new ItemStack(Items.SNOWBALL),             // ICE
+                        new ItemStack(Items.REDSTONE),             // LIGHTNING
+                        new ItemStack(Items.BONE),                 // NECROMANCY
+                        new ItemStack(Blocks.STONE, 1, 1),         // granite = EARTH
+                        new ItemStack(AMBlocks.cerublossom),      // SORCERY
+                        new ItemStack(AMBlocks.aum),              // HEALING
                 };
                 int idx = (ticksExisted / 40) % elementHints.length;
                 return elementHints[idx];
@@ -1045,9 +1049,9 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
             {
                 ItemStack[] tierHints = {
                         EBWizardryCompatBootstrap.getMagicCrystalStack(),  // NOVICE
-                        new ItemStack(am2.common.registry.AMItems.lesser_focus),          // APPRENTICE
-                        new ItemStack(am2.common.registry.AMItems.standard_focus),        // ADVANCED
-                        new ItemStack(am2.common.registry.AMItems.greater_focus),         // MASTER
+                        new ItemStack(AMItems.lesser_focus),          // APPRENTICE
+                        new ItemStack(AMItems.standard_focus),        // ADVANCED
+                        new ItemStack(AMItems.greater_focus),         // MASTER
                 };
                 int idx = (ticksExisted / 40) % tierHints.length;
                 return tierHints[idx];
@@ -1244,7 +1248,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
      */
     private void finalizeDiscoveryRitual() {
         // Find the player who started the ritual
-        net.minecraft.entity.player.EntityPlayer player = null;
+        EntityPlayer player = null;
         if (!lastCraftingPlayerName.isEmpty()) {
             player = world.getPlayerEntityByName(lastCraftingPlayerName);
         }
@@ -1260,7 +1264,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
             ISkillData skillData = SkillData.For(player);
             if (skillData != null && skillData.getAvailableDiscoveryPoints(discipline) <= 0) {
                 String elemName = EBWizardryCompatBootstrap.getElementDisplayName(discoveryElementOrdinal);
-                player.sendMessage(new net.minecraft.util.text.TextComponentTranslation(
+                player.sendMessage(new TextComponentTranslation(
                         "am2.craftingaltar.discovery.no_points", elemName));
                 // Ritual pauses – do NOT reset state, power is preserved
                 return;
@@ -1280,7 +1284,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
             if (player != null) {
                 String elemName = EBWizardryCompatBootstrap.getElementDisplayName(discoveryElementOrdinal);
                 String tierName = EBWizardryCompatBootstrap.getTierDisplayName(discoveryTierOrdinal);
-                player.sendMessage(new net.minecraft.util.text.TextComponentTranslation(
+                player.sendMessage(new TextComponentTranslation(
                         "am2.craftingaltar.discovery.exhausted", tierName, elemName));
             }
         } else {
@@ -1289,7 +1293,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
                 lectern.setStack(ItemStack.EMPTY);
             }
             // Spawn the spell book as a dropped item at the altar centre
-            net.minecraft.entity.item.EntityItem entityItem = new net.minecraft.entity.item.EntityItem(
+            EntityItem entityItem = new EntityItem(
                     world, pos.getX() + 0.5, pos.getY() - 1.5, pos.getZ() + 0.5, spellBook);
             entityItem.motionX = 0;
             entityItem.motionY = 0.1;
@@ -1353,7 +1357,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
                             // to the client automatically (capabilities are not synced by default).
                             if (!craftStack.hasTagCompound())
                                 craftStack.setTagCompound(new NBTTagCompound());
-                            craftStack.getTagCompound().setFloat(am2.common.items.ItemSpellBase.KEY_MANA_COST_CACHED,
+                            craftStack.getTagCompound().setFloat(ItemSpellBase.KEY_MANA_COST_CACHED,
                                     caster.getBaseManaCost(caster.getCurrentShapeGroup()));
                         }
                         if (!craftStack.hasTagCompound())
@@ -1399,7 +1403,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
             writer.add(pos.getZ());
             writer.add(CRAFTING_CHANGED);
             writer.add(crafting);
-            AMNetworkHandler.getNetwork().sendToAllAround(new PacketCraftingAltarSync(pos, writer.generate()), new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 32));
+            AMNetworkHandler.getNetwork().sendToAllAround(new PacketCraftingAltarSync(pos, writer.generate()), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 32));
         }
         if (crafting) {
             allAddedItems.clear();
@@ -1630,7 +1634,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
             if (addedItem == null)
                 continue;
             ItemStack stack = new ItemStack((addedItem));
-            if (stack.getItem() == null || stack.getItem() == net.minecraft.init.Items.AIR)
+            if (stack.getItem() == null || stack.getItem() == Items.AIR)
                 continue;
             this.allAddedItems.add(stack);
         }
@@ -1641,7 +1645,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
             if (addedItem == null)
                 continue;
             ItemStack stack = new ItemStack((addedItem));
-            if (stack.getItem() == null || stack.getItem() == net.minecraft.init.Items.AIR)
+            if (stack.getItem() == null || stack.getItem() == Items.AIR)
                 continue;
             this.currentAddedItems.add(stack);
         }

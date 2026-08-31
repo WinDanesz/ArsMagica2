@@ -2,7 +2,6 @@ package am2.api.spell;
 
 import am2.ArsMagica;
 import am2.api.affinity.Affinity;
-import am2.common.config.AMConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;

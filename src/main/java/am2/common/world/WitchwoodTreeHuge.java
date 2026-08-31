@@ -4,6 +4,7 @@ import am2.common.registry.AMBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockSapling;
+import net.minecraft.block.BlockVine;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -273,10 +274,10 @@ public class WitchwoodTreeHuge extends WorldGenBigTree {
                 worldObj.setBlockState(blockPos, par3, 2);
                 
                 if (par3.getBlock() == AMBlocks.witchwood_log) {
-                    if (rand.nextInt(3) == 0 && worldObj.isAirBlock(blockPos.west())) worldObj.setBlockState(blockPos.west(), Blocks.VINE.getDefaultState().withProperty(net.minecraft.block.BlockVine.EAST, true), 2);
-                    if (rand.nextInt(3) == 0 && worldObj.isAirBlock(blockPos.east())) worldObj.setBlockState(blockPos.east(), Blocks.VINE.getDefaultState().withProperty(net.minecraft.block.BlockVine.WEST, true), 2);
-                    if (rand.nextInt(3) == 0 && worldObj.isAirBlock(blockPos.north())) worldObj.setBlockState(blockPos.north(), Blocks.VINE.getDefaultState().withProperty(net.minecraft.block.BlockVine.SOUTH, true), 2);
-                    if (rand.nextInt(3) == 0 && worldObj.isAirBlock(blockPos.south())) worldObj.setBlockState(blockPos.south(), Blocks.VINE.getDefaultState().withProperty(net.minecraft.block.BlockVine.NORTH, true), 2);
+                    if (rand.nextInt(3) == 0 && worldObj.isAirBlock(blockPos.west())) worldObj.setBlockState(blockPos.west(), Blocks.VINE.getDefaultState().withProperty(BlockVine.EAST, true), 2);
+                    if (rand.nextInt(3) == 0 && worldObj.isAirBlock(blockPos.east())) worldObj.setBlockState(blockPos.east(), Blocks.VINE.getDefaultState().withProperty(BlockVine.WEST, true), 2);
+                    if (rand.nextInt(3) == 0 && worldObj.isAirBlock(blockPos.north())) worldObj.setBlockState(blockPos.north(), Blocks.VINE.getDefaultState().withProperty(BlockVine.SOUTH, true), 2);
+                    if (rand.nextInt(3) == 0 && worldObj.isAirBlock(blockPos.south())) worldObj.setBlockState(blockPos.south(), Blocks.VINE.getDefaultState().withProperty(BlockVine.NORTH, true), 2);
                 }
             }
         }

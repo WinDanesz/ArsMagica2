@@ -1,13 +1,13 @@
 package am2.common.bosses.ai;
 
+import am2.common.animation.AIAnimation;
+import am2.common.animation.IAnimatedEntity;
 import am2.common.bosses.BossActions;
 import am2.common.bosses.EntityEnderGuardian;
 import am2.common.bosses.IArsMagicaBoss;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
-import am2.common.animation.AIAnimation;
-import am2.common.animation.IAnimatedEntity;
 
 public class EntityAIShadowstep extends AIAnimation {
 

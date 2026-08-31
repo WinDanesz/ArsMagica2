@@ -11,6 +11,7 @@ import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -53,6 +54,6 @@ public class EBWizBlast extends SpellModifier implements IEBWizExclusive {
 
 
     public Set<Affinity> getAffinity() {
-        return java.util.Collections.singleton(Affinities.fire);
+        return Collections.singleton(Affinities.fire);
     }
 }

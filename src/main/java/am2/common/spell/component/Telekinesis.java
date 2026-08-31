@@ -37,7 +37,7 @@ public class Telekinesis extends SpellComponent {
     public boolean applyEffectBlock(SpellData spell, World world, BlockPos blockPos, EnumFacing blockFace, double impactX, double impactY, double impactZ, EntityLivingBase caster) {
         if (!world.isRemote && caster instanceof EntityPlayer) {
             IBlockState state = world.getBlockState(blockPos);
-            net.minecraft.block.Block block = state.getBlock();
+            Block block = state.getBlock();
             if (block instanceof BlockLever || block instanceof BlockButton ||
                     block instanceof BlockDoor || block instanceof BlockTrapDoor ||
                     block instanceof BlockFenceGate) {

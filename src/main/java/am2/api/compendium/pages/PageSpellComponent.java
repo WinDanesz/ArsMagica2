@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -102,7 +103,7 @@ public class PageSpellComponent extends CompendiumPage<SpellPart> {
         int startX = 72 - (8 * modifiers.size());
         int yOffset = 10;
         if (!modifiers.isEmpty()) {
-            String shapeName = net.minecraft.client.resources.I18n.format(element instanceof SpellModifier ? "am2.gui.modifies" : "am2.gui.modifiedBy");
+            String shapeName = I18n.format(element instanceof SpellModifier ? "am2.gui.modifies" : "am2.gui.modifiedBy");
             mc.fontRenderer.drawString(shapeName, posX + 72 - (mc.fontRenderer.getStringWidth(shapeName) / 2), posY, 0);
             GlStateManager.color(1.0f, 1.0f, 1.0f);
         }

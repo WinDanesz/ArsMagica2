@@ -7,6 +7,8 @@ import am2.api.spell.SpellModifiers;
 import am2.common.LogHelper;
 import am2.common.registry.Affinities;
 import com.google.common.collect.Sets;
+import electroblob.wizardry.util.NBTExtras;
+import electroblob.wizardry.util.ParticleBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
@@ -70,7 +72,7 @@ public class Metamorphosis extends SpellComponent {
         // Copy NBT state but strip the UUID so the new entity gets a fresh identity
         NBTTagCompound nbt = new NBTTagCompound();
         living.writeToNBT(nbt);
-        electroblob.wizardry.util.NBTExtras.removeUniqueId(nbt, "UUID");
+        NBTExtras.removeUniqueId(nbt, "UUID");
         newEntity.readFromNBT(nbt);
 
         // Kill the original entity and spawn the transformed one
@@ -97,12 +99,12 @@ public class Metamorphosis extends SpellComponent {
         // Dark-magic burst centred on the target — safe to call directly since this class
         // is only loaded when EBWizardry is present.
         for (int i = 0; i < 20; i++) {
-            electroblob.wizardry.util.ParticleBuilder.create(electroblob.wizardry.util.ParticleBuilder.Type.DARK_MAGIC,
+            ParticleBuilder.create(ParticleBuilder.Type.DARK_MAGIC,
                             rand, x, y + 1.0, z, 1.0, false)
                     .clr(0.4f, 0.0f, 0.8f)
                     .spawn(world);
         }
-        electroblob.wizardry.util.ParticleBuilder.create(electroblob.wizardry.util.ParticleBuilder.Type.BUFF)
+        ParticleBuilder.create(ParticleBuilder.Type.BUFF)
                 .pos(x, y + 1.0, z)
                 .clr(0x6A0DAD)
                 .spawn(world);

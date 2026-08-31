@@ -144,7 +144,7 @@ public class TileEntityManaBattery extends TileEntityAMPower implements ITileEnt
     }
 
     @Override
-    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt) {
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         int oldLight = this.world.getBlockState(this.getPos()).getLightValue(this.world, this.getPos());
         this.readFromNBT(pkt.getNbtCompound());
         int newLight = this.world.getBlockState(this.getPos()).getLightValue(this.world, this.getPos());

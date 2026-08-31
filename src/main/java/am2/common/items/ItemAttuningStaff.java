@@ -7,6 +7,7 @@ import am2.common.power.PowerNodeRegistry;
 import am2.common.power.PowerTypes;
 import am2.common.registry.AMSkills;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -132,7 +133,7 @@ public class ItemAttuningStaff extends Item {
     @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack par1ItemStack) {
         if (isMagiTechStaff()) {
-            return net.minecraft.client.resources.I18n.format("item.arsmagica2:attuning_staff.name");
+            return I18n.format("item.arsmagica2:attuning_staff.name");
         }
         String name = super.getItemStackDisplayName(par1ItemStack);
         if (par1ItemStack.hasTagCompound() && par1ItemStack.getTagCompound().hasKey(NBT_SPELL_NAME))

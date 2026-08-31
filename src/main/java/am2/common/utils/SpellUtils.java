@@ -70,6 +70,11 @@ public class SpellUtils {
         float factor = (float) (ext.getCurrentLevel() < 20 ?
                 0.5 + (0.5 * (ext.getCurrentLevel() / 19)) :
                 1.0 + (1.0 * (ext.getCurrentLevel() - 20) / 79));
+                
+        if (caster.getAttributeMap() != null && caster.getAttributeMap().getAttributeInstance(ArsMagicaAPI.spellDamageMultiplier) != null) {
+            factor *= (float) caster.getAttributeMap().getAttributeInstance(ArsMagicaAPI.spellDamageMultiplier).getAttributeValue();
+        }
+        
         return damage * factor;
     }
 
@@ -123,7 +128,7 @@ public class SpellUtils {
 
         magnitude *= ArsMagica.config.getDamageMultiplier();
         if (dmgSrcPlayer != null) {
-            am2.api.affinity.Affinity dominantAffinity = spellStack != null ? spellStack.getMainShift() : null;
+            Affinity dominantAffinity = spellStack != null ? spellStack.getMainShift() : null;
             magnitude *= EBWizardryCompatBootstrap.getArtefactPotencyMultiplier(dmgSrcPlayer, dominantAffinity);
         }
 

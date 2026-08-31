@@ -4,8 +4,8 @@ import am2.common.entity.ai.selectors.SummonEntitySelector;
 import am2.common.utils.EntityUtils;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
+import net.minecraft.entity.monster.IMob;
 
 public class EntityAIHurtByTargetExcludeOwner extends EntityAIHurtByTarget {
 

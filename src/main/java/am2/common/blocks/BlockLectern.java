@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -159,8 +160,8 @@ public class BlockLectern extends BlockAMSpecialRenderContainer {
     }
 
     @Override
-    public net.minecraft.util.EnumBlockRenderType getRenderType(IBlockState state) {
-        return net.minecraft.util.EnumBlockRenderType.MODEL;
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.MODEL;
     }
 
 }

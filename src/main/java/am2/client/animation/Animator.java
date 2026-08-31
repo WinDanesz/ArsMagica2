@@ -1,12 +1,12 @@
 package am2.client.animation;
 
+import am2.common.animation.AnimationAPI;
+import am2.common.animation.IAnimatedEntity;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import am2.common.animation.AnimationAPI;
-import am2.common.animation.IAnimatedEntity;
 
 import java.util.HashMap;
 

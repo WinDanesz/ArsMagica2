@@ -52,9 +52,9 @@ public class SpellRenderer implements ItemMeshDefinition {
                 return toReturn;
             }
         } catch (URISyntaxException e) {
-            am2.ArsMagica.LOGGER.error("SpellRenderer.getResourceListingURISyntaxException caught: ", e);
+            ArsMagica.LOGGER.error("SpellRenderer.getResourceListingURISyntaxException caught: ", e);
         } catch (IOException e) {
-            am2.ArsMagica.LOGGER.error("SpellRenderer.getResourceListingIOException caught: ", e);
+            ArsMagica.LOGGER.error("SpellRenderer.getResourceListingIOException caught: ", e);
         }
         return Lists.newArrayList();
     }
@@ -71,7 +71,7 @@ public class SpellRenderer implements ItemMeshDefinition {
                 toReturn.add(new ResourceLocation("arsmagica2:" + iconsPrefix + name.replace(".png", "")));
             }
         } catch (IOException e) {
-            am2.ArsMagica.LOGGER.error("SpellRenderer.processDirectory IOException caught: ", e);
+            ArsMagica.LOGGER.error("SpellRenderer.processDirectory IOException caught: ", e);
         }
         Collections.sort(toReturn, (o1, o2) -> o1.toString().compareTo(o2.toString()));
         return toReturn;

@@ -8,6 +8,7 @@ import am2.client.particles.AMParticle;
 import am2.client.particles.AMParticleDefs;
 import am2.client.particles.ParticleFadeOut;
 import am2.client.particles.ParticleFloatUpward;
+import am2.common.registry.Affinities;
 import am2.common.utils.DummyEntityPlayer;
 import com.google.common.base.Optional;
 import net.minecraft.entity.Entity;
@@ -66,8 +67,8 @@ public class EntitySpellPuddle extends Entity {
             int color = spell.getColor(world, caster, null);
             if (color == -1) color = spell.getMainShift().getColor();
             // Manual color overrides for puddle visuals
-            if (spell.getMainShift() == am2.common.registry.Affinities.fire)      color = 0xFF7700;
-            if (spell.getMainShift() == am2.common.registry.Affinities.lightning) color = 0x4488FF;
+            if (spell.getMainShift() == Affinities.fire)      color = 0xFF7700;
+            if (spell.getMainShift() == Affinities.lightning) color = 0x4488FF;
             this.dataManager.set(WATCHER_COLOR, color);
         }
     }

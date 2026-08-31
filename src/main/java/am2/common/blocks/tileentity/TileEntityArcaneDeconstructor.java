@@ -5,7 +5,10 @@ import am2.api.ArsMagicaAPI;
 import am2.api.blocks.IKeystoneLockable;
 import am2.api.extensions.ISpellCaster;
 import am2.api.spell.SpellPart;
-import am2.client.particles.*;
+import am2.client.particles.AMParticle;
+import am2.client.particles.ParticleFadeOut;
+import am2.client.particles.ParticleFloatUpward;
+import am2.client.particles.ParticleOrbitPoint;
 import am2.common.items.ItemCrystalPhylactery;
 import am2.common.packet.AMDataReader;
 import am2.common.packet.AMDataWriter;
@@ -35,8 +38,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -150,7 +152,7 @@ public class TileEntityArcaneDeconstructor extends TileEntityAMPower implements 
                 }
             }
             if (this.shouldSync()) {
-                AMNetworkHandler.getNetwork().sendToAllAround(new PacketArcaneDeconstructorSync(pos, this.createSyncPacket()), new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
+                AMNetworkHandler.getNetwork().sendToAllAround(new PacketArcaneDeconstructorSync(pos, this.createSyncPacket()), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
                 this.confirm();
             }
         }

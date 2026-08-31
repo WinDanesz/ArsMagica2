@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 /**
  * Fired each tick that the Arcane Reconstructor block spends repairing an item.
  *
- * <p>This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.
+ * <p>This event is {@link Cancelable}.
  * Cancel it to skip that repair tick (the item durability will not be restored for
  * the current tick, though the reconstructor keeps running).</p>
  *

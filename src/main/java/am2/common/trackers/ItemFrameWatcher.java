@@ -5,7 +5,6 @@ import am2.client.particles.AMParticle;
 import am2.client.particles.ParticleApproachEntity;
 import am2.client.particles.ParticleColorShift;
 import am2.client.particles.ParticleHoldPosition;
-import am2.common.registry.AMBlocks;
 import am2.common.registry.AMItems;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Items;

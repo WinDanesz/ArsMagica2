@@ -1,5 +1,6 @@
 package am2.client.blocks.render;
 
+import am2.ArsMagica;
 import am2.api.math.AMVector3;
 import am2.client.bosses.renderers.RenderItemNoBob;
 import am2.client.gui.AMGuiHelper;
@@ -151,7 +152,7 @@ public class TileArcaneReconstructorRenderer extends TileEntitySpecialRenderer<T
             t.draw();
             GlStateManager.popMatrix();
         } catch (Throwable trowable) {
-            am2.ArsMagica.LOGGER.error("ArcaneReconstructorRenderer.renderGroup exception caught: ", trowable);
+            ArsMagica.LOGGER.error("ArcaneReconstructorRenderer.renderGroup exception caught: ", trowable);
         }
     }
 

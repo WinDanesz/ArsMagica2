@@ -13,7 +13,6 @@ import am2.common.utils.EntityUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,12 +29,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class ItemSpellBase extends Item {
 
     @Override
     @Nullable
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         return new SpellCaster();
     }
 
@@ -152,7 +153,7 @@ public class ItemSpellBase extends Item {
                 int currentGroup = caster.getCurrentShapeGroup();
                 List<List<List<SpellPart>>> shapeGroups = caster.getShapeGroups();
                 List<List<SpellPart>> common = caster.getSpellCommon();
-                List<List<SpellPart>> stages = new java.util.ArrayList<>();
+                List<List<SpellPart>> stages = new ArrayList<>();
                 if (currentGroup < shapeGroups.size()) {
                     stages.addAll(shapeGroups.get(currentGroup));
                 }

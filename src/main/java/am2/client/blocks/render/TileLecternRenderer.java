@@ -1,8 +1,7 @@
 package am2.client.blocks.render;
 
-import am2.client.models.ModelArchmagePodium;
+import am2.ArsMagica;
 import am2.common.blocks.BlockLectern;
-import am2.common.blocks.tileentity.TileEntityArcaneDeconstructor;
 import am2.common.blocks.tileentity.TileEntityLectern;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBook;
@@ -13,7 +12,6 @@ import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -197,7 +195,7 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
             RenderHelper.enableStandardItemLighting();
         }
         catch (Exception e) {
-            am2.ArsMagica.LOGGER.error("LecternRenderer.render exception caught: ", e);
+            ArsMagica.LOGGER.error("LecternRenderer.render exception caught: ", e);
             return;
         }
         GlStateManager.popMatrix();

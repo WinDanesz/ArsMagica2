@@ -1,5 +1,6 @@
 package am2.common.utils;
 
+import am2.ArsMagica;
 import am2.common.LogHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -17,7 +18,7 @@ public class RenderFactory<T extends Entity> implements IRenderFactory<T> {
         try {
             this.constructor = clazz.getConstructor(RenderManager.class);
         } catch (NoSuchMethodException | SecurityException e) {
-            am2.ArsMagica.LOGGER.error("Exception caught: ", e);
+            ArsMagica.LOGGER.error("Exception caught: ", e);
         }
     }
 

@@ -2,9 +2,7 @@ package am2.common.blocks;
 
 import am2.common.registry.AMBlocks;
 import am2.common.registry.AMItems;
-import am2.common.registry.AMTabs;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.util.IStringSerializable;

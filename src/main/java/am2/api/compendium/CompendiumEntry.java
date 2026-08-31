@@ -1,5 +1,6 @@
 package am2.api.compendium;
 
+import am2.ArsMagica;
 import am2.api.compendium.pages.CompendiumPage;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
@@ -144,7 +145,7 @@ public class CompendiumEntry {
                         CompendiumPage<?> page = CompendiumPage.getCompendiumPage(Entity.class, entity);
                         if (page != null) pages.add(page);
                     } catch (Exception e) {
-                        am2.ArsMagica.LOGGER.error("Failed to instantiate entity class for compendium: {}", obj, e);
+                        ArsMagica.LOGGER.error("Failed to instantiate entity class for compendium: {}", obj, e);
                     }
                 }
             } else {

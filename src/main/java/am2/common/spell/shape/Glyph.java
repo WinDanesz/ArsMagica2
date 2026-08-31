@@ -3,6 +3,7 @@ package am2.common.spell.shape;
 import am2.api.affinity.Affinity;
 import am2.api.extensions.IEntityExtension;
 import am2.api.spell.SpellData;
+import am2.api.spell.SpellModifiers;
 import am2.api.spell.SpellShape;
 import am2.common.extensions.EntityExtension;
 import am2.common.registry.AMItems;
@@ -24,6 +25,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import java.util.EnumSet;
+import java.util.UUID;
 
 public class Glyph extends SpellShape {
 
@@ -75,7 +77,7 @@ public class Glyph extends SpellShape {
                 double gx = ext.getGlyphX();
                 double gy = ext.getGlyphY();
                 double gz = ext.getGlyphZ();
-                java.util.UUID entityId = ext.getGlyphEntityId();
+                UUID entityId = ext.getGlyphEntityId();
                 NBTTagCompound storedSpellTag = ext.getGlyphSpell();
                 ext.clearGlyph();
                 if (storedSpellTag == null) {
@@ -116,8 +118,8 @@ public class Glyph extends SpellShape {
     }
 
     @Override
-    public EnumSet<am2.api.spell.SpellModifiers> getModifiers() {
-        return EnumSet.noneOf(am2.api.spell.SpellModifiers.class);
+    public EnumSet<SpellModifiers> getModifiers() {
+        return EnumSet.noneOf(SpellModifiers.class);
     }
 
     @Override

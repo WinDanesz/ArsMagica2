@@ -2,6 +2,8 @@ package am2;
 
 import am2.api.spell.SpellPart;
 import am2.common.CommonProxy;
+import am2.common.advancement.AMAdvancementTriggers;
+import am2.common.animation.AnimationAPI;
 import am2.common.commands.CommandArsMagica;
 import am2.common.commands.CommandRespec;
 import am2.common.config.AMConfig;
@@ -26,7 +28,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import am2.common.animation.AnimationAPI;
 
 import java.io.File;
 import java.util.Properties;
@@ -91,7 +92,7 @@ public class ArsMagica {
         proxy.init();
         AnimationAPI.init();
         CommonProxy.initOreDict();
-        am2.common.advancement.AMAdvancementTriggers.register();
+        AMAdvancementTriggers.register();
         config.init();
         StaffPresets.init(config.getStaffPresets());
     }

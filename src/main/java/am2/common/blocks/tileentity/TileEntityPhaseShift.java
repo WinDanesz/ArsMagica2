@@ -5,7 +5,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -63,7 +66,7 @@ public class TileEntityPhaseShift extends TileEntity implements ITickable {
     /**
      * Checks if the adjacent block at the given position is also a phase shift block.
      */
-    public boolean isAdjacentPhaseShift(net.minecraft.util.EnumFacing facing) {
+    public boolean isAdjacentPhaseShift(EnumFacing facing) {
         if (world == null) return false;
         return world.getBlockState(pos.offset(facing)).getBlock() instanceof BlockPhaseShift;
     }
@@ -104,12 +107,12 @@ public class TileEntityPhaseShift extends TileEntity implements ITickable {
     }
 
     @Override
-    public net.minecraft.network.play.server.SPacketUpdateTileEntity getUpdatePacket() {
-        return new net.minecraft.network.play.server.SPacketUpdateTileEntity(pos, 0, getUpdateTag());
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        return new SPacketUpdateTileEntity(pos, 0, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt) {
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         readFromNBT(pkt.getNbtCompound());
     }
 }

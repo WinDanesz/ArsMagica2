@@ -1,5 +1,6 @@
 package am2.common.container;
 
+import am2.common.items.ItemSpellBook;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
@@ -119,10 +120,10 @@ public class InventorySpellBook implements IInventory {
 
     @Override
     public void markDirty() {
-        if (this.bagStack != null && !this.bagStack.isEmpty() && this.bagStack.getItem() instanceof am2.common.items.ItemSpellBook) {
+        if (this.bagStack != null && !this.bagStack.isEmpty() && this.bagStack.getItem() instanceof ItemSpellBook) {
             ItemStack[] items = new ItemStack[inventorySize];
             for (int i = 0; i < inventorySize; i++) items[i] = inventoryContents.get(i);
-            ((am2.common.items.ItemSpellBook)this.bagStack.getItem()).updateStackTagCompound(this.bagStack, items);
+            ((ItemSpellBook)this.bagStack.getItem()).updateStackTagCompound(this.bagStack, items);
         }
     }
 

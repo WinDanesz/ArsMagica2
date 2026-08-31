@@ -16,8 +16,10 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.world.World;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class EntitySpellOrb extends Entity {
 
@@ -135,8 +137,8 @@ public class EntitySpellOrb extends Entity {
                             caster.getEntityBoundingBox().grow(6))
                             .stream()
                             .filter(e -> e.getShooter() == caster)
-                            .sorted(java.util.Comparator.comparingInt(EntitySpellOrb::getOrbIndex))
-                            .collect(java.util.stream.Collectors.toList());
+                            .sorted(Comparator.comparingInt(EntitySpellOrb::getOrbIndex))
+                            .collect(Collectors.toList());
                     int total = siblings.size();
                     for (int i = 0; i < total; i++) {
                         EntitySpellOrb sibling = siblings.get(i);

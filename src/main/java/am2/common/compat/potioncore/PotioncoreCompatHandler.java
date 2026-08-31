@@ -1,5 +1,7 @@
 package am2.common.compat.potioncore;
 
+import am2.ArsMagica;
+import am2.api.SpellRegistryHelper;
 import am2.api.skill.SkillPoint;
 import am2.api.spell.SpellPart;
 import am2.common.compat.potioncore.spells.Corrosion;
@@ -18,8 +20,8 @@ public final class PotioncoreCompatHandler {
     private PotioncoreCompatHandler() {}
 
     public static void registerSpellParts(IForgeRegistry<SpellPart> registry) {
-        am2.api.SpellRegistryHelper.registerSpellComponent(registry, "corrosion",
-                new ResourceLocation(am2.ArsMagica.MODID, "items/spells/components/corrosion"),
+        SpellRegistryHelper.registerSpellComponent(registry, "corrosion",
+                new ResourceLocation(ArsMagica.MODID, "items/spells/components/corrosion"),
                 SkillPoint.SILVER_POINT,
                 new Corrosion(),
                 SkillTrees.TREE_OFFENSE, 75, 450);

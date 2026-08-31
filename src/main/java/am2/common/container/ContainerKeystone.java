@@ -3,7 +3,6 @@ package am2.common.container;
 import am2.common.container.slot.SlotRuneOnly;
 import am2.common.items.ItemKeystone;
 import am2.common.items.ItemKeystone.KeystoneCombination;
-import am2.common.items.ItemRune;
 import am2.common.items.ItemRuneBag;
 import am2.common.registry.AMItems;
 import am2.common.utils.InventoryUtilities;

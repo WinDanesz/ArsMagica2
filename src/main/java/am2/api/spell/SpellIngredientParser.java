@@ -1,5 +1,6 @@
 package am2.api.spell;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
@@ -88,8 +89,8 @@ public final class SpellIngredientParser {
             } else if (o instanceof Item) {
                 ResourceLocation key = ForgeRegistries.ITEMS.getKey((Item) o);
                 if (key != null) result.add(key.toString() + ":0");
-            } else if (o instanceof net.minecraft.block.Block) {
-                ResourceLocation key = ForgeRegistries.BLOCKS.getKey((net.minecraft.block.Block) o);
+            } else if (o instanceof Block) {
+                ResourceLocation key = ForgeRegistries.BLOCKS.getKey((Block) o);
                 if (key != null) result.add(key.toString() + ":0");
             } else if (o instanceof String) {
                 String s = (String) o;

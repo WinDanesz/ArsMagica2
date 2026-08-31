@@ -13,6 +13,7 @@ import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class EntityWaterElemental extends EntityMob {
@@ -75,7 +76,7 @@ public class EntityWaterElemental extends EntityMob {
     }
 
     @Override
-    protected net.minecraft.util.ResourceLocation getLootTable() {
+    protected ResourceLocation getLootTable() {
         return AMLoot.WATER_ELEMENTAL_LOOT;
     }
 

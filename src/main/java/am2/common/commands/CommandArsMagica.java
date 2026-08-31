@@ -17,6 +17,7 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -142,7 +143,7 @@ public class CommandArsMagica extends CommandBase {
         EntityPlayer player = getCommandSenderAsPlayer(sender);
         ItemStack heldItem = player.getHeldItemMainhand();
         if (heldItem.isEmpty()) throw new CommandException("You must be holding an item");
-        if (!(heldItem.getItem() instanceof net.minecraft.item.ItemArmor)) throw new CommandException("The held item must be an armor piece");
+        if (!(heldItem.getItem() instanceof ItemArmor)) throw new CommandException("The held item must be an armor piece");
         float amount = (float) parseDouble(args[1]);
         if (amount <= 0) throw new CommandException("Amount must be positive");
         ArmorHelper.addXPToArmor(amount, heldItem);

@@ -1,6 +1,5 @@
 package am2.client.blocks.render;
 
-import am2.common.blocks.BlockIllusionBlock;
 import am2.common.blocks.tileentity.TileEntityIllusionBlock;
 import am2.common.registry.AMBlocks;
 import net.minecraft.block.state.IBlockState;
@@ -15,6 +14,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
+import net.minecraftforge.client.ForgeHooksClient;
 
 public class TileIllusionBlockRenderer extends TileEntitySpecialRenderer<TileEntityIllusionBlock> {
 
@@ -75,7 +75,7 @@ public class TileIllusionBlockRenderer extends TileEntitySpecialRenderer<TileEnt
                 .getAtlasSprite("minecraft:blocks/destroy_stage_" + destroyStage);
         IBakedModel baseModel = Minecraft.getMinecraft().getBlockRendererDispatcher()
                 .getBlockModelShapes().getModelForState(te.getMimicBlock());
-        IBakedModel damageModel = net.minecraftforge.client.ForgeHooksClient
+        IBakedModel damageModel = ForgeHooksClient
                 .getDamageModel(baseModel, sprite, te.getMimicBlock(), te.getWorld(), te.getPos());
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buf = tessellator.getBuffer();

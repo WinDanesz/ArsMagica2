@@ -5,19 +5,22 @@ import am2.common.entity.EntityDryad;
 import am2.common.entity.EntityManaCreeper;
 import am2.common.entity.EntityManaElemental;
 import am2.common.registry.AMBlocks;
-import net.minecraft.block.BlockDirt;
-import net.minecraft.block.BlockVine;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeDecorator;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraft.world.gen.feature.WorldGenBlockBlob;
+import net.minecraft.world.gen.feature.WorldGenTallGrass;
+import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 
@@ -37,13 +40,13 @@ public class BiomeWitchwoodForest extends Biome {
     private static int biomeId;
     private static BiomeDecorator decorator;
     
-    private static net.minecraft.block.Block crystalFlowerBlock = null;
+    private static Block crystalFlowerBlock = null;
     private static boolean crystalFlowerSearched = false;
 
-    private net.minecraft.block.Block getCrystalFlower() {
+    private Block getCrystalFlower() {
         if (!crystalFlowerSearched) {
-            crystalFlowerBlock = net.minecraft.block.Block.REGISTRY.getObject(new net.minecraft.util.ResourceLocation("ebwizardry", "crystal_flower"));
-            if (crystalFlowerBlock == net.minecraft.init.Blocks.AIR) {
+            crystalFlowerBlock = Block.REGISTRY.getObject(new ResourceLocation("ebwizardry", "crystal_flower"));
+            if (crystalFlowerBlock == Blocks.AIR) {
                 crystalFlowerBlock = null;
             }
             crystalFlowerSearched = true;
@@ -85,13 +88,13 @@ public class BiomeWitchwoodForest extends Biome {
     }
 
     @Override
-    public net.minecraft.world.gen.feature.WorldGenerator getRandomWorldGenForGrass(Random rand) {
-        return rand.nextInt(4) == 0 ? new net.minecraft.world.gen.feature.WorldGenTallGrass(net.minecraft.block.BlockTallGrass.EnumType.FERN) : new net.minecraft.world.gen.feature.WorldGenTallGrass(net.minecraft.block.BlockTallGrass.EnumType.GRASS);
+    public WorldGenerator getRandomWorldGenForGrass(Random rand) {
+        return rand.nextInt(4) == 0 ? new WorldGenTallGrass(BlockTallGrass.EnumType.FERN) : new WorldGenTallGrass(BlockTallGrass.EnumType.GRASS);
     }
 
     @Override
     public void decorate(World worldIn, Random rand, BlockPos pos) {
-        DOUBLE_PLANT_GENERATOR.setPlantType(net.minecraft.block.BlockDoublePlant.EnumPlantType.FERN);
+        DOUBLE_PLANT_GENERATOR.setPlantType(BlockDoublePlant.EnumPlantType.FERN);
         for (int i = 0; i < rand.nextInt(5); ++i) {
             int x = rand.nextInt(16) + 8;
             int z = rand.nextInt(16) + 8;
@@ -102,15 +105,15 @@ public class BiomeWitchwoodForest extends Biome {
         this.decorator.decorate(worldIn, rand, this, pos);
 
         // Electroblob's Wizardry Crystal Flowers
-        net.minecraft.block.Block crystalFlower = getCrystalFlower();
-        if (crystalFlower != null && crystalFlower instanceof net.minecraft.block.BlockBush && rand.nextInt(4) == 0) {
+        Block crystalFlower = getCrystalFlower();
+        if (crystalFlower != null && crystalFlower instanceof BlockBush && rand.nextInt(4) == 0) {
             int x = rand.nextInt(16) + 8;
             int z = rand.nextInt(16) + 8;
             BlockPos clusterPos = worldIn.getHeight(pos.add(x, 0, z));
 
             for (int j = 0; j < 6; ++j) {
                 BlockPos p = clusterPos.add(rand.nextInt(8) - rand.nextInt(8), rand.nextInt(4) - rand.nextInt(4), rand.nextInt(8) - rand.nextInt(8));
-                if (worldIn.isAirBlock(p) && p.getY() < 255 && ((net.minecraft.block.BlockBush)crystalFlower).canBlockStay(worldIn, p, crystalFlower.getDefaultState())) {
+                if (worldIn.isAirBlock(p) && p.getY() < 255 && ((BlockBush)crystalFlower).canBlockStay(worldIn, p, crystalFlower.getDefaultState())) {
                     worldIn.setBlockState(p, crystalFlower.getDefaultState(), 2);
                 }
             }
@@ -299,7 +302,7 @@ public class BiomeWitchwoodForest extends Biome {
     }
 
     @Override
-    public void genTerrainBlocks(World worldIn, Random rand, net.minecraft.world.chunk.ChunkPrimer chunkPrimerIn, int x, int z, double noiseVal) {
+    public void genTerrainBlocks(World worldIn, Random rand, ChunkPrimer chunkPrimerIn, int x, int z, double noiseVal) {
         float f = rand.nextFloat();
         if (f < 0.3f) {
             this.topBlock = Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.COARSE_DIRT);

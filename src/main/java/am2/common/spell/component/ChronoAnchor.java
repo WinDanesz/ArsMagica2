@@ -9,14 +9,15 @@ import am2.api.spell.SpellModifiers;
 import am2.client.particles.AMParticle;
 import am2.client.particles.ParticleFadeOut;
 import am2.client.particles.ParticleOrbitEntity;
+import am2.common.extensions.EntityExtension;
 import am2.common.registry.AMItems;
 import am2.common.registry.AMPotions;
 import am2.common.registry.Affinities;
 import am2.common.utils.SpellUtils;
-import am2.common.extensions.EntityExtension;
 import com.google.common.collect.Sets;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -56,8 +57,8 @@ public class ChronoAnchor extends SpellComponent {
         tag.setFloat("Absorption", entity.getAbsorptionAmount());
         tag.setInteger("Air", entity.getAir());
         tag.setBoolean("Burning", entity.isBurning());
-        if (entity instanceof net.minecraft.entity.player.EntityPlayer) {
-            net.minecraft.entity.player.EntityPlayer player = (net.minecraft.entity.player.EntityPlayer) entity;
+        if (entity instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) entity;
             NBTTagCompound foodTag = new NBTTagCompound();
             player.getFoodStats().writeNBT(foodTag);
             tag.setTag("FoodStats", foodTag);

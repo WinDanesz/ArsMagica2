@@ -21,6 +21,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
+import java.util.Collections;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
@@ -80,7 +81,7 @@ public class SpellBookBakedModel implements IBakedModel {
         private final SpellBookBakedModel parent;
 
         public SpellBookOverrides(SpellBookBakedModel parent) {
-            super(java.util.Collections.emptyList());
+            super(Collections.emptyList());
             this.parent = parent;
         }
 

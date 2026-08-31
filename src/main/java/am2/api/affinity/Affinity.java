@@ -4,6 +4,7 @@ import am2.ArsMagica;
 import am2.api.ArsMagicaAPI;
 import am2.common.registry.Affinities;
 import am2.common.utils.NBTUtils;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -11,6 +12,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -122,9 +125,9 @@ public class Affinity extends IForgeRegistryEntry.Impl<Affinity> implements Comp
      *
      * @return the localized name of the affinity
      */
-    @net.minecraftforge.fml.relauncher.SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
+    @SideOnly(Side.CLIENT)
     public String getLocalizedName() {
-        return net.minecraft.client.resources.I18n.format(getTranslationKey());
+        return I18n.format(getTranslationKey());
     }
 
     /**
@@ -288,11 +291,11 @@ public class Affinity extends IForgeRegistryEntry.Impl<Affinity> implements Comp
         return id;
     }
 
-    public void setEssenceItem(net.minecraft.item.Item item) {
+    public void setEssenceItem(Item item) {
         this.essenceItem = item;
     }
 
-    public net.minecraft.item.Item getEssenceItem() {
+    public Item getEssenceItem() {
         if (essenceItem == null) {
             ResourceLocation location = new ResourceLocation(this.getRegistryName().getNamespace(), "essence_" + this.getRegistryName().getPath());
             essenceItem = ForgeRegistries.ITEMS.getValue(location);

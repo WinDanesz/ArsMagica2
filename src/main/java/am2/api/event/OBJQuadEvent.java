@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <p>Use the static helper {@link #post(String)} to fire this event and retrieve
  * the resolved tint index.</p>
  *
- * <p>Posted on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
+ * <p>Posted on {@link MinecraftForge#EVENT_BUS}.</p>
  */
 public class OBJQuadEvent extends Event {
 

@@ -1,11 +1,11 @@
 package am2.common.animation;
 
+import am2.common.animation.packet.PacketAnim;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-import am2.common.animation.packet.PacketAnim;
 
 public class AnimationAPI {
 

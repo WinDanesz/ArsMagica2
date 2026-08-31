@@ -14,7 +14,6 @@ import am2.common.registry.AMSkills;
 import am2.common.registry.CompendiumRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -32,6 +31,7 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 
 /**
  * Loader for the Arcane Compendium content from XML files.
@@ -751,7 +751,7 @@ public class CompendiumXMLLoader {
             }
             Skill skill = null;
             try {
-                java.lang.reflect.Field field = AMSkills.class.getField(skillName);
+                Field field = AMSkills.class.getField(skillName);
                 skill = (Skill) field.get(null);
             } catch (Exception e) {
                 LogHelper.log(Level.ERROR, e, "Could not find skill field: " + skillName);

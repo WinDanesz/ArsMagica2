@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nullable;
 
@@ -12,7 +13,7 @@ public class TileEntityChalkArrow extends TileEntity {
 
     private int colorIndex = 0; // 0 = white (byMetadata ordering)
     // Direction the arrow texture points (used by TESR for wall arrows)
-    private net.minecraft.util.EnumFacing arrowFacing = net.minecraft.util.EnumFacing.NORTH;
+    private EnumFacing arrowFacing = EnumFacing.NORTH;
 
     public int getColorIndex() {
         return colorIndex;
@@ -27,11 +28,11 @@ public class TileEntityChalkArrow extends TileEntity {
         }
     }
 
-    public net.minecraft.util.EnumFacing getArrowFacing() {
+    public EnumFacing getArrowFacing() {
         return arrowFacing;
     }
 
-    public void setArrowFacing(net.minecraft.util.EnumFacing facing) {
+    public void setArrowFacing(EnumFacing facing) {
         this.arrowFacing = facing;
         markDirty();
         if (world != null && !world.isRemote) {
@@ -53,7 +54,7 @@ public class TileEntityChalkArrow extends TileEntity {
         super.readFromNBT(compound);
         colorIndex = compound.getInteger("Color") & 0xF;
         int fi = compound.getInteger("ArrowFacing");
-        arrowFacing = net.minecraft.util.EnumFacing.byHorizontalIndex(fi & 3);
+        arrowFacing = EnumFacing.byHorizontalIndex(fi & 3);
     }
 
     @Override

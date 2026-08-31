@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class ObeliskFuelHelper implements IObeliskFuelHelper {
-    public static final am2.common.ObeliskFuelHelper instance = new am2.common.ObeliskFuelHelper();
+    public static final ObeliskFuelHelper instance = new ObeliskFuelHelper();
 
     private final List<Function<ItemStack, Integer>> validFuels = Lists.newArrayList();
 

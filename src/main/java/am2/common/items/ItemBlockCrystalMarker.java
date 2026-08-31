@@ -2,9 +2,9 @@ package am2.common.items;
 
 import am2.common.blocks.BlockCrystalMarker;
 import net.minecraft.block.Block;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

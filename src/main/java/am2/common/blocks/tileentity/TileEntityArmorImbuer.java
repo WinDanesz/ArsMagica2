@@ -13,6 +13,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
+import java.util.Arrays;
+
 public class TileEntityArmorImbuer extends TileEntityAMPower implements IInventory {
 
     private ItemStack[] inventory;
@@ -21,7 +23,7 @@ public class TileEntityArmorImbuer extends TileEntityAMPower implements IInvento
     public TileEntityArmorImbuer() {
         super(5);
         inventory = new ItemStack[getSizeInventory()];
-        java.util.Arrays.fill(inventory, ItemStack.EMPTY);
+        Arrays.fill(inventory, ItemStack.EMPTY);
     }
 
     @Override
@@ -166,7 +168,7 @@ public class TileEntityArmorImbuer extends TileEntityAMPower implements IInvento
         super.readFromNBT(nbttagcompound);
         NBTTagList nbttaglist = nbttagcompound.getTagList("ArmorInfuserInventory", Constants.NBT.TAG_COMPOUND);
         inventory = new ItemStack[getSizeInventory()];
-        java.util.Arrays.fill(inventory, ItemStack.EMPTY);
+        Arrays.fill(inventory, ItemStack.EMPTY);
         for (int i = 0; i < nbttaglist.tagCount(); i++) {
             String tag = String.format("ArrayIndex", i);
             NBTTagCompound nbttagcompound1 = (NBTTagCompound) nbttaglist.getCompoundTagAt(i);

@@ -1,6 +1,7 @@
 package am2.api.skill;
 
 import am2.api.ArsMagicaAPI;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class SkillTree {
     }
 
     public String getLocalizedName() {
-        return net.minecraft.client.resources.I18n.format(getUnlocalizedName());
+        return I18n.format(getUnlocalizedName());
     }
 
     public SkillTree disableRender(String compendiumUnlock) {

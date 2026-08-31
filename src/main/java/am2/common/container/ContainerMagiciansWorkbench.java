@@ -15,6 +15,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -129,7 +130,7 @@ public class ContainerMagiciansWorkbench extends AM2Container {
 
     @Override
     public void onCraftMatrixChanged(IInventory par1iInventory) {
-        net.minecraft.item.crafting.IRecipe recipe1 = CraftingManager.findMatchingRecipe(this.firstCraftMatrix, world);
+        IRecipe recipe1 = CraftingManager.findMatchingRecipe(this.firstCraftMatrix, world);
         this.workbenchInventory.firstCraftResult.setInventorySlotContents(0, recipe1 == null ? ItemStack.EMPTY : recipe1.getCraftingResult(this.firstCraftMatrix));
         if (!initializing) {
             for (int i = 0; i < 9; ++i) {
@@ -137,7 +138,7 @@ public class ContainerMagiciansWorkbench extends AM2Container {
             }
         }
 
-        net.minecraft.item.crafting.IRecipe recipe2 = CraftingManager.findMatchingRecipe(this.secondCraftMatrix, world);
+        IRecipe recipe2 = CraftingManager.findMatchingRecipe(this.secondCraftMatrix, world);
         this.workbenchInventory.secondCraftResult.setInventorySlotContents(0, recipe2 == null ? ItemStack.EMPTY : recipe2.getCraftingResult(this.secondCraftMatrix));
         if (!initializing) {
             int secondMatrixSize = secondCraftMatrix.getSizeInventory();

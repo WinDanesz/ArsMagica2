@@ -1,6 +1,8 @@
 package am2.client.bosses.models;
 
+import am2.client.animation.Animator;
 import am2.client.entity.render.AM2ModelRenderer;
+import am2.common.animation.IAnimatedEntity;
 import am2.common.bosses.BossActions;
 import am2.common.bosses.EntityEnderGuardian;
 import net.minecraft.client.model.ModelBase;
@@ -8,8 +10,6 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
-import am2.client.animation.Animator;
-import am2.common.animation.IAnimatedEntity;
 
 //
 //import am2.client.animation.Animator;

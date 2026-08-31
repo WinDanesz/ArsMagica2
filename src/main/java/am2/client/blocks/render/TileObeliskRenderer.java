@@ -1,5 +1,6 @@
 package am2.client.blocks.render;
 
+import am2.ArsMagica;
 import am2.common.blocks.BlockObelisk;
 import am2.common.blocks.tileentity.TileEntityObelisk;
 import am2.common.registry.AMBlocks;
@@ -12,6 +13,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +46,7 @@ public class TileObeliskRenderer extends TileEntitySpecialRenderer<TileEntityObe
     private void loadOBJ() {
         loaded = true;
         try (
-            java.io.InputStream is = Minecraft.getMinecraft().getResourceManager()
+            InputStream is = Minecraft.getMinecraft().getResourceManager()
                     .getResource(OBJ_RESOURCE).getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"))
         ) {
@@ -76,7 +78,7 @@ public class TileObeliskRenderer extends TileEntitySpecialRenderer<TileEntityObe
                 }
             }
         } catch (Exception e) {
-            am2.ArsMagica.LOGGER.error("ObeliskRenderer.loadOBJ exception caught: ", e);
+            ArsMagica.LOGGER.error("ObeliskRenderer.loadOBJ exception caught: ", e);
         }
     }
 

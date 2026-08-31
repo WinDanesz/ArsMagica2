@@ -1,5 +1,6 @@
 package am2.api.spell;
 
+import am2.ArsMagica;
 import am2.api.ArsMagicaAPI;
 import am2.api.affinity.Affinity;
 import am2.common.blocks.BlockSpellSealedDoor;
@@ -55,7 +56,7 @@ public class SpellData {
                 NBTTagCompound tag = buf.readCompoundTag();
                 return Optional.fromNullable(tag != null ? readFromNBT(tag) : null);
             } catch (IOException e) {
-                am2.ArsMagica.LOGGER.error("Exception caught: ", e);
+                ArsMagica.LOGGER.error("Exception caught: ", e);
             }
             return Optional.absent();
         }

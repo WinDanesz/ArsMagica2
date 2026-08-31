@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.EnumSet;
@@ -95,7 +96,7 @@ public class Puddle extends SpellShape {
                 // Raycast missed or hit a non-floor surface.
                 // Project horizontally in the caster's look direction (ignore pitch so the
                 // forward distance is always consistent regardless of vertical aim).
-                net.minecraft.util.math.Vec3d look = caster.getLookVec();
+                Vec3d look = caster.getLookVec();
                 double horizLen = Math.sqrt(look.x * look.x + look.z * look.z);
                 double forwardDist = 5.0;
                 double projX, projZ;

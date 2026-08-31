@@ -18,6 +18,7 @@ import am2.common.registry.ImbuementRegistry;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -43,9 +44,12 @@ public class AffinityShiftUtils {
             if (caster instanceof EntityPlayer) {
                 if (SkillData.For(caster).hasSkill(AMSkills.affinity_gains.getID())) {
                     shift *= 1.1f;
-                    //xp *= 0.9f;
                 }
-                ItemStack chestArmor = ((EntityPlayer) caster).getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+                
+                if (caster.getAttributeMap() != null && caster.getAttributeMap().getAttributeInstance(ArsMagicaAPI.affinityGainModifier) != null) {
+                    shift *= (float) caster.getAttributeMap().getAttributeInstance(ArsMagicaAPI.affinityGainModifier).getAttributeValue();
+                }
+                ItemStack chestArmor = caster.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
                 if (!chestArmor.isEmpty() && ArmorHelper.isInfusionPreset(chestArmor, ImbuementRegistry.MAGIC_XP))
                     xp *= 1.25f;
             }
@@ -65,7 +69,7 @@ public class AffinityShiftUtils {
     }
 
     public static ItemStack getEssenceForAffinity(Affinity affinity) {
-        net.minecraft.item.Item essenceItem = affinity.getEssenceItem();
+        Item essenceItem = affinity.getEssenceItem();
         return new ItemStack(essenceItem);
     }
 

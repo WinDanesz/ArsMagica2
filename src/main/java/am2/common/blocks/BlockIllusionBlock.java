@@ -4,6 +4,7 @@ import am2.common.blocks.tileentity.TileEntityIllusionBlock;
 import am2.common.registry.AMPotions;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -52,7 +53,7 @@ public class BlockIllusionBlock extends BlockAMContainer {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new ExtendedBlockState(this, new net.minecraft.block.properties.IProperty[]{ILLUSION_TYPE},
+        return new ExtendedBlockState(this, new IProperty[]{ILLUSION_TYPE},
                 new IUnlistedProperty[]{MIMIC_BLOCK});
     }
 
@@ -148,7 +149,7 @@ public class BlockIllusionBlock extends BlockAMContainer {
     }
 
     @Override
-    public boolean canRenderInLayer(IBlockState state, net.minecraft.util.BlockRenderLayer layer) {
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
         // Allow rendering in all layers so transparent/cutout mimics (glass, leaves) work correctly
         return true;
     }

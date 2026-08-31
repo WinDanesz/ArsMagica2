@@ -1,8 +1,6 @@
 package am2.common.entity;
 
 import am2.ArsMagica;
-import am2.client.particles.AMParticle;
-import am2.client.particles.ParticleOrbitEntity;
 import am2.common.entity.ai.EntityAIManaDrainBolt;
 import am2.common.extensions.EntityExtension;
 import am2.common.registry.AMLoot;
@@ -13,9 +11,9 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class EntityManaElemental extends EntityMob {

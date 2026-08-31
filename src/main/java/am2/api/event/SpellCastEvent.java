@@ -2,6 +2,7 @@ package am2.api.event;
 
 import am2.api.spell.SpellData;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
@@ -43,10 +44,10 @@ public class SpellCastEvent extends Event {
     /**
      * Fired <em>before</em> a spell resolves.
      *
-     * <p>This event is {@link net.minecraftforge.fml.common.eventhandler.Cancelable}.
+     * <p>This event is {@link Cancelable}.
      * Canceling it prevents the spell from being cast and the mana from being deducted.</p>
      */
-    @net.minecraftforge.fml.common.eventhandler.Cancelable
+    @Cancelable
     public static class Pre extends SpellCastEvent {
 
         /**

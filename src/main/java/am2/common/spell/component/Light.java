@@ -14,6 +14,7 @@ import am2.api.spell.SpellComponent;
 import am2.api.spell.SpellData;
 import am2.api.spell.SpellModifiers;
 import am2.client.particles.AMParticle;
+import am2.common.LogHelper;
 import am2.common.blocks.BlockMageLight;
 import am2.common.power.PowerNodeRegistry;
 import am2.common.registry.AMBlocks;
@@ -43,13 +44,13 @@ public class Light extends SpellComponent implements IRitualInteraction {
 
     @Override
     public boolean applyEffectBlock(SpellData spell, World world, BlockPos pos, EnumFacing blockFace, double impactX, double impactY, double impactZ, EntityLivingBase caster) {
-        am2.common.LogHelper.info("Light applyEffectBlock called at %s, block is %s, obelisk is %s",
+        LogHelper.info("Light applyEffectBlock called at %s, block is %s, obelisk is %s",
                 pos, world.getBlockState(pos).getBlock().getRegistryName(),
                 AMBlocks.obelisk != null ? AMBlocks.obelisk.getRegistryName() : "NULL");
         if (world.getBlockState(pos).getBlock().equals(AMBlocks.obelisk)) {
-            am2.common.LogHelper.info("Light spell hit obelisk at %s, checking ritual...", pos);
+            LogHelper.info("Light spell hit obelisk at %s, checking ritual...", pos);
             if (RitualShapeHelper.instance.matchesRitual(this, world, pos)) {
-                am2.common.LogHelper.info("Ritual matched! Transforming obelisk to celestial prism");
+                LogHelper.info("Ritual matched! Transforming obelisk to celestial prism");
                 if (!world.isRemote) {
                     RitualShapeHelper.instance.consumeReagents(this, world, pos);
                     RitualShapeHelper.instance.consumeShape(this, world, pos);

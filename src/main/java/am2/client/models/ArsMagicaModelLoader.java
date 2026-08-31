@@ -66,7 +66,7 @@ public class ArsMagicaModelLoader implements ICustomModelLoader {
             IModel model = new SpellModel(builder.build());
             return model;
         } catch (IOException e) {
-            am2.ArsMagica.LOGGER.error("Exception caught: ", e);
+            ArsMagica.LOGGER.error("Exception caught: ", e);
         }
         return ModelLoaderRegistry.getMissingModel();
     }
@@ -152,9 +152,9 @@ public class ArsMagicaModelLoader implements ICustomModelLoader {
                 return toReturn;
             }
         } catch (URISyntaxException e) {
-            am2.ArsMagica.LOGGER.error("Exception caught: ", e);
+            ArsMagica.LOGGER.error("Exception caught: ", e);
         } catch (IOException e) {
-            am2.ArsMagica.LOGGER.error("Exception caught: ", e);
+            ArsMagica.LOGGER.error("Exception caught: ", e);
         }
         return Lists.newArrayList();
     }
@@ -178,7 +178,7 @@ public class ArsMagicaModelLoader implements ICustomModelLoader {
                 }
             }
         } catch (IOException e) {
-            am2.ArsMagica.LOGGER.error("Exception caught: ", e);
+            ArsMagica.LOGGER.error("Exception caught: ", e);
         }
         Collections.sort(toReturn, (o1, o2) -> o1.toString().compareTo(o2.toString()));
         return toReturn;

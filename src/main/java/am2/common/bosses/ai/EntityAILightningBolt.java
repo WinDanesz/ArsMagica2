@@ -2,14 +2,14 @@ package am2.common.bosses.ai;
 
 import am2.ArsMagica;
 import am2.api.DamageSources;
+import am2.common.animation.AIAnimation;
+import am2.common.animation.IAnimatedEntity;
 import am2.common.bosses.BossActions;
 import am2.common.bosses.EntityLightningGuardian;
 import am2.common.registry.AMSounds;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
-import am2.common.animation.AIAnimation;
-import am2.common.animation.IAnimatedEntity;
 
 public class EntityAILightningBolt extends AIAnimation {
 

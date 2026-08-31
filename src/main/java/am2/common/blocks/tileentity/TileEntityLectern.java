@@ -1,9 +1,5 @@
 package am2.common.blocks.tileentity;
 
-import am2.ArsMagica;
-import am2.client.particles.AMParticle;
-import am2.client.particles.ParticleFadeOut;
-import am2.client.particles.ParticleMoveOnHeading;
 import am2.common.registry.AMLecternBooks;
 import am2.network.AMNetworkHandler;
 import am2.network.packets.PacketLecternSync;
@@ -15,6 +11,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityEnchantmentTable;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class TileEntityLectern extends TileEntityEnchantmentTable implements ITickable {
     private ItemStack stack = ItemStack.EMPTY;
@@ -134,7 +131,7 @@ public class TileEntityLectern extends TileEntityEnchantmentTable implements ITi
         this.stack = stack;
         markDirty();
         if (!this.world.isRemote) {
-            AMNetworkHandler.getNetwork().sendToAllAround(new PacketLecternSync(pos, stack), new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 32));
+            AMNetworkHandler.getNetwork().sendToAllAround(new PacketLecternSync(pos, stack), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 32));
         }
         return true;
     }

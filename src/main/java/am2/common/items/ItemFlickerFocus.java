@@ -4,12 +4,12 @@ import am2.api.ArsMagicaAPI;
 import am2.api.flickers.AbstractFlickerFunctionality;
 import am2.api.items.IMultiTexturedItem;
 import am2.common.utils.SpellUtils;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

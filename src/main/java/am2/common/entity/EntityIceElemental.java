@@ -22,6 +22,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
@@ -191,7 +192,7 @@ public class EntityIceElemental extends EntityMob {
             shard.shoot(Math.cos(angle), 0.3 + rand.nextDouble() * 0.3, Math.sin(angle), 1.2f, 0f);
             world.spawnEntity(shard);
         }
-        world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_GLASS_BREAK, net.minecraft.util.SoundCategory.HOSTILE, 1.5f, 0.8f + rand.nextFloat() * 0.4f);
+        world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.HOSTILE, 1.5f, 0.8f + rand.nextFloat() * 0.4f);
     }
 
     @Override

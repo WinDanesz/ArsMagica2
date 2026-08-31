@@ -21,7 +21,6 @@ import am2.common.utils.DimensionUtilities;
 import am2.common.utils.KeystoneUtilities;
 import am2.common.utils.SelectionUtils;
 import com.google.common.collect.Sets;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;

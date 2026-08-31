@@ -17,6 +17,7 @@ import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.compat.electroblob.EBWizardryCompatHandler;
 import am2.common.extensions.AffinityData;
 import am2.common.extensions.EntityExtension;
+import am2.common.items.ItemSpellBase;
 import am2.common.items.ItemSpellBook;
 import am2.common.power.PowerTypes;
 import am2.common.registry.AMItems;
@@ -353,9 +354,9 @@ public class AMIngameGUI extends Gui {
                     if (caster != null) {
                         float manaCost = caster.getManaCost(Minecraft.getMinecraft().world, Minecraft.getMinecraft().player);
                         if (manaCost == 0 && spellStack.hasTagCompound()
-                                && spellStack.getTagCompound().hasKey(am2.common.items.ItemSpellBase.KEY_MANA_COST_CACHED)) {
+                                && spellStack.getTagCompound().hasKey(ItemSpellBase.KEY_MANA_COST_CACHED)) {
                             // Capability not yet synced to client; use the cached value baked into the tagCompound.
-                            manaCost = spellStack.getTagCompound().getFloat(am2.common.items.ItemSpellBase.KEY_MANA_COST_CACHED);
+                            manaCost = spellStack.getTagCompound().getFloat(ItemSpellBase.KEY_MANA_COST_CACHED);
                             IEntityExtension ext = EntityExtension.For(Minecraft.getMinecraft().player);
                             if (ext != null && ext.getMaxBurnout() > 0) manaCost *= (1 + (ext.getCurrentBurnout() / ext.getMaxBurnout()));
                         }

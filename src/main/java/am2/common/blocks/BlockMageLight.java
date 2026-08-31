@@ -4,7 +4,6 @@ import am2.ArsMagica;
 import am2.client.particles.AMParticle;
 import am2.client.particles.ParticleFloatUpward;
 import am2.client.particles.ParticleGrow;
-import am2.client.particles.ParticleOrbitPoint;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;

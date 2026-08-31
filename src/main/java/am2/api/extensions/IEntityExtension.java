@@ -13,6 +13,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 public interface IEntityExtension {
@@ -98,19 +99,19 @@ public interface IEntityExtension {
     void clearGlyph();
 
     /** Stores the UUID of the entity the glyph is attached to, or null for block-based glyphs. */
-    void setGlyphEntity(java.util.UUID entityId);
+    void setGlyphEntity(UUID entityId);
 
     /** Returns the UUID of the attached entity, or null if not entity-attached. */
-    java.util.UUID getGlyphEntityId();
+    UUID getGlyphEntityId();
 
     /**
      * Stores the serialized SpellData (remaining stages) that was used when placing the glyph.
      * This allows a bare Glyph shape (detonation-only) to replay the original spell at the glyph position.
      */
-    void setGlyphSpell(net.minecraft.nbt.NBTTagCompound tag);
+    void setGlyphSpell(NBTTagCompound tag);
 
     /** Returns the stored glyph spell NBT, or null if none was saved. */
-    net.minecraft.nbt.NBTTagCompound getGlyphSpell();
+    NBTTagCompound getGlyphSpell();
 
     void setShrunk(boolean shrunk);
 
@@ -167,7 +168,7 @@ public interface IEntityExtension {
                 am2tag.setDouble("GlyphX", instance.getGlyphX());
                 am2tag.setDouble("GlyphY", instance.getGlyphY());
                 am2tag.setDouble("GlyphZ", instance.getGlyphZ());
-                net.minecraft.nbt.NBTTagCompound glyphSpell = instance.getGlyphSpell();
+                NBTTagCompound glyphSpell = instance.getGlyphSpell();
                 if (glyphSpell != null) {
                     am2tag.setTag("GlyphSpell", glyphSpell);
                 }
@@ -223,7 +224,7 @@ public interface IEntityExtension {
                     instance.setGlyphSpell(am2tag.getCompoundTag("GlyphSpell"));
                 }
                 if (am2tag.hasKey("GlyphEntityId")) {
-                    instance.setGlyphEntity(java.util.UUID.fromString(am2tag.getString("GlyphEntityId")));
+                    instance.setGlyphEntity(UUID.fromString(am2tag.getString("GlyphEntityId")));
                 } else {
                     instance.setGlyphEntity(null);
                 }
@@ -343,7 +344,7 @@ public interface IEntityExtension {
     float getAnchorHealth();
 
     /** Stores additional anchor state: absorption, food stats, air level, and active potion effects. */
-    void setAnchorExtraData(net.minecraft.nbt.NBTTagCompound data);
+    void setAnchorExtraData(NBTTagCompound data);
 
-    net.minecraft.nbt.NBTTagCompound getAnchorExtraData();
+    NBTTagCompound getAnchorExtraData();
 }

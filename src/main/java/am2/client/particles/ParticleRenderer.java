@@ -1,5 +1,6 @@
 package am2.client.particles;
 
+import am2.common.utils.CloakUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.ActiveRenderInfo;
@@ -94,7 +95,7 @@ public class ParticleRenderer {
         deferredArcs.clear();
         deferredBlocks.clear();
         deferredBeams.clear();
-        am2.common.utils.CloakUtils.clearCaches();
+        CloakUtils.clearCaches();
     }
 
     @SubscribeEvent

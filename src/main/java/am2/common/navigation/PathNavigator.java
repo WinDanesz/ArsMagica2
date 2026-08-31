@@ -1,5 +1,6 @@
 package am2.common.navigation;
 
+import am2.ArsMagica;
 import am2.api.math.AMVector3;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -258,7 +259,7 @@ public class PathNavigator {
                 currentWaypoint.Unshift();
             }
         } catch (Exception e) {
-            am2.ArsMagica.LOGGER.error("Exception caught: ", e);
+            ArsMagica.LOGGER.error("Exception caught: ", e);
             currentWaypoint = null;
         }
     }
