@@ -10,10 +10,12 @@ import am2.client.particles.AMParticle;
 import am2.client.particles.AMParticleDefs;
 import am2.client.particles.ParticleFadeOut;
 import am2.client.particles.ParticleMoveOnHeading;
+import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.power.PowerTypes;
 import am2.common.registry.AMBlocks;
 import am2.common.registry.AMItems;
 import am2.common.registry.AMSounds;
+import am2.common.registry.Affinities;
 import am2.common.spell.SpellCastResult;
 import am2.common.utils.MathUtilities;
 import net.minecraft.entity.Entity;
@@ -145,20 +147,30 @@ public class Cone extends SpellShape {
             double py = startY + (world.rand.nextFloat() - 0.5f) * 0.3;
             double pz = startZ + (world.rand.nextFloat() - 0.5f) * 0.3;
 
-            AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, particleType, px, py, pz);
-            if (particle != null) {
-                particle.setMaxAge(8 + world.rand.nextInt(5));
-                particle.setParticleScale(0.1f + world.rand.nextFloat() * 0.1f);
-                particle.setIgnoreMaxAge(false);
-                if (color != -1) {
-                    particle.setRGBColorI(color);
+            float particleYaw = MathHelper.wrapDegrees(caster.rotationYaw + 90 + horizontalAngle);
+            float particlePitch = MathHelper.wrapDegrees(caster.rotationPitch + verticalAngle);
+            float particleSpeed = speed + world.rand.nextFloat() * speed * 0.3f;
+
+            if (affinity == Affinities.ice && EBWizardryCompatBootstrap.isActive) {
+                double yawRad = Math.toRadians(particleYaw);
+                double pitchRad = Math.toRadians(particlePitch);
+                double vx = Math.cos(yawRad) * particleSpeed;
+                double vz = Math.sin(yawRad) * particleSpeed;
+                double vy = -Math.sin(pitchRad) * particleSpeed;
+                EBWizardryCompatBootstrap.spawnDirectedFrostParticle(world, px, py, pz, vx, vy, vz);
+            } else {
+                AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, particleType, px, py, pz);
+                if (particle != null) {
+                    particle.setMaxAge(8 + world.rand.nextInt(5));
+                    particle.setParticleScale(0.1f + world.rand.nextFloat() * 0.1f);
+                    particle.setIgnoreMaxAge(false);
+                    if (color != -1) {
+                        particle.setRGBColorI(color);
+                    }
+                    // Move outward in the cone direction (yaw + 90 matches codebase convention for ParticleMoveOnHeading)
+                    particle.AddParticleController(new ParticleMoveOnHeading(particle, particleYaw, particlePitch, particleSpeed, 1, false));
+                    particle.AddParticleController(new ParticleFadeOut(particle, 1, false).setFadeSpeed(0.1f).setKillParticleOnFinish(true));
                 }
-                // Move outward in the cone direction (yaw + 90 matches codebase convention for ParticleMoveOnHeading)
-                float particleYaw = MathHelper.wrapDegrees(caster.rotationYaw + 90 + horizontalAngle);
-                float particlePitch = MathHelper.wrapDegrees(caster.rotationPitch + verticalAngle);
-                float particleSpeed = speed + world.rand.nextFloat() * speed * 0.3f;
-                particle.AddParticleController(new ParticleMoveOnHeading(particle, particleYaw, particlePitch, particleSpeed, 1, false));
-                particle.AddParticleController(new ParticleFadeOut(particle, 1, false).setFadeSpeed(0.1f).setKillParticleOnFinish(true));
             }
         }
     }
