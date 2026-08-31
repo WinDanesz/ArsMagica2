@@ -837,7 +837,7 @@ public class GuiInscriptionTable extends GuiContainer {
         }
         if (!hasShape && !(part instanceof SpellShape))
             return false;
-        if (part instanceof SpellShape && ((ContainerInscriptionTable) this.inventorySlots).currentRecipeContains(part))
+        if (part instanceof SpellShape && ((ContainerInscriptionTable) this.inventorySlots).shapeIsAlreadyUsed(part))
             return false;
         if (part instanceof SpellComponent) {
             int index = ((ContainerInscriptionTable) this.inventorySlots).getCurrentRecipeSize() - 1;
