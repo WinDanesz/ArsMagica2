@@ -28,6 +28,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -111,7 +112,7 @@ public class SpellParticleRender extends ItemOverrideList {
         if (AMItems.ebwiz_spell_binding != null && item.getItem() == AMItems.ebwiz_spell_binding) {
             String iconName = ItemEBWizSpellBinding.getHandIconName(item);
             if (iconName == null) return false;
-            renderEffectNamed(iconName, true, entity);
+            renderEffectNamed(iconName, true, entity, item);
             return true;
         }
 
@@ -163,16 +164,20 @@ public class SpellParticleRender extends ItemOverrideList {
             float z = -2.5f;
             float y = 0;
             ItemStack leftStack = mc.player.getHeldItemOffhand();
-            if (ItemStack.areItemStacksEqual(stack, leftStack)) {
-                if (mc.player.getItemInUseCount() > 0) {
-                    z += 0;
-                } else {
-                    x = -2;
-                }
-            }
-            if (mc.player.getItemInUseCount() > 0){
+            // Vanilla's ItemRenderer caches the stack it hands to model overrides and only
+            // refreshes it around reequip animations; AM2 spell items carry live-changing NBT
+            // (cooldowns/spell data), which keeps that cache stale relative to the live hand
+            // contents. Compare by item+damage only (ignore NBT) so staleness can't misclassify
+            // which hand this render call belongs to.
+            boolean isOffhand = ItemStack.areItemsEqual(stack, leftStack);
+            boolean casting = mc.player.getItemInUseCount() > 0;
+            if (casting) {
                 y = 0.8f;
-                x += -0.3f;
+                x = isOffhand ? -1.3f : 1.0f;
+            } else if (isOffhand) {
+                x = -2;
+            } else {
+                x = 1;
             }
             GL11.glTranslatef(x, y, z);
 
@@ -182,7 +187,8 @@ public class SpellParticleRender extends ItemOverrideList {
 
             if (includeArm && mc.currentScreen == null) {
                 Minecraft.getMinecraft().renderEngine.bindTexture(mc.player.getLocationSkin());
-                renderFirstPersonArm(mc.player);
+                EnumHand hand = isOffhand ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND;
+                renderFirstPersonArm(mc.player, hand);
             }
         } else if (mc.currentScreen == null) {
             GL11.glTranslatef(-0.25f, 0.0f, 0.0f);
@@ -214,7 +220,7 @@ public class SpellParticleRender extends ItemOverrideList {
     }
 
     /** Renders the hand-glow effect using an icon looked up by name from {@link AMParticleIcons}. */
-    public void renderEffectNamed(String iconName, boolean includeArm, EntityLivingBase entity) {
+    public void renderEffectNamed(String iconName, boolean includeArm, EntityLivingBase entity, ItemStack stack) {
 
         if (!setupIcons) {
             setupAffinityIcons();
@@ -239,7 +245,8 @@ public class SpellParticleRender extends ItemOverrideList {
 
             if (includeArm && mc.currentScreen == null) {
                 Minecraft.getMinecraft().renderEngine.bindTexture(mc.player.getLocationSkin());
-                renderFirstPersonArm(mc.player);
+                EnumHand hand = ItemStack.areItemsEqual(stack, mc.player.getHeldItemOffhand()) ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND;
+                renderFirstPersonArm(mc.player, hand);
             }
         } else if (mc.currentScreen == null) {
             GL11.glTranslatef(-0.25f, 0.0f, 0.0f);
@@ -294,9 +301,10 @@ public class SpellParticleRender extends ItemOverrideList {
         t.draw();
     }
 
-    private void renderFirstPersonArm(EntityPlayerSP player) {
-        boolean flag = player.isHandActive() && player.getActiveHand() ==  EnumHand.OFF_HAND;
-        float f = flag ? 1.0F : -1.0F;
+    private void renderFirstPersonArm(EntityPlayerSP player, EnumHand hand) {
+        EnumHandSide side = hand == EnumHand.MAIN_HAND ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
+        float f = side == EnumHandSide.RIGHT ? 1.0F : -1.0F;
+        boolean casting = player.isHandActive() && player.getActiveHand() == hand;
         float f1 = MathHelper.sqrt(0);
         GlStateManager.rotate(f * 45.0F, 0.0F, 1.0F, 0.0F);
         float f5 = MathHelper.sin(0 * 0 * (float) Math.PI);
@@ -310,11 +318,19 @@ public class SpellParticleRender extends ItemOverrideList {
         GlStateManager.rotate(200.0F, 1.0F, 0.0F, 0.0F);
         GlStateManager.rotate(f * -135.0F, 0.0F, 1.0F, 0.0F);
         GlStateManager.translate(f * 5.6F, 0.0F, 0.0F);
+        if (casting) {
+            // Tilt the already-positioned hand toward the camera; applied after the
+            // placement chain above so it can't perturb where the arm pivots to.
+            // Not scaled by f: both hands need the same-signed tilt to angle toward
+            // screen center rather than away from it (the preceding chain doesn't
+            // mirror this particular local axis between hands).
+            GlStateManager.rotate(-15.0F, 1.0F, 0.0F, 0.0F);
+        }
         Object renderObject = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(abstractclientplayer);
         RenderPlayer renderplayer = (renderObject instanceof RenderPlayer) ? (RenderPlayer) renderObject : null;
         GlStateManager.disableCull();
         if (renderplayer != null) {
-            if (flag) {
+            if (side == EnumHandSide.RIGHT) {
                 renderplayer.renderRightArm(abstractclientplayer);
             } else {
                 renderplayer.renderLeftArm(abstractclientplayer);

@@ -1,7 +1,9 @@
 package am2.common.spell;
 
 import am2.ArsMagica;
+import am2.api.ArsMagicaAPI;
 import am2.api.affinity.Affinity;
+import am2.api.event.SpellCastEvent;
 import am2.api.extensions.IEntityExtension;
 import am2.api.extensions.ISpellCaster;
 import am2.api.spell.*;
@@ -12,7 +14,6 @@ import am2.common.utils.AffinityShiftUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -29,7 +30,6 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.oredict.OreDictionary;
-import am2.api.event.SpellCastEvent;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -77,6 +77,11 @@ public class SpellCaster implements ISpellCaster, ICapabilityProvider, ICapabili
         float manaCost = this.getBaseManaCost(this.currentShapeGroup);
         IEntityExtension ext = EntityExtension.For(caster);
         manaCost *= (1 + (ext.getCurrentBurnout() / ext.getMaxBurnout()));
+        
+        if (caster.getAttributeMap() != null && caster.getAttributeMap().getAttributeInstance(ArsMagicaAPI.manaCostMultiplier) != null) {
+            manaCost *= (float) caster.getAttributeMap().getAttributeInstance(ArsMagicaAPI.manaCostMultiplier).getAttributeValue();
+        }
+        
         return manaCost;
     }
 
@@ -128,16 +133,11 @@ public class SpellCaster implements ISpellCaster, ICapabilityProvider, ICapabili
         SpellData data = this.createSpellData(source);
         float manaCost = this.getManaCost(world, caster);
 
-        am2.common.LogHelper.info("[AM2Trace] cast() called on " + (world.isRemote ? "CLIENT" : "SERVER") + "! Original manaCost: " + manaCost + ". Player mana: " + ext.getCurrentMana());
-
         SpellCastEvent.Pre preEvent = new SpellCastEvent.Pre(caster, data, manaCost);
         if (MinecraftForge.EVENT_BUS.post(preEvent)) {
-            am2.common.LogHelper.info("[AM2Trace] Event cancelled!");
             return false;
         }
         manaCost = preEvent.manaCost;
-
-        am2.common.LogHelper.info("[AM2Trace] After Pre event on " + (world.isRemote ? "CLIENT" : "SERVER") + ", manaCost: " + manaCost);
 
         if (ext.hasEnoughMana(manaCost)) {
             List<String> missingReagents = getMissingReagentNames(data, caster);
@@ -179,7 +179,11 @@ public class SpellCaster implements ISpellCaster, ICapabilityProvider, ICapabili
                 cost += _cost * _multiplier;
             }
             if (result != SpellCastResult.FREE_CAST) {
-                ext.setCurrentBurnout(Math.min(ext.getMaxBurnout(), ext.getCurrentBurnout() + (cost * multiplier)));
+                float totalBurnout = cost * multiplier;
+                if (caster.getAttributeMap() != null && caster.getAttributeMap().getAttributeInstance(ArsMagicaAPI.burnoutGenerationMultiplier) != null) {
+                    totalBurnout *= (float) caster.getAttributeMap().getAttributeInstance(ArsMagicaAPI.burnoutGenerationMultiplier).getAttributeValue();
+                }
+                ext.setCurrentBurnout(Math.min(ext.getMaxBurnout(), ext.getCurrentBurnout() + totalBurnout));
             }
             if (result == SpellCastResult.SUCCESS || result == SpellCastResult.FREE_CAST) {
                 MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(caster, data, manaCost));
