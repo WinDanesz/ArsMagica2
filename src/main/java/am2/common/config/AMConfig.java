@@ -482,6 +482,7 @@ public class AMConfig extends Configuration {
     private final String KEY_SpellBookPositionX = "spell_book_x";
     private final String KEY_SpellBookPositionY = "spell_book_y";
     private final String KEY_EnderAffinityAbilityCooldown = "ender_affinity_ability_cd";
+    private final String KEY_LightningAffinityThunderPunchCooldown = "lightning_affinity_thunder_punch_cd";
 
     private final String KEY_ManaShieldingPositionX = "mana_shielding_x";
     private final String KEY_ManaShieldingPositionY = "mana_shielding_y";
@@ -655,6 +656,7 @@ public class AMConfig extends Configuration {
     private double manaCap;
     private double baseMana;
     private int enderAffinityAbilityCooldown;
+    private int lightningAffinityThunderPunchCooldown;
 
     private AMVector2 manaHudPosition;
     private AMVector2 burnoutHudPosition;
@@ -1138,6 +1140,7 @@ public class AMConfig extends Configuration {
         this.hellCowArmor = this.get(CATEGORY_MOBS, this.KEY_HellCowArmor, 15.0, "Hell Cow armor value. Default: 15").getDouble(15.0);
 
         this.enderAffinityAbilityCooldown = this.get(CATEGORY_GENERAL, this.KEY_EnderAffinityAbilityCooldown, 100, "Set this to the number of ticks between ender affinity teleports.").getInt();
+        this.lightningAffinityThunderPunchCooldown = this.get(CATEGORY_GENERAL, this.KEY_LightningAffinityThunderPunchCooldown, 300, "Set this to the number of ticks between thunder punch procs.").getInt();
 
         this.oldXpCalculations = this.get(CATEGORY_GENERAL, this.KEY_OldCalculations, true, "Enable Old XP calculations (before 1.5.0C-8)").setRequiresMcRestart(true).getBoolean(true);
 
@@ -2116,6 +2119,10 @@ public class AMConfig extends Configuration {
 
     public int getEnderAffinityAbilityCooldown() {
         return this.enderAffinityAbilityCooldown;
+    }
+
+    public int getLightningAffinityThunderPunchCooldown() {
+        return this.lightningAffinityThunderPunchCooldown;
     }
 
     public boolean getEnableWitchwoodForest() {

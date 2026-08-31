@@ -419,11 +419,41 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
     public void addSpellPartToStageGroup(int groupIndex, SpellPart part) {
         ArrayList<SpellPart> group = this.shapeGroups.get(groupIndex);
         if (!this.currentSpellIsReadOnly && group.size() < 4 && !(part instanceof SpellComponent)) {
+            if (part instanceof SpellShape && this.shapeIsAlreadyUsed(part)) return;
             group.add(part);
             if (this.world.isRemote)
                 this.sendDataToServer();
             this.countModifiers();
         }
+    }
+
+    /**
+     * Whether {@code shape} already appears anywhere in the current recipe or in any
+     * of the shape groups. Used to prevent the same shape from being added more than
+     * once to a spell (each shape may only start one stage across the whole spell).
+     */
+    public boolean shapeIsAlreadyUsed(SpellPart shape) {
+        if (this.currentRecipe.contains(shape)) return true;
+        for (ArrayList<SpellPart> group : this.shapeGroups) {
+            if (group.contains(shape)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Whether {@code component} is already present in the stage currently being built
+     * at the end of {@code recipe} (i.e. since the last shape added to it).
+     */
+    private boolean lastStageAlreadyContainsComponent(ArrayList<SpellPart> recipe, SpellPart component) {
+        int index = recipe.size() - 1;
+        while (index >= 0 && !(recipe.get(index) instanceof SpellShape)) {
+            SpellPart curPart = recipe.get(index--);
+            if (curPart instanceof SpellComponent
+                    && SpellRegistryHelper.getSkillFromPart(curPart).getID() == SpellRegistryHelper.getSkillFromPart(component).getID()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void removeSpellPartFromStageGroup(int index, int groupIndex) {
@@ -451,6 +481,8 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 
     public void addSpellPart(SpellPart part) {
         if (!this.currentSpellIsReadOnly && this.currentRecipe.size() < ArsMagica.config.getMaxRecipeSize()) {
+            if (part instanceof SpellShape && this.shapeIsAlreadyUsed(part)) return;
+            if (part instanceof SpellComponent && this.lastStageAlreadyContainsComponent(this.currentRecipe, part)) return;
             this.currentRecipe.add(part);
             if (this.world.isRemote)
                 this.sendDataToServer();
