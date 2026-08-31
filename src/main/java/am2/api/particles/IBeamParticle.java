@@ -27,4 +27,13 @@ public interface IBeamParticle {
      * This will offset the beam to make it look like it is coming from the player's active item and not their face.
      */
     public void setFirstPersonPlayerCast();
+
+    /**
+     * Same as {@link #setFirstPersonPlayerCast()}, but additionally offsets the beam sideways
+     * toward the hand that is actually casting it (screen-right for {@code rightHandSide == true},
+     * screen-left otherwise), rather than dead-center from the face.
+     */
+    default void setFirstPersonPlayerCast(boolean rightHandSide) {
+        setFirstPersonPlayerCast();
+    }
 }

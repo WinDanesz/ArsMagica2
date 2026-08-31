@@ -164,24 +164,16 @@ public class BlockInlay extends BlockRailBase {
     private boolean checkForIceEffigy(World world, BlockPos pos) {
         if (world.getBlockState(pos.add(1, 0, 1)).getBlock() == AMBlocks.blue_topaz_block) {
             if (world.getBlockState(pos.add(1, 1, 1)).getBlock() == AMBlocks.blue_topaz_block) {
-                if (world.getBlockState(pos.add(1, 2, 1)).getBlock() == AMBlocks.ice_effigy) {
-                    IBlockState state = world.getBlockState(pos.add(1, 2, 1));
-                    int iceMeta = world.getBlockState(pos.add(1, 2, 1)).getValue(BlockEffigy.PROGRESS);
-                    if (iceMeta > 0) {
-                        ArsMagica.proxy.particleManager.RibbonFromPointToPoint(world, pos.getX() + 1.5, pos.getY() + 2, pos.getZ() + 1.5, pos.getX() + 2, pos.getY() + 3, pos.getZ() + 2);
-                    }
-                    if (iceMeta >= 3) {
-                        BossSpawnHelper.instance.onIceEffigyBuilt(world, pos.add(1, 0, 1));
-                    } else {
-                        List<EntitySnowman> snowmen = world.getEntitiesWithinAABB(EntitySnowman.class, new AxisAlignedBB(pos.getX() - 9, pos.getY() - 2, pos.getZ() - 9, pos.getX() + 10, pos.getY() + 4, pos.getZ() + 10));
-                        if (!snowmen.isEmpty()) {
-                            snowmen.get(0).attackEntityFrom(DamageSources.unsummon, 5000);
-                            iceMeta++;
-                            world.setBlockState(pos.add(1, 2, 1), state.withProperty(BlockEffigy.PROGRESS, iceMeta));
-                            ArsMagica.proxy.particleManager.BeamFromEntityToPoint(world, snowmen.get(0), pos.getX() + 1.5, pos.getY() + 2.5, pos.getZ() + 1.5);
+                if (world.getBlockState(pos.add(1, 2, 1)).getBlock() == Blocks.ICE) {
+                    List<EntitySnowman> snowmen = world.getEntitiesWithinAABB(EntitySnowman.class, new AxisAlignedBB(pos.getX() - 9, pos.getY() - 2, pos.getZ() - 9, pos.getX() + 10, pos.getY() + 4, pos.getZ() + 10));
+                    if (snowmen.size() >= 3) {
+                        for (int i = 0; i < 3; i++) {
+                            snowmen.get(i).attackEntityFrom(DamageSources.unsummon, 5000);
+                            ArsMagica.proxy.particleManager.BeamFromEntityToPoint(world, snowmen.get(i), pos.getX() + 1.5, pos.getY() + 2.5, pos.getZ() + 1.5);
                         }
+                        BossSpawnHelper.instance.onIceEffigyBuilt(world, pos.add(1, 0, 1));
+                        return true;
                     }
-                    return true;
                 }
             }
         }
@@ -195,23 +187,14 @@ public class BlockInlay extends BlockRailBase {
 
         if (world.getBlockState(pos.add(1, 0, 1)).getBlock() == AMBlocks.mana_battery) {
             if (world.getBlockState(pos.add(1, 1, 1)).getBlock() == Blocks.IRON_BARS) {
-                if (world.getBlockState(pos.add(1, 2, 1)).getBlock() == AMBlocks.lightning_effigy) {
-                    IBlockState state = world.getBlockState(pos.add(1, 2, 1));
-                    int fenceMeta = world.getBlockState(pos.add(1, 2, 1)).getValue(BlockEffigy.PROGRESS);
-                    if (fenceMeta > 0) {
-                        ArsMagica.proxy.particleManager.RibbonFromPointToPoint(world, pos.getX() + 1.5, pos.getY() + 2, pos.getZ() + 1.5, pos.getX() + 2, pos.getY() + 3, pos.getZ() + 2);
-                    }
-                    fenceMeta++;
-                    world.setBlockState(pos.add(1, 2, 1), state.withProperty(BlockEffigy.PROGRESS, fenceMeta));
+                if (world.getBlockState(pos.add(1, 2, 1)).getBlock() == Blocks.IRON_BARS) {
                     if (!world.isRemote) {
                         for (int i = 0; i < 5; ++i)
                             ArsMagica.proxy.particleManager.BoltFromPointToPoint(world, pos.getX() + 1.5, pos.getY() + 30, pos.getZ() + 1.5, pos.getX() + 1.5, pos.getY() + 2, pos.getZ() + 1.5);
-                        for (int i = 0; i < fenceMeta; ++i)
-                            world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_LIGHTNING_THUNDER, SoundCategory.AMBIENT, 1.0f, world.rand.nextFloat() + 0.5f, false);
+                        for (int i = 0; i < 3; ++i)
+                            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_LIGHTNING_THUNDER, SoundCategory.AMBIENT, 1.0f, world.rand.nextFloat() + 0.5f);
                     }
-                    if (fenceMeta >= 3) {
-                        BossSpawnHelper.instance.onLightningEffigyBuilt(world, pos.add(1, 0, 1));
-                    }
+                    BossSpawnHelper.instance.onLightningEffigyBuilt(world, pos.add(1, 0, 1));
                     return true;
                 }
             }
