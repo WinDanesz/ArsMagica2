@@ -41,6 +41,7 @@ public class AMBeam extends Particle implements IBeamParticle {
     private boolean positionChanged = false;
 
     private boolean fppc = false; //first person player cast
+    private boolean fppcRightHand = true;
 
     public AMBeam(World world, double x, double y, double z, double destX, double destY, double destZ) {
         this(world, x, y, z, destX, destY, destZ, 0);
@@ -130,6 +131,16 @@ public class AMBeam extends Particle implements IBeamParticle {
                     this.posX -= offsetX;
                     this.posZ -= offsetZ;
                     this.posY += 0.06f;
+
+                    // Shift sideways toward the casting hand so the beam appears to leave
+                    // the rendered hand instead of the center of the screen. Reuses the same
+                    // cos/sin(yaw) pair as the pull-toward-camera offset above, which points
+                    // screen-left; negating it points screen-right.
+                    float sideDist = 0.15f;
+                    float sideSign = this.fppcRightHand ? -1.0f : 1.0f;
+                    this.posX += offsetX * sideSign * (sideDist / 0.06f);
+                    this.posZ += offsetZ * sideSign * (sideDist / 0.06f);
+
                     this.prevPosX = this.posX;
                     this.prevPosY = this.posY;
                     this.prevPosZ = this.posZ;
@@ -145,6 +156,12 @@ public class AMBeam extends Particle implements IBeamParticle {
     @Override
     public void setFirstPersonPlayerCast() {
         this.fppc = true;
+    }
+
+    @Override
+    public void setFirstPersonPlayerCast(boolean rightHandSide) {
+        this.fppc = true;
+        this.fppcRightHand = rightHandSide;
     }
 
     private void handleAging() {

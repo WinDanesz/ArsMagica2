@@ -172,8 +172,8 @@ public class SpellParticleRender extends ItemOverrideList {
             boolean isOffhand = ItemStack.areItemsEqual(stack, leftStack);
             boolean casting = mc.player.getItemInUseCount() > 0;
             if (casting) {
-                y = 0.8f;
-                x = isOffhand ? -1.3f : 1.0f;
+                y = 0.5f;
+                x = isOffhand ? -0.8f : 0.3f;
             } else if (isOffhand) {
                 x = -2;
             } else {
@@ -233,12 +233,27 @@ public class SpellParticleRender extends ItemOverrideList {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        float scale = 3f;
+        float scale;
         if (entity == mc.player && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
-
+            float x = 0;
+            float z = -2.5f;
+            float y = 0;
+            ItemStack leftStack = mc.player.getHeldItemOffhand();
             GL11.glPushMatrix();
             RenderHelper.disableStandardItemLighting();
-            GL11.glTranslatef(0.0f, 0.0f, -2.5f);
+            boolean isOffhand = ItemStack.areItemsEqual(stack, leftStack);
+            boolean casting = mc.player.getItemInUseCount() > 0;
+            if (casting) {
+                y = 0.5f;
+                x = isOffhand ? -0.8f : 0.3f;
+            } else if (isOffhand) {
+                x = -2;
+            } else {
+                x = 1;
+            }
+            GL11.glTranslatef(x, y, z);
+
+            // GL11.glTranslatef(0.0f, 0.0f, -2.5f);
             RenderByIconName(iconName);
             RenderHelper.enableStandardItemLighting();
             GL11.glPopMatrix();
@@ -324,7 +339,13 @@ public class SpellParticleRender extends ItemOverrideList {
             // Not scaled by f: both hands need the same-signed tilt to angle toward
             // screen center rather than away from it (the preceding chain doesn't
             // mirror this particular local axis between hands).
-            GlStateManager.rotate(-15.0F, 1.0F, 0.0F, 0.0F);
+            GlStateManager.rotate(-30.0F, 1.0F, 0.0F, 0.0F);
+            if (hand == EnumHand.MAIN_HAND) {
+                GlStateManager.translate(0.1F,0F,0.6F);
+            } else {
+                GlStateManager.translate(-0.25F,0.2F,0.5F);
+
+            }
         }
         Object renderObject = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(abstractclientplayer);
         RenderPlayer renderplayer = (renderObject instanceof RenderPlayer) ? (RenderPlayer) renderObject : null;

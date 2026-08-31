@@ -41,20 +41,20 @@ public final class EBWizSpellBindingRenderer extends TileEntityItemStackRenderer
         GlStateManager.color(1f, 1f, 1f, 1f);
         GlStateManager.disableLighting();
         GlStateManager.disableCull();
-
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buf = tessellator.getBuffer();
-        buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        buf.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
         // Unit quad (0,0)-(1,1) in item space.
         // RenderItem applies translate(-0.5,-0.5,-0.5) before calling TEISR, so this quad
         // occupies [-0.5,0.5]^2 in model space, filling one 16x16 item slot.
         // disableCull ensures both faces render (e.g. when the item spins on the ground).
         // V is flipped (1→0) because the GUI applies scale(16,-16,16) which inverts Y.
-        buf.pos(0, 0, 0).tex(0, 1).endVertex();
-        buf.pos(0, 1, 0).tex(0, 0).endVertex();
-        buf.pos(1, 1, 0).tex(1, 0).endVertex();
-        buf.pos(1, 0, 0).tex(1, 1).endVertex();
+        buf.pos(0.0D, 0.0D, 0.0D).tex(0, 1).normal(0.0F, 0.0F, 1.0F).endVertex();
+        buf.pos(1.0D, 0.0D, 0.0D).tex(1, 1).normal(0.0F, 0.0F, 1.0F).endVertex();
+        buf.pos(1.0D, 1.0D, 0.0D).tex(1, 0).normal(0.0F, 0.0F, 1.0F).endVertex();
+        buf.pos(0.0D, 1.0D, 0.0D).tex(0, 0).normal(0.0F, 0.0F, 1.0F).endVertex();
         tessellator.draw();
+       // GlStateManager.translate(0F,1F,1F);
 
         GlStateManager.enableCull();
         GlStateManager.enableLighting();
