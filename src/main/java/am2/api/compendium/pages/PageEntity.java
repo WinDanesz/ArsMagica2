@@ -1,5 +1,6 @@
 package am2.api.compendium.pages;
 
+import am2.ArsMagica;
 import am2.common.bosses.AM2Boss;
 import am2.common.entity.EntityFlicker;
 import net.minecraft.client.Minecraft;
@@ -16,6 +17,7 @@ public class PageEntity extends CompendiumPage<Entity> {
     private float curRotationH = 0;
     private int lastMouseX = 0;
     private boolean isDragging;
+    private boolean loggedRenderError = false;
 
     public PageEntity(Entity element) throws Throwable {
         super(element);
@@ -59,6 +61,12 @@ public class PageEntity extends CompendiumPage<Entity> {
 
                 Entity ent = element.getClass().getConstructor(World.class).newInstance(world);
                 ent.readFromNBT(compound);
+                if (mc.player != null) {
+                    // Keep the preview entity at the player's position so it picks up loaded, lit
+                    // chunk data - otherwise it sits at world origin, which is usually unloaded on
+                    // the client and renders pitch black (i.e. invisible).
+                    ent.setPosition(mc.player.posX, mc.player.posY, mc.player.posZ);
+                }
 
                 RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
                 renderManager.setPlayerViewY(180.0F);
@@ -71,14 +79,20 @@ public class PageEntity extends CompendiumPage<Entity> {
                 GlStateManager.disableTexture2D();
                 GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
             } catch (Exception e) {
-
+                if (!loggedRenderError) {
+                    loggedRenderError = true;
+                    ArsMagica.LOGGER.error("PageEntity failed to render entity preview for {}", element.getClass().getName(), e);
+                }
             }
             GlStateManager.popMatrix();
             GlStateManager.popAttrib();
 
             RenderHelper.disableStandardItemLighting();
         } catch (Exception e) {
-
+            if (!loggedRenderError) {
+                loggedRenderError = true;
+                ArsMagica.LOGGER.error("PageEntity failed to render entity preview for {}", element.getClass().getName(), e);
+            }
         }
         GlStateManager.popMatrix();
 
