@@ -89,7 +89,7 @@ public class AffinityAbilityModifiers {
             for (int l1 = k; l1 < l && !isOnIce; ++l1) {
                 for (int i2 = i1; i2 < j1 && !isOnIce; ++i2) {
                     Material block = ent.world.getBlockState(new BlockPos(k1, l1, i2)).getMaterial();
-                    if (block == Material.ICE || block == Material.PACKED_ICE) {
+                    if (block == Material.ICE || block == Material.PACKED_ICE || block == Material.SNOW || block == Material.CRAFTED_SNOW) {
                         return true;
                     }
                 }
