@@ -364,59 +364,93 @@ am2.glyph.none=No glyph is stored.
 
 ##air
 affinityability.agile.name=Agile
+affinityability.agile.desc=Boosts jump height and reduces fall damage, scaling with depth.
 affinityability.lightasafeather.name=Light as a Feather
+affinityability.lightasafeather.desc=50-85%% depth: rain gusts randomly push you around.
 
 ##arcane
 affinityability.clearcaster.name=Clearcaster
+affinityability.clearcaster.desc=5%% chance per cast to grant Clarity (next spell free). +1%% per depth%% above 90%%.
 affinityability.magicweakness.name=Magic Weakness
+affinityability.magicweakness.desc=You take 10%% more damage from magical sources.
 affinityability.onewithmagic.name=Magical Focus
+affinityability.onewithmagic.desc=-5%% mana/burnout cost. Consumes Clarity for a free cast.
 
 ##earth
 affinityability.solidbones.name=Solid Bones
+affinityability.solidbones.desc=Up to 10%% damage reduction; sink faster in water; less fall tolerance.
 affinityability.stoneskin.name=Stone Skin
 
 ##ender
 affinityability.nightvision.name=Darkvision
+affinityability.nightvision.desc=Toggle a permanent night vision effect.
 affinityability.relocation.name=Relocation
+affinityability.relocation.desc=Press to blink up to 32 blocks, on a cooldown.
 affinityability.poisonresistance.name=Resistant to Poison
+affinityability.poisonresistance.desc=Immune to poison; reduces magic and wither damage.
 affinityability.sunlightweakness.name=Weakness to Sunlight
+affinityability.sunlightweakness.desc=Max health reduced while in direct daylight.
 affinityability.waterweakness_ender.name=Weakness to Water
+affinityability.waterweakness_ender.desc=Max health reduced while wet.
 
 ##fire
 affinityability.firepunch.name=Fire Punch
+affinityability.firepunch.desc=Unarmed hits ignite the target and deal bonus damage.
 affinityability.fireresistance.name=Resistant to Fire
+affinityability.fireresistance.desc=Reduces fire and lava damage, up to 60%% at full depth.
 affinityability.waterweakness_fire.name=Weakness to Water
+affinityability.waterweakness_fire.desc=Periodic damage while touching water; floors at 75%% health.
 
 ##ice
 affinityability.coldblooded.name=Cold Blooded
+affinityability.coldblooded.desc=Slows melee attackers; you move slower off ice or snow.
 affinityability.lavafreeze.name=Frozen Footsteps (Lava)
+affinityability.lavafreeze.desc=Toggle: freeze lava into obsidian beneath your feet.
 affinityability.waterfreeze.name=Frozen Footsteps (Water)
+affinityability.waterfreeze.desc=Toggle: freeze water into ice beneath your feet.
 
 ##life
 affinityability.fasthealing.name=Fast Healing
+affinityability.fasthealing.desc=Slowly regenerates extra health, ignoring hunger.
 affinityability.pacifist.name=Pacifist
+affinityability.pacifist.desc=Killing a living creature nauseates and weakens you.
+affinityability.healingtouch.name=Healing Touch
+affinityability.healingtouch.desc=Empty-hand touch heals a creature 4 HP, on a cooldown.
 
 ##water
 affinityability.antiendermen.name=Endermen-Repellant
+affinityability.antiendermen.desc=Attacking Endermen take drowning damage.
 affinityability.expandedlungs.name=Expanded Lungs
+affinityability.expandedlungs.desc=Slower breath loss underwater.
 affinityability.fireweakness.name=Fire Weakness
+affinityability.fireweakness.desc=Periodic damage while burning or in the Nether; floors at 75%% health.
 affinityability.fluidity.name=Fluidity
+affinityability.fluidity.desc=Not pushed by flowing water.
 affinityability.swiftswim.name=Swift Swimmer
+affinityability.swiftswim.desc=Bonus swim speed.
 
 ##nature
 affinityability.harvester.name=Harvester
-affinityability.leaflike.name=Leaf on the Wind
 affinityability.photosynthesis.name=Photosynthesis
+affinityability.photosynthesis.desc=Regens hunger in daylight; loses it faster at night.
 affinityability.rooted.name=Rooted
+affinityability.rooted.desc=Movement speed reduced by your roots. At full depth, climb walls by pressing into them; sneak to slide down gently.
 affinityability.thorns.name=Thorns Aura
+affinityability.thorns.desc=Melee attackers take damage.
 
 ##lightning
 affinityability.fulmination.name=Fulmination
+affinityability.fulmination.desc=May ignite nearby TNT; can supercharge nearby creepers.
 affinityability.reflexes.name=Lightning Reflexes
+affinityability.reflexes.desc=Movement speed boosted dramatically.
 affinityability.lightningstep.name=Lightning Step
+affinityability.lightningstep.desc=Step up one-block ledges.
 affinityability.shortcircuit.name=Short Circuit
+affinityability.shortcircuit.desc=Chance to drain mana while wet.
 affinityability.thunderpunch.name=Thunderpunch
+affinityability.thunderpunch.desc=Unarmed hits call down lightning, on a cooldown.
 affinityability.waterweakness_lightning.name=Weakness to Water
+affinityability.waterweakness_lightning.desc=Max health reduced while wet.
 
 #Rituals
 ritual.arsmagica2\:astral_distortion.name=Ritual of Corruption

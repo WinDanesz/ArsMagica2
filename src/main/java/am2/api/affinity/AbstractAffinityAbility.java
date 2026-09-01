@@ -11,6 +11,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
@@ -105,6 +106,15 @@ public abstract class AbstractAffinityAbility extends IForgeRegistryEntry.Impl<A
     }
 
     public void applyJump(EntityPlayer player, LivingJumpEvent event) {
+    }
+
+    /**
+     * Fired when the player right-clicks (interacts with) an entity.
+     *
+     * @param player : the current player
+     * @param event : the interact event, carrying the target entity and hand used.
+     */
+    public void applyInteractEntity(EntityPlayer player, PlayerInteractEvent.EntityInteract event) {
     }
 
     public void removeEffects(EntityPlayer player) {

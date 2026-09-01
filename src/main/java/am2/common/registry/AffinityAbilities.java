@@ -51,6 +51,7 @@ public class AffinityAbilities {
         //LIFE
         registry.register(new AbilityFastHealing());
         registry.register(new AbilityPacifist());
+        registry.register(new AbilityHealingTouch());
 
         //WATER
         registry.register(new AbilityExpandedLungs());
@@ -62,7 +63,6 @@ public class AffinityAbilities {
         //NATURE
         registry.register(new AbilityRooted());
         registry.register(new AbilityThorns());
-        registry.register(new AbilityLeafLike());
         registry.register(new AbilityPhotosynthesis());
 
         //LIGHTNING

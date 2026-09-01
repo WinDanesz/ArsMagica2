@@ -2568,9 +2568,7 @@
         <desc>
 					At 50%% depth, you will gain the Thorns effect, causing melee attackers to take damage (similar to the armor enchant).  This damage increases at 75%% affinity and at full affinity.  At full nature affinity you also slowly regenerate hunger in direct sunlight, though you lose hunger more quickly at night or in dark areas.
 					!d
-					Nature affinity causes you to move slightly slower due to your roots, starting at 50%% depth.
-					!d
-					At full nature affinity, pressing yourself into a wall lets you climb it, and resets your fall distance so you can safely let go.  Sneak while against a wall instead to slide gently down it.
+					Nature affinity causes you to move slightly slower due to your roots, starting at 50%% depth.  At full depth, those same roots let you climb: pressing yourself into a wall lets you climb it, resetting your fall distance so you can safely let go.  Sneak while against a wall instead to slide gently down it.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
