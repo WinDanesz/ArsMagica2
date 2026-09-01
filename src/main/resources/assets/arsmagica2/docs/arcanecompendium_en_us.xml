@@ -2530,34 +2530,34 @@
       <subitem id="earth_affinity">
         <name>Earth Affinity</name>
         <desc>
-					Earth affinity grants a minor defense bonus, due to your hardened skin.  At max, you will have 10%% overall damage reduction, applied before armor.  This amount depends on your affinity depth into earth, and begins at 25%% depth.
+					Earth affinity grants a minor defense bonus, due to your hardened skin.  This bonus scales with your affinity depth, unlocks at 50%% depth, and reaches 10%% overall damage reduction (applied before armor) at full depth.
 					!d
-					With earth affinity, you are heavier, and as such you will sink more quickly in water (though never enough that you cannot surface), and you cannot fall as far without taking fall damage.
+					Starting at that same 50%% depth, you are heavier, and as such you will sink more quickly in water (though never enough that you cannot surface), and you cannot fall as far without taking fall damage.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
       <subitem id="water_affinity">
         <name>Water Affinity</name>
         <desc>
-					Water affinity grants a bonus to swim speed as well as slower breath loss underwater.  You are also not pushed by flowing water.  Endermen that attack a full water-affinity mage will take damage as if they had touched water.
+					Water affinity grants a bonus to swim speed and slower breath loss underwater starting around 40-50%% depth.  You are also not pushed by flowing water past 50%% depth.  Once your water affinity reaches 90%% depth, Endermen that attack you will take damage as if they had touched water.
 					!d
-					Water affinity mages take damage periodically if exposed to fire, making the nether particularly dangerous.  This damage will not take you below 75%% health, and will not occur at all if you are lower.
+					Once your water affinity reaches 50%% depth, you will start to take damage periodically when exposed to fire, making the nether particularly dangerous.  This damage will not take you down below 75%% health and will not occur if lower.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
       <subitem id="air_affinity">
         <name>Air Affinity</name>
         <desc>
-					Air affinity grants a bonus to jump height and lets you fall farther before taking damage.  These bonuses are dependent on your affinity depth: you can jump one block higher and fall one block farther at 50%% depth.  This bonus increases to 2 at 75%%, and 3 at full depth.
+					Air affinity grants a bonus to jump height and lets you fall farther before taking damage, up to 2 blocks farther at full depth.  Both bonuses unlock at 50%% depth and scale with how deep into the affinity you are.
 					!d
-					Air affinity mages are hindered by rain and storms; the wind blows you around and you must move slower.  #5Sneaking#0 or casting a spell of #5Gravity Well#0 can negate the effect and allow you to move in the storm, albeit slowly.
+					Between 50%% and 85%% depth, air affinity mages are hindered by rain and storms: while caught out in the rain, gusts of wind will randomly buffet you around.  #5Sneaking#0 or having a #5Gravity Well#0 spell active protects you from the gusts entirely.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
       <subitem id="fire_affinity">
         <name>Fire Affinity</name>
         <desc>
-					Fire affinity grants damage reduction in fire and lava, though never complete immunity.  The protection is directly related to your affinity depth, and reaches 60%% reduction at full depth.  Punching enemies at full affinity will light them on fire.
+					Fire affinity grants damage reduction in fire and lava, though never complete immunity.  The protection is directly related to your affinity depth, and reaches 60%% reduction at full depth.  At 80%% depth, punching enemies bare-handed will light them on fire and deal a small amount of bonus damage.
 					!d
 					Once your fire affinity reaches 50%%, you will start to take damage periodically when touching water sources.  This damage will not take you down below 75%% health and will not occur if lower.
 				</desc>
@@ -2566,56 +2566,58 @@
       <subitem id="nature_affinity">
         <name>Nature Affinity</name>
         <desc>
-					Nature affinity gives you additional seeds and saplings when harvesting plants from around the world.  At 50%% depth, you will gain the Thorns effect, causing melee attackers to take damage (similar to the armor enchant).  This damage increases at 75%% affinity and at full affinity.  At full nature affinity you also slowly regenerate hunger in direct sunlight.  At full nature affinity, you can extend roots into the ground, allowing you to climb certain surfaces like a spider does.
+					At 50%% depth, you will gain the Thorns effect, causing melee attackers to take damage (similar to the armor enchant).  This damage increases at 75%% affinity and at full affinity.  At full nature affinity you also slowly regenerate hunger in direct sunlight, though you lose hunger more quickly at night or in dark areas.
 					!d
-					Nature affinity causes you to move slightly slower due to your roots. At full nature affinity depth, you lose hunger more quickly at night or in dark areas.
+					Nature affinity causes you to move slightly slower due to your roots, starting at 50%% depth.
 					!d
-					At full nature affinity, you gain the aspect of a leaf on the wind, negating all fall damage and falling more slowly.  You can sneak to fall at normal speed.  This will still cause fall damage to be negated.
+					At full nature affinity, pressing yourself into a wall lets you climb it, and resets your fall distance so you can safely let go.  Sneak while against a wall instead to slide gently down it.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
       <subitem id="ice_affinity">
         <name>Ice Affinity</name>
         <desc>
-					Ice affinity causes attackers to be slowed.  At 50%% depth, while sneaking you will freeze water to ice in front of you, allowing you to make bridges as you move.  At 100%% depth, you can freeze lava to obsidian.
+					Ice affinity causes attackers to be slowed, growing stronger at 50%%, 75%%, and full depth.  Once you reach 50%% depth, you can toggle #5Frozen Footsteps#0 (default keybind: Toggle Ice Bridge) to freeze water into ice beneath your feet as you walk, letting you bridge across it.  At full depth, the same toggle also freezes lava into obsidian.
 					!d
-					All ice mages move slightly slower due to being cold blooded, unless on ice or water.
+					All ice mages move slightly slower due to being cold blooded once their depth passes 10%%, unless standing on ice or snow.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
       <subitem id="lightning_affinity">
         <name>Lightning Affinity</name>
         <desc>
-					Lightning affinity causes you to run faster.  The speed increase is directly related to your affinity depth, ranging from 1 to 30%%.  At 50%% depth, you gain the ability to step up over one block high ledges.
+					Lightning affinity causes you to run faster.  At 50%% depth, you gain the ability to step up over one block high ledges.  At 65%% depth, your reflexes sharpen and your movement speed is boosted dramatically.  At 75%% depth, striking an enemy with your bare hands has a chance to call down a bolt of lightning on them, though this can only happen once every 15 seconds.
 					!d
-					Unfortunately due to your affinity you are also sort of short out in water. You can also light nearby TNT and supercharge nearby creepers!  Don't worry though, as you gain more control over your electric nature, you will be able to reduce the TNT and Creeper effects.
+					Unfortunately, standing in water leaves you short circuited.  Starting at 25%% depth, being wet carries a chance to drain your mana.  Between 50%% and 90%% depth, being wet also weakens you, reducing your maximum health - mastering your affinity past 90%% depth removes this weakness entirely.
+					!d
+					Between 50%% and 80%% depth, your unstable affinity may accidentally detonate nearby TNT.  From 70%% depth onward, you can also supercharge nearby creepers with a jolt of electricity!  Don't worry though, as you gain more control over your electric nature, you will stop igniting TNT past 80%% depth.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
       <subitem id="life_affinity">
         <name>Life Affinity</name>
         <desc>
-					Life affinity causes you to very slowly regenerate additional life.  The regen speed is directly related to your depth.  This regen happens regardless of your hunger level.
+					Life affinity causes you to very slowly regenerate additional life, scaling with your depth from the moment you gain any life affinity.  This regen happens regardless of your hunger level.  Once your life affinity reaches 40%% depth, touching a creature with an empty hand will heal it for 4 health, on a 10 second cooldown.
 					!d
-					Due to your close ties with life, any time you kill something it makes you sick and nauseated for a while.
+					Once your life affinity reaches 60%% depth, killing a living, non-undead creature will make you sick: nauseated, hungry, weak, and slow to mine for a while.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
       <subitem id="arcane_affinity">
         <name>Arcane Affinity</name>
         <desc>
-					Arcane affinity causes all spells to cost 5%% less mana, in addition to other mana reductions.  At full depth, there is also a chance that upon casting a spell, you will gain the clarity effect, causing your next spell to cost 0 mana.
+					Once your arcane affinity reaches 40%% depth, each successful spell cast has a 5%% chance to grant you the clarity effect for a few seconds.  Past 90%% depth, that chance climbs by 1%% for every 1%% of extra depth, reaching 15%% at full depth.  At 50%% depth, all spells cost 5%% less mana and burnout, and while clarity is active, your next spell costs 0 mana and burnout entirely.
 					!d
-					As a disadvantage, all magical damage sources do more damage to you.
+					As a disadvantage, once your arcane affinity passes 25%% depth, you take 10%% more damage from magical sources.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
       <subitem id="ender_affinity">
         <name>Ender Affinity</name>
         <desc>
-					Ender affinity gives you poison resistance at 50%% depth, and at 75%% depth you gain night vision automatically in dark areas.  At full ender affinity, Endermen will not attack you, unless you attack them first.
+					Once your ender affinity reaches 25%% depth, you become resistant to poison and take reduced damage from magic and wither sources, scaling up to a 75%% reduction at full depth.  At 75%% depth, you also gain Relocation: press the Ender Teleport key to blink up to 32 blocks in the direction you're looking, on a short cooldown.  At that same depth, you can toggle Dark Vision (default keybind: Toggle Dark Vision) for a permanent night vision effect while it's active.
 					!d
-					Due to your dark nature, your maximum health is reduced in light, and at higher ender affinity, it is reduced in water as well.  Masters of the ender are rumored to have evolved beyond this weakness.
+					Due to your dark nature, between 65%% and 95%% depth your maximum health is reduced while standing in direct sunlight during the day, and once your depth reaches 50%%, it is reduced while wet as well.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
