@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -348,7 +349,7 @@ public final class AMItems {
 
         registerItemBlock(registry, AMBlocks.otherworld_aura);
         registerItemBlock(registry, AMBlocks.particle_emitter);
-        registerItemBlock(registry, AMBlocks.mana_drain);
+        registerItemBlock(registry, AMBlocks.draining_well);
 
         registerItemBlock(registry, AMBlocks.liquid_essence_block);
 
@@ -369,8 +370,7 @@ public final class AMItems {
         registerItemBlock(registry, AMBlocks.redstone_inlay);
         registerItemBlock(registry, AMBlocks.iron_inlay);
         registerItemBlock(registry, AMBlocks.gold_inlay);
-        registerItemBlock(registry, AMBlocks.ice_effigy);
-        registerItemBlock(registry, AMBlocks.lightning_effigy);
+
 
     }
 
@@ -406,5 +406,17 @@ public final class AMItems {
     public static void registerItemBlock(IForgeRegistry<Item> registry, Block block, Item itemblock) {
         itemblock.setRegistryName(Objects.requireNonNull(block.getRegistryName()));
         registry.register(itemblock);
+    }
+
+    @SubscribeEvent
+    public static void onMissingItemMappings(RegistryEvent.MissingMappings<Item> event) {
+        for (RegistryEvent.MissingMappings.Mapping<Item> mapping : event.getMappings()) {
+            if (mapping.key.equals(new ResourceLocation(ArsMagica.MODID, "mana_drain"))) {
+                Item item = Item.getItemFromBlock(AMBlocks.draining_well);
+                if (item != null) {
+                    mapping.remap(item);
+                }
+            }
+        }
     }
 }

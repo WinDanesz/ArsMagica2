@@ -20,8 +20,11 @@ import am2.common.utils.MathUtilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -113,7 +116,7 @@ public class Beam extends SpellShape {
                 beam = (AMBeam) ArsMagica.proxy.particleManager.BeamFromEntityToPoint(world, caster, beamHitVec.x, beamHitVec.y, beamHitVec.z, color == -1 ? affinity.getColor() : color);
                 if (beam != null) {
                     if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
-                        beam.setFirstPersonPlayerCast();
+                        beam.setFirstPersonPlayerCast(isCastingWithRightSide(caster));
                     beams.put(caster.getEntityId(), beam);
                 }
             }
@@ -130,6 +133,21 @@ public class Beam extends SpellShape {
                 particle.AddParticleController(new ParticleMoveOnHeading(particle, world.rand.nextDouble() * 360, world.rand.nextDouble() * 360, world.rand.nextDouble() * 0.2 + 0.02f, 1, false));
             }
         }
+    }
+
+    /**
+     * Determines which physical side (screen-right vs screen-left) the beam should visually
+     * originate from in first person, based on which hand is actively casting it plus the
+     * player's configured primary hand. Mirrors the logic in SpellParticleRender's first-person
+     * arm rendering so the beam appears to leave the same hand that's shown casting.
+     */
+    @SideOnly(Side.CLIENT)
+    private static boolean isCastingWithRightSide(EntityLivingBase caster) {
+        if (!(caster instanceof EntityPlayer)) return true;
+        EntityPlayer player = (EntityPlayer) caster;
+        boolean offHand = player.isHandActive() && player.getActiveHand() == EnumHand.OFF_HAND;
+        EnumHandSide side = offHand ? player.getPrimaryHand().opposite() : player.getPrimaryHand();
+        return side == EnumHandSide.RIGHT;
     }
 
     @Override
