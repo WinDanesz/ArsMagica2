@@ -2,7 +2,6 @@ package am2.common.affinity.abilities;
 
 import am2.api.affinity.AbstractAffinityAbility;
 import am2.api.affinity.Affinity;
-import am2.api.event.SpellCastEvent.Pre;
 import am2.common.packet.AMNetHandler;
 import am2.common.registry.AMPotions;
 import am2.common.registry.Affinities;
@@ -32,7 +31,7 @@ public class AbilityLightAsAFeather extends AbstractAffinityAbility {
     }
 
     @Override
-    public void applyPreSpellCast(EntityPlayer ent, Pre event) {
+    public void applyTick(EntityPlayer ent) {
         if (ent.world.isRaining() && !ent.world.isRemote && ent.getEntityWorld().getBiome(ent.getPosition()).canRain() && !ent.world.isRemote && ent.world.rand.nextInt(100) < 10) {
             if (!ent.isSneaking() && !ent.isPotionActive(AMPotions.gravity_well) && !ent.isInsideOfMaterial(Material.WATER) && ent.isWet()) {
                 double velX = ent.world.rand.nextDouble() - 0.5;
