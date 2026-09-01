@@ -60,7 +60,7 @@ public class AMPotions {
         registerPotion(registry, "astral_distortion", new BuffEffectAstralDistortion(true, 0x6c0000).setIconIndex(0, 4));
         registerPotion(registry, "burnout_reduction", new BuffEffectBurnoutReduction(false, 0xcc0000).setIconIndex(1, 1));
         registerPotion(registry, "charm", new BuffEffectCharmed(true, 0xff3ca2).setIconIndex(3, 2));
-        registerPotion(registry, "clarity", new BuffEffectClarity(false, 0xbbffff).setIconIndex(0, 5));
+        registerPotion(registry, "clarity", new BuffEffectClarity(false, 0xbbffff).setIconIndex(0, 1));
         registerPotion(registry, "entangle", new BuffEffectEntangled(false, 0x009300).setIconIndex(3, 7));
         registerPotion(registry, "flight", new BuffEffectFlight(false, 0xc6dada).setIconIndex(2, 1));
         registerPotion(registry, "frost_slow", new BuffEffectFrostSlowed(true, 0x1fffdd).setIconIndex(3, 3));

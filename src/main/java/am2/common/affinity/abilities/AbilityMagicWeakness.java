@@ -25,7 +25,7 @@ public class AbilityMagicWeakness extends AbstractAffinityAbility {
 
     @Override
     public void applyHurt(EntityPlayer player, LivingHurtEvent event, boolean isAttacker) {
-        if (!isAttacker) {
+        if (!isAttacker && event.getSource().isMagicDamage()) {
             event.setAmount(event.getAmount() * 1.1F);
         }
     }

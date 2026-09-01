@@ -5,6 +5,7 @@ import am2.api.affinity.Affinity;
 import am2.common.extensions.AffinityData;
 import am2.common.registry.Affinities;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -23,6 +24,13 @@ public class AbilityPoisonResistance extends AbstractAffinityAbility {
     @Override
     public Affinity getAffinity() {
         return Affinities.ender;
+    }
+
+    @Override
+    public void applyTick(EntityPlayer player) {
+        if (!player.world.isRemote && player.isPotionActive(MobEffects.POISON)) {
+            player.removePotionEffect(MobEffects.POISON);
+        }
     }
 
     @Override
