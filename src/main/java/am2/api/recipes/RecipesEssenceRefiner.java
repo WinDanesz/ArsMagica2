@@ -5,7 +5,9 @@ import am2.common.registry.AMBlocks;
 import am2.common.registry.AMItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.PotionTypes;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionUtils;
 
 import java.util.HashMap;
 
@@ -94,19 +96,19 @@ public class RecipesEssenceRefiner extends RecipesArsMagica {
                 new ItemStack(AMItems.essence_water));
 
         AddRecipe(new ItemStack[]{
-                        new ItemStack(Items.POTIONITEM, 1, 0),
+                        PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER),
                         new ItemStack(AMBlocks.wakebloom),
                         new ItemStack(AMItems.arcane_ash),
                         new ItemStack(AMBlocks.wakebloom),
-                        new ItemStack(Items.POTIONITEM, 1, 0)
+                        PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER)
                 },
                 new ItemStack(AMItems.essence_water));
 
         AddRecipe(new ItemStack[]{
                         new ItemStack(AMBlocks.wakebloom),
-                        new ItemStack(Items.POTIONITEM, 1, 0),
+                        PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER),
                         new ItemStack(AMItems.arcane_ash),
-                        new ItemStack(Items.POTIONITEM, 1, 0),
+                        PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER),
                         new ItemStack(AMBlocks.wakebloom)
                 },
                 new ItemStack(AMItems.essence_water));
