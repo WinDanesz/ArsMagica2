@@ -125,6 +125,34 @@ public final class EBWizardryCompatBootstrap {
         registerConjureBlockCompendiumEntry();
         registerArtefactSpellPowerEntry();
         registerDiscoveryRitualCompendiumEntry();
+        registerWizardMasteryCompendiumEntry();
+    }
+
+    private static void registerWizardMasteryCompendiumEntry() {
+        CompendiumEntry entry = new CompendiumEntry(null, "wizard_mastery");
+        entry.setCategory(CompendiumCategory.MECHANIC);
+        entry.setName("Wizard Mastery");
+        entry.addObject(
+            "The Occulus holds a second tab alongside the usual shapes, components, and modifiers - one that has nothing "
+            + "to do with building spells at all, and everything to do with a wizard's discipline. !d"
+            + "The #4Elemental Disciplines#0 tab appears on the Occulus only while Electroblob's Wizardry is installed. "
+            + "It shows seven disciplines, one per element - Fire, Ice, Lightning, Earth, Sorcery, Healing, and Necromancy."
+            + "!d #4Levelling a Discipline#0"
+            + "!l Select a discipline to focus on it, then spend a skill point to raise its level, "
+            + "up to a maximum of 100. The very same #2Blue#0, #2Green#0, and #2Red#0 skill points "
+            + "used to unlock shapes, components, and modifiers are spent here: "
+            + "levels 0-29 cost Blue points, 30-59 cost Green points, and 60-100 cost Red points, "
+            + "so a well-rounded mage will find their late Occulus progress and their Wizard Mastery in competition for the same points."
+            + "!d #4What Mastery Grants#0"
+            + "!l Every level of a discipline quietly strengthens EBWizardry spells of the matching element when you cast them - "
+            + "trimming their mana cost and deepening their potency, with both bonuses scaling up as the level rises."
+            + "!d Each level also banks one #5Discovery Point#0 for that element, spent at the Crafting Altar's Spell Discovery Ritual "
+            + "to conjure a new spell book of that element and tier. A discipline with no available discovery points cannot fuel the ritual "
+            + "until it is levelled further."
+        );
+        entry.setRelatedEntries("occulus,wizard_spells,ebwiz_discovery_ritual");
+        entry.setUnlocked();
+        CompendiumRegistry.registerEntry(entry);
     }
 
     private static void registerArtefactSpellPowerEntry() {
