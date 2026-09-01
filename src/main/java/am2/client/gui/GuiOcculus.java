@@ -13,6 +13,7 @@ import am2.api.skill.SkillTree;
 import am2.client.gui.controls.GuiButtonDisciplinePlus;
 import am2.client.gui.controls.GuiButtonSkillTree;
 import am2.client.texture.SpellIconManager;
+import am2.common.affinity.abilities.AbilityHealingTouch;
 import am2.common.affinity.abilities.AbilityRelocation;
 import am2.common.affinity.abilities.AbilityThunderPunch;
 import am2.common.extensions.AffinityData;
@@ -653,6 +654,7 @@ public class GuiOcculus extends GuiScreen {
 
                     for (AbstractAffinityAbility ability : abilites) {
                         if (ability.getAffinity() == aff) {
+                            String abilityId = ability.getRegistryName().toString().replaceAll("arsmagica2:", "");
                             String advancedTooltip = "";
                             if (isShiftDown) {
                                 advancedTooltip = " (Min. : " + Math.round(ability.getMinimumDepth() * 100) + "%" + (ability.hasMax() ? (", Max. : " + Math.round(ability.getMaximumDepth() * 100) + "%") : "") + ")";
@@ -661,13 +663,16 @@ public class GuiOcculus extends GuiScreen {
                                 advancedTooltip += TextFormatting.GRAY.toString() + " [CD: " + (ArsMagica.config.getLightningAffinityThunderPunchCooldown() / 20) + "s]";
                             } else if (ability instanceof AbilityRelocation) {
                                 advancedTooltip += TextFormatting.GRAY.toString() + " [CD: " + (ArsMagica.config.getEnderAffinityAbilityCooldown() / 20) + "s]";
+                            } else if (ability instanceof AbilityHealingTouch) {
+                                advancedTooltip += TextFormatting.GRAY.toString() + " [CD: " + (AbilityHealingTouch.COOLDOWN_TICKS / 20) + "s]";
                             }
                             drawString.add(TextFormatting.RESET.toString()
                                     + (ability.isEligible(player) ? TextFormatting.GREEN.toString()
                                     : TextFormatting.DARK_RED.toString())
-                                    + I18n.format("affinityability."
-                                    + ability.getRegistryName().toString().replaceAll("arsmagica2:", "")
-                                    + ".name") + advancedTooltip);
+                                    + I18n.format("affinityability." + abilityId + ".name") + advancedTooltip);
+                            if (isShiftDown) {
+                                drawString.add(TextFormatting.GRAY.toString() + I18n.format("affinityability." + abilityId + ".desc"));
+                            }
                         }
                     }
                 }
