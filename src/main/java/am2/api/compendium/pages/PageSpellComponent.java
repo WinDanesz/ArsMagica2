@@ -31,8 +31,8 @@ import static net.minecraft.client.renderer.texture.TextureMap.LOCATION_BLOCKS_T
 
 public class PageSpellComponent extends CompendiumPage<SpellPart> {
 
+    private static final float ROTATION_DEGREES_PER_TICK = 18f / 20f;
     private Object[] craftingComponents;
-    private float framecount = 0;
     private ItemStack stackTip = ItemStack.EMPTY;
     private int tipX;
     private int tipY;
@@ -48,9 +48,10 @@ public class PageSpellComponent extends CompendiumPage<SpellPart> {
         RenderHelper.disableStandardItemLighting();
         int cx = posX + 64;
         int cy = posY + 92;
-        framecount += 0.5f;
+        long elapsedTicks = (long) AMGuiHelper.instance.getSlowTicker() * 40L + AMGuiHelper.instance.getFastTicker();
+        float framecount = elapsedTicks * ROTATION_DEGREES_PER_TICK;
         stackTip = ItemStack.EMPTY;
-        RenderRecipe(cx, cy, mouseX, mouseY);
+        RenderRecipe(cx, cy, mouseX, mouseY, framecount);
         TextureAtlasSprite icon = SpellIconManager.INSTANCE.getSprite(element.getRegistryName().toString());
         mc.renderEngine.bindTexture(LOCATION_BLOCKS_TEXTURE);
         GlStateManager.color(1, 1, 1, 1);
@@ -127,7 +128,7 @@ public class PageSpellComponent extends CompendiumPage<SpellPart> {
         RenderHelper.disableStandardItemLighting();
     }
 
-    private void RenderRecipe(int cx, int cy, int mousex, int mousey) {
+    private void RenderRecipe(int cx, int cy, int mousex, int mousey, float framecount) {
         if (craftingComponents == null) return;
         float angleStep = (360.0f / craftingComponents.length);
         for (int i = 0; i < craftingComponents.length; ++i) {
