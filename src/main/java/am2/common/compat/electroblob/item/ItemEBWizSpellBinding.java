@@ -10,6 +10,7 @@ import am2.common.extensions.EntityExtension;
 import am2.common.items.ItemSpellBase;
 import am2.common.registry.AMItems;
 import am2.common.registry.Affinities;
+import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.event.SpellCastEvent;
@@ -27,6 +28,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -35,6 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -130,6 +133,17 @@ public final class ItemEBWizSpellBinding extends ItemSpellBase implements ISpell
         String registryName = stack.getTagCompound().getString(NBT_KEY);
         if (registryName.isEmpty()) return null;
         return Spell.registry.getValue(new ResourceLocation(registryName));
+    }
+
+    /**
+     * Mirrors vanilla {@code ItemSpellBook}'s spoiler protection: a spell must
+     * be discovered (per EBWiz's per-player {@code WizardData}) before its
+     * identity is shown. Without this check, binding a spell into an AM2
+     * spell book slot would reveal an undiscovered spell's name/element
+     * immediately, bypassing EBWiz's discovery mechanic entirely.
+     */
+    private static boolean isDiscovered(Spell spell, ItemStack stack) {
+        return Wizardry.proxy.shouldDisplayDiscovered(spell, stack);
     }
 
     // -------------------------------------------------------------------------
@@ -265,7 +279,7 @@ public final class ItemEBWizSpellBinding extends ItemSpellBase implements ISpell
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         Spell spell = getSpell(stack);
-        if (spell != null) {
+        if (spell != null && isDiscovered(spell, stack)) {
             Element element = spell.getElement();
             return element.getFormattingCode() + spell.getDisplayName();
         }
@@ -366,6 +380,10 @@ public final class ItemEBWizSpellBinding extends ItemSpellBase implements ISpell
     public void addInformation(ItemStack stack, @Nullable World worldIn,
                                List<String> tooltip, ITooltipFlag flagIn) {
         Spell spell = getSpell(stack);
+        if (spell != null && !isDiscovered(spell, stack)) {
+            tooltip.add(I18n.translateToLocal("item.ebwizardry:spell_book.new"));
+            return;
+        }
 
         // Affinity gain
         if (spell != null) {
@@ -377,7 +395,7 @@ public final class ItemEBWizSpellBinding extends ItemSpellBase implements ISpell
                     final float gainAmount = (float) ArsMagica.config.getEBWizAffinityGainAmount();
                     tooltip.add("\u00a77Affinity Gain:");
                     // Sort descending by weight then display actual per-cast gain amount.
-                    List<AMConfig.WeightedAffinity> sorted = new java.util.ArrayList<>(weights);
+                    List<AMConfig.WeightedAffinity> sorted = new ArrayList<>(weights);
                     sorted.sort((a, b) -> Float.compare(b.weight, a.weight));
                     for (AMConfig.WeightedAffinity wa : sorted) {
                         if (wa.weight <= 0f) continue;

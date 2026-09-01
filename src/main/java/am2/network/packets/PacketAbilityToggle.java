@@ -4,7 +4,9 @@ import am2.common.extensions.AffinityData;
 import am2.network.AMPacket;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
@@ -56,10 +58,9 @@ public class PacketAbilityToggle extends AMPacket<PacketAbilityToggle> {
                 affinityData.addAbilityBoolean(message.abilityId, newState);
 
                 // Send feedback message to player
-                // Note: Using simple strings here, proper localization should be used
-                String statusText = newState ? "enabled" : "disabled";
-                String messageText = String.format("Ability '%s' %s", message.abilityId, statusText);
-                player.sendMessage(new TextComponentString(messageText));
+                ITextComponent abilityName = new TextComponentTranslation("am2.chat.ability_" + message.abilityId);
+                ITextComponent statusText = new TextComponentTranslation(newState ? "am2.chat.enabled" : "am2.chat.disabled");
+                player.sendMessage(new TextComponentString("").appendSibling(abilityName).appendText(" ").appendSibling(statusText));
             }
         }
     }

@@ -1245,7 +1245,7 @@ public class CompendiumXMLLoader {
             case "TileEntityCraftingAltar":
                 return new TileEntityCraftingAltar().getMultiblockStructure();
             case "TileEntityManaDrain":
-                return new TileEntityManaDrain().getMultiblockStructure();
+                return new TileEntityDrainingWell().getMultiblockStructure();
             default:
                 return null;
         }

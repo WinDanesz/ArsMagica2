@@ -1,23 +1,45 @@
 package am2.common.compat.electroblob;
 
 import am2.ArsMagica;
+import am2.api.affinity.Affinity;
 import am2.api.compendium.CompendiumCategory;
 import am2.api.compendium.CompendiumEntry;
+import am2.api.spell.SpellPart;
 import am2.common.compat.electroblob.item.ItemEBWizSpellBinding;
 import am2.common.compat.electroblob.item.ItemSpellBookEBWiz;
+import am2.common.entity.ai.selectors.SummonEntitySelector;
 import am2.common.items.ItemSpellBook;
 import am2.common.registry.CompendiumRegistry;
 import am2.common.skill.Discipline;
+import am2.common.utils.EntityUtils;
+import electroblob.wizardry.event.SpellCastEvent;
+import electroblob.wizardry.item.ItemWand;
+import electroblob.wizardry.item.ItemWizardArmour;
+import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.spell.Spell;
+import electroblob.wizardry.util.AllyDesignationSystem;
+import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.IForgeRegistry;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Bootstrap class for Electroblob's Wizardry (ebwizardry) compatibility.
@@ -46,52 +68,52 @@ public final class EBWizardryCompatBootstrap {
      * present. Safe to call unconditionally – the check is performed here.
      */
     public static void register() {
-        if (!am2.ArsMagica.config.getEbwizCompatEnabled()) return;
+        if (!ArsMagica.config.getEbwizCompatEnabled()) return;
         if (Loader.isModLoaded(MODID)) {
             isActive = true;
             MinecraftForge.EVENT_BUS.register(new EBWizardryCompatHandler());
             registerCompendiumEntry();
-            am2.common.entity.ai.selectors.SummonEntitySelector.ebwizValidator =
-                    electroblob.wizardry.util.AllyDesignationSystem::isValidTarget;
+            SummonEntitySelector.ebwizValidator =
+                    AllyDesignationSystem::isValidTarget;
 
             // Tell Wizardry to treat AM2 summons as allies of their owner so that
             // Wizardry minions won't attack them and healing spells will affect them.
-            electroblob.wizardry.util.AllyDesignationSystem.registerValidTargetPredicate((attacker, target) -> {
+            AllyDesignationSystem.registerValidTargetPredicate((attacker, target) -> {
                 if (!(target instanceof EntityLivingBase)) return false;
-                if (!am2.common.utils.EntityUtils.isSummon((EntityLivingBase) target)) return false;
-                int ownerEntityId = am2.common.utils.EntityUtils.getOwner((EntityLivingBase) target);
+                if (!EntityUtils.isSummon((EntityLivingBase) target)) return false;
+                int ownerEntityId = EntityUtils.getOwner((EntityLivingBase) target);
                 if (ownerEntityId == -1) return false;
-                net.minecraft.entity.Entity ownerEntity = target.world.getEntityByID(ownerEntityId);
+                Entity ownerEntity = target.world.getEntityByID(ownerEntityId);
                 if (ownerEntity == null) return false;
                 // Direct owner — never attack
                 if (attacker == ownerEntity) return true;
                 // Another AM2 summon of the same owner — don't attack each other
                 if (attacker instanceof EntityLivingBase
-                        && am2.common.utils.EntityUtils.isSummon((EntityLivingBase) attacker)
-                        && am2.common.utils.EntityUtils.getOwner((EntityLivingBase) attacker) == ownerEntityId) return true;
+                        && EntityUtils.isSummon((EntityLivingBase) attacker)
+                        && EntityUtils.getOwner((EntityLivingBase) attacker) == ownerEntityId) return true;
                 // Cross-player: attacker is a Wizardry ally of the summon's owner
-                if (attacker instanceof net.minecraft.entity.player.EntityPlayer
-                        && ownerEntity instanceof net.minecraft.entity.player.EntityPlayer)
-                    return electroblob.wizardry.util.AllyDesignationSystem.isPlayerAlly(
-                            (net.minecraft.entity.player.EntityPlayer) attacker,
-                            (net.minecraft.entity.player.EntityPlayer) ownerEntity);
+                if (attacker instanceof EntityPlayer
+                        && ownerEntity instanceof EntityPlayer)
+                    return AllyDesignationSystem.isPlayerAlly(
+                            (EntityPlayer) attacker,
+                            (EntityPlayer) ownerEntity);
                 return false;
             });
 
-            electroblob.wizardry.util.AllyDesignationSystem.registerAllyPredicate((allyOf, possibleAlly) -> {
-                if (!am2.common.utils.EntityUtils.isSummon(possibleAlly)) return false;
-                int ownerEntityId = am2.common.utils.EntityUtils.getOwner(possibleAlly);
+            AllyDesignationSystem.registerAllyPredicate((allyOf, possibleAlly) -> {
+                if (!EntityUtils.isSummon(possibleAlly)) return false;
+                int ownerEntityId = EntityUtils.getOwner(possibleAlly);
                 if (ownerEntityId == -1) return false;
-                net.minecraft.entity.Entity ownerEntity = possibleAlly.world.getEntityByID(ownerEntityId);
+                Entity ownerEntity = possibleAlly.world.getEntityByID(ownerEntityId);
                 if (ownerEntity == null) return false;
                 // Direct owner can always heal/buff their own summons
                 if (allyOf == ownerEntity) return true;
                 // Cross-player: allyOf is a Wizardry ally of the summon's owner
-                if (allyOf instanceof net.minecraft.entity.player.EntityPlayer
-                        && ownerEntity instanceof net.minecraft.entity.player.EntityPlayer)
-                    return electroblob.wizardry.util.AllyDesignationSystem.isPlayerAlly(
-                            (net.minecraft.entity.player.EntityPlayer) allyOf,
-                            (net.minecraft.entity.player.EntityPlayer) ownerEntity);
+                if (allyOf instanceof EntityPlayer
+                        && ownerEntity instanceof EntityPlayer)
+                    return AllyDesignationSystem.isPlayerAlly(
+                            (EntityPlayer) allyOf,
+                            (EntityPlayer) ownerEntity);
                 return false;
             });
 
@@ -214,7 +236,6 @@ public final class EBWizardryCompatBootstrap {
             + "The spell's content is discovered by the caster upon reading the book."
             + "!d Should you have already mastered every spell of the chosen element and tier, the ritual will run its course "
             + "but yield nothing - the writable book remains on the lectern, and the ingredients and etherium are still consumed."
-            + "!d This feature can be disabled in the AM2 config under #2EBWiz_Discovery_Enabled#0."
         );
         entry.setRelatedEntries("crafting_altar,obelisk");
         entry.setUnlocked();
@@ -223,7 +244,7 @@ public final class EBWizardryCompatBootstrap {
 
     private static void registerConjureBlockCompendiumEntry() {
         CompendiumEntry entry = new CompendiumEntry(null, "conjure_block");
-        entry.setCategory(am2.api.compendium.CompendiumCategory.SPELL_COMPONENT);
+        entry.setCategory(CompendiumCategory.SPELL_COMPONENT);
         entry.setName("Conjure Block");
         entry.addObject(
             "I raised my hand and something solid answered. Not quarried, not carried – simply called forth. "
@@ -240,7 +261,7 @@ public final class EBWizardryCompatBootstrap {
 
     private static void registerCobwebSpellCompendiumEntry() {
         CompendiumEntry entry = new CompendiumEntry(null, "cobweb_spell");
-        entry.setCategory(am2.api.compendium.CompendiumCategory.SPELL_COMPONENT);
+        entry.setCategory(CompendiumCategory.SPELL_COMPONENT);
         entry.setName("Cobweb");
         entry.addObject(
             "It seemed effortless, the way it spread. A single gesture, and the air between us filled with sticky strands, "
@@ -257,7 +278,7 @@ public final class EBWizardryCompatBootstrap {
 
     private static void registerIceStatueCompendiumEntry() {
         CompendiumEntry entry = new CompendiumEntry(null, "ice_statue");
-        entry.setCategory(am2.api.compendium.CompendiumCategory.SPELL_COMPONENT);
+        entry.setCategory(CompendiumCategory.SPELL_COMPONENT);
         entry.setName("Ice Statue");
         entry.addObject(
             "They stood perfectly still, their face caught in an expression of pure terror, their skin turned to glimmering ice. "
@@ -274,7 +295,7 @@ public final class EBWizardryCompatBootstrap {
      * Registers all EBWiz-exclusive spell parts (modifiers and components).
      * Safe to call unconditionally – does nothing when EBWiz is absent.
      */
-    public static void registerSpellParts(net.minecraftforge.registries.IForgeRegistry<am2.api.spell.SpellPart> registry) {
+    public static void registerSpellParts(IForgeRegistry<SpellPart> registry) {
         if (!Loader.isModLoaded(MODID)) return;
         EBWizardryCompatHandler.registerSpellParts(registry);
     }
@@ -313,25 +334,25 @@ public final class EBWizardryCompatBootstrap {
      * Returns the AM2 mana cost for the EBWiz wand's currently-selected spell,
      * applying the discipline cost discount when {@code caster} is non-null.
      */
-    public static float getEBWizWandCurrentSpellManaCost(ItemStack stack, @javax.annotation.Nullable EntityLivingBase caster) {
+    public static float getEBWizWandCurrentSpellManaCost(ItemStack stack, @Nullable EntityLivingBase caster) {
         if (!Loader.isModLoaded(MODID)) return -1f;
         if (stack.isEmpty()) return -1f;
-        if (!(stack.getItem() instanceof electroblob.wizardry.item.ItemWand)) return -1f;
-        electroblob.wizardry.item.ItemWand wand = (electroblob.wizardry.item.ItemWand) stack.getItem();
-        electroblob.wizardry.spell.Spell spell = wand.getCurrentSpell(stack);
-        if (spell == null || spell == electroblob.wizardry.registry.Spells.none) return -1f;
+        if (!(stack.getItem() instanceof ItemWand)) return -1f;
+        ItemWand wand = (ItemWand) stack.getItem();
+        Spell spell = wand.getCurrentSpell(stack);
+        if (spell == null || spell == Spells.none) return -1f;
         float cost = spell.getCost() * ArsMagica.config.getEBWizManaCostMultiplier();
         if (caster != null) {
             // We use a fake event container to run ItemWizardArmour's internal maths 
             // without actually firing it on the Forge Event Bus. This ensures no side 
             // effects are triggered by other mods during HUD rendering.
-            electroblob.wizardry.util.SpellModifiers fakeModifiers = new electroblob.wizardry.util.SpellModifiers();
-            fakeModifiers.set(electroblob.wizardry.util.SpellModifiers.COST, 1.0f, false);
-            electroblob.wizardry.event.SpellCastEvent.Pre fakeEvent =
-                    new electroblob.wizardry.event.SpellCastEvent.Pre(
-                            electroblob.wizardry.event.SpellCastEvent.Source.WAND, spell, caster, fakeModifiers);
-            electroblob.wizardry.item.ItemWizardArmour.onSpellCastPreEvent(fakeEvent);
-            float armourDiscount = fakeModifiers.get(electroblob.wizardry.util.SpellModifiers.COST);
+            SpellModifiers fakeModifiers = new SpellModifiers();
+            fakeModifiers.set(SpellModifiers.COST, 1.0f, false);
+            SpellCastEvent.Pre fakeEvent =
+                    new SpellCastEvent.Pre(
+                            SpellCastEvent.Source.WAND, spell, caster, fakeModifiers);
+            ItemWizardArmour.onSpellCastPreEvent(fakeEvent);
+            float armourDiscount = fakeModifiers.get(SpellModifiers.COST);
 
             cost *= EBWizardryCompatHandler.getDisciplineCostMultiplier(caster, spell) * armourDiscount;
         }
@@ -345,7 +366,7 @@ public final class EBWizardryCompatBootstrap {
     public static boolean isEBWizWand(ItemStack stack) {
          if (!Loader.isModLoaded(MODID)) return false;
         if (stack.isEmpty()) return false;
-        return stack.getItem() instanceof electroblob.wizardry.item.ItemWand;
+        return stack.getItem() instanceof ItemWand;
     }
 
     /**
@@ -375,7 +396,7 @@ public final class EBWizardryCompatBootstrap {
      * (e.g. fire mage robes reducing fireball cost) are factored in.
      * Returns {@code -1} if EBWiz is not loaded or the stack is invalid.
      */
-    public static float getEBWizSpellBindingManaCost(ItemStack stack, net.minecraft.entity.EntityLivingBase caster) {
+    public static float getEBWizSpellBindingManaCost(ItemStack stack, EntityLivingBase caster) {
         if (!Loader.isModLoaded(MODID)) return -1f;
         return EBWizardryCompatHandler.getEBWizSpellBindingManaCost(stack, caster);
     }
@@ -399,7 +420,7 @@ public final class EBWizardryCompatBootstrap {
      */
     public static boolean isEBWizBindingBook(ItemStack stack) {
         if (stack.isEmpty()) return false;
-        if (stack.getItem() != net.minecraft.init.Items.WRITTEN_BOOK) return false;
+        if (stack.getItem() != Items.WRITTEN_BOOK) return false;
         if (!stack.hasTagCompound()) return false;
         return stack.getTagCompound().hasKey("EBWizSpell");
     }
@@ -427,22 +448,29 @@ public final class EBWizardryCompatBootstrap {
      * @param velScale Multiplier on random velocity (0–1). Pass 0 for stationary particles, 1 for full drift.
      * @return {@code true} if EBWizardry particles were spawned, {@code false} if EBWiz is not loaded.
      */
-    public static boolean spawnFrostParticles(net.minecraft.world.World world, double x, double y, double z, int count, java.util.Random rand, double spread, double velScale) {
+    public static boolean spawnFrostParticles(World world, double x, double y, double z, int count, Random rand, double spread, double velScale) {
         if (!Loader.isModLoaded(MODID)) return false;
         EBWizardryCompatHandler.spawnFrostParticles(world, x, y, z, count, rand, spread, velScale);
         return true;
     }
 
     /** Overload with explicit spread, default velocity scale of 1. */
-    public static boolean spawnFrostParticles(net.minecraft.world.World world, double x, double y, double z, int count, java.util.Random rand, double spread) {
+    public static boolean spawnFrostParticles(World world, double x, double y, double z, int count, Random rand, double spread) {
         if (!Loader.isModLoaded(MODID)) return false;
         EBWizardryCompatHandler.spawnFrostParticles(world, x, y, z, count, rand, spread);
         return true;
     }
 
     /** Convenience overload with default spread of 0.4 blocks and full velocity. */
-    public static boolean spawnFrostParticles(net.minecraft.world.World world, double x, double y, double z, int count, java.util.Random rand) {
+    public static boolean spawnFrostParticles(World world, double x, double y, double z, int count, Random rand) {
         return spawnFrostParticles(world, x, y, z, count, rand, 0.4, 1.0);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static boolean spawnDirectedFrostParticle(World world, double x, double y, double z, double vx, double vy, double vz) {
+        if (!Loader.isModLoaded(MODID)) return false;
+        EBWizardryCompatHandler.spawnDirectedFrostParticle(world, x, y, z, vx, vy, vz);
+        return true;
     }
 
     /**
@@ -450,8 +478,8 @@ public final class EBWizardryCompatBootstrap {
      * Returns {@code false} and does nothing if EBWizardry is not loaded.
      * Safe to call unconditionally client-side.
      */
-    @net.minecraftforge.fml.relauncher.SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
-    public static boolean spawnMistCloudParticle(net.minecraft.world.World world, double x, double y, double z,
+    @SideOnly(Side.CLIENT)
+    public static boolean spawnMistCloudParticle(World world, double x, double y, double z,
                                                  double vx, double vy, double vz, float scale, int lifetime) {
         if (!Loader.isModLoaded(MODID)) return false;
         EBWizardryCompatHandler.spawnMistCloudParticle(world, x, y, z, vx, vy, vz, scale, lifetime);
@@ -463,7 +491,7 @@ public final class EBWizardryCompatBootstrap {
      * Returns {@code true} if the effect was applied, {@code false} if EBWiz is absent.
      * Safe to call unconditionally.
      */
-    public static boolean applyFrostEffect(net.minecraft.entity.EntityLivingBase target, int durationTicks, int amplifier) {
+    public static boolean applyFrostEffect(EntityLivingBase target, int durationTicks, int amplifier) {
         if (!Loader.isModLoaded(MODID)) return false;
         EBWizardryCompatHandler.applyFrostEffect(target, durationTicks, amplifier);
         return true;
@@ -539,7 +567,7 @@ public final class EBWizardryCompatBootstrap {
      * which implements an EBWiz interface and would trigger a
      * {@link NoClassDefFoundError} on startup when EBWiz is absent.
      */
-    public static void registerEBWizItems(net.minecraftforge.registries.IForgeRegistry<Item> registry) {
+    public static void registerEBWizItems(IForgeRegistry<Item> registry) {
         if (Loader.isModLoaded(MODID)) {
             EBWizardryCompatHandler.registerEBWizItems(registry);
         }
@@ -556,9 +584,9 @@ public final class EBWizardryCompatBootstrap {
      * <p>Safe to call unconditionally – returns 0 when EBWiz is absent or the
      * config option is disabled.
      */
-    public static float getCondenserRegenMultiplier(net.minecraft.entity.player.EntityPlayer player) {
+    public static float getCondenserRegenMultiplier(EntityPlayer player) {
         if (!Loader.isModLoaded(MODID)) return 0f;
-        if (!am2.ArsMagica.config.getEBWizCondenserManaRegenEnabled()) return 0f;
+        if (!ArsMagica.config.getEBWizCondenserManaRegenEnabled()) return 0f;
         return EBWizardryCompatHandler.getCondenserRegenMultiplier(player);
     }
 
@@ -569,7 +597,7 @@ public final class EBWizardryCompatBootstrap {
      * <p>Apply as {@code regenTicks *= (1 - getRingCondensingRegenMultiplier(player))}.
      * Safe to call unconditionally – returns 0 when EBWiz is absent.
      */
-    public static float getRingCondensingRegenMultiplier(net.minecraft.entity.player.EntityPlayer player) {
+    public static float getRingCondensingRegenMultiplier(EntityPlayer player) {
         if (!Loader.isModLoaded(MODID)) return 0f;
         return EBWizardryCompatHandler.getRingCondensingRegenMultiplier(player);
     }
@@ -599,8 +627,8 @@ public final class EBWizardryCompatBootstrap {
      *
      * <p>Returns an empty map when EBWiz is not loaded. Safe to call unconditionally.
      */
-    public static java.util.Map<String, String[]> getEBWizRecipeDefaults() {
-        if (!Loader.isModLoaded(MODID)) return java.util.Collections.emptyMap();
+    public static Map<String, String[]> getEBWizRecipeDefaults() {
+        if (!Loader.isModLoaded(MODID)) return Collections.emptyMap();
         return EBWizardryCompatHandler.getEBWizRecipeDefaults();
     }
 
@@ -620,10 +648,10 @@ public final class EBWizardryCompatBootstrap {
      * @param player the casting player
      * @return a multiplier ≥ {@code 1.0f} to apply to AM2 spell damage
      */
-    public static float getArtefactPotencyMultiplier(net.minecraft.entity.player.EntityPlayer player,
-            @javax.annotation.Nullable am2.api.affinity.Affinity dominantAffinity) {
+    public static float getArtefactPotencyMultiplier(EntityPlayer player,
+                                                     @Nullable Affinity dominantAffinity) {
         if (!Loader.isModLoaded(MODID)) return 1.0f;
-        float ratio = am2.ArsMagica.config.getEBWizArtefactPotencyRatio();
+        float ratio = ArsMagica.config.getEBWizArtefactPotencyRatio();
         if (ratio <= 0f) return 1.0f;
         return EBWizardryCompatHandler.computeArtefactPotencyMultiplier(player, ratio, dominantAffinity);
     }
@@ -637,7 +665,7 @@ public final class EBWizardryCompatBootstrap {
      * @param priority the AI task priority
      * @param cooldown cooldown in ticks between casts
      */
-    public static void addArcAttackAI(net.minecraft.entity.EntityLiving entity, int priority, int cooldown) {
+    public static void addArcAttackAI(EntityLiving entity, int priority, int cooldown) {
         if (!Loader.isModLoaded(MODID)) return;
         EBWizardryCompatHandler.addArcAttackAI(entity, priority, cooldown);
     }
@@ -722,7 +750,7 @@ public final class EBWizardryCompatBootstrap {
      * Selects a random undiscovered EBWiz spell of the given element and tier.
      * Returns {@link ItemStack#EMPTY} if the pool is exhausted or EBWiz is not loaded.
      */
-    public static ItemStack selectRandomUndiscoveredSpell(net.minecraft.entity.player.EntityPlayer player, int elementOrdinal, int tierOrdinal) {
+    public static ItemStack selectRandomUndiscoveredSpell(EntityPlayer player, int elementOrdinal, int tierOrdinal) {
         if (!Loader.isModLoaded(MODID)) return ItemStack.EMPTY;
         return EBWizardryCompatHandler.selectRandomUndiscoveredSpell(player, elementOrdinal, tierOrdinal);
     }
@@ -731,7 +759,7 @@ public final class EBWizardryCompatBootstrap {
      * Marks the spell in the given spell book stack as discovered in the player's data.
      * No-op if EBWiz is not loaded.
      */
-    public static void markSpellDiscovered(net.minecraft.entity.player.EntityPlayer player, ItemStack spellBookStack) {
+    public static void markSpellDiscovered(EntityPlayer player, ItemStack spellBookStack) {
         if (!Loader.isModLoaded(MODID)) return;
         EBWizardryCompatHandler.markSpellDiscovered(player, spellBookStack);
     }

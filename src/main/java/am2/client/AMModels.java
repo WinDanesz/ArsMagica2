@@ -245,7 +245,7 @@ public final class AMModels {
             ResourceLocation icon = spellPart.getIcon();
             if (icon == null)
                 continue;
-            ModelResourceLocation mrl = new ModelResourceLocation(spellPart.getRegistryName(), "inventory");
+            ModelResourceLocation mrl = new ModelResourceLocation(spellPart.getRegistryName(), "spell_part");
             // Create a simple item layer model using ItemLayerModel
             ItemLayerModel layerModel = new ItemLayerModel(ImmutableList.of(spellPart.getIcon()));
             TRSRTransformation transform = TRSRTransformation.identity();

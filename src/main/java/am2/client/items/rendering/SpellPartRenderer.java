@@ -15,7 +15,7 @@ public class SpellPartRenderer implements ItemMeshDefinition {
     public ModelResourceLocation getModelLocation(ItemStack stack) {
         int metadata = stack.getMetadata();
         Skill s = ItemSpellComponent.getSkillByID(metadata);
-        return new ModelResourceLocation(s.getRegistryName(), "inventory");
+        return new ModelResourceLocation(s.getRegistryName(), "spell_part");
     }
 
 }

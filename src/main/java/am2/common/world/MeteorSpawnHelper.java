@@ -29,7 +29,8 @@ public class MeteorSpawnHelper {
             WorldServer ws = FMLCommonHandler.instance().getMinecraftServerInstance().worlds[0];
             int baseChance = ArsMagica.config.getMeteorSpawnBaseChance();
             int moonPhaseMultiplier = ArsMagica.config.getMeteorSpawnMoonPhaseMultiplier();
-            if (rand.nextInt(baseChance + (moonPhaseMultiplier * ws.provider.getMoonPhase(ws.provider.getWorldTime()))) == 0) {
+            int bound = baseChance + (moonPhaseMultiplier * ws.provider.getMoonPhase(ws.provider.getWorldTime()));
+            if (rand.nextInt(Math.max(1, bound)) == 0) {
                 spawnMeteor();
             }
         } else {
@@ -75,6 +76,9 @@ public class MeteorSpawnHelper {
                 spawnCoord = attractorCoord;
                 meteorOffsetRadius = ArsMagica.config.getMeteorSpawnRadiusAttractor();
             }
+            
+            meteorOffsetRadius = Math.max(1, meteorOffsetRadius);
+            
             for (int i = 0; i < 10; ++i) {
                 BlockPos offsetCoord = spawnCoord.add(new AMVector3(rand.nextInt(meteorOffsetRadius) - (meteorOffsetRadius / 2), 0, rand.nextInt(meteorOffsetRadius) - (meteorOffsetRadius / 2))).toBlockPos();
                 offsetCoord = correctYCoord(ws, offsetCoord);
