@@ -14,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.init.PotionTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
@@ -134,7 +135,7 @@ public class ApplyPotion extends SpellComponent {
     @Override
     public Object[] getRecipe() {
         return new Object[]{
-                new ItemStack(Items.SPLASH_POTION),
+                PotionUtils.addPotionToItemStack(new ItemStack(Items.SPLASH_POTION), PotionTypes.WEAKNESS),
                 new ItemStack(Items.BREWING_STAND)
         };
     }
