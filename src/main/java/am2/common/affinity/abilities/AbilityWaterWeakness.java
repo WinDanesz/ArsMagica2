@@ -9,6 +9,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;
@@ -20,6 +21,10 @@ public class AbilityWaterWeakness extends AbstractAffinityAbility {
     // Grace period (in ticks) the malus is kept after the player is no longer wet, so bobbing
     // at the water's surface doesn't yank the debuff on/off every tick. Applying is still instant.
     private static final int GRACE_PERIOD_TICKS = 20;
+    // How often (in ticks) the fire variant deals its periodic water damage.
+    private static final int FIRE_DAMAGE_INTERVAL_TICKS = 20;
+    // Fire's weakness to water won't push the player below this fraction of their max health.
+    private static final float FIRE_DAMAGE_HEALTH_FLOOR = 0.75f;
 
     public String affinity;
     private final Map<UUID, Integer> graceTicksRemaining = new HashMap<>();
@@ -36,7 +41,8 @@ public class AbilityWaterWeakness extends AbstractAffinityAbility {
 
     @Override
     public float getMaximumDepth() {
-        return 0.9f;
+        // Fire deals direct damage rather than capping max health (see applyWaterDamage), so it has no upper depth bound.
+        return "fire".equals(this.affinity) ? -1F : 0.9f;
     }
 
     @Override
@@ -58,7 +64,6 @@ public class AbilityWaterWeakness extends AbstractAffinityAbility {
     // instance is currently ineligible, fighting the one that IS eligible every tick.
     private AttributeModifier getModifier() {
         return switch (this.affinity) {
-            case "fire" -> AffinityAbilityModifiers.waterWeaknessFire;
             case "lightning" -> AffinityAbilityModifiers.waterWeaknessLightning;
             default -> AffinityAbilityModifiers.waterWeakness;
         };
@@ -75,6 +80,10 @@ public class AbilityWaterWeakness extends AbstractAffinityAbility {
 
     @Override
     public void applyTick(EntityPlayer player) {
+        if ("fire".equals(this.affinity)) {
+            applyWaterDamage(player);
+            return;
+        }
         IAttributeInstance attribute = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
         UUID id = player.getUniqueID();
         if (isSubmergedInWater(player)) {
@@ -87,8 +96,18 @@ public class AbilityWaterWeakness extends AbstractAffinityAbility {
         AffinityAbilityModifiers.instance.applyOrRemoveModifier(attribute, getModifier(), graceTicksRemaining.getOrDefault(id, 0) > 0);
     }
 
+    // Fire mages take real, periodic damage from touching water instead of the max-health cap the
+    // other variants use, but it won't push them below FIRE_DAMAGE_HEALTH_FLOOR of their max health.
+    private void applyWaterDamage(EntityPlayer player) {
+        if (player.world.isRemote || !isSubmergedInWater(player)) return;
+        if (player.ticksExisted % FIRE_DAMAGE_INTERVAL_TICKS != 0) return;
+        if (player.getHealth() <= player.getMaxHealth() * FIRE_DAMAGE_HEALTH_FLOOR) return;
+        player.attackEntityFrom(DamageSource.DROWN, 1.0f);
+    }
+
     @Override
     public void removeEffects(EntityPlayer player) {
+        if ("fire".equals(this.affinity)) return;
         graceTicksRemaining.remove(player.getUniqueID());
         IAttributeInstance attribute = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
         AffinityAbilityModifiers.instance.applyOrRemoveModifier(attribute, getModifier(), false);
