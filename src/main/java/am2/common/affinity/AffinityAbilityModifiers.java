@@ -34,7 +34,11 @@ public class AffinityAbilityModifiers {
     public static final AttributeModifier lightningAffinitySpeed = new AttributeModifier(lightningAffinityModifierID, "Lightning Reflexes", 1.20, OPERATION_ADD);
 
     public static final UUID waterWeaknessID = UUID.fromString("3b51a94c-7844-732b-8b69-a1f5cd50a60f");
-    public static final AttributeModifier waterWeakness = new AttributeModifier(waterWeaknessID, "Water Weakness", -0.25, OPERATION_ADD);
+    public static final AttributeModifier waterWeakness = new AttributeModifier(waterWeaknessID, "Water Weakness (Ender)", -0.25, OPERATION_ADD);
+    public static final UUID waterWeaknessFireID = UUID.fromString("3b51a94c-7844-732b-8b69-a1f5cd50a60c");
+    public static final AttributeModifier waterWeaknessFire = new AttributeModifier(waterWeaknessFireID, "Water Weakness (Fire)", -0.25, OPERATION_ADD);
+    public static final UUID waterWeaknessLightningID = UUID.fromString("3b51a94c-7844-732b-8b69-a1f5cd50a60b");
+    public static final AttributeModifier waterWeaknessLightning = new AttributeModifier(waterWeaknessLightningID, "Water Weakness (Lightning)", -0.25, OPERATION_ADD);
     public static final UUID fireWeaknessID = UUID.fromString("3b51a94c-7844-732b-8b69-a1f5cd50a60e");
     public static final AttributeModifier fireWeakness = new AttributeModifier(fireWeaknessID, "Fire Weakness", -0.25, OPERATION_ADD);
     public static final UUID sunlightWeaknessID = UUID.fromString("3b51a94c-7844-732b-8b69-a1f5cd50a60d");

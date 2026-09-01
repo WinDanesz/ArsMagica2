@@ -44,12 +44,12 @@ public class AffinityAbilityHelper {
                     if (entry.getValue() > 0)
                         AffinityData.For(event.getEntityLiving()).addCooldown(entry.getKey(), entry.getValue() - 1);
                 }
-            }
-            for (AbstractAffinityAbility ability : GameRegistry.findRegistry(AbstractAffinityAbility.class).getValues()) {
-                if (ability.canApply((EntityPlayer) event.getEntityLiving()))
-                    ability.applyTick((EntityPlayer) event.getEntityLiving());
-                else
-                    ability.removeEffects((EntityPlayer) event.getEntityLiving());
+                for (AbstractAffinityAbility ability : GameRegistry.findRegistry(AbstractAffinityAbility.class).getValues()) {
+                    if (ability.canApply((EntityPlayer) event.getEntityLiving()))
+                        ability.applyTick((EntityPlayer) event.getEntityLiving());
+                    else
+                        ability.removeEffects((EntityPlayer) event.getEntityLiving());
+                }
             }
         }
     }

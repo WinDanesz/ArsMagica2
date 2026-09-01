@@ -42,6 +42,17 @@ public class ArsMagicaAPI {
     public static final IAttribute manaRegenTimeModifier = new RangedAttribute(null, "am2.manaRegenModifier", 1.0f, 0.5f, 2.0f).setDescription("Mana Regen Rate Multiplier").setShouldWatch(true);
     //Bonus to burnout reduction rate.  Applied multiplicatively.
     public static final IAttribute burnoutReductionRate = new RangedAttribute(null, "am2.burnoutReduction", 1.0f, 0.1f, 2.0f).setDescription("Burnout Reduction Rate").setShouldWatch(true);
+    //Bonus to max summons. Applied additively.
+    public static final IAttribute maxSummons = new RangedAttribute(null, "am2.maxSummons", 0.0f, 0.0f, Double.MAX_VALUE).setDescription("Max Summons").setShouldWatch(true);
+    //Spell damage multiplier. Applied multiplicatively. Base 1.0.
+    public static final IAttribute spellDamageMultiplier = new RangedAttribute(null, "am2.spellDamageMultiplier", 1.0f, 0.0f, Double.MAX_VALUE).setDescription("Spell Damage Multiplier").setShouldWatch(true);
+    //Mana cost multiplier. Applied multiplicatively. Base 1.0.
+    public static final IAttribute manaCostMultiplier = new RangedAttribute(null, "am2.manaCostMultiplier", 1.0f, 0.0f, Double.MAX_VALUE).setDescription("Mana Cost Multiplier").setShouldWatch(true);
+    //Burnout generation multiplier. Applied multiplicatively. Base 1.0.
+    public static final IAttribute burnoutGenerationMultiplier = new RangedAttribute(null, "am2.burnoutGenerationMultiplier", 1.0f, 0.0f, Double.MAX_VALUE).setDescription("Burnout Generation Multiplier").setShouldWatch(true);
+    //Affinity gain multiplier. Applied multiplicatively. Base 1.0. Minimum 0.0 (halts gain).
+    public static final IAttribute affinityGainModifier = new RangedAttribute(null, "am2.affinityGainModifier", 1.0f, 0.0f, Double.MAX_VALUE).setDescription("Affinity Gain Multiplier").setShouldWatch(true);
+
 
 
     public static IForgeRegistry<Affinity> getAffinityRegistry() {
