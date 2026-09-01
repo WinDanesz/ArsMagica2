@@ -34,6 +34,12 @@ public class SlotInscriptionTable extends Slot {
     }
 
     @Override
+    public int getItemStackLimit(ItemStack stack) {
+        if (EBWizardryCompatBootstrap.isEBWizSpellBook(stack)) return 1;
+        return super.getItemStackLimit(stack);
+    }
+
+    @Override
     public ItemStack onTake(EntityPlayer par1EntityPlayer, ItemStack par2ItemStack) {
         if (EBWizardryCompatBootstrap.isEBWizBindingBook(par2ItemStack)) {
             // Player is taking the written book output of EBWiz binding workflow – recipe already cleared by createEBWizBindingBook.
