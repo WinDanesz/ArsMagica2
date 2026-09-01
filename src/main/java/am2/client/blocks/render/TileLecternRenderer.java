@@ -21,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.oredict.OreDictionary;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
@@ -81,8 +82,8 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
         GlStateManager.translate(x + 0.5F, y + 1.65F, z + 0.5F);
         GlStateManager.rotate(deg, 0, partialTicks, 0);
 
-        int dye = ((podium.tickCount) / 100) % 16;
-        if (stack.getItem() == Items.DYE) {
+        if (stack.getItem() == Items.DYE && stack.getMetadata() == OreDictionary.WILDCARD_VALUE) {
+            int dye = ((podium.tickCount) / 100) % 16;
             stack = new ItemStack(Items.DYE, 1, dye);
         }
         Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.GROUND);
