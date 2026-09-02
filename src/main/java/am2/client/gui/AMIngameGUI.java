@@ -75,6 +75,8 @@ public class AMIngameGUI extends Gui {
     private static final ResourceLocation hud_orb_liquid_burnout = new ResourceLocation(ArsMagica.MODID, "textures/gui/hud_orb_liquid_burnout.png");
     private static final ResourceLocation hud_orb_shine = new ResourceLocation(ArsMagica.MODID, "textures/gui/hud_orb_shine.png");
     private static final int ORB_WAVE_SEGMENTS = 16;
+    private static final float ORB_WINDOW_TOP = 0.15625f;
+    private static final float ORB_WINDOW_BOTTOM = 0.84375f;
     private static final int BUBBLE_BASE_COUNT = 4;
     private static final float[] BUBBLE_X = {0.32f, 0.58f, 0.45f, 0.70f, 0.25f, 0.75f, 0.48f, 0.62f, 0.36f, 0.66f, 0.52f, 0.40f};
     private static final float[] BUBBLE_PHASE = {0.1f, 0.55f, 0.8f, 0.3f, 0.92f, 0.15f, 0.6f, 0.02f, 0.72f, 0.38f, 0.48f, 0.85f};
@@ -527,23 +529,56 @@ public class AMIngameGUI extends Gui {
         fillPct = Math.max(0.0f, Math.min(1.0f, fillPct));
         if (fillPct <= 0.0f) return;
 
-        if (tint != null) {
-            GlStateManager.color(tint[0], tint[1], tint[2], 1.0f);
-        }
         this.mc.renderEngine.bindTexture(liquidTex);
 
         float amplitude = (0.9f + waveBoost) * (size / 32.0f);
         boolean nearEdge = fillPct < 0.03f || fillPct > 0.97f;
-        float fillHeight = size * fillPct;
-        float baseTopY = y + (size - fillHeight);
+        // The frame's bezel masks off the outer ring of the square canvas, so the actually-visible
+        // liquid window is only the middle ORB_WINDOW_TOP..ORB_WINDOW_BOTTOM band, not the full 0..1.
+        // Map fillPct onto that band so 100% fill lines up with the orb actually looking full.
+        float windowTop = size * ORB_WINDOW_TOP;
+        float windowBottom = size * ORB_WINDOW_BOTTOM;
+        float fillHeight = (windowBottom - windowTop) * fillPct;
+        float baseTopY = y + windowBottom - fillHeight;
 
+        // Back layer: a darker copy of the wave, traveling in the opposite direction, amplified, and
+        // offset higher, so it peeks out above/around the front surface like the far inner wall of a
+        // liquid swirling opposite to the near surface.
+        float backOffset = Math.max(1.0f, size * 0.03f);
+        float darken = 0.45f;
+        float backR = (tint != null ? tint[0] : 1.0f) * darken;
+        float backG = (tint != null ? tint[1] : 1.0f) * darken;
+        float backB = (tint != null ? tint[2] : 1.0f) * darken;
+        GlStateManager.color(backR, backG, backB, 1.0f);
+        this.drawLiquidWaveMesh(x, y, size, baseTopY - backOffset, amplitude * 1.8f, time, true, nearEdge);
+
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        if (tint != null) {
+            GlStateManager.color(tint[0], tint[1], tint[2], 1.0f);
+        }
+        this.drawLiquidWaveMesh(x, y, size, baseTopY, amplitude, time, false, nearEdge);
+
+        this.drawOrbBubbles(x, y, size, fillPct, time, bubbleSeed, boilIntensity);
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
+    /**
+     * One wavy triangle-strip liquid surface, cropped bottom-up from the texture's V coordinate.
+     * reverseDirection flips the sign of the spatial term (not the wave value), so the wave travels
+     * across the surface in the opposite horizontal direction over time instead of just being a
+     * vertical mirror of the same traveling wave - used for the back depth layer, so it reads as the
+     * far inner wall of a liquid rotating opposite to the near surface rather than a static reflection.
+     */
+    private void drawLiquidWaveMesh(int x, int y, int size, float baseTopY, float amplitude, float time, boolean reverseDirection, boolean nearEdge) {
         Tessellator tess = Tessellator.getInstance();
         BufferBuilder buffer = tess.getBuffer();
         buffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX);
         for (int s = 0; s <= ORB_WAVE_SEGMENTS; s++) {
             float u = s / (float) ORB_WAVE_SEGMENTS;
             float px = x + size * u;
-            float wave = nearEdge ? 0.0f : (float) Math.sin(time * 1.7 + u * Math.PI * 3.0) * amplitude;
+            float spatialPhase = u * (float) Math.PI * 3.0f;
+            if (reverseDirection) spatialPhase = -spatialPhase;
+            float wave = nearEdge ? 0.0f : (float) Math.sin(time * 1.7 + spatialPhase) * amplitude;
             float topY = baseTopY + wave;
             if (topY < y) topY = y;
             if (topY > y + size) topY = y + size;
@@ -552,9 +587,6 @@ public class AMIngameGUI extends Gui {
             buffer.pos(px, y + size, this.zLevel).tex(u, 1.0).endVertex();
         }
         tess.draw();
-
-        this.drawOrbBubbles(x, y, size, fillPct, time, bubbleSeed, boilIntensity);
-        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     /**

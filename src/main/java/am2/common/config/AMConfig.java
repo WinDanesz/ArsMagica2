@@ -450,6 +450,8 @@ public class AMConfig extends Configuration {
     /** GUI Config **/
     private final String KEY_ManaHudPositionX = "mana_hud_position_x";
     private final String KEY_BurnoutHudPositionX = "burnout_hud_position_x";
+    private final String KEY_ManaOrbPositionX = "mana_orb_position_x";
+    private final String KEY_BurnoutOrbPositionX = "burnout_orb_position_x";
     private final String KEY_BuffsPositivePositionX = "buffs_positive_position_x";
     private final String KEY_BuffsNegativePositionX = "buffs_negative_position_x";
     private final String KEY_LevelPositionX = "level_position_x";
@@ -461,6 +463,8 @@ public class AMConfig extends Configuration {
 
     private final String KEY_ManaHudPositionY = "mana_hud_position_y";
     private final String KEY_BurnoutHudPositionY = "burnout_hud_position_y";
+    private final String KEY_ManaOrbPositionY = "mana_orb_position_y";
+    private final String KEY_BurnoutOrbPositionY = "burnout_orb_position_y";
     private final String KEY_BuffsPositivePositionY = "buffs_positive_position_y";
     private final String KEY_BuffsNegativePositionY = "buffs_negative_position_y";
     private final String KEY_LevelPositionY = "level_position_y";
@@ -502,6 +506,10 @@ public class AMConfig extends Configuration {
     private final String KEY_ShowNumerics = "show_numeric_values";
     private final String KEY_ShowXPAlways = "show_xp_always";
     private final String KEY_ShowHUDBars = "show_hud_bars";
+    private final String KEY_ShowHudOrbs = "show_hud_orbs";
+    private final String KEY_HudOrbSize = "hud_orb_size";
+    private final String KEY_HudOrbBlackBackground = "hud_orb_black_background";
+    private final String KEY_HudOrbAffinityColor = "hud_orb_affinity_color";
     private final String KEY_ColourblindMode = "colourblind_mode";
     /** End GUI Config **/
 
@@ -660,6 +668,8 @@ public class AMConfig extends Configuration {
 
     private AMVector2 manaHudPosition;
     private AMVector2 burnoutHudPosition;
+    private AMVector2 manaOrbPosition;
+    private AMVector2 burnoutOrbPosition;
     private int manaBarWidth = 100;
     private int manaBarHeight = 10;
     private int burnoutBarWidth = 100;
@@ -686,6 +696,10 @@ public class AMConfig extends Configuration {
     private boolean showArmorUI;
     private boolean stagedCompendium;
     private boolean showHudBars;
+    private boolean showHudOrbs;
+    private int hudOrbSize;
+    private boolean hudOrbBlackBackground;
+    private boolean hudOrbAffinityColor;
     private boolean colourblindMode;
     private boolean candlesAreRovingLights;
     private boolean coloredSpellBookNames;
@@ -977,6 +991,8 @@ public class AMConfig extends Configuration {
 
         this.manaHudPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_ManaHudPositionX, 0.7104166746139526).getDouble(0.7104166746139526), this.get(CATEGORY_UI, this.KEY_ManaHudPositionY, 0.9137254953384399).getDouble(0.9137254953384399));
         this.burnoutHudPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_BurnoutHudPositionX, 0.13333334028720856).getDouble(0.13333334028720856), this.get(CATEGORY_UI, this.KEY_BurnoutHudPositionY, 0.9176470637321472).getDouble(0.9176470637321472));
+        this.manaOrbPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_ManaOrbPositionX, 0.82).getDouble(0.82), this.get(CATEGORY_UI, this.KEY_ManaOrbPositionY, 0.73).getDouble(0.73));
+        this.burnoutOrbPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_BurnoutOrbPositionX, 0.016).getDouble(0.016), this.get(CATEGORY_UI, this.KEY_BurnoutOrbPositionY, 0.73).getDouble(0.73));
         this.positiveBuffsPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_BuffsPositivePositionX, 0.5145833492279053).getDouble(0.5145833492279053), this.get(CATEGORY_UI, this.KEY_BuffsPositivePositionY, 0.47843137383461).getDouble(0.47843137383461));
         this.negativeBuffsPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_BuffsNegativePositionX, 0.46666666865348816).getDouble(0.46666666865348816), this.get(CATEGORY_UI, this.KEY_BuffsNegativePositionY, 0.47843137383461).getDouble(0.47843137383461));
         this.levelPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_LevelPositionX, 0.49791666865348816).getDouble(0.49791666865348816), this.get(CATEGORY_UI, this.KEY_LevelPositionY, 0.8117647171020508).getDouble(0.8117647171020508));
@@ -1003,6 +1019,10 @@ public class AMConfig extends Configuration {
         this.showNumerics = this.get(CATEGORY_UI, this.KEY_ShowNumerics, false).getBoolean(false);
         this.showXPAlways = this.get(CATEGORY_UI, this.KEY_ShowXPAlways, false).getBoolean(false);
         this.showHudBars = this.get(CATEGORY_UI, this.KEY_ShowHUDBars, true).getBoolean(true);
+        this.showHudOrbs = this.get(CATEGORY_UI, this.KEY_ShowHudOrbs, false, "Set this to true to use the Diablo-style liquid orb HUD (blue mana orb bottom-right, red burnout orb bottom-left) instead of the classic bars.").getBoolean(false);
+        this.hudOrbSize = this.get(CATEGORY_UI, this.KEY_HudOrbSize, 52, "Diameter in pixels of the mana/burnout orbs when show_hud_orbs is enabled.").getInt();
+        this.hudOrbBlackBackground = this.get(CATEGORY_UI, this.KEY_HudOrbBlackBackground, false, "Set this to true to give the empty (unfilled) portion of the HUD orbs a dark glass background instead of being fully transparent.").getBoolean(false);
+        this.hudOrbAffinityColor = this.get(CATEGORY_UI, this.KEY_HudOrbAffinityColor, true, "Set this to false to keep the mana orb always blue. When true, the mana orb (and its numeric value) shifts toward your highest affinity's color once that affinity's depth exceeds 50%.").getBoolean(true);
 
         this.witchwoodForestID = this.get(CATEGORY_WORLDGEN, this.KEY_WitchwoodForestBiomeID, -1, "Sets the biome ID that Witchwood Forest will use. Default: -1 (automatic))").getInt();
         this.witchwoodLeafParticles = this.get(CATEGORY_GENERAL, this.KEY_WitchwoodLeavesFall, true, "Disable this if you experience low FPS in witchwood forests").getBoolean(true);
@@ -1680,6 +1700,14 @@ public class AMConfig extends Configuration {
         return this.burnoutHudPosition;
     }
 
+    public AMVector2 getManaOrbPosition() {
+        return this.manaOrbPosition;
+    }
+
+    public AMVector2 getBurnoutOrbPosition() {
+        return this.burnoutOrbPosition;
+    }
+
     public int getManaBarWidth() {
         return Math.max(2, Math.min(100, this.manaBarWidth));
     }
@@ -1710,6 +1738,22 @@ public class AMConfig extends Configuration {
 
     public void setBurnoutBarHeight(int height) {
         this.burnoutBarHeight = Math.max(2, Math.min(10, height));
+    }
+
+    public int getOrbSize() {
+        return Math.max(24, Math.min(160, this.hudOrbSize));
+    }
+
+    public void setOrbSize(int size) {
+        this.hudOrbSize = Math.max(24, Math.min(160, size));
+    }
+
+    public boolean showOrbBlackBackground() {
+        return this.hudOrbBlackBackground;
+    }
+
+    public boolean showOrbAffinityColor() {
+        return this.hudOrbAffinityColor;
     }
 
     public AMVector2 getPositiveBuffsPosition() {
@@ -1982,6 +2026,10 @@ public class AMConfig extends Configuration {
 
     public boolean showHudBars() {
         return this.showHudBars;
+    }
+
+    public boolean showHudOrbs() {
+        return this.showHudOrbs;
     }
 
     public boolean witchwoodLeafPFX() {
@@ -2423,12 +2471,13 @@ public class AMConfig extends Configuration {
                 new AMVector2(0.47083333134651184, 0.7450980544090271),
                 new AMVector2(0.0, 0.0),
                 new AMVector2(0.7104166746139526, 0.9352226853370667),
-                true, false, false, true, false, true,
-                100, 10, 100, 10);
+                true, false, false, true, false, this.showHudBars,
+                100, 10, 100, 10, this.showHudOrbs, 52, this.hudOrbBlackBackground, this.hudOrbAffinityColor,
+                new AMVector2(0.82, 0.73), new AMVector2(0.016, 0.73));
         saveGuiPositions();
     }
 
-    public void setGuiPositions(AMVector2 manaHud, AMVector2 burnoutHud, AMVector2 levelHud, AMVector2 affinityHud, AMVector2 posBuffsHud, AMVector2 negBuffsHud, AMVector2 armorHead, AMVector2 armorChest, AMVector2 armorLegs, AMVector2 armorBoots, AMVector2 xpBar, AMVector2 contingency, AMVector2 manaNumeric, AMVector2 burnoutNumeric, AMVector2 XPNumeric, AMVector2 spellBookPos, AMVector2 manaShieldingPos, boolean showBuffs, boolean showNumerics, boolean minimalHud, boolean showArmorUI, boolean showXPAlways, boolean showHudBars, int manaBarWidth, int manaBarHeight, int burnoutBarWidth, int burnoutBarHeight) {
+    public void setGuiPositions(AMVector2 manaHud, AMVector2 burnoutHud, AMVector2 levelHud, AMVector2 affinityHud, AMVector2 posBuffsHud, AMVector2 negBuffsHud, AMVector2 armorHead, AMVector2 armorChest, AMVector2 armorLegs, AMVector2 armorBoots, AMVector2 xpBar, AMVector2 contingency, AMVector2 manaNumeric, AMVector2 burnoutNumeric, AMVector2 XPNumeric, AMVector2 spellBookPos, AMVector2 manaShieldingPos, boolean showBuffs, boolean showNumerics, boolean minimalHud, boolean showArmorUI, boolean showXPAlways, boolean showHudBars, int manaBarWidth, int manaBarHeight, int burnoutBarWidth, int burnoutBarHeight, boolean showHudOrbs, int orbSize, boolean orbBlackBackground, boolean orbAffinityColor, AMVector2 manaOrbPos, AMVector2 burnoutOrbPos) {
         this.manaHudPosition = manaHud;
         this.burnoutHudPosition = burnoutHud;
         this.levelPosition = levelHud;
@@ -2456,11 +2505,19 @@ public class AMConfig extends Configuration {
         this.manaBarHeight = manaBarHeight;
         this.burnoutBarWidth = burnoutBarWidth;
         this.burnoutBarHeight = burnoutBarHeight;
+        this.showHudOrbs = showHudOrbs;
+        this.hudOrbSize = orbSize;
+        this.hudOrbBlackBackground = orbBlackBackground;
+        this.hudOrbAffinityColor = orbAffinityColor;
+        this.manaOrbPosition = manaOrbPos;
+        this.burnoutOrbPosition = burnoutOrbPos;
     }
 
     public void saveGuiPositions() {
         this.updateAMVector2(this.KEY_ManaHudPositionX, this.KEY_ManaHudPositionY, this.manaHudPosition);
         this.updateAMVector2(this.KEY_BurnoutHudPositionX, this.KEY_BurnoutHudPositionY, this.burnoutHudPosition);
+        this.updateAMVector2(this.KEY_ManaOrbPositionX, this.KEY_ManaOrbPositionY, this.manaOrbPosition);
+        this.updateAMVector2(this.KEY_BurnoutOrbPositionX, this.KEY_BurnoutOrbPositionY, this.burnoutOrbPosition);
         this.updateAMVector2(this.KEY_LevelPositionX, this.KEY_LevelPositionY, this.levelPosition);
         this.updateAMVector2(this.KEY_AffinityPositionX, this.KEY_AffinityPositionY, this.affinityPosition);
         this.updateAMVector2(this.KEY_BuffsPositivePositionX, this.KEY_BuffsPositivePositionY, this.positiveBuffsPosition);
@@ -2516,6 +2573,22 @@ public class AMConfig extends Configuration {
         Property burnoutHeight;
         burnoutHeight = this.get(CATEGORY_UI, this.KEY_BurnoutBarHeight, 10);
         burnoutHeight.set(this.burnoutBarHeight);
+
+        Property orbShow;
+        orbShow = this.get(CATEGORY_UI, this.KEY_ShowHudOrbs, false);
+        orbShow.set(this.showHudOrbs);
+
+        Property orbSizeProp;
+        orbSizeProp = this.get(CATEGORY_UI, this.KEY_HudOrbSize, 52);
+        orbSizeProp.set(this.hudOrbSize);
+
+        Property orbBlackBgProp;
+        orbBlackBgProp = this.get(CATEGORY_UI, this.KEY_HudOrbBlackBackground, false);
+        orbBlackBgProp.set(this.hudOrbBlackBackground);
+
+        Property orbAffinityColorProp;
+        orbAffinityColorProp = this.get(CATEGORY_UI, this.KEY_HudOrbAffinityColor, true);
+        orbAffinityColorProp.set(this.hudOrbAffinityColor);
 
         this.save();
     }

@@ -93,6 +93,8 @@ public class GuiHudCustomization extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
+        this.buttonList.clear();
+        snapData.clear();
 
         doShowBuffs = ArsMagica.config.getShowBuffs();
         doShowNumerics = ArsMagica.config.getShowNumerics();
