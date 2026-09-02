@@ -4,12 +4,14 @@ import am2.ArsMagica;
 import am2.api.ArsMagicaAPI;
 import am2.api.SkillPointRegistry;
 import am2.api.SkillTreeRegistry;
+import am2.api.SpellRegistryHelper;
 import am2.api.affinity.AbstractAffinityAbility;
 import am2.api.affinity.Affinity;
 import am2.api.extensions.ISkillData;
 import am2.api.skill.Skill;
 import am2.api.skill.SkillPoint;
 import am2.api.skill.SkillTree;
+import am2.api.spell.SpellComponent;
 import am2.client.gui.controls.GuiButtonDisciplinePlus;
 import am2.client.gui.controls.GuiButtonSkillTree;
 import am2.client.texture.SpellIconManager;
@@ -49,6 +51,7 @@ import org.lwjgl.input.Mouse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Set;
 
 public class GuiOcculus extends GuiScreen {
     int xSize = 210;
@@ -468,6 +471,34 @@ public class GuiOcculus extends GuiScreen {
                         list.add(TextFormatting.DARK_GRAY.toString() + s.getOcculusDesc());
                     else
                         list.add(TextFormatting.DARK_RED.toString() + I18n.format("am2.gui.occulus.missingrequirements"));
+
+                    SpellComponent component = SpellRegistryHelper.getComponentFromName(s.getID());
+                    if (component != null) {
+                        Set<Affinity> componentAffinities = component.getAffinity();
+                        int affinityCount = 0;
+                        if (componentAffinities != null) {
+                            for (Affinity a : componentAffinities) {
+                                if (a != Affinities.none) affinityCount++;
+                            }
+                        }
+                        if (affinityCount > 0) {
+                            int affX = mouseX + 14;
+                            int affY = mouseY - 34;
+                            drawRect(affX - 2, affY - 2, affX - 2 + 18 * affinityCount + 2, affY + 16, 0xCC000000);
+                            RenderHelper.enableGUIStandardItemLighting();
+                            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                            for (Affinity a : componentAffinities) {
+                                if (a == Affinities.none) continue;
+                                Item essenceItem = a.getEssenceItem();
+                                if (essenceItem != null && essenceItem != Items.AIR) {
+                                    this.itemRender.renderItemAndEffectIntoGUI(new ItemStack(essenceItem), affX, affY);
+                                }
+                                affX += 18;
+                            }
+                            RenderHelper.disableStandardItemLighting();
+                            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                        }
+                    }
 
                     drawHoveringText(list, mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
                     flag = true;
