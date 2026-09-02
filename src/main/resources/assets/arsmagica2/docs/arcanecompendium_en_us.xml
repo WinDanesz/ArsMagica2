@@ -2539,7 +2539,9 @@
       <subitem id="water_affinity">
         <name>Water Affinity</name>
         <desc>
-					Water affinity grants a bonus to swim speed and slower breath loss underwater starting around 40-50%% depth.  You are also not pushed by flowing water past 50%% depth.  Once your water affinity reaches 90%% depth, Endermen that attack you will take damage as if they had touched water.
+					Water affinity grants a bonus to swim speed starting at 50%% depth, with a further increase past 75%% depth.  You are also not pushed by flowing water past 50%% depth.  Once your water affinity reaches 90%% depth, Endermen that attack you will take damage as if they had touched water.
+					!d
+					Starting at 40%% depth, you lose breath more slowly while underwater.  This bonus scales with your affinity depth, reaching 3x normal breath-holding time at full depth.
 					!d
 					Once your water affinity reaches 50%% depth, you will start to take damage periodically when exposed to fire, making the nether particularly dangerous.  This damage will not take you down below 75%% health and will not occur if lower.
 				</desc>
