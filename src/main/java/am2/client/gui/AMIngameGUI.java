@@ -48,6 +48,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 import java.util.Comparator;
 import java.util.List;
@@ -68,6 +69,17 @@ public class AMIngameGUI extends Gui {
     private static final ResourceLocation mana_bar_full = new ResourceLocation(ArsMagica.MODID, "textures/gui/mana_bar_full.png");
     private static final ResourceLocation burnout_bar_background = new ResourceLocation(ArsMagica.MODID, "textures/gui/burnout_bar_background.png");
     private static final ResourceLocation burnout_bar_full = new ResourceLocation(ArsMagica.MODID, "textures/gui/burnout_bar_full.png");
+    private static final ResourceLocation hud_orb_frame = new ResourceLocation(ArsMagica.MODID, "textures/gui/hud_orb_frame.png");
+    private static final ResourceLocation hud_orb_glass = new ResourceLocation(ArsMagica.MODID, "textures/gui/hud_orb_glass.png");
+    private static final ResourceLocation hud_orb_liquid_mana = new ResourceLocation(ArsMagica.MODID, "textures/gui/hud_orb_liquid_mana.png");
+    private static final ResourceLocation hud_orb_liquid_burnout = new ResourceLocation(ArsMagica.MODID, "textures/gui/hud_orb_liquid_burnout.png");
+    private static final ResourceLocation hud_orb_shine = new ResourceLocation(ArsMagica.MODID, "textures/gui/hud_orb_shine.png");
+    private static final int ORB_WAVE_SEGMENTS = 16;
+    private static final int BUBBLE_BASE_COUNT = 4;
+    private static final float[] BUBBLE_X = {0.32f, 0.58f, 0.45f, 0.70f, 0.25f, 0.75f, 0.48f, 0.62f, 0.36f, 0.66f, 0.52f, 0.40f};
+    private static final float[] BUBBLE_PHASE = {0.1f, 0.55f, 0.8f, 0.3f, 0.92f, 0.15f, 0.6f, 0.02f, 0.72f, 0.38f, 0.48f, 0.85f};
+    private static final float[] BUBBLE_SPEED = {0.55f, 0.4f, 0.65f, 0.47f, 0.52f, 0.6f, 0.44f, 0.58f, 0.5f, 0.62f, 0.46f, 0.56f};
+    private static final float[] MANA_BASE_TINT = {0.42f, 0.70f, 1.0f};
 //	private static final ResourceLocation inventory = new ResourceLocation("textures/gui/container/inventory.png");
 
     public AMIngameGUI() {
@@ -340,9 +352,11 @@ public class AMIngameGUI extends Gui {
             if (flashTimer > 0) {
                 GlStateManager.color(1.0f, 1.0f, 1.0f);
             }
+        } else if (ArsMagica.config.showHudOrbs()) {
+            this.RenderManaOrbs(i, j, mana, bonusMana, maxMana, hasBonusMana, hasOverloadMana, Burnout, maxBurnout);
         }
 
-        if (ArsMagica.config.getShowNumerics()) {
+        if (ArsMagica.config.showHudBars() && ArsMagica.config.getShowNumerics()) {
             GlStateManager.enableBlend();
             String spellcost = "";
             ItemStack curItem = Minecraft.getMinecraft().player.getHeldItem(EnumHand.MAIN_HAND);
@@ -401,6 +415,222 @@ public class AMIngameGUI extends Gui {
             fontRenderer.drawString(burnoutStr, burnoutNumericPos.iX + 25 - fontRenderer.getStringWidth(burnoutStr), burnoutNumericPos.iY, 0xFF2020);
         }
         //Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+    }
+
+    /**
+     * Diablo2-style alternative HUD: a blue mana orb (bottom-right) and a red burnout orb (bottom-left),
+     * each filled with an animated liquid that sloshes and bubbles, behind a pixel-art bezel frame.
+     */
+    private void RenderManaOrbs(int i, int j, float mana, float bonusMana, float maxMana, boolean hasBonusMana, boolean hasOverloadMana, float burnout, float maxBurnout) {
+        if (maxMana <= 0) {
+            maxMana = 100;
+            mana = 0;
+            bonusMana = 0;
+        }
+        if (maxBurnout <= 0) {
+            maxBurnout = 100;
+            burnout = 0;
+        }
+
+        float renderMana = Math.max(0.0f, Math.min(maxMana, mana + bonusMana));
+        float manaPct = Math.max(0.0f, Math.min(1.0f, renderMana / maxMana));
+        float burnoutPct = Math.max(0.0f, Math.min(1.0f, burnout / maxBurnout));
+
+        int orbSize = ArsMagica.config.getOrbSize();
+        AMVector2 manaOrbPos = this.getShiftedVector(ArsMagica.config.getManaOrbPosition(), i, j);
+        AMVector2 burnoutOrbPos = this.getShiftedVector(ArsMagica.config.getBurnoutOrbPosition(), i, j);
+        int manaX = manaOrbPos.iX;
+        int manaY = manaOrbPos.iY;
+        int burnoutX = burnoutOrbPos.iX;
+        int burnoutY = burnoutOrbPos.iY;
+
+        float time = this.mc.player.ticksExisted / 20.0f;
+
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.disableCull();
+
+        float flashTimer = AMGuiHelper.instance.getFlashTimer(MANA_BAR_FLASH_SLOT);
+        float flashPct = flashTimer / (float) AMGuiHelper.instance.flashDuration;
+        float overloadPulse = hasOverloadMana ? 0.35f + 0.35f * Math.abs((float) Math.sin(time * 6.0)) : 0.0f;
+        float burnoutPulse = burnoutPct > 0.75f ? ((burnoutPct - 0.75f) / 0.25f) * (0.35f + 0.35f * Math.abs((float) Math.sin(time * 4.0))) : 0.0f;
+        float[] manaTint = this.getManaOrbTint();
+
+        this.drawLiquidOrb(manaX, manaY, orbSize, hud_orb_liquid_mana, manaPct, time, hasOverloadMana ? 1.6f : 0.0f, 0.0f, 0.0f, manaTint);
+        this.drawOrbFrameAndGloss(manaX, manaY, orbSize, flashPct, overloadPulse);
+
+        this.drawLiquidOrb(burnoutX, burnoutY, orbSize, hud_orb_liquid_burnout, burnoutPct, time + 3.7f, burnoutPct > 0.9f ? 1.2f : 0.0f, 0.41f, burnoutPct, null);
+        this.drawOrbFrameAndGloss(burnoutX, burnoutY, orbSize, 0.0f, burnoutPulse);
+
+        if (ArsMagica.config.getShowNumerics()) {
+            GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+            String manaStr = Math.round(renderMana) + "/" + Math.round(maxMana);
+            String burnoutStr = Math.round(burnout) + "/" + Math.round(maxBurnout);
+            int manaColor = hasBonusMana ? 0xeae31c : hasOverloadMana ? 0xFF2020 : packRgb(manaTint);
+            this.mc.fontRenderer.drawStringWithShadow(manaStr, manaX + orbSize / 2 - this.mc.fontRenderer.getStringWidth(manaStr) / 2, manaY + orbSize + 2, manaColor);
+            this.mc.fontRenderer.drawStringWithShadow(burnoutStr, burnoutX + orbSize / 2 - this.mc.fontRenderer.getStringWidth(burnoutStr) / 2, burnoutY + orbSize + 2, 0xFF2020);
+        }
+
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
+    /**
+     * The mana orb's liquid is a neutral (grayscale) texture so it can be tinted to any color; normally
+     * that tint is just a fixed blue. Once the player's highest affinity exceeds 50% depth, it gradually
+     * blends toward that affinity's color instead, reaching the full affinity color at 100% depth.
+     */
+    private float[] getManaOrbTint() {
+        if (!ArsMagica.config.showOrbAffinityColor()) {
+            return MANA_BASE_TINT;
+        }
+        IAffinityData ad = AffinityData.For(this.mc.player);
+        Affinity highest = ad.getHighestAffinities()[0];
+        if (highest == null || highest == Affinities.none) {
+            return MANA_BASE_TINT;
+        }
+        double depth = ad.getAffinityDepth(highest);
+        if (depth <= 0.5) {
+            return MANA_BASE_TINT;
+        }
+        float t = (float) Math.min(1.0, (depth - 0.5) / 0.5);
+        int color = highest.getColor();
+        float ar = ((color >> 16) & 0xFF) / 255.0f;
+        float ag = ((color >> 8) & 0xFF) / 255.0f;
+        float ab = (color & 0xFF) / 255.0f;
+        return new float[]{
+                MANA_BASE_TINT[0] + (ar - MANA_BASE_TINT[0]) * t,
+                MANA_BASE_TINT[1] + (ag - MANA_BASE_TINT[1]) * t,
+                MANA_BASE_TINT[2] + (ab - MANA_BASE_TINT[2]) * t
+        };
+    }
+
+    private static int packRgb(float[] rgb) {
+        int r = Math.round(Math.max(0.0f, Math.min(1.0f, rgb[0])) * 255.0f);
+        int g = Math.round(Math.max(0.0f, Math.min(1.0f, rgb[1])) * 255.0f);
+        int b = Math.round(Math.max(0.0f, Math.min(1.0f, rgb[2])) * 255.0f);
+        return (r << 16) | (g << 8) | b;
+    }
+
+    /**
+     * Draws the empty glass, then (if any) the liquid fill as a wavy triangle-strip mesh clipped bottom-up
+     * from the source texture's V coordinate - the texture already depicts a full circle with transparent
+     * corners, so cropping it vertically reads as a liquid level inside a round container.
+     */
+    private void drawLiquidOrb(int x, int y, int size, ResourceLocation liquidTex, float fillPct, float time, float waveBoost, float bubbleSeed, float boilIntensity, float[] tint) {
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        if (ArsMagica.config.showOrbBlackBackground()) {
+            this.mc.renderEngine.bindTexture(hud_orb_glass);
+            this.drawTexturedModalRectSimple(x, y, size, size);
+        }
+
+        fillPct = Math.max(0.0f, Math.min(1.0f, fillPct));
+        if (fillPct <= 0.0f) return;
+
+        if (tint != null) {
+            GlStateManager.color(tint[0], tint[1], tint[2], 1.0f);
+        }
+        this.mc.renderEngine.bindTexture(liquidTex);
+
+        float amplitude = (0.9f + waveBoost) * (size / 32.0f);
+        boolean nearEdge = fillPct < 0.03f || fillPct > 0.97f;
+        float fillHeight = size * fillPct;
+        float baseTopY = y + (size - fillHeight);
+
+        Tessellator tess = Tessellator.getInstance();
+        BufferBuilder buffer = tess.getBuffer();
+        buffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX);
+        for (int s = 0; s <= ORB_WAVE_SEGMENTS; s++) {
+            float u = s / (float) ORB_WAVE_SEGMENTS;
+            float px = x + size * u;
+            float wave = nearEdge ? 0.0f : (float) Math.sin(time * 1.7 + u * Math.PI * 3.0) * amplitude;
+            float topY = baseTopY + wave;
+            if (topY < y) topY = y;
+            if (topY > y + size) topY = y + size;
+            float v = (topY - y) / size;
+            buffer.pos(px, topY, this.zLevel).tex(u, v).endVertex();
+            buffer.pos(px, y + size, this.zLevel).tex(u, 1.0).endVertex();
+        }
+        tess.draw();
+
+        this.drawOrbBubbles(x, y, size, fillPct, time, bubbleSeed, boilIntensity);
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
+    /**
+     * A handful of small untextured quads drifting upward through the liquid, fading in/out over their
+     * rise - cheap stand-in for carbonation that reinforces the "liquid" read at pixel-art scale.
+     * boilIntensity (0..1) gradually pulls in more bubbles from the pool and speeds their rise, so a
+     * fuller burnout orb reads as "boiling" rather than just gently bubbling.
+     */
+    private void drawOrbBubbles(int x, int y, int size, float fillPct, float time, float seed, float boilIntensity) {
+        if (fillPct < 0.05f || size < 8) return;
+        float fillHeight = size * fillPct;
+        if (fillHeight < 4) return;
+        float bottom = y + size;
+
+        boilIntensity = Math.max(0.0f, Math.min(1.0f, boilIntensity));
+        int activeCount = Math.round(BUBBLE_BASE_COUNT + boilIntensity * (BUBBLE_X.length - BUBBLE_BASE_COUNT));
+        float speedMul = 1.0f + boilIntensity * 0.8f;
+
+        float[] alphas = new float[activeCount];
+        float[] bys = new float[activeCount];
+        boolean any = false;
+        for (int b = 0; b < activeCount; b++) {
+            float cycle = (time * BUBBLE_SPEED[b] * speedMul + BUBBLE_PHASE[b] + seed) % 1.0f;
+            float alpha = (float) Math.sin(cycle * Math.PI) * 0.35f;
+            alphas[b] = alpha;
+            bys[b] = bottom - cycle * (fillHeight - 3) - 2;
+            if (alpha > 0.01f) any = true;
+        }
+        if (!any) return;
+
+        GlStateManager.disableTexture2D();
+        Tessellator tess = Tessellator.getInstance();
+        BufferBuilder buffer = tess.getBuffer();
+        buffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        for (int b = 0; b < activeCount; b++) {
+            if (alphas[b] <= 0.01f) continue;
+            float bx = x + size * BUBBLE_X[b];
+            float by = bys[b];
+            float bs = 1.0f + (b % 3);
+            buffer.pos(bx, by + bs, this.zLevel).color(1.0f, 1.0f, 1.0f, alphas[b]).endVertex();
+            buffer.pos(bx + bs, by + bs, this.zLevel).color(1.0f, 1.0f, 1.0f, alphas[b]).endVertex();
+            buffer.pos(bx + bs, by, this.zLevel).color(1.0f, 1.0f, 1.0f, alphas[b]).endVertex();
+            buffer.pos(bx, by, this.zLevel).color(1.0f, 1.0f, 1.0f, alphas[b]).endVertex();
+        }
+        tess.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
+    /**
+     * Bezel frame + glass shine on top of the liquid. flashPct briefly brightens the orb white (mana spent
+     * on a cast, mirroring the classic bar's flash); warnPct is a slow red pulse for dangerous states
+     * (overloaded mana, burnout nearing max). Both reuse the shine texture's alpha shape, additively tinted.
+     */
+    private void drawOrbFrameAndGloss(int x, int y, int size, float flashPct, float warnPct) {
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        this.mc.renderEngine.bindTexture(hud_orb_frame);
+        this.drawTexturedModalRectSimple(x, y, size, size);
+
+        this.mc.renderEngine.bindTexture(hud_orb_shine);
+        this.drawTexturedModalRectSimple(x, y, size, size);
+
+        if (flashPct > 0.0f || warnPct > 0.0f) {
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            if (flashPct > 0.0f) {
+                GlStateManager.color(1.0f, 1.0f, 1.0f, flashPct * 0.55f);
+                this.drawTexturedModalRectSimple(x, y, size, size);
+            }
+            if (warnPct > 0.0f) {
+                GlStateManager.color(1.0f, 0.15f, 0.05f, warnPct * 0.5f);
+                this.drawTexturedModalRectSimple(x, y, size, size);
+            }
+            GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        }
     }
 
 //	private ItemStack getSpellFromStack(ItemStack stack){
