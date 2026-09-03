@@ -26,6 +26,7 @@ public class AffinityData implements IAffinityData, ICapabilityProvider, ICapabi
     public static final ResourceLocation ID = new ResourceLocation("arsmagica2:AffinityData");
     public static final String NIGHT_VISION = "night_vision";
     public static final String ICE_BRIDGE_STATE = "ice_bridge";
+    public static final String WALL_CLIMB = "wall_climb";
     public static final float MAX_DEPTH = 100F;
     private static final float ADJACENT_FACTOR = 0.25f;
     private static final float MINOR_OPPOSING_FACTOR = 0.5f;

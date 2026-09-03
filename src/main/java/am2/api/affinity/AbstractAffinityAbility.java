@@ -84,6 +84,20 @@ public abstract class AbstractAffinityAbility extends IForgeRegistryEntry.Impl<A
     public void applyTick(EntityPlayer player) {
     }
 
+    /**
+     * Whether {@link #applyTick} must also run client-side, for the local player only.
+     * <p>
+     * Needed for abilities that alter the player's own motion: the owning client is authoritative over its
+     * own position, so a server-only motion change is invisible to it (overwritten by its own movement
+     * prediction next tick) even though it's still correct for everyone else's server-driven view of that
+     * player. Abilities that only touch server-synced state (attributes, potion effects, ...) don't need this.
+     *
+     * @return true if {@link #applyTick} should also be invoked client-side for the local player.
+     */
+    public boolean hasClientTick() {
+        return false;
+    }
+
     public void applyKeyPress(EntityPlayer player) {
     }
 

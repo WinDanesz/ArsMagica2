@@ -321,6 +321,15 @@ public class AMConfig extends Configuration {
     private final String KEY_AffinityThornsDamage3 = "affinity_thorns_damage_3";
     private final String KEY_AffinityFulminationMinDepth = "affinity_fulmination_min_depth";
     private final String KEY_AffinityFulminationLightningChance = "affinity_fulmination_lightning_chance";
+    private final String KEY_AffinityReflexesMinDepth = "affinity_reflexes_min_depth";
+    private final String KEY_AffinityReflexesSpeedBonus = "affinity_reflexes_speed_bonus";
+    private final String KEY_AffinityShortCircuitChance = "affinity_short_circuit_chance";
+    private final String KEY_AffinityShortCircuitManaDrain = "affinity_short_circuit_mana_drain";
+    private final String KEY_AffinityShortCircuitCooldown = "affinity_short_circuit_cooldown";
+    private final String KEY_AffinityRimeguardMinDepth = "affinity_rimeguard_min_depth";
+    private final String KEY_AffinityRimeguardMaxShieldFraction = "affinity_rimeguard_max_shield_fraction";
+    private final String KEY_AffinityRimeguardCalmTicks = "affinity_rimeguard_calm_ticks";
+    private final String KEY_AffinityRimeguardTicksPerHeart = "affinity_rimeguard_ticks_per_heart";
     /** End Affinity Ability Thresholds **/
 
     /** Burnout Formula **/
@@ -329,6 +338,7 @@ public class AMConfig extends Configuration {
     private final String KEY_BurnoutBase = "burnout_base";
     private final String KEY_AffinityHealCooldownFull = "affinity_heal_cooldown_full";
     private final String KEY_AffinityHealCooldownPartial = "affinity_heal_cooldown_partial";
+    private final String KEY_BurnoutLiquidEssenceRate = "burnout_liquid_essence_rate";
     /** End Burnout Formula **/
 
     /** Flicker Generation Weights **/
@@ -909,6 +919,15 @@ public class AMConfig extends Configuration {
     private int affinityThornsDamage3;
     private float affinityFulminationMinDepth;
     private float affinityFulminationLightningChance;
+    private float affinityReflexesMinDepth;
+    private float affinityReflexesSpeedBonus;
+    private float affinityShortCircuitChance;
+    private float affinityShortCircuitManaDrain;
+    private int affinityShortCircuitCooldown;
+    private float affinityRimeguardMinDepth;
+    private float affinityRimeguardMaxShieldFraction;
+    private int affinityRimeguardCalmTicks;
+    private int affinityRimeguardTicksPerHeart;
     /** End Affinity Ability Thresholds **/
 
     /** Burnout Formula **/
@@ -917,6 +936,7 @@ public class AMConfig extends Configuration {
     private int burnoutBase;
     private int affinityHealCooldownFull;
     private int affinityHealCooldownPartial;
+    private float burnoutLiquidEssenceRate;
     /** End Burnout Formula **/
 
     /** Flicker Generation Weights **/
@@ -1561,6 +1581,15 @@ public class AMConfig extends Configuration {
         this.affinityThornsDamage3 = this.get(CATEGORY_AFFINITY, this.KEY_AffinityThornsDamage3, 3, "Thorns damage at tier 3 (depth == 1.0). Default: 3").getInt();
         this.affinityFulminationMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityFulminationMinDepth, 0.7, "Minimum lightning affinity depth for creeper supercharge chance. Default: 0.7").getDouble(0.7);
         this.affinityFulminationLightningChance = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityFulminationLightningChance, 0.05, "Chance (0.0-1.0) per tick for creeper supercharge at fulmination depth. Default: 0.05 (5%)").getDouble(0.05);
+        this.affinityReflexesMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityReflexesMinDepth, 0.5, "Minimum lightning affinity depth to start gaining the Reflexes movement speed bonus. Default: 0.5").getDouble(0.5);
+        this.affinityReflexesSpeedBonus = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityReflexesSpeedBonus, 0.7, "Movement speed bonus (multiplicative, same scale as vanilla Speed potions at 0.2 per level) at 100% lightning depth. Ramps linearly from 0 at the minimum depth up to this value. Default: 0.7 (+70%)").getDouble(0.7);
+        this.affinityShortCircuitChance = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityShortCircuitChance, 0.02, "Chance (0.0-1.0) per tick to short-circuit while wet, once off cooldown. Default: 0.02 (2%, down from a hardcoded 4%)").getDouble(0.02);
+        this.affinityShortCircuitManaDrain = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityShortCircuitManaDrain, 40.0, "Mana drained per short-circuit proc. Default: 40 (down from a hardcoded 100)").getDouble(40.0);
+        this.affinityShortCircuitCooldown = this.get(CATEGORY_AFFINITY, this.KEY_AffinityShortCircuitCooldown, 60, "Cooldown in ticks between short-circuit procs, so it can no longer drain mana on consecutive ticks. Default: 60 (3s)").getInt(60);
+        this.affinityRimeguardMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityRimeguardMinDepth, 0.6, "Minimum ice affinity depth to start building a Rimeguard frost shield. Default: 0.6").getDouble(0.6);
+        this.affinityRimeguardMaxShieldFraction = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityRimeguardMaxShieldFraction, 0.3, "Maximum Rimeguard shield size, as a fraction of max HP, at 100% ice depth. Ramps linearly from 0 at the minimum depth up to this value. Default: 0.3 (30%)").getDouble(0.3);
+        this.affinityRimeguardCalmTicks = this.get(CATEGORY_AFFINITY, this.KEY_AffinityRimeguardCalmTicks, 300, "Ticks without taking damage before Rimeguard starts building its shield. Default: 300 (15s)").getInt(300);
+        this.affinityRimeguardTicksPerHeart = this.get(CATEGORY_AFFINITY, this.KEY_AffinityRimeguardTicksPerHeart, 100, "Ticks it takes Rimeguard to build one extra heart (2 HP) of shield once past the calm-ticks grace period. Default: 100 (5s)").getInt(100);
 
         // Burnout Formula
         this.manaBurnoutRatio = (float) this.get(CATEGORY_GENERAL, this.KEY_ManaBurnoutRatio, 0.38, "Fraction of mana cost added as burnout when casting a spell. Default: 0.38").getDouble(0.38);
@@ -1568,6 +1597,7 @@ public class AMConfig extends Configuration {
         this.burnoutBase = this.get(CATEGORY_GENERAL, this.KEY_BurnoutBase, 1, "Base burnout capacity at level 0. Default: 1").getInt();
         this.affinityHealCooldownFull = this.get(CATEGORY_AFFINITY, this.KEY_AffinityHealCooldownFull, 40, "Cooldown ticks for affinity heal when placed on full cooldown. Default: 40").getInt();
         this.affinityHealCooldownPartial = this.get(CATEGORY_AFFINITY, this.KEY_AffinityHealCooldownPartial, 20, "Cooldown ticks for affinity heal when placed on partial cooldown. Default: 20").getInt();
+        this.burnoutLiquidEssenceRate = (float) this.get(CATEGORY_GENERAL, this.KEY_BurnoutLiquidEssenceRate, 15.0, "Percent of max burnout gained per second while standing in liquid essence. Default: 15.0 (5%%/sec)").getDouble(15.0);
 
         // Flicker Generation Weights
         this.flickerWeightAir = this.get(CATEGORY_FLICKER, this.KEY_FlickerWeightAir, 50, "Spawn weight for Air flickers. Default: 50").getInt();
@@ -2968,6 +2998,15 @@ public class AMConfig extends Configuration {
     public int getAffinityThornsDamage3() { return this.affinityThornsDamage3; }
     public float getAffinityFulminationMinDepth() { return this.affinityFulminationMinDepth; }
     public float getAffinityFulminationLightningChance() { return this.affinityFulminationLightningChance; }
+    public float getAffinityReflexesMinDepth() { return this.affinityReflexesMinDepth; }
+    public float getAffinityReflexesSpeedBonus() { return this.affinityReflexesSpeedBonus; }
+    public float getAffinityShortCircuitChance() { return this.affinityShortCircuitChance; }
+    public float getAffinityShortCircuitManaDrain() { return this.affinityShortCircuitManaDrain; }
+    public int getAffinityShortCircuitCooldown() { return this.affinityShortCircuitCooldown; }
+    public float getAffinityRimeguardMinDepth() { return this.affinityRimeguardMinDepth; }
+    public float getAffinityRimeguardMaxShieldFraction() { return this.affinityRimeguardMaxShieldFraction; }
+    public int getAffinityRimeguardCalmTicks() { return this.affinityRimeguardCalmTicks; }
+    public int getAffinityRimeguardTicksPerHeart() { return this.affinityRimeguardTicksPerHeart; }
 
     /** Burnout Formula **/
     public float getManaBurnoutRatio() { return this.manaBurnoutRatio; }
@@ -2975,6 +3014,7 @@ public class AMConfig extends Configuration {
     public int getBurnoutBase() { return this.burnoutBase; }
     public int getAffinityHealCooldownFull() { return this.affinityHealCooldownFull; }
     public int getAffinityHealCooldownPartial() { return this.affinityHealCooldownPartial; }
+    public float getBurnoutLiquidEssenceRate() { return this.burnoutLiquidEssenceRate; }
 
     /** Flicker Generation Weights **/
     public int getFlickerWeightAir() { return this.flickerWeightAir; }

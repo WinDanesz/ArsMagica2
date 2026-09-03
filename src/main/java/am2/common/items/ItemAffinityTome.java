@@ -44,18 +44,38 @@ public class ItemAffinityTome extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack itemStack = player.getHeldItem(hand);
-        if (world.isRemote) return super.onItemRightClick(world, player, hand);
         Affinity affinity = getAffinity();
+        IAffinityData data = AffinityData.For(player);
+
         if (affinity == Affinities.none) {
-            IAffinityData data = AffinityData.For(player);
-            data.setLocked(false);
+            boolean hasAffinity = false;
             for (Affinity aff : ArsMagicaAPI.getAffinityRegistry().getValues()) {
-                data.setAffinityDepth(aff, data.getAffinityDepth(aff) * AffinityData.MAX_DEPTH - 20);
+                if (data.getAffinityDepth(aff) > 0) {
+                    hasAffinity = true;
+                    break;
+                }
+            }
+            if (!hasAffinity) {
+                return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemStack);
+            }
+            if (!world.isRemote) {
+                data.setLocked(false);
+                for (Affinity aff : ArsMagicaAPI.getAffinityRegistry().getValues()) {
+                    data.setAffinityDepth(aff, data.getAffinityDepth(aff) * AffinityData.MAX_DEPTH - 20);
+                }
             }
         } else {
-            AffinityData.For(player).incrementAffinity(affinity, 20);
+            if (data.getAffinityDepth(affinity) >= 1.0) {
+                return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemStack);
+            }
+            if (!world.isRemote) {
+                data.incrementAffinity(affinity, 20);
+            }
         }
-        itemStack.shrink(1);
+
+        if (!world.isRemote) {
+            itemStack.shrink(1);
+        }
 
         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStack);
     }

@@ -47,6 +47,7 @@ public class AffinityAbilities {
         registry.register(new AbilityLavaFreeze());
         registry.register(new AbilityWaterFreeze());
         registry.register(new AbilityColdBlooded());
+        registry.register(new AbilityRimeguard());
 
         //LIFE
         registry.register(new AbilityFastHealing());
@@ -64,6 +65,7 @@ public class AffinityAbilities {
         registry.register(new AbilityRooted());
         registry.register(new AbilityThorns());
         registry.register(new AbilityPhotosynthesis());
+        registry.register(new AbilityWallClimb());
 
         //LIGHTNING
         registry.register(new AbilityLightningStep());

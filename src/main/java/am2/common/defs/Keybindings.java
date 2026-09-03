@@ -29,6 +29,7 @@ public class Keybindings {
     public static final KeyBinding SHAPE_GROUP = new KeyBinding("key.am2.shape_groups", Keyboard.KEY_C, "keybindings.am2");
     //public static final KeyBinding AURA_CUSTOMIZATION = new KeyBinding("key.am2.aura_customization", Keyboard.KEY_B, "keybindings.am2");
     public static final KeyBinding NIGHT_VISION = new KeyBinding("key.am2.dark_vision", Keyboard.KEY_L, "keybindings.am2");
+    public static final KeyBinding WALL_CLIMB = new KeyBinding("key.am2.wall_climb", Keyboard.KEY_K, "keybindings.am2");
     public static final KeyBinding SPELL_BOOK_PREV = new KeyBinding("key.am2.spellbookprev", Keyboard.KEY_Z, "keybindings.am2");
     public static final KeyBinding SPELL_BOOK_NEXT = new KeyBinding("key.am2.spellbooknext", Keyboard.KEY_X, "keybindings.am2");
     public static final KeyBinding CHARM_CAST = new KeyBinding("key.am2.charmcast", Keyboard.KEY_V, "keybindings.am2");
@@ -42,6 +43,8 @@ public class Keybindings {
 
         if (NIGHT_VISION.isPressed())
             AMNetworkHandler.getNetwork().sendToServer(new PacketAbilityToggle(AffinityData.NIGHT_VISION));
+        else if (WALL_CLIMB.isPressed())
+            AMNetworkHandler.getNetwork().sendToServer(new PacketAbilityToggle(AffinityData.WALL_CLIMB));
         else if (ICE_BRIDGE.isPressed())
             AMNetworkHandler.getNetwork().sendToServer(new PacketAbilityToggle(AffinityData.ICE_BRIDGE_STATE));
         else if (SHAPE_GROUP.isPressed()) {

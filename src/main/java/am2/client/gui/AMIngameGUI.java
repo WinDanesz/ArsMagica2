@@ -10,6 +10,7 @@ import am2.api.items.IBoundItem;
 import am2.api.math.AMVector2;
 import am2.api.spell.SpellPart;
 import am2.client.commands.ConfigureAMUICommand;
+import am2.common.affinity.abilities.AbilityRimeguard;
 import am2.client.texture.SpellIconManager;
 import am2.common.armor.ArmorHelper;
 import am2.common.blocks.BlockManaBattery;
@@ -43,6 +44,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -74,6 +76,7 @@ public class AMIngameGUI extends Gui {
     private static final ResourceLocation hud_orb_liquid_mana = new ResourceLocation(ArsMagica.MODID, "textures/gui/hud_orb_liquid_mana.png");
     private static final ResourceLocation hud_orb_liquid_burnout = new ResourceLocation(ArsMagica.MODID, "textures/gui/hud_orb_liquid_burnout.png");
     private static final ResourceLocation hud_orb_shine = new ResourceLocation(ArsMagica.MODID, "textures/gui/hud_orb_shine.png");
+    private static final ResourceLocation rimeguard_hearts = new ResourceLocation(ArsMagica.MODID, "textures/gui/rimeguard_hearts.png");
     private static final int ORB_WAVE_SEGMENTS = 16;
     private static final float ORB_WINDOW_TOP = 0.15625f;
     private static final float ORB_WINDOW_BOTTOM = 0.84375f;
@@ -136,6 +139,67 @@ public class AMIngameGUI extends Gui {
             GlStateManager.resetColor();
             ConfigureAMUICommand.showIfQueued();
         }
+    }
+
+    // GuiIngameForge#left_height as it stood right before vanilla's own renderHealth() ran this
+    // frame — i.e. the exact row position vanilla itself used for the health hearts. Captured in
+    // the HEALTH Pre event (before renderHealth's own left_height += ... runs) and consumed in
+    // the matching Post event below, so our icons land on the same 9x9 grid cells vanilla just
+    // drew into and paint over them, instead of guessing a fixed pixel offset.
+    private int rimeguardHealthRowTop;
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onRimeguardHealthPre(RenderGameOverlayEvent.Pre e) {
+        if (e.getType() != RenderGameOverlayEvent.ElementType.HEALTH)
+            return;
+        this.rimeguardHealthRowTop = new ScaledResolution(this.mc).getScaledHeight() - GuiIngameForge.left_height;
+    }
+
+    // Draws Rimeguard's (Ice affinity) shield hearts directly on top of vanilla's own health
+    // hearts, covering the leftmost N of them (N = current shield hearts) instead of adding a
+    // separate row — left_height is deliberately left untouched here since we're overlaying,
+    // not stacking a new element.
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void renderRimeguardShield(RenderGameOverlayEvent.Post e) {
+        if (e.getType() != RenderGameOverlayEvent.ElementType.HEALTH)
+            return;
+        var player = this.mc.player;
+        if (player == null)
+            return;
+        AffinityData data = AffinityData.For(player);
+        if (data == null)
+            return;
+        float shield = data.getAbilityFloat(AbilityRimeguard.SHIELD_KEY);
+        if (shield <= 0f)
+            return;
+
+        ScaledResolution res = new ScaledResolution(this.mc);
+        int left = res.getScaledWidth() / 2 - 91;
+        int top = this.rimeguardHealthRowTop;
+
+        GlStateManager.pushMatrix();
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        GlStateManager.enableBlend();
+        this.mc.renderEngine.bindTexture(rimeguard_hearts);
+
+        int hearts = (int) Math.ceil(shield / AbilityRimeguard.HP_PER_HEART);
+        for (int i = 0; i < hearts; i++) {
+            float remaining = shield - i * AbilityRimeguard.HP_PER_HEART;
+            float u = remaining >= AbilityRimeguard.HP_PER_HEART ? 0f : 9f;
+            int x = left + (i % 10) * 8;
+            int y = top - (i / 10) * 10;
+            drawModalRectWithCustomSizedTexture(x, y, u, 0f, 9, 9, 18f, 9f);
+        }
+
+        // Restore icons.png rather than the blocks atlas: renderArmor() runs immediately after
+        // this event and (unlike renderHealth) never rebinds its own texture, relying on icons.png
+        // still being bound from health's draw. Leaving the wrong texture bound here made armor's
+        // icons sample garbage from the blocks atlas instead.
+        this.mc.renderEngine.bindTexture(mc_gui);
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        GlStateManager.popMatrix();
     }
 
     private void RenderArsMagicaGUIItems(int i, int j, FontRenderer fontRenderer) {
@@ -736,13 +800,10 @@ public class AMIngameGUI extends Gui {
                     GlStateManager.color(red, green, blue);
                 }
 
-//				if (icon != null && icon != Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite()){
-//					AMGuiHelper.DrawIconAtXY(icon, position.iX, position.iY, this.zLevel, 10, 10, true);
-//				}else{
                 GlStateManager.pushMatrix();
                 AMGuiHelper.DrawItemAtXY(mc.player.inventory.armorInventory.get(3 - slot), position.iX, position.iY, this.zLevel, 0.63f);
                 GlStateManager.popMatrix();
-//				}
+
             }
         }
         GlStateManager.color(1.0f, 1.0f, 1.0f);
@@ -832,9 +893,7 @@ public class AMIngameGUI extends Gui {
             default:
                 return;
         }
-        //LogHelper.info(icon);
         this.DrawIconAtXY(icon, "items", contingencyPos.iX, contingencyPos.iY, 16, 16, true);
-        //GL11.glColor3f(1.0f, 1.0f, 1.0f);
     }
 
 //	public void RenderBuffs(int i, int j){
@@ -996,10 +1055,6 @@ public class AMIngameGUI extends Gui {
         var8.getBuffer().pos(par1 + 0, par2 + 0, this.zLevel).tex(var9, var11).normal(0.0F, 1.0F, 0.0F).endVertex();
         var8.draw();
     }
-
-//	private void renderPortalOverlay(float par1, int par2, int par3){
-//
-//	}
 
     private void DrawIconAtXY(TextureAtlasSprite icon, String base, float x, float y, boolean semitransparent) {
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);

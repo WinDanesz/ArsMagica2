@@ -14,6 +14,7 @@ import am2.client.blocks.colorizers.ManaBatteryBlockColorizer;
 import am2.client.blocks.colorizers.MonoColorizer;
 import am2.client.blocks.render.*;
 import am2.client.commands.ConfigureAMUICommand;
+import am2.client.entity.render.LayerRimeguardFrost;
 import am2.client.gui.*;
 import am2.client.handlers.ClientTickHandler;
 import am2.client.items.colorizers.*;
@@ -47,6 +48,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.toasts.SystemToast;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -231,6 +233,7 @@ public class ClientProxy extends CommonProxy {
         //ClientRegistry.registerKeyBinding(Keybindings.AURA_CUSTOMIZATION);
         ClientRegistry.registerKeyBinding(Keybindings.SHAPE_GROUP);
         ClientRegistry.registerKeyBinding(Keybindings.NIGHT_VISION);
+        ClientRegistry.registerKeyBinding(Keybindings.WALL_CLIMB);
         ClientRegistry.registerKeyBinding(Keybindings.SPELL_BOOK_NEXT);
         ClientRegistry.registerKeyBinding(Keybindings.SPELL_BOOK_PREV);
         ClientRegistry.registerKeyBinding(Keybindings.CHARM_CAST);
@@ -286,6 +289,11 @@ public class ClientProxy extends CommonProxy {
         itemColors.registerItemColorHandler(armorColorizer,
                 AMItems.mage_hood, AMItems.mage_robe, AMItems.mage_leggings, AMItems.mage_boots,
                 AMItems.battlemage_helmet, AMItems.battlemage_chestplate, AMItems.battlemage_leggings, AMItems.battlemage_boots);
+
+        // Both the "default" and "slim" (Alex-model) player skin renderers need their own layer instance.
+        for (RenderPlayer renderPlayer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()) {
+            renderPlayer.addLayer(new LayerRimeguardFrost(renderPlayer));
+        }
     }
 
     @Override

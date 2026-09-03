@@ -2580,13 +2580,15 @@
 					Ice affinity causes attackers to be slowed, growing stronger at 50%%, 75%%, and full depth.  Once you reach 50%% depth, you can toggle #5Frozen Footsteps#0 (default keybind: Toggle Ice Bridge) to freeze water into ice beneath your feet as you walk, letting you bridge across it.  At full depth, the same toggle also freezes lava into obsidian.
 					!d
 					All ice mages move slightly slower due to being cold blooded once their depth passes 10%%, unless standing on ice or snow.
+					!d
+					Past 60%% depth, standing uninjured for 15 seconds calls forth #5Rimeguard#0: a crust of frost begins to armor you, adding one extra heart every 5 seconds. This shield depletes before your true health and grows larger the deeper your affinity, up to 30%% of your max health at full depth. Taking damage resets the calm before it can grow further, and the crust shatters in a burst of ice if it's ever fully broken.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
       <subitem id="lightning_affinity">
         <name>Lightning Affinity</name>
         <desc>
-					Lightning affinity causes you to run faster.  At 50%% depth, you gain the ability to step up over one block high ledges.  At 65%% depth, your reflexes sharpen and your movement speed is boosted dramatically.  At 75%% depth, striking an enemy with your bare hands has a chance to call down a bolt of lightning on them, though this can only happen once every 15 seconds.
+					Lightning affinity causes you to run faster.  At 50%% depth, you gain the ability to step up over one block high ledges, and your reflexes begin to sharpen - your movement speed scales with your affinity depth from there, reaching a 50%% boost at full depth.  At 75%% depth, striking an enemy with your bare hands has a chance to call down a bolt of lightning on them, though this can only happen once every 15 seconds.
 					!d
 					Unfortunately, standing in water leaves you short circuited.  Starting at 25%% depth, being wet carries a chance to drain your mana.  Between 50%% and 90%% depth, being wet also weakens you, reducing your maximum health - mastering your affinity past 90%% depth removes this weakness entirely.
 					!d

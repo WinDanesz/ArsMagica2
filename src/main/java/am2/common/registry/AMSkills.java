@@ -37,6 +37,7 @@ public class AMSkills {
     public static final Skill extra_summons = placeholder();
     public static final Skill shield_overload = placeholder();
     public static final Skill colour = placeholder();
+    public static final Skill meditation = placeholder();
 
     public static final Skill projectile = placeholder();
     public static final Skill orbs = placeholder();
@@ -224,6 +225,7 @@ public class AMSkills {
         registry.register(new Skill("extra_summons", getTalentTexture("extra_summon"), SkillPoint.RED_SKILL_POINT, 230, 210, SkillTrees.TREE_TALENT, ArsMagica.config.getExtraSummonsMaxLevel(), "arsmagica2:augmented_casting"));
         registry.register(new Skill("shield_overload", getTalentTexture("shield_overload"), SkillPoint.SILVER_POINT, 275, 210, SkillTrees.TREE_TALENT));
         registry.register(new Skill("colour", getModifierTexture("Colour"), SkillPoint.BLUE_SKILL_POINT, 230, 75, SkillTrees.TREE_TALENT));
+        registry.register(new Skill("meditation", getTalentTexture("meditation"), SkillPoint.RED_SKILL_POINT, 365, 165, SkillTrees.TREE_TALENT, "arsmagica2:mana_regen_ii"));
 
         // Offense
         registry.register(new Skill("projectile", getShapeTexture("projectile"), SkillPoint.BLUE_SKILL_POINT, 300, 45, SkillTrees.TREE_OFFENSE));

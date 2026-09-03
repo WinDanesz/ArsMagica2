@@ -331,6 +331,7 @@ key.am2.teleport=Ender Teleport
 key.am2.shape_groups=Cycle Spell Shape Group
 key.am2.aura_customization=Aura Customization
 key.am2.dark_vision=Toggle Dark Vision
+key.am2.wall_climb=Toggle Wall Climb
 key.am2.spellbooknext=Next Spell
 key.am2.spellbookprev=Previous Spell
 key.am2.charmcast=Cast from Charm Slot
@@ -404,6 +405,8 @@ affinityability.waterweakness_fire.desc=Periodic damage while touching water; fl
 ##ice
 affinityability.coldblooded.name=Cold Blooded
 affinityability.coldblooded.desc=Slows melee attackers; you move slower off ice or snow.
+affinityability.rimeguard.name=Rimeguard
+affinityability.rimeguard.desc=Standing uninjured for 15s builds a frost shield, one heart every 5s, up to 30%% max HP at full depth. Shatters when broken.
 affinityability.lavafreeze.name=Frozen Footsteps (Lava)
 affinityability.lavafreeze.desc=Toggle: freeze lava into obsidian beneath your feet.
 affinityability.waterfreeze.name=Frozen Footsteps (Water)
@@ -434,7 +437,9 @@ affinityability.harvester.name=Harvester
 affinityability.photosynthesis.name=Photosynthesis
 affinityability.photosynthesis.desc=Regens hunger in daylight; loses it faster at night.
 affinityability.rooted.name=Rooted
-affinityability.rooted.desc=Movement speed reduced by your roots. At full depth, climb walls by pressing into them; sneak to slide down gently.
+affinityability.rooted.desc=Movement speed reduced by your roots.
+affinityability.wall_climb.name=Wall Climb
+affinityability.wall_climb.desc=Toggle with the Wall Climb key. At full depth, climb walls by pressing into them; sneak to slide down gently.
 affinityability.thorns.name=Thorns Aura
 affinityability.thorns.desc=Melee attackers take damage.
 
@@ -442,11 +447,11 @@ affinityability.thorns.desc=Melee attackers take damage.
 affinityability.fulmination.name=Fulmination
 affinityability.fulmination.desc=May ignite nearby TNT; can supercharge nearby creepers.
 affinityability.reflexes.name=Lightning Reflexes
-affinityability.reflexes.desc=Movement speed boosted dramatically.
+affinityability.reflexes.desc=Movement speed increases with your affinity depth, up to 50%% at full depth.
 affinityability.lightningstep.name=Lightning Step
 affinityability.lightningstep.desc=Step up one-block ledges.
 affinityability.shortcircuit.name=Short Circuit
-affinityability.shortcircuit.desc=Chance to drain mana while wet.
+affinityability.shortcircuit.desc=Chance to drain mana while wet, on a cooldown. Sparks with lightning when triggered.
 affinityability.thunderpunch.name=Thunderpunch
 affinityability.thunderpunch.desc=Unarmed hits call down lightning, on a cooldown.
 affinityability.waterweakness_lightning.name=Weakness to Water
@@ -641,6 +646,7 @@ skill.arsmagica2\:spell_motion.name=Spell Motion
 skill.arsmagica2\:shield_overload.name=Shield Overload
 skill.arsmagica2\:augmented_casting.name=Augmented Casting
 skill.arsmagica2\:affinity_gains.name=Affinity Gains Boost
+skill.arsmagica2\:meditation.name=Meditation
 
 skill.arsmagica2\:projectile.occulusdesc=Snowball!
 skill.arsmagica2\:physical_damage.occulusdesc=Ranged sword... Why not ?
@@ -785,6 +791,7 @@ skill.arsmagica2\:prosperity.occulusdesc=Gold. Loads of Gold.
 skill.arsmagica2\:mana_regen_i.occulusdesc=You can feel the mana flowing around you...
 skill.arsmagica2\:mana_regen_ii.occulusdesc=All this energy... Why waste it?
 skill.arsmagica2\:mana_regen_iii.occulusdesc=Your control over mana has come to its best.
+skill.arsmagica2\:meditation.occulusdesc=Stand motionless a moment, and the mana comes to you.
 skill.arsmagica2\:mage_posse_i.occulusdesc=Summon a fellow mage to fight by your side.
 skill.arsmagica2\:mage_posse_ii.occulusdesc=Let's share!
 skill.arsmagica2\:extra_summons.occulusdesc=A true master of summoning commands many creatures.
@@ -1152,6 +1159,7 @@ am2.chat.enabled=§aEnabled
 am2.chat.disabled=§cDisabled
 am2.chat.ability_ice_bridge=§bFrozen Footsteps
 am2.chat.ability_night_vision=§dDark Vision
+am2.chat.ability_wall_climb=§2Wall Climb
 
 #Components
 
@@ -1449,6 +1457,7 @@ compendium.talent.mage_band_ii.name=Mage Posse II
 compendium.talent.mana_regen_i.name=Mana Regen Boost I
 compendium.talent.mana_regen_ii.name=Mana Regen Boost II
 compendium.talent.mana_regen_iii.name=Mana Regen Boost III
+compendium.talent.meditation.name=Meditation
 
 compendium.affinity_gains.page1=You have decided that elemental attunement is more important than arcane knowledge. You can receive a boost to affinity gains in exchange for slower magic XP gain. This is a permanent effect.
 compendium.augmented_casting.page1=You have figured out how to put everything you have into a spell cast. All of your spells are more powerful. Durations are longer, radii are bigger, and damage is increased.
@@ -1459,6 +1468,7 @@ compendium.mana_regen_i.page1=You are more attuned with the energy flowing throu
 compendium.mana_regen_ii.page1=You are more attuned with the energy flowing through you. Your magic regenerates faster than normal. This replaces the bonus given by Mana Regen Boost I
 compendium.mana_regen_iii.page1=You are more attuned with the energy flowing through you. Your magic regenerates much faster than normal. This replaces the bonus given by Mana Regen Boost II.
 compendium.spell_motion.page1=You have realized that agility is key. To that end, you have trained yourself to be able to move at normal speed while using a spell.
+compendium.meditation.page1=You have learned to draw mana from stillness itself. After standing motionless for a couple of seconds, your mana regenerates 15% faster - the effect fades the instant you move.
 
 #Guides
 

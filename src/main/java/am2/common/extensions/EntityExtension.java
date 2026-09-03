@@ -14,6 +14,7 @@ import am2.common.bosses.EntityLifeGuardian;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.packet.AMDataReader;
 import am2.common.packet.AMDataWriter;
+import am2.common.registry.AMBlocks;
 import am2.common.registry.AMItems;
 import am2.common.registry.AMPotions;
 import am2.common.registry.AMSkills;
@@ -26,6 +27,8 @@ import am2.network.packets.PacketTKDistanceSync;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -34,6 +37,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -157,6 +161,22 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
     private int cachedBurnoutFactorTick = -1000;
 
     private static final int REGEN_CACHE_INTERVAL = 20;
+
+    // Meditation talent: counts consecutive server ticks the player hasn't moved. Not
+    // serialized/synced - it's fine for this to reset to 0 on relog/clone like the caches above.
+    private int stillTicks = 0;
+    private static final int MEDITATION_STILL_TICKS = 40; // 2 seconds
+    // Squared distance (in blocks) below which a tick's movement is considered "standing still".
+    private static final double MEDITATION_MOVEMENT_THRESHOLD_SQ = 0.0009D; // 0.03 blocks/tick
+
+    // Applied to ArsMagicaAPI.manaRegenTimeModifier (a RangedAttribute clamped to [0.5, 2.0])
+    // rather than folded into the ad hoc cachedRegenMultiplier chain below: routing it through
+    // the attribute means Minecraft's own attribute clamp bounds how far it (and anything else
+    // that targets this same attribute) can push mana regen, so it can't compound into an
+    // absurd regen rate no matter what else the player has stacked.
+    private static final UUID MEDITATION_REGEN_MODIFIER_ID = UUID.fromString("d473c65f-9058-4772-b0e1-0c86803a3554");
+    private static final AttributeModifier MEDITATION_REGEN_MODIFIER =
+            new AttributeModifier(MEDITATION_REGEN_MODIFIER_ID, "Meditation", -0.15D, 2); // MULTIPLY_TOTAL
 
     private void addSyncCode(int code) {
         this.syncCode |= code;
@@ -732,6 +752,10 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
 
     @Override
     public void manaBurnoutTick() {
+        if (this.entity instanceof EntityPlayer) {
+            updateMeditationStillness((EntityPlayer) this.entity);
+        }
+
         // Fast path: non-player entities at magic level 0 with no active AM2 magic state
         // (no burnout, no gravity override, no mana shield) represent the vast majority of
         // loaded entities (vanilla mobs, animals, etc.).  Skip all the expensive attribute
@@ -875,6 +899,40 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
                     ((EntityPlayer) this.entity).addExhaustion(0.05f * severity);
                 }
             }
+        }
+
+        // Standing in liquid essence gradually builds burnout, independent of current burnout level
+        if (this.entity instanceof EntityPlayer) {
+            float maxBurnout = this.getMaxBurnout();
+            if (maxBurnout > 0 && this.getCurrentBurnout() < maxBurnout
+                    && this.entity.world.getBlockState(new BlockPos(this.entity)).getBlock() == AMBlocks.liquid_essence_block) {
+                float gainPerTick = maxBurnout * (ArsMagica.config.getBurnoutLiquidEssenceRate() / 100f) / 20f;
+                this.setCurrentBurnout(Math.min(maxBurnout, this.getCurrentBurnout() + gainPerTick));
+            }
+        }
+    }
+
+    /**
+     * Meditation talent: tracks how long the player has stood still and applies/removes the
+     * mana regen bonus accordingly. Breaks (and the count restarts) the instant the player moves,
+     * so the bonus can't be carried into active spellcasting/kiting - only true stillness counts.
+     */
+    private void updateMeditationStillness(EntityPlayer player) {
+        double dx = player.posX - player.prevPosX;
+        double dy = player.posY - player.prevPosY;
+        double dz = player.posZ - player.prevPosZ;
+        boolean moved = (dx * dx + dy * dy + dz * dz) > MEDITATION_MOVEMENT_THRESHOLD_SQ;
+        this.stillTicks = moved ? 0 : this.stillTicks + 1;
+
+        boolean eligible = this.stillTicks >= MEDITATION_STILL_TICKS
+                && SkillData.For(player).hasSkill(AMSkills.meditation.getID());
+        IAttributeInstance attribute = player.getEntityAttribute(ArsMagicaAPI.manaRegenTimeModifier);
+        if (eligible) {
+            if (attribute.getModifier(MEDITATION_REGEN_MODIFIER_ID) == null)
+                attribute.applyModifier(MEDITATION_REGEN_MODIFIER);
+        } else {
+            if (attribute.getModifier(MEDITATION_REGEN_MODIFIER_ID) != null)
+                attribute.removeModifier(MEDITATION_REGEN_MODIFIER);
         }
     }
 

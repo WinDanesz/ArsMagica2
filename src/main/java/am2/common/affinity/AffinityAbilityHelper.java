@@ -55,6 +55,24 @@ public class AffinityAbilityHelper {
         }
     }
 
+    /**
+     * Client-side counterpart to {@link #onPlayerTick}, for abilities that need to run on the owning
+     * client too (see {@link AbstractAffinityAbility#hasClientTick()}). Only ever runs for the local
+     * player: other players' movement is already server-driven and interpolated normally, and running
+     * ability logic against them here would just be duplicating/fighting that.
+     */
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void onPlayerTickClient(LivingUpdateEvent event) {
+        if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
+        EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+        if (!player.world.isRemote || player != ArsMagica.proxy.getLocalPlayer()) return;
+        for (AbstractAffinityAbility ability : GameRegistry.findRegistry(AbstractAffinityAbility.class).getValues()) {
+            if (ability.hasClientTick() && ability.canApply(player))
+                ability.applyTick(player);
+        }
+    }
+
     @SubscribeEvent
     public void onPlayerHurt(LivingHurtEvent event) {
         if (event.getEntityLiving() instanceof EntityPlayer) {
