@@ -20,8 +20,11 @@ public class AffinityAbilities {
         IForgeRegistry<AbstractAffinityAbility> registry = event.getRegistry();
 
         //AIR
-        registry.register(new AbilityLightAsAFeather());
         registry.register(new AbilityAgile());
+        registry.register(new AbilityWindswept());
+        registry.register(new AbilityGaleFist());
+        registry.register(new AbilityTailwind());
+        registry.register(new AbilityEyeOfTheStorm());
 
         //ARCANE
         registry.register(new AbilityClearCaster());
@@ -30,6 +33,8 @@ public class AffinityAbilities {
 
         //EARTH
         registry.register(new AbilitySolidBones());
+        registry.register(new AbilityImmovable());
+        registry.register(new AbilityHardening());
 
         //ENDER
         registry.register(new AbilityRelocation());
