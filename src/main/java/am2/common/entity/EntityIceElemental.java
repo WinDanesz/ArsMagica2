@@ -3,13 +3,13 @@ package am2.common.entity;
 import am2.ArsMagica;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.registry.AMLoot;
+import am2.common.registry.Affinities;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.init.Blocks;
@@ -33,7 +33,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class EntityIceElemental extends EntityMob {
+public class EntityIceElemental extends EntityElemental {
 
     private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(EntityIceElemental.class, DataSerializers.VARINT);
     private static final int NUM_VARIANTS = 4;
@@ -54,7 +54,7 @@ public class EntityIceElemental extends EntityMob {
     }
 
     public EntityIceElemental(World world) {
-        super(world);
+        super(world, Affinities.ice);
         setSize(0.6F, 1.8F);
         initAI();
     }
@@ -72,8 +72,7 @@ public class EntityIceElemental extends EntityMob {
         this.tasks.addTask(7, new EntityAIWander(this, 0.375f));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, 0, true, false, null));
+        initAffinityTargeting(16.0D);
     }
 
     @Nullable

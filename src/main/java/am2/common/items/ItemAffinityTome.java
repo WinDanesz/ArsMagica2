@@ -84,10 +84,11 @@ public class ItemAffinityTome extends Item {
     @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack stack) {
         Affinity affinity = getAffinity();
-        if (affinity != null) {
+        if (affinity != null && affinity != Affinities.none) {
             return I18n.translateToLocalFormatted("item.arsmagica2:affinity_tome.name", affinity.getDisplayName());
+        } else {
+            return I18n.translateToLocal("item.arsmagica2:affinity_tome_none.name");
         }
-        return super.getItemStackDisplayName(stack);
     }
 
     @Override

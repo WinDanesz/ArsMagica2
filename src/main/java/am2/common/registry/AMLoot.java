@@ -25,7 +25,10 @@ public class AMLoot {
     public static final ResourceLocation ICE_ELEMENTAL_LOOT = LootTableList.register(new ResourceLocation("arsmagica2", "entities/ice_elemental"));
     public static final ResourceLocation ICE_ELEMENTAL_LOOT_PACKED = LootTableList.register(new ResourceLocation("arsmagica2", "entities/ice_elemental_packed"));
     public static final ResourceLocation ICE_ELEMENTAL_LOOT_BLUE = LootTableList.register(new ResourceLocation("arsmagica2", "entities/ice_elemental_blue"));
+    public static final ResourceLocation AIR_ELEMENTAL_LOOT = LootTableList.register(new ResourceLocation("arsmagica2", "entities/air_elemental"));
+    public static final ResourceLocation NATURE_ELEMENTAL_LOOT = LootTableList.register(new ResourceLocation("arsmagica2", "entities/nature_elemental"));
     public static final ResourceLocation DRYAD_LOOT = LootTableList.register(new ResourceLocation("arsmagica2", "entities/dryad"));
+    public static final ResourceLocation DRUID_LOOT = LootTableList.register(new ResourceLocation("arsmagica2", "entities/druid"));
     public static final ResourceLocation HECATE_LOOT = LootTableList.register(new ResourceLocation("arsmagica2", "entities/hecate"));
     public static final ResourceLocation AIR_GUARDIAN_LOOT = LootTableList.register(new ResourceLocation("arsmagica2", "entities/air_guardian"));
     public static final ResourceLocation ARCANE_GUARDIAN_LOOT = LootTableList.register(new ResourceLocation("arsmagica2", "entities/arcane_guardian"));

@@ -1,0 +1,31 @@
+{
+    "pools": [
+        {
+            "name": "air_essence",
+            "rolls": 1,
+            "conditions": [
+                {
+                    "condition": "random_chance_with_looting",
+                    "chance": 0.1,
+                    "looting_multiplier": 0.03
+                }
+            ],
+            "entries": [
+                {
+                    "type": "item",
+                    "name": "arsmagica2:essence_air",
+                    "weight": 1,
+                    "functions": [
+                        {
+                            "function": "looting_enchant",
+                            "count": {
+                                "min": 0,
+                                "max": 1
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

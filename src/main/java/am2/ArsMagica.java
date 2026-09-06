@@ -10,6 +10,7 @@ import am2.common.config.AMConfig;
 import am2.common.config.SpellPartConfig;
 import am2.common.config.SpellPartConfiguration;
 import am2.common.items.StaffPresets;
+import am2.common.loot.LootFunctionFireproof;
 import am2.common.loot.LootFunctionSoulbind;
 import am2.common.loot.LootFunctionStaffPreset;
 import am2.common.registry.AMBlocks;
@@ -84,6 +85,7 @@ public class ArsMagica {
         AMBlocks.registerTileEntities();
         LootFunctionManager.registerFunction(new LootFunctionSoulbind.Serializer());
         LootFunctionManager.registerFunction(new LootFunctionStaffPreset.Serializer());
+        LootFunctionManager.registerFunction(new LootFunctionFireproof.Serializer());
     }
 
     @EventHandler

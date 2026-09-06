@@ -37,16 +37,19 @@ public class EntityAIRangedAttackSpell extends EntityAIBase {
      */
     int maxRangedAttackTime;
 
-    ItemStack spellStack;
+    private final ItemStack[] spellStacks;
 
-    public EntityAIRangedAttackSpell(EntityCreature host, float moveSpeed, int cooldown, ItemStack spellStack) {
+    public EntityAIRangedAttackSpell(EntityCreature host, float moveSpeed, int cooldown, ItemStack... spellStacks) {
+        if (spellStacks.length == 0) {
+            throw new IllegalArgumentException("An attack spell is required");
+        }
         rangedAttackTime = 0;
         field_48367_f = 0;
         entityHost = host;
         world = host.world;
         field_48370_e = moveSpeed;
         maxRangedAttackTime = cooldown;
-        this.spellStack = spellStack;
+        this.spellStacks = spellStacks.clone();
         setMutexBits(3);
     }
 
@@ -158,14 +161,25 @@ public class EntityAIRangedAttackSpell extends EntityAIBase {
         float manaMax = ext.getMaxMana();
         LOGGER.info("[{}] PRE-CAST  mana: {}/{}", entityHost.getName(), manaBefore, manaMax);
 
+        ItemStack spellStack = chooseSpell();
         ISpellCaster caster = spellStack.getCapability(SpellCaster.INSTANCE, null);
         boolean success = caster != null && caster.cast(spellStack, world, entityHost);
 
         float manaAfter = ext.getCurrentMana();
         LOGGER.info("[{}] POST-CAST mana: {}/{}  (cast={})", entityHost.getName(), manaAfter, manaMax, success);
 
+        onSpellCast(spellStack, success);
+
         if (success) {
             entityHost.swingArm(EnumHand.MAIN_HAND);
         }
+    }
+
+    protected ItemStack chooseSpell() {
+        return spellStacks[entityHost.getRNG().nextInt(spellStacks.length)];
+    }
+
+    /** Called after the selected spell has been resolved. */
+    protected void onSpellCast(ItemStack spellStack, boolean success) {
     }
 }

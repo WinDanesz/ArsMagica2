@@ -14,12 +14,14 @@ import am2.api.spell.SpellData;
 import am2.common.advancement.AMAdvancementTriggers;
 import am2.common.armor.ArmorHelper;
 import am2.common.entity.EntitySpellProjectile;
+import am2.common.entity.EntityAirElemental;
 import am2.common.extensions.AffinityData;
 import am2.common.extensions.EntityExtension;
 import am2.common.extensions.RiftStorage;
 import am2.common.extensions.SkillData;
 import am2.common.items.ItemCrystalPhylactery;
 import am2.common.items.ItemSpellBase;
+import am2.common.loot.LootFunctionFireproof;
 import am2.common.lore.ArcaneCompendium;
 import am2.common.packet.AMNetHandler;
 import am2.common.registry.*;
@@ -66,6 +68,7 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -79,6 +82,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntityHandler {
+
+    /** Air elementals are made of wind; arrows continue through them. */
+    @SubscribeEvent
+    public void onArrowImpact(ProjectileImpactEvent.Arrow event) {
+        if (event.getRayTraceResult() != null
+                && event.getRayTraceResult().entityHit instanceof EntityAirElemental) {
+            event.setCanceled(true);
+        }
+    }
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
@@ -730,7 +742,13 @@ public class EntityHandler {
     @SubscribeEvent
     public void entityJoinWorldEvent(EntityJoinWorldEvent event) {
         if (event.getEntity() instanceof EntityItem) {
-            EntityItemWatcher.instance.addWatchedItem((EntityItem) event.getEntity());
+            EntityItem entityItem = (EntityItem) event.getEntity();
+            EntityItemWatcher.instance.addWatchedItem(entityItem);
+
+            ItemStack stack = entityItem.getItem();
+            if (!stack.isEmpty() && stack.hasTagCompound() && stack.getTagCompound().getBoolean(LootFunctionFireproof.NBT_TAG)) {
+                EntityUtils.setFireImmune(entityItem);
+            }
         }
     }
 }

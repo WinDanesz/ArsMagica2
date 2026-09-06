@@ -7,11 +7,11 @@ import am2.client.particles.ParticleApproachPoint;
 import am2.common.entity.ai.EntityAIFireballAttack;
 import am2.common.extensions.EntityExtension;
 import am2.common.registry.AMLoot;
+import am2.common.registry.Affinities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
@@ -27,7 +27,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class EntityFireElemental extends EntityMob {
+public class EntityFireElemental extends EntityElemental {
 
     private static final int cookRadius = 10;
     private int blockFireTimer = 0;
@@ -35,7 +35,7 @@ public class EntityFireElemental extends EntityMob {
     private static final DataParameter<Integer> COOK_TARGET_ID = EntityDataManager.createKey(EntityFireElemental.class, DataSerializers.VARINT);
 
     public EntityFireElemental(World world) {
-        super(world);
+        super(world, Affinities.fire);
         setSize(0.6F, 1.8F);
         isImmuneToFire = true;
         EntityExtension.For(this).setMagicLevelWithMana(30);
@@ -56,8 +56,7 @@ public class EntityFireElemental extends EntityMob {
         this.tasks.addTask(7, new EntityAIWander(this, 1.0f));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 0, true, false, null));
+        initAffinityTargeting(16.0D);
     }
 
     @Override

@@ -41,10 +41,10 @@ public class Summon extends SpellComponent {
     private static final ResourceLocation DEFAULT_SUMMON = new ResourceLocation("minecraft", "skeleton");
 
     public EntityLiving summonCreature(SpellData spell, EntityLivingBase caster, EntityLivingBase target, World world, double x, double y, double z) {
-        ResourceLocation key = getSummonType(spell);
-        Entity spawned = EntityList.createEntityByIDFromName(key, world);
+        Entity spawned = createSummonEntity(spell, caster, world);
+        if (spawned == null) return null;
         if (!(spawned instanceof EntityLiving)) {
-            ArsMagica.LOGGER.error("Summon: entity '{}' is not an EntityLiving", key);
+            ArsMagica.LOGGER.error("Summon: entity '{}' is not an EntityLiving", spawned);
             return null;
         }
         EntityLiving entity = (EntityLiving) spawned;
@@ -78,6 +78,15 @@ public class Summon extends SpellComponent {
         spell.applyComponentsToEntity(world, caster, entity);
 
         return entity;
+    }
+
+    /**
+     * Determines which creature to spawn. Overridden by subclasses (e.g. {@link Elemental}) that
+     * pick a creature by some means other than the phylactery-encoded {@link #getSummonType(SpellData)}.
+     */
+    protected Entity createSummonEntity(SpellData spell, EntityLivingBase caster, World world) {
+        ResourceLocation key = getSummonType(spell);
+        return EntityList.createEntityByIDFromName(key, world);
     }
 
     @Override

@@ -3,10 +3,10 @@ package am2.common.entity;
 import am2.ArsMagica;
 import am2.api.sources.DamageSourceWind;
 import am2.common.registry.AMLoot;
+import am2.common.registry.Affinities;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
@@ -25,7 +25,7 @@ import net.minecraftforge.common.BiomeDictionary;
 
 import javax.annotation.Nullable;
 
-public class EntityEarthElemental extends EntityMob {
+public class EntityEarthElemental extends EntityElemental {
 
     private static final DataParameter<Boolean> STRANGLING = EntityDataManager.createKey(EntityEarthElemental.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(EntityEarthElemental.class, DataSerializers.VARINT);
@@ -50,7 +50,7 @@ public class EntityEarthElemental extends EntityMob {
     }
 
     public EntityEarthElemental(World world) {
-        super(world);
+        super(world, Affinities.earth);
         setSize(0.6F, 1.8F);
         initAI();
     }
@@ -69,8 +69,7 @@ public class EntityEarthElemental extends EntityMob {
         this.tasks.addTask(7, new EntityAIWander(this, 0.375f));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 0, true, false, null));
+        initAffinityTargeting(16.0D);
     }
 
     @Nullable
@@ -154,7 +153,7 @@ public class EntityEarthElemental extends EntityMob {
     public void onUpdate() {
         super.onUpdate();
         EntityPlayer hugged = world.getClosestPlayerToEntity(this, 1.5);
-        if (hugged != null && !hugged.isCreative()) {
+        if (hugged != null && !hugged.isCreative() && hugged == this.getAttackTarget()) {
             // Clamp to the player's side on both server and client for smooth movement
             double dx = hugged.posX - this.posX;
             double dz = hugged.posZ - this.posZ;

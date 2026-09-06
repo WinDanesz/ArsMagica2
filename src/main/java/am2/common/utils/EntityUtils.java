@@ -30,6 +30,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ public class EntityUtils {
     private static final String summonDurationKey = "AM2_Summon_Duration";
     private static final String summonOwnerKey = "AM2_Summon_Owner";
     private static Method ptrSetSize = null;
+    private static Field ptrIsImmuneToFire = null;
     private static final String summonTileXKey = "AM2_Summon_Tile_X";
     private static final String summonTileYKey = "AM2_Summon_Tile_Y";
     private static final String summonTileZKey = "AM2_Summon_Tile_Z";
@@ -397,6 +399,30 @@ public class EntityUtils {
                 ArsMagica.LOGGER.error("Failed to invoke setSize method on Entity: ", t);
                 return;
             }
+        }
+    }
+
+    /**
+     * Flips the protected {@code isImmuneToFire} flag on an arbitrary entity via reflection, since
+     * there's no public setter for it on {@link Entity}. Used to make specific dropped items
+     * (e.g. boss loot, see {@link am2.common.loot.LootFunctionFireproof}) survive lava/fire.
+     */
+    public static void setFireImmune(Entity entity) {
+        if (entity == null || entity.isImmuneToFire())
+            return;
+        if (ptrIsImmuneToFire == null) {
+            try {
+                ptrIsImmuneToFire = ReflectionHelper.findField(Entity.class, "isImmuneToFire", "field_70178_ae");
+            } catch (Throwable t) {
+                ArsMagica.LOGGER.error("Failed to find isImmuneToFire field on Entity: ", t);
+                return;
+            }
+        }
+        try {
+            ptrIsImmuneToFire.setAccessible(true);
+            ptrIsImmuneToFire.setBoolean(entity, true);
+        } catch (Throwable t) {
+            ArsMagica.LOGGER.error("Failed to set isImmuneToFire field on Entity: ", t);
         }
     }
 

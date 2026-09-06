@@ -6,10 +6,10 @@ import am2.common.entity.ai.EntityAIFlyingWander;
 import am2.common.entity.ai.EntityAIRangedAttackSpell;
 import am2.common.extensions.EntityExtension;
 import am2.common.registry.AMLoot;
+import am2.common.registry.Affinities;
 import am2.common.utils.NPCSpells;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.pathfinding.PathNavigate;
@@ -21,10 +21,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class EntityLightningElemental extends EntityMob {
+public class EntityLightningElemental extends EntityElemental {
 
     public EntityLightningElemental(World world) {
-        super(world);
+        super(world, Affinities.lightning);
         setSize(0.6F, 1.8F);
         this.moveHelper = new EntityFlyHelper(this);
         EntityExtension.For(this).setMagicLevelWithMana(10 + this.rand.nextInt(10));
@@ -49,8 +49,7 @@ public class EntityLightningElemental extends EntityMob {
         this.tasks.addTask(7, new EntityAIFlyingWander(this, 0.6, 10.0F));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, 0, true, false, null));
+        initAffinityTargeting(16.0D);
     }
 
     @Override

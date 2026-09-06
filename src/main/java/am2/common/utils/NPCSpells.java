@@ -4,7 +4,9 @@ import am2.api.ArsMagicaAPI;
 import am2.api.extensions.ISpellCaster;
 import am2.api.spell.SpellPart;
 import am2.common.registry.AMItems;
+import am2.common.items.ItemCrystalPhylactery;
 import am2.common.spell.SpellCaster;
+import am2.common.spell.shape.Projectile;
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -80,6 +82,10 @@ public class NPCSpells {
     public final ItemStack manaLink;
     public final ItemStack lightningBolt;
     public final ItemStack lightningElemental_attack;
+    public final ItemStack airElemental_attack;
+    public final ItemStack druid_RockThrow;
+    public final ItemStack druid_RootWave;
+    public final ItemStack druid_WolfSummon;
 
     private NPCSpells() {
         lightMage_DiminishedAttack = createSpell(Lists.newArrayList(Projectile(), PhysicalDamage()));
@@ -108,6 +114,19 @@ public class NPCSpells {
         manaLink = createSpell(Lists.newArrayList(ArsMagicaAPI.getSpellRegistry().getValue(new ResourceLocation("arsmagica2", "touch")), ArsMagicaAPI.getSpellRegistry().getValue(new ResourceLocation("arsmagica2", "mana_link"))));
         lightningBolt = createSpell(Lists.newArrayList(Projectile(), LightningDamage(), Damage()));
         lightningElemental_attack = createSpell(Lists.newArrayList(Projectile(), LightningDamage()));
+        airElemental_attack = createSpell(Lists.newArrayList(Projectile(), PhysicalDamage(), Knockback()));
+        druid_RockThrow = createSpell(Lists.newArrayList(Projectile(), PhysicalDamage()));
+        druid_RootWave = createSpell(Lists.newArrayList(Wave(), Radius(), Entangle(), PhysicalDamage()));
+        druid_WolfSummon = createSpell(Lists.newArrayList(Self(), Summon()));
+        ISpellCaster druidWolfSpell = SpellCaster.of(druid_WolfSummon);
+        if (druidWolfSpell != null) {
+            druidWolfSpell.getCommonStoredData().setString(ItemCrystalPhylactery.TAG_SUMMON_TYPE, "minecraft:wolf");
+        }
+        ISpellCaster airSpell = SpellCaster.of(airElemental_attack);
+        if (airSpell != null) {
+            // Keep the gust's damage and shove, but give this NPC spell air visuals.
+            airSpell.getCommonStoredData().setBoolean(Projectile.AIR_PROJECTILE_KEY, true);
+        }
     }
 
     public final ItemStack createSpell(List<SpellPart> parts) {
@@ -171,6 +190,14 @@ public class NPCSpells {
 
     private SpellPart Slow() {
         return ArsMagicaAPI.getSpellRegistry().getValue(new ResourceLocation("arsmagica2", "slow"));
+    }
+
+    private SpellPart Entangle() {
+        return ArsMagicaAPI.getSpellRegistry().getValue(new ResourceLocation("arsmagica2", "entangle"));
+    }
+
+    private SpellPart Summon() {
+        return ArsMagicaAPI.getSpellRegistry().getValue(new ResourceLocation("arsmagica2", "summon"));
     }
 
     private SpellPart Blind() {

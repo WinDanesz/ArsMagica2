@@ -40,6 +40,8 @@ public class AMEntities {
         registry.register(create(EntityDarkling.class,           "darkling")            .tracker(64, 2, true).build());
         registry.register(create(EntityDarkMage.class,           "dark_mage")           .tracker(64, 2, true).egg(0x110011, 0xAA00FF).build());
         registry.register(create(EntityDryad.class,              "dryad")               .tracker(64, 2, true).egg(0x00ff00, 0x34e122).build());
+        registry.register(create(EntityDruid.class,              "druid")               .tracker(64, 2, true).egg(0x4a7023, 0x6b4423).build());
+        registry.register(create(EntityAirElemental.class,       "air_elemental")       .tracker(64, 2, true).egg(0xeaf6ff, 0xffd84d).build());
         registry.register(create(EntityEarthElemental.class,     "earth_elemental")     .tracker(64, 2, true).egg(0x61330b, 0x00ff00).build());
         registry.register(create(EntityFireElemental.class,      "fire_elemental")      .tracker(64, 2, true).egg(0xef260b, 0xff0000).build());
         registry.register(create(EntityLightMage.class,          "light_mage")          .tracker(64, 2, true).egg(0xEEEEFF, 0xAA00FF).build());
@@ -74,6 +76,7 @@ public class AMEntities {
         registry.register(create(EntityLightningElemental.class, "lightning_elemental") .tracker(64, 2, true).egg(0xFFFF44, 0xFFAA00).build());
         registry.register(create(EntityIceElemental.class,       "ice_elemental")       .tracker(64, 2, true).egg(0xaaddff, 0xffffff).build());
         registry.register(create(EntityFlyingBook.class,         "flying_book")         .tracker(64, 2, true).build());
+        registry.register(create(EntityNatureElemental.class,   "nature_elemental")   .tracker(64, 2, true).egg(0x49652a, 0x785332).build());
     }
 
     private static <T extends Entity> EntityEntryBuilder<T> create(Class<T> entityClass, String name) {
@@ -116,12 +119,15 @@ public class AMEntities {
         RenderingRegistry.registerEntityRenderingHandler(EntityEarthElemental.class, new RenderFactory(RenderEarthElemental.class));
         RenderingRegistry.registerEntityRenderingHandler(EntityLightningElemental.class, new RenderFactory(RenderLightningElemental.class));
         RenderingRegistry.registerEntityRenderingHandler(EntityIceElemental.class, new RenderFactory(RenderIceElemental.class));
+        RenderingRegistry.registerEntityRenderingHandler(EntityAirElemental.class, new RenderFactory(RenderAirElemental.class));
+        RenderingRegistry.registerEntityRenderingHandler(EntityNatureElemental.class, new RenderFactory(RenderNatureElemental.class));
         RenderingRegistry.registerEntityRenderingHandler(EntityManaCreeper.class, new RenderFactory(RenderManaCreeper.class));
         RenderingRegistry.registerEntityRenderingHandler(EntityLightMage.class, new RenderFactory(RenderLightMage.class));
         RenderingRegistry.registerEntityRenderingHandler(EntityDarkMage.class, new RenderFactory(RenderDarkMage.class));
         RenderingRegistry.registerEntityRenderingHandler(EntityManaVortex.class, new RenderFactory(RenderManaVortex.class));
         RenderingRegistry.registerEntityRenderingHandler(EntityHecate.class, new RenderFactory(RenderHecate.class));
         RenderingRegistry.registerEntityRenderingHandler(EntityDryad.class, new RenderFactory(RenderDryad.class));
+        RenderingRegistry.registerEntityRenderingHandler(EntityDruid.class, new RenderFactory(RenderDruid.class));
         RenderingRegistry.registerEntityRenderingHandler(EntityFlicker.class, new RenderFactory(RenderFlicker.class));
         RenderingRegistry.registerEntityRenderingHandler(EntityHellCow.class, new RenderFactory(RenderHellCow.class));
         RenderingRegistry.registerEntityRenderingHandler(EntityDarkling.class, new RenderFactory(RenderDarkling.class));
@@ -147,6 +153,8 @@ public class AMEntities {
         Biome.SpawnListEntry earthElementals = new Biome.SpawnListEntry(EntityEarthElemental.class, ArsMagica.config.GetEarthElementalSpawnRate(), 1, 2);
         Biome.SpawnListEntry fireElementals = new Biome.SpawnListEntry(EntityFireElemental.class, ArsMagica.config.GetFireElementalSpawnRate(), 1, 1);
         Biome.SpawnListEntry lightningElementals = new Biome.SpawnListEntry(EntityLightningElemental.class, ArsMagica.config.GetLightningElementalSpawnRate(), 1, 1);
+        Biome.SpawnListEntry airElementals = new Biome.SpawnListEntry(EntityAirElemental.class, ArsMagica.config.GetAirElementalSpawnRate(), 1, 2);
+        Biome.SpawnListEntry natureElementals = new Biome.SpawnListEntry(EntityNatureElemental.class, ArsMagica.config.GetNatureElementalSpawnRate(), 1, 2);
         Biome.SpawnListEntry flickers = new Biome.SpawnListEntry(EntityFlicker.class, ArsMagica.config.GetFlickerSpawnRate(), 1, 1);
 
         initSpawnsForBiomeTypes(manaElementals, EnumCreatureType.MONSTER, new BiomeDictionary.Type[]{BiomeDictionary.Type.BEACH, BiomeDictionary.Type.DRY, BiomeDictionary.Type.FOREST, BiomeDictionary.Type.COLD, BiomeDictionary.Type.HILLS, BiomeDictionary.Type.JUNGLE, BiomeDictionary.Type.MAGICAL, BiomeDictionary.Type.MOUNTAIN, BiomeDictionary.Type.PLAINS, BiomeDictionary.Type.SWAMP, BiomeDictionary.Type.WASTELAND}, new BiomeDictionary.Type[]{BiomeDictionary.Type.END, BiomeDictionary.Type.NETHER, BiomeDictionary.Type.MUSHROOM});
@@ -180,7 +188,11 @@ public class AMEntities {
 
         initSpawnsForBiomeTypes(lightningElementals, EnumCreatureType.MONSTER, new BiomeDictionary.Type[]{BiomeDictionary.Type.MOUNTAIN, BiomeDictionary.Type.HILLS, BiomeDictionary.Type.BEACH}, new BiomeDictionary.Type[]{BiomeDictionary.Type.END, BiomeDictionary.Type.NETHER, BiomeDictionary.Type.MUSHROOM});
 
+        initSpawnsForBiomeTypes(airElementals, EnumCreatureType.MONSTER, new BiomeDictionary.Type[]{BiomeDictionary.Type.MOUNTAIN, BiomeDictionary.Type.HILLS, BiomeDictionary.Type.PLAINS, BiomeDictionary.Type.BEACH}, new BiomeDictionary.Type[]{BiomeDictionary.Type.END, BiomeDictionary.Type.NETHER, BiomeDictionary.Type.MUSHROOM});
+
         initSpawnsForBiomeTypes(flickers, EnumCreatureType.AMBIENT, BiomeDictionary.Type.getAll().toArray(new BiomeDictionary.Type[0]), new BiomeDictionary.Type[0]);
+        // FOREST includes vanilla roofed forests; the dictionary also supports modded forests/jungles.
+        initSpawnsForBiomeTypes(natureElementals, EnumCreatureType.MONSTER, new BiomeDictionary.Type[]{BiomeDictionary.Type.FOREST, BiomeDictionary.Type.JUNGLE}, new BiomeDictionary.Type[]{BiomeDictionary.Type.END, BiomeDictionary.Type.NETHER, BiomeDictionary.Type.MUSHROOM});
 
     }
 

@@ -24,6 +24,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
@@ -34,6 +35,9 @@ public class EntityDryad extends EntityCreature {
 
     private static final DataParameter<Integer> SKIN_VARIANT = EntityDataManager.createKey(EntityDryad.class, DataSerializers.VARINT);
     public static final int NUM_VARIANTS = 3;
+
+    private static final class DryadGroupData implements IEntityLivingData {
+    }
 
     public int getSkinVariant() {
         return this.dataManager.get(SKIN_VARIANT);
@@ -49,12 +53,46 @@ public class EntityDryad extends EntityCreature {
         this.dataManager.register(SKIN_VARIANT, 0);
     }
 
-    @Nullable
     @Override
     public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
+        // livingdata == null means this dryad is the leader of a freshly-formed spawn group
+        // (the same signal vanilla wolves/zombies use for pack behaviour) - the right moment to
+        // decide whether the whole group gets an escorting druid.
+        boolean isGroupLeader = livingdata == null;
         livingdata = super.onInitialSpawn(difficulty, livingdata);
+        // Vanilla passes this result to the next pack member. Record the group even if the
+        // guard roll or placement fails, so later dryads cannot retry the same group's chance.
+        if (livingdata == null) {
+            livingdata = new DryadGroupData();
+        }
         this.setSkinVariant(this.rand.nextInt(NUM_VARIANTS));
+        if (isGroupLeader && !this.world.isRemote) {
+            trySpawnDruidGuard();
+        }
         return livingdata;
+    }
+
+    private void trySpawnDruidGuard() {
+        if (this.rand.nextInt(100) >= ArsMagica.config.getDruidGuardChance()) return;
+
+        double searchRadius = ArsMagica.config.getDruidGuardSearchRadius();
+        AxisAlignedBB searchArea = this.getEntityBoundingBox().grow(searchRadius);
+        if (!this.world.getEntitiesWithinAABB(EntityDruid.class, searchArea).isEmpty()) return;
+
+        for (int attempt = 0; attempt < 8; attempt++) {
+            int dx = this.rand.nextInt(9) - 4;
+            int dz = this.rand.nextInt(9) - 4;
+            if (dx == 0 && dz == 0) continue;
+            BlockPos ground = this.world.getHeight(this.getPosition().add(dx, 0, dz));
+
+            EntityDruid druid = new EntityDruid(this.world);
+            druid.setLocationAndAngles(ground.getX() + 0.5, ground.getY(), ground.getZ() + 0.5, this.rand.nextFloat() * 360.0F, 0.0F);
+            if (druid.getCanSpawnHere()) {
+                druid.onInitialSpawn(this.world.getDifficultyForLocation(ground), null);
+                this.world.spawnEntity(druid);
+                return;
+            }
+        }
     }
 
     public EntityDryad(World par1World) {

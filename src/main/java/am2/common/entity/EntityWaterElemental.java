@@ -7,21 +7,21 @@ import am2.client.particles.ParticleFloatUpward;
 import am2.common.entity.ai.EntityAIWaterElementalAttack;
 import am2.common.extensions.EntityExtension;
 import am2.common.registry.AMLoot;
+import am2.common.registry.Affinities;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-public class EntityWaterElemental extends EntityMob {
+public class EntityWaterElemental extends EntityElemental {
 
     private float hostileSpeed;
 
     public EntityWaterElemental(World par1World) {
-        super(par1World);
+        super(par1World, Affinities.water);
         this.hostileSpeed = 0.46F;
         initAI();
         EntityExtension.For(this).setCurrentLevel(5);
@@ -45,8 +45,7 @@ public class EntityWaterElemental extends EntityMob {
         this.tasks.addTask(3, new EntityAIWaterElementalAttack(this, EntityPlayer.class, this.hostileSpeed, false));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 0, true, false, null));
+        initAffinityTargeting(16.0D);
     }
 
     @Override

@@ -189,6 +189,9 @@ public class EntitySpellProjectile extends Entity {
             for (Entity candidate : candidates) {
                 if (!candidate.canBeCollidedWith()) continue;
                 if (candidate.equals(getShooter())) continue;
+                // Allied gusts pass through one another without applying either
+                // damage or the spell's separate knockback component.
+                if (isFriendlyAirElemental(candidate)) continue;
                 RayTraceResult intercept = candidate.getEntityBoundingBox().grow(0.3D, 0.3D, 0.3D).calculateIntercept(startVec, endVec);
                 if (intercept != null) {
                     double dist = startVec.distanceTo(intercept.hitVec);
@@ -285,6 +288,10 @@ public class EntitySpellProjectile extends Entity {
         }
     }
 
+    private boolean isFriendlyAirElemental(Entity candidate) {
+        return candidate instanceof EntityAirElemental && getShooter() instanceof EntityAirElemental;
+    }
+
     @Override
     protected void readEntityFromNBT(NBTTagCompound tagCompund) {
         NBTTagCompound am2Tag = NBTUtils.getAM2Tag(tagCompund);
@@ -324,7 +331,7 @@ public class EntitySpellProjectile extends Entity {
         EntityLivingBase target = null;
         double dist = 900;
         for (Entity entity : entities) {
-            if (entity instanceof EntityLivingBase && !entity.equals(getShooter())) {
+            if (entity instanceof EntityLivingBase && !entity.equals(getShooter()) && !isFriendlyAirElemental(entity)) {
                 Vec3d ePos = new Vec3d(entity.posX, entity.posY, entity.posZ);
                 double eDist = pos.distanceTo(ePos);
                 if (eDist < dist) {
