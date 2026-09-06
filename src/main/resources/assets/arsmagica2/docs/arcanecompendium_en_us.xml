@@ -1900,6 +1900,19 @@
 			</desc>
       <relatedEntries></relatedEntries>
     </mob>
+    <mob id="mob_druid">
+      <name>Druid</name>
+      <desc>
+                Druids are nature-aligned spellcasters who wander near
+                dryads and defend them from danger. They attack hostile
+                creatures with earth magic and entangling roots, and can
+                summon a wolf to fight alongside them. !d
+                Druids are friendly toward nature elementals and earth
+                elementals. They also offer trades for
+                plants, magical materials, and mana supplies.
+      </desc>
+      <relatedEntries>mob_dryad,mob_nature_elemental,earth_elemental</relatedEntries>
+    </mob>
     <mob id="mob_darkling">
       <name>Darkling</name>
       <desc>Darklings are small dog-like creatures that are found in the Nether.  Their body becomes less visible during night, fading to near invisibility at midnight.  As dawn approaches, the Darklings will begin to gradually appear again until they become fully visible again for the day.</desc>
