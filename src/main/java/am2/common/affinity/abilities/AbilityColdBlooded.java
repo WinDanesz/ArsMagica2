@@ -43,19 +43,15 @@ public class AbilityColdBlooded extends AbstractAffinityAbility {
             double iceDepth = AffinityData.For(player).getAffinityDepth(Affinities.ice);
             int duration = 40;
             int amplifier = 0;
-            if (iceDepth >= 1.0f) {
-                duration = 160;
-                amplifier = 2;
-            } else if (iceDepth >= 0.75f) {
+            if (iceDepth >= 0.75f) {
                 duration = 100;
                 amplifier = 1;
             } else if (iceDepth >= ArsMagica.config.getAffinityColdBloodedMinDepth()) {
-                duration = 40;
-                amplifier = 0;
+                duration = 30;
             }
             if (event.getSource() != null && event.getSource().getTrueSource() != null) {
                 EntityLivingBase target = (EntityLivingBase) event.getSource().getTrueSource();
-                if (!am2.common.compat.electroblob.EBWizardryCompatBootstrap.applyFrostEffect(target, duration, amplifier)) {
+                if (!am2.common.compat.electroblob.EBWizardryCompatBootstrap.applyFrostEffect(target, duration, 0)) {
                     PotionEffect effect = new PotionEffect(AMPotions.frost_slow, duration, amplifier);
                     target.addPotionEffect(effect);
                 }

@@ -61,6 +61,9 @@ public class AMConfig extends Configuration {
     private final String KEY_DryadCropGrowthEnabled = "dryad_crop_growth_enabled";
     private final String KEY_DryadBonemealEnabled = "dryad_bonemeal_enabled";
     private final String KEY_DryadPlantGrowthRate = "dryad_plant_growth_rate";
+    private final String KEY_DruidGuardChance = "druid_guard_chance";
+    private final String KEY_DruidGuardSearchRadius = "druid_guard_search_radius";
+    private final String KEY_DruidDefendRadius = "druid_defend_radius";
     private final String KEY_ManaElementalSpawnRate = "mana_elemental_spawn_rate";
     private final String KEY_ManaCreeperSpawnRate = "mana_creeper_spawn_rate";
     private final String KEY_DarklingSpawnRate = "darkling_spawn_rate";
@@ -69,6 +72,8 @@ public class AMConfig extends Configuration {
     private final String KEY_FireElementalSpawnRate = "fire_elemental_spawn_rate";
     private final String KEY_LightningElementalSpawnRate = "lightning_elemental_spawn_rate";
     private final String KEY_IceElementalSpawnRate = "ice_elemental_spawn_rate";
+    private final String KEY_AirElementalSpawnRate = "air_elemental_spawn_rate";
+    private final String KEY_NatureElementalSpawnRate = "nature_elemental_spawn_rate";
     private final String KEY_FlickerSpawnRate = "flicker_spawn_rate";
     private final String KEY_FlickerMaxPerPlayer = "flicker_max_per_player";
     private final String KEY_FlickerSpawnChance = "flicker_spawn_chance";
@@ -84,6 +89,11 @@ public class AMConfig extends Configuration {
     private final String KEY_IceElementalAttackDamage = "ice_elemental_attack_damage";
     private final String KEY_LightningElementalMaxHealth = "lightning_elemental_max_health";
     private final String KEY_LightningElementalAttackDamage = "lightning_elemental_attack_damage";
+    private final String KEY_AirElementalMaxHealth = "air_elemental_max_health";
+    private final String KEY_NatureElementalMaxHealth = "nature_elemental_max_health";
+    private final String KEY_AirElementalAttackDamage = "air_elemental_attack_damage";
+    private final String KEY_NatureElementalAttackDamage = "nature_elemental_attack_damage";
+    private final String KEY_NatureElementalChargeDamageMultiplier = "nature_elemental_charge_damage_multiplier";
     private final String KEY_WaterElementalMaxHealth = "water_elemental_max_health";
     private final String KEY_ManaElementalMaxHealth = "mana_elemental_max_health";
     private final String KEY_DisableManaElementalParticles = "disable_mana_elemental_particles";
@@ -96,6 +106,7 @@ public class AMConfig extends Configuration {
     private final String KEY_DarklingMaxHealth = "darkling_max_health";
     private final String KEY_ManaCreeperMaxHealth = "mana_creeper_max_health";
     private final String KEY_DryadMaxHealth = "dryad_max_health";
+    private final String KEY_DruidMaxHealth = "druid_max_health";
     private final String KEY_DarkMageArmor = "dark_mage_armor";
     private final String KEY_EarthElementalArmor = "earth_elemental_armor";
     private final String KEY_HecateArmor = "hecate_armor";
@@ -103,6 +114,8 @@ public class AMConfig extends Configuration {
     private final String KEY_FireElementalArmor = "fire_elemental_armor";
     private final String KEY_LightMageArmor = "light_mage_armor";
     private final String KEY_LightningElementalArmor = "lightning_elemental_armor";
+    private final String KEY_AirElementalArmor = "air_elemental_armor";
+    private final String KEY_NatureElementalArmor = "nature_elemental_armor";
     private final String KEY_ManaElementalArmor = "mana_elemental_armor";
     private final String KEY_HellCowArmor = "hell_cow_armor";
     /** End Mob Stats **/
@@ -179,6 +192,26 @@ public class AMConfig extends Configuration {
     private final String KEY_MeteorSpawnRadiusAttractor = "meteor_spawn_radius_attractor";
     private final String KEY_HazardousGateways = "hazardous_gateways";
     private final String KEY_CanDryadsDespawn = "can_dryads_despawn";
+    private final String KEY_CanDruidsDespawn = "can_druids_despawn";
+
+    /** Druid Trades **/
+    private final String KEY_DruidBuyValueBread = "druid_buy_value_bread";
+    private final String KEY_DruidBuyValueMushroomStew = "druid_buy_value_mushroom_stew";
+    private final String KEY_DruidBuyValueManaPotion = "druid_buy_value_mana_potion";
+    private final String KEY_DruidBuyValueVinteumDust = "druid_buy_value_vinteum_dust";
+    private final String KEY_DruidBuyValueMoonstone = "druid_buy_value_moonstone";
+    private final String KEY_DruidSellValueCerublossom = "druid_sell_value_cerublossom";
+    private final String KEY_DruidSellValueDesertNova = "druid_sell_value_desert_nova";
+    private final String KEY_DruidSellValueTarmaRoot = "druid_sell_value_tarma_root";
+    private final String KEY_DruidSellValueWakebloom = "druid_sell_value_wakebloom";
+    private final String KEY_DruidSellValueAum = "druid_sell_value_aum";
+    private final String KEY_DruidSellValueNatureEssence = "druid_sell_value_nature_essence";
+    private final String KEY_DruidTradeCommonSellQtyMin = "druid_trade_common_sell_qty_min";
+    private final String KEY_DruidTradeCommonSellQtyMax = "druid_trade_common_sell_qty_max";
+    private final String KEY_DruidTradeOrdinaryUsesMin = "druid_trade_ordinary_uses_min";
+    private final String KEY_DruidTradeOrdinaryUsesMax = "druid_trade_ordinary_uses_max";
+    private final String KEY_DruidTradeRareUsesMin = "druid_trade_rare_uses_min";
+    private final String KEY_DruidTradeRareUsesMax = "druid_trade_rare_uses_max";
     private final String KEY_MaxOrbsPerPlayer = "max_orbs_per_player";
 
     private final String KEY_ArmorXpInfusionFactor = "armor_xp_infusion_factor";
@@ -314,6 +347,11 @@ public class AMConfig extends Configuration {
     /** Affinity Ability Thresholds & Effects **/
     private final String KEY_AffinityAgileMinDepth = "affinity_agile_min_depth";
     private final String KEY_AffinityAgileJumpBoost = "affinity_agile_jump_boost";
+    private final String KEY_AffinityImmovableMinDepth = "affinity_immovable_min_depth";
+    private final String KEY_AffinityImmovableMaxResistance = "affinity_immovable_max_resistance";
+    private final String KEY_AffinityHardeningMinDepth = "affinity_hardening_min_depth";
+    private final String KEY_AffinityHardeningStoneDepth = "affinity_hardening_stone_depth";
+    private final String KEY_AffinityHardeningMaxBonusMultiplier = "affinity_hardening_max_bonus_multiplier";
     private final String KEY_AffinityColdBloodedMinDepth = "affinity_cold_blooded_min_depth";
     private final String KEY_AffinityThornsMinDepth = "affinity_thorns_min_depth";
     private final String KEY_AffinityThornsDamage1 = "affinity_thorns_damage_1";
@@ -330,6 +368,28 @@ public class AMConfig extends Configuration {
     private final String KEY_AffinityRimeguardMaxShieldFraction = "affinity_rimeguard_max_shield_fraction";
     private final String KEY_AffinityRimeguardCalmTicks = "affinity_rimeguard_calm_ticks";
     private final String KEY_AffinityRimeguardTicksPerHeart = "affinity_rimeguard_ticks_per_heart";
+    private final String KEY_AffinityRimeguardShatterDamage = "affinity_rimeguard_shatter_damage";
+    private final String KEY_AffinityRimeguardShatterRadius = "affinity_rimeguard_shatter_radius";
+    private final String KEY_AffinityClearCasterCooldown = "affinity_clearcaster_cooldown";
+    private final String KEY_AffinityWindsweptMinDepth = "affinity_windswept_min_depth";
+    private final String KEY_AffinityWindsweptMaxDepth = "affinity_windswept_max_depth";
+    private final String KEY_AffinityWindsweptKnockback = "affinity_windswept_knockback";
+    private final String KEY_AffinityGaleFistMinDepth = "affinity_gale_fist_min_depth";
+    private final String KEY_AffinityGaleFistKnockback = "affinity_gale_fist_knockback";
+    private final String KEY_AffinityGaleFistCooldown = "affinity_gale_fist_cooldown";
+    private final String KEY_AffinityTailwindMinDepth = "affinity_tailwind_min_depth";
+    private final String KEY_AffinityTailwindBaseFuelTicks = "affinity_tailwind_base_fuel_ticks";
+    private final String KEY_AffinityTailwindMaxDurationMultiplier = "affinity_tailwind_max_duration_multiplier";
+    private final String KEY_AffinityTailwindFuelRegenPerTick = "affinity_tailwind_fuel_regen_per_tick";
+    private final String KEY_AffinityTailwindFlightDrainPerTick = "affinity_tailwind_flight_drain_per_tick";
+    private final String KEY_AffinityTailwindFlightSpeed = "affinity_tailwind_flight_speed";
+    private final String KEY_AffinityTailwindFullDepletionRegenDelay = "affinity_tailwind_full_depletion_regen_delay";
+    private final String KEY_AffinityTailwindPartialRegenDelay = "affinity_tailwind_partial_regen_delay";
+    private final String KEY_AffinityEyeOfTheStormMinDepth = "affinity_eye_of_the_storm_min_depth";
+    private final String KEY_AffinityEyeOfTheStormHealthThreshold = "affinity_eye_of_the_storm_health_threshold";
+    private final String KEY_AffinityEyeOfTheStormCooldown = "affinity_eye_of_the_storm_cooldown";
+    private final String KEY_AffinityEyeOfTheStormRadius = "affinity_eye_of_the_storm_radius";
+    private final String KEY_AffinityEyeOfTheStormKnockback = "affinity_eye_of_the_storm_knockback";
     /** End Affinity Ability Thresholds **/
 
     /** Burnout Formula **/
@@ -505,6 +565,7 @@ public class AMConfig extends Configuration {
 
     private final String KEY_ShowHudMinimally = "show_hud_minimally";
     private final String KEY_ShowArmorUI = "show_armor_ui";
+    private final String KEY_ShowTailwindReserveRing = "show_tailwind_reserve_ring";
     private final String KEY_MoonstoneMeteorsDestroyTerrain = "moonstone_meteor_destroy_terrain";
 
     private final String KEY_ManaBarWidth = "mana_bar_width";
@@ -534,6 +595,7 @@ public class AMConfig extends Configuration {
     private static final String CATEGORY_SPELL_BALANCE = "spell_balance";
     private static final String CATEGORY_AFFINITY = "affinity_abilities";
     private static final String CATEGORY_FLICKER = "flicker_generation";
+    private static final String CATEGORY_DRUID_TRADES = "druid_trades";
 
     private int GFXLevel;
     private boolean PlayerSpellsDamageTerrain;
@@ -704,6 +766,7 @@ public class AMConfig extends Configuration {
     private boolean showHudMinimally;
     private boolean showXPAlways;
     private boolean showArmorUI;
+    private boolean showTailwindReserveRing;
     private boolean stagedCompendium;
     private boolean showHudBars;
     private boolean showHudOrbs;
@@ -727,6 +790,28 @@ public class AMConfig extends Configuration {
     private boolean savePowerOnWorldSave;
 
     private boolean canDryadsDespawn;
+    private boolean canDruidsDespawn;
+    private int druidGuardChance;
+    private int druidGuardSearchRadius;
+    private int druidDefendRadius;
+
+    private int druidBuyValueBread;
+    private int druidBuyValueMushroomStew;
+    private int druidBuyValueManaPotion;
+    private int druidBuyValueVinteumDust;
+    private int druidBuyValueMoonstone;
+    private int druidSellValueCerublossom;
+    private int druidSellValueDesertNova;
+    private int druidSellValueTarmaRoot;
+    private int druidSellValueWakebloom;
+    private int druidSellValueAum;
+    private int druidSellValueNatureEssence;
+    private int druidTradeCommonSellQtyMin;
+    private int druidTradeCommonSellQtyMax;
+    private int druidTradeOrdinaryUsesMin;
+    private int druidTradeOrdinaryUsesMax;
+    private int druidTradeRareUsesMin;
+    private int druidTradeRareUsesMax;
 
     private boolean oldXpCalculations;
     private boolean burnoutHungerDepletion;
@@ -789,6 +874,11 @@ public class AMConfig extends Configuration {
     private double iceElementalAttackDamage;
     private double lightningElementalMaxHealth;
     private double lightningElementalAttackDamage;
+    private double airElementalMaxHealth;
+    private double natureElementalMaxHealth;
+    private double airElementalAttackDamage;
+    private double natureElementalAttackDamage;
+    private double natureElementalChargeDamageMultiplier;
     private double waterElementalMaxHealth;
     private double manaElementalMaxHealth;
     private boolean disableManaElementalParticles;
@@ -801,6 +891,7 @@ public class AMConfig extends Configuration {
     private double darklingMaxHealth;
     private double manaCreeperMaxHealth;
     private double dryadMaxHealth;
+    private double druidMaxHealth;
     private double darkMageArmor;
     private double earthElementalArmor;
     private double hecateArmor;
@@ -808,6 +899,8 @@ public class AMConfig extends Configuration {
     private double fireElementalArmor;
     private double lightMageArmor;
     private double lightningElementalArmor;
+    private double airElementalArmor;
+    private double natureElementalArmor;
     private double manaElementalArmor;
     private double hellCowArmor;
     /** End Mob Stats **/
@@ -912,6 +1005,11 @@ public class AMConfig extends Configuration {
     /** Affinity Ability Thresholds & Effects **/
     private float affinityAgileMinDepth;
     private float affinityAgileJumpBoost;
+    private float affinityImmovableMinDepth;
+    private float affinityImmovableMaxResistance;
+    private float affinityHardeningMinDepth;
+    private float affinityHardeningStoneDepth;
+    private float affinityHardeningMaxBonusMultiplier;
     private float affinityColdBloodedMinDepth;
     private float affinityThornsMinDepth;
     private int affinityThornsDamage1;
@@ -928,6 +1026,28 @@ public class AMConfig extends Configuration {
     private float affinityRimeguardMaxShieldFraction;
     private int affinityRimeguardCalmTicks;
     private int affinityRimeguardTicksPerHeart;
+    private float affinityRimeguardShatterDamage;
+    private float affinityRimeguardShatterRadius;
+    private int affinityClearCasterCooldown;
+    private float affinityWindsweptMinDepth;
+    private float affinityWindsweptMaxDepth;
+    private float affinityWindsweptKnockback;
+    private float affinityGaleFistMinDepth;
+    private float affinityGaleFistKnockback;
+    private int affinityGaleFistCooldown;
+    private float affinityTailwindMinDepth;
+    private int affinityTailwindBaseFuelTicks;
+    private float affinityTailwindMaxDurationMultiplier;
+    private float affinityTailwindFuelRegenPerTick;
+    private float affinityTailwindFlightDrainPerTick;
+    private float affinityTailwindFlightSpeed;
+    private int affinityTailwindFullDepletionRegenDelay;
+    private int affinityTailwindPartialRegenDelay;
+    private float affinityEyeOfTheStormMinDepth;
+    private float affinityEyeOfTheStormHealthThreshold;
+    private int affinityEyeOfTheStormCooldown;
+    private float affinityEyeOfTheStormRadius;
+    private float affinityEyeOfTheStormKnockback;
     /** End Affinity Ability Thresholds **/
 
     /** Burnout Formula **/
@@ -977,6 +1097,7 @@ public class AMConfig extends Configuration {
         this.addCustomCategoryComment(CATEGORY_SPELL_BALANCE, "Spell shape defaults, modifier values, buff durations, and inscription table limits. Tweak these to rebalance spell mechanics.");
         this.addCustomCategoryComment(CATEGORY_AFFINITY, "Affinity ability activation thresholds and effect magnitudes. Adjust these to rebalance passive affinity bonuses.");
         this.addCustomCategoryComment(CATEGORY_FLICKER, "Spawn weights for flicker affinities in the Flicker Lure. Higher weight = more common.");
+        this.addCustomCategoryComment(CATEGORY_DRUID_TRADES, "Trade values for everything a Druid buys and sells, plus how many uses each offer gets before it needs to restock. Offers are generated by matching a sell item's value (times how many are sold) against a buy item's value to work out the price, so changing a value here reprices every offer that uses that item.");
         this.getCategory(CATEGORY_UI).setShowInGui(false);
     }
 
@@ -1035,6 +1156,7 @@ public class AMConfig extends Configuration {
         this.manaShieldingPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_ManaShieldingPositionX, 0.7104166746139526).getDouble(0.7104166746139526), this.get(CATEGORY_UI, this.KEY_ManaShieldingPositionY, 0.9352226853370667).getDouble(0.9352226853370667));
         this.showHudMinimally = this.get(CATEGORY_UI, this.KEY_ShowHudMinimally, false, "Set this to true to only show the AM HUD when a spell is equipped").getBoolean(false);
         this.showArmorUI = this.get(CATEGORY_UI, this.KEY_ShowArmorUI, true).getBoolean(true);
+        this.showTailwindReserveRing = this.get(CATEGORY_UI, this.KEY_ShowTailwindReserveRing, true, "Show a thin ring around the crosshair (first person only) representing Tailwind's remaining flight/glide reserve. Default: true").getBoolean(true);
         this.showBuffs = this.get(CATEGORY_UI, this.KEY_ShowBuffs, true).getBoolean(true);
         this.showNumerics = this.get(CATEGORY_UI, this.KEY_ShowNumerics, false).getBoolean(false);
         this.showXPAlways = this.get(CATEGORY_UI, this.KEY_ShowXPAlways, false).getBoolean(false);
@@ -1145,6 +1267,28 @@ public class AMConfig extends Configuration {
         this.savePowerOnWorldSave = this.get(CATEGORY_GENERAL, this.KEY_SavePowerOnWorldSave, true, "Set this to false if you are experiencing tick lage due to AM2 saving power data alongside the world save.  This will instead cache the power data in memory to be saved later.  This comes with more risk in the event of a crash, and a larger memory footprint, but increased performance. Can be used alongside chunk unload save config. Power data is still always saved at world unload (server shutdown).").getBoolean(true);
 
         this.canDryadsDespawn = this.get(CATEGORY_MOBS, this.KEY_CanDryadsDespawn, true, "Set this to false if you don't want dryads to despawn.").getBoolean(true);
+        this.canDruidsDespawn = this.get(CATEGORY_MOBS, this.KEY_CanDruidsDespawn, true, "Set this to false if you don't want druids to despawn.").getBoolean(true);
+        this.druidGuardChance = this.get(CATEGORY_MOBS, this.KEY_DruidGuardChance, 35, "Percentage chance (0-100) that a freshly-spawned dryad group gets an escorting druid. Default: 35").getInt(35);
+        this.druidGuardSearchRadius = this.get(CATEGORY_MOBS, this.KEY_DruidGuardSearchRadius, 24, "If a druid already exists within this many blocks of a new dryad group, skip spawning another one. Default: 24").getInt(24);
+        this.druidDefendRadius = this.get(CATEGORY_MOBS, this.KEY_DruidDefendRadius, 16, "How far (in blocks) a druid watches for dryads under attack. Default: 16").getInt(16);
+
+        this.druidBuyValueBread = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidBuyValueBread, 2, "Trade value of one Bread when a druid buys it. Default: 2").getInt(2);
+        this.druidBuyValueMushroomStew = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidBuyValueMushroomStew, 4, "Trade value of one Mushroom Stew when a druid buys it. Default: 4").getInt(4);
+        this.druidBuyValueManaPotion = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidBuyValueManaPotion, 7, "Trade value of one Standard Mana Potion when a druid buys it. Default: 7").getInt(7);
+        this.druidBuyValueVinteumDust = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidBuyValueVinteumDust, 1, "Trade value of one Vinteum Dust when a druid buys it. Default: 1").getInt(1);
+        this.druidBuyValueMoonstone = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidBuyValueMoonstone, 18, "Trade value of one Moonstone when a druid buys it - the most expensive currency a druid accepts. Default: 18").getInt(18);
+        this.druidSellValueCerublossom = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidSellValueCerublossom, 4, "Trade value of one Cerublossom when a druid sells it. Default: 4").getInt(4);
+        this.druidSellValueDesertNova = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidSellValueDesertNova, 6, "Trade value of one Desert Nova when a druid sells it. Default: 6").getInt(6);
+        this.druidSellValueTarmaRoot = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidSellValueTarmaRoot, 7, "Trade value of one Tarma Root when a druid sells it. Default: 7").getInt(7);
+        this.druidSellValueWakebloom = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidSellValueWakebloom, 6, "Trade value of one Wakebloom when a druid sells it. Default: 6").getInt(6);
+        this.druidSellValueAum = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidSellValueAum, 12, "Trade value of one Aum when a druid sells it. Aum is rare: always sold 1 at a time, on the slow (rare) restock schedule, and never accepted as payment. Default: 12").getInt(12);
+        this.druidSellValueNatureEssence = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidSellValueNatureEssence, 25, "Trade value of one Nature Essence when a druid sells it. Treated as rare like Aum: sold 1 at a time on the slow restock schedule. Default: 25").getInt(25);
+        this.druidTradeCommonSellQtyMin = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidTradeCommonSellQtyMin, 1, "Minimum quantity sold per offer for common (non-rare) sell items. Default: 1").getInt(1);
+        this.druidTradeCommonSellQtyMax = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidTradeCommonSellQtyMax, 2, "Maximum quantity sold per offer for common (non-rare) sell items. Default: 2").getInt(2);
+        this.druidTradeOrdinaryUsesMin = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidTradeOrdinaryUsesMin, 3, "Minimum uses per restock for ordinary (non-rare) offers. Default: 3").getInt(3);
+        this.druidTradeOrdinaryUsesMax = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidTradeOrdinaryUsesMax, 6, "Maximum uses per restock for ordinary (non-rare) offers. Default: 6").getInt(6);
+        this.druidTradeRareUsesMin = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidTradeRareUsesMin, 1, "Minimum uses per restock for rare offers (Aum, Nature Essence). Default: 1").getInt(1);
+        this.druidTradeRareUsesMax = this.get(CATEGORY_DRUID_TRADES, this.KEY_DruidTradeRareUsesMax, 2, "Maximum uses per restock for rare offers (Aum, Nature Essence). Default: 2").getInt(2);
 
         // Mob Stats
         this.fireElementalMaxHealth = this.get(CATEGORY_MOBS, this.KEY_FireElementalMaxHealth, 30.0, "Fire Elemental max HP. Default: 30").getDouble(30.0);
@@ -1157,6 +1301,11 @@ public class AMConfig extends Configuration {
         this.iceElementalAttackDamage = this.get(CATEGORY_MOBS, this.KEY_IceElementalAttackDamage, 4.0, "Ice Elemental attack damage. Default: 4").getDouble(4.0);
         this.lightningElementalMaxHealth = this.get(CATEGORY_MOBS, this.KEY_LightningElementalMaxHealth, 25.0, "Lightning Elemental max HP. Default: 25").getDouble(25.0);
         this.lightningElementalAttackDamage = this.get(CATEGORY_MOBS, this.KEY_LightningElementalAttackDamage, 4.0, "Lightning Elemental attack damage. Default: 4").getDouble(4.0);
+        this.airElementalMaxHealth = this.get(CATEGORY_MOBS, this.KEY_AirElementalMaxHealth, 18.0, "Air Elemental max HP. Default: 18").getDouble(18.0);
+        this.natureElementalMaxHealth = this.get(CATEGORY_MOBS, this.KEY_NatureElementalMaxHealth, 30.0, "Nature Elemental max HP. Default: 30").getDouble(30.0);
+        this.airElementalAttackDamage = this.get(CATEGORY_MOBS, this.KEY_AirElementalAttackDamage, 3.0, "Air Elemental attack damage. Default: 3").getDouble(3.0);
+        this.natureElementalAttackDamage = this.get(CATEGORY_MOBS, this.KEY_NatureElementalAttackDamage, 8.0, "Nature Elemental regular headbutt damage. Default: 8", 0.0, 2048.0).getDouble(8.0);
+        this.natureElementalChargeDamageMultiplier = this.get(CATEGORY_MOBS, this.KEY_NatureElementalChargeDamageMultiplier, 1.75, "Nature Elemental charge damage multiplier applied to its attack damage. Default: 1.75 (14 damage with the default 8 attack damage)", 0.0, 100.0).getDouble(1.75);
         this.waterElementalMaxHealth = this.get(CATEGORY_MOBS, this.KEY_WaterElementalMaxHealth, 20.0, "Water Elemental max HP. Default: 20").getDouble(20.0);
         this.manaElementalMaxHealth = this.get(CATEGORY_MOBS, this.KEY_ManaElementalMaxHealth, 20.0, "Mana Elemental max HP. Default: 20").getDouble(20.0);
         this.disableManaElementalParticles = this.get(CATEGORY_MOBS, this.KEY_DisableManaElementalParticles, false, "Set this to true to disable the particle effects on Mana Elementals, which may improve performance.").getBoolean(false);
@@ -1169,6 +1318,7 @@ public class AMConfig extends Configuration {
         this.darklingMaxHealth = this.get(CATEGORY_MOBS, this.KEY_DarklingMaxHealth, 7.0, "Darkling max HP. Default: 7").getDouble(7.0);
         this.manaCreeperMaxHealth = this.get(CATEGORY_MOBS, this.KEY_ManaCreeperMaxHealth, 20.0, "Mana Creeper max HP. Default: 20").getDouble(20.0);
         this.dryadMaxHealth = this.get(CATEGORY_MOBS, this.KEY_DryadMaxHealth, 20.0, "Dryad max HP. Default: 20").getDouble(20.0);
+        this.druidMaxHealth = this.get(CATEGORY_MOBS, this.KEY_DruidMaxHealth, 24.0, "Druid max HP. Default: 24").getDouble(24.0);
         this.darkMageArmor = this.get(CATEGORY_MOBS, this.KEY_DarkMageArmor, 5.0, "Dark Mage armor value. Default: 5").getDouble(5.0);
         this.earthElementalArmor = this.get(CATEGORY_MOBS, this.KEY_EarthElementalArmor, 18.0, "Earth Elemental armor value. Default: 18").getDouble(18.0);
         this.hecateArmor = this.get(CATEGORY_MOBS, this.KEY_HecateArmor, 5.0, "Hecate armor value. Default: 5").getDouble(5.0);
@@ -1176,6 +1326,8 @@ public class AMConfig extends Configuration {
         this.fireElementalArmor = this.get(CATEGORY_MOBS, this.KEY_FireElementalArmor, 5.0, "Fire Elemental armor value. Default: 5").getDouble(5.0);
         this.lightMageArmor = this.get(CATEGORY_MOBS, this.KEY_LightMageArmor, 1.0, "Light Mage armor value. Default: 1").getDouble(1.0);
         this.lightningElementalArmor = this.get(CATEGORY_MOBS, this.KEY_LightningElementalArmor, 8.0, "Lightning Elemental armor value. Default: 8").getDouble(8.0);
+        this.airElementalArmor = this.get(CATEGORY_MOBS, this.KEY_AirElementalArmor, 4.0, "Air Elemental armor value. Default: 4").getDouble(4.0);
+        this.natureElementalArmor = this.get(CATEGORY_MOBS, this.KEY_NatureElementalArmor, 4.0, "Nature Elemental armor value. Default: 4").getDouble(4.0);
         this.manaElementalArmor = this.get(CATEGORY_MOBS, this.KEY_ManaElementalArmor, 12.0, "Mana Elemental armor value. Default: 12").getDouble(12.0);
         this.hellCowArmor = this.get(CATEGORY_MOBS, this.KEY_HellCowArmor, 15.0, "Hell Cow armor value. Default: 15").getDouble(15.0);
 
@@ -1572,8 +1724,13 @@ public class AMConfig extends Configuration {
         SkillPoint.loadFromConfig(this);
 
         // Affinity Ability Thresholds & Effects
-        this.affinityAgileMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityAgileMinDepth, 0.5, "Minimum air affinity depth to activate Agile (jump boost). Default: 0.5").getDouble(0.5);
-        this.affinityAgileJumpBoost = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityAgileJumpBoost, 0.35, "Jump boost factor multiplied by air affinity depth. Default: 0.35").getDouble(0.35);
+        this.affinityAgileMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityAgileMinDepth, 0.4, "Minimum air affinity depth to activate Agile (jump boost, fall reduction, and mid-air jumps). Default: 0.4").getDouble(0.4);
+        this.affinityAgileJumpBoost = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityAgileJumpBoost, 0.2, "Jump boost factor multiplied by air affinity depth. Default: 0.2 (down from 0.35, now that Agile also grants mid-air jumps)").getDouble(0.2);
+        this.affinityImmovableMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityImmovableMinDepth, 0.3, "Minimum earth affinity depth for Immovable (knockback resistance). Default: 0.3").getDouble(0.3);
+        this.affinityImmovableMaxResistance = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityImmovableMaxResistance, 1.0, "Knockback resistance at 100%% earth depth, ramping linearly from 0 at the minimum depth. Vanilla's knockback resistance is a per-hit chance to fully negate knockback rather than a smooth reduction, so 1.0 here means guaranteed negation at full depth. Default: 1.0").getDouble(1.0);
+        this.affinityHardeningMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityHardeningMinDepth, 0.6, "Minimum earth affinity depth for Hardening (bare-hand mining speed against stone and wood). Bare-hand speed ramps linearly from vanilla (1.0) at this depth up to stone tool efficiency at affinity_hardening_stone_depth. Default: 0.6").getDouble(0.6);
+        this.affinityHardeningStoneDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityHardeningStoneDepth, 0.8, "Earth affinity depth at which Hardening's bare-hand mining speed against stone and wood reaches stone pickaxe/axe efficiency. Ramps further to affinity_hardening_max_bonus_multiplier times that efficiency at 100%% depth. Default: 0.8").getDouble(0.8);
+        this.affinityHardeningMaxBonusMultiplier = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityHardeningMaxBonusMultiplier, 1.25, "Multiplier over stone tool efficiency that Hardening's bare-hand mining speed reaches at 100%% earth depth, ramping linearly from 1.0x at affinity_hardening_stone_depth. Default: 1.25 (25%% faster than a stone tool)").getDouble(1.25);
         this.affinityColdBloodedMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityColdBloodedMinDepth, 0.5, "Minimum ice affinity depth for Cold Blooded tiered effects (slowness/freeze). The speed penalty activates at depth 0.1. Default: 0.5").getDouble(0.5);
         this.affinityThornsMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityThornsMinDepth, 0.5, "Minimum nature affinity depth for Thorns tier 1. Tier 2 at 0.75, tier 3 at 1.0. Default: 0.5").getDouble(0.5);
         this.affinityThornsDamage1 = this.get(CATEGORY_AFFINITY, this.KEY_AffinityThornsDamage1, 1, "Thorns damage at tier 1 (depth >= min). Default: 1").getInt();
@@ -1587,9 +1744,31 @@ public class AMConfig extends Configuration {
         this.affinityShortCircuitManaDrain = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityShortCircuitManaDrain, 40.0, "Mana drained per short-circuit proc. Default: 40 (down from a hardcoded 100)").getDouble(40.0);
         this.affinityShortCircuitCooldown = this.get(CATEGORY_AFFINITY, this.KEY_AffinityShortCircuitCooldown, 60, "Cooldown in ticks between short-circuit procs, so it can no longer drain mana on consecutive ticks. Default: 60 (3s)").getInt(60);
         this.affinityRimeguardMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityRimeguardMinDepth, 0.6, "Minimum ice affinity depth to start building a Rimeguard frost shield. Default: 0.6").getDouble(0.6);
-        this.affinityRimeguardMaxShieldFraction = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityRimeguardMaxShieldFraction, 0.3, "Maximum Rimeguard shield size, as a fraction of max HP, at 100% ice depth. Ramps linearly from 0 at the minimum depth up to this value. Default: 0.3 (30%)").getDouble(0.3);
+        this.affinityRimeguardMaxShieldFraction = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityRimeguardMaxShieldFraction, 0.4, "Maximum Rimeguard shield size, as a fraction of max HP, at 100% ice depth. Ramps linearly from 0 at the minimum depth up to this value. Default: 0.4 (40%)").getDouble(0.4);
         this.affinityRimeguardCalmTicks = this.get(CATEGORY_AFFINITY, this.KEY_AffinityRimeguardCalmTicks, 300, "Ticks without taking damage before Rimeguard starts building its shield. Default: 300 (15s)").getInt(300);
         this.affinityRimeguardTicksPerHeart = this.get(CATEGORY_AFFINITY, this.KEY_AffinityRimeguardTicksPerHeart, 100, "Ticks it takes Rimeguard to build one extra heart (2 HP) of shield once past the calm-ticks grace period. Default: 100 (5s)").getInt(100);
+        this.affinityRimeguardShatterDamage = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityRimeguardShatterDamage, 4.0, "Frost damage dealt to nearby mobs when the Rimeguard shield fully breaks. Default: 4.0").getDouble(4.0);
+        this.affinityRimeguardShatterRadius = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityRimeguardShatterRadius, 3.0, "Radius, in blocks, of the shatter damage burst when the Rimeguard shield fully breaks. Default: 3.0").getDouble(3.0);
+        this.affinityClearCasterCooldown = this.get(CATEGORY_AFFINITY, this.KEY_AffinityClearCasterCooldown, 200, "Cooldown in ticks between Clarity procs from Clear Caster (Arcane affinity), so a lucky roll can't chain into another right away. Default: 200 (10s)").getInt(200);
+        this.affinityWindsweptMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityWindsweptMinDepth, 0.05, "Minimum air affinity depth for Windswept (bonus knockback taken from combat hits). Default: 0.05").getDouble(0.05);
+        this.affinityWindsweptMaxDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityWindsweptMaxDepth, 0.95, "Maximum air affinity depth for Windswept; the knockback penalty tapers linearly to zero as depth approaches this value, reaching none at all here. Default: 0.95").getDouble(0.95);
+        this.affinityWindsweptKnockback = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityWindsweptKnockback, 1.0, "Extra shove velocity added away from the attacker when hurt, at the minimum qualifying depth. Tapers linearly down to 0 at the maximum depth. Default: 1.0").getDouble(1.0);
+        this.affinityGaleFistMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityGaleFistMinDepth, 0.5, "Minimum air affinity depth for Gale Fist (melee hits gust and knock back). Default: 0.5").getDouble(0.5);
+        this.affinityGaleFistKnockback = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityGaleFistKnockback, 0.9, "Knockback velocity dealt to a Gale Fist target at 100%% air depth; scales linearly down to 0 at the minimum depth. Default: 0.9").getDouble(0.9);
+        this.affinityGaleFistCooldown = this.get(CATEGORY_AFFINITY, this.KEY_AffinityGaleFistCooldown, 10, "Cooldown in ticks between Gale Fist knockback procs (the gust particle still shows on every hit). Default: 10 (0.5s)").getInt(10);
+        this.affinityTailwindMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindMinDepth, 0.6, "Minimum air affinity depth for Tailwind (toggleable real flight); also where the flight reserve starts scaling up from its base amount. Default: 0.6").getDouble(0.6);
+        this.affinityTailwindBaseFuelTicks = this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindBaseFuelTicks, 40, "Flight reserve at the minimum qualifying depth. Scales up with depth beyond that, up to affinity_tailwind_max_duration_multiplier times this amount at 100%% depth. Default: 40 (2s, reaching 6s at 100%% depth with the default 3x multiplier)").getInt(40);
+        this.affinityTailwindMaxDurationMultiplier = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindMaxDurationMultiplier, 3.0, "How many times the base reserve (affinity_tailwind_base_fuel_ticks) you get at 100%% air depth, ramping linearly from 1x at the minimum depth. Default: 3.0").getDouble(3.0);
+        this.affinityTailwindFuelRegenPerTick = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindFuelRegenPerTick, 0.5, "Flight reserve regained per tick while Tailwind is toggled on but not actively flying. Default: 0.5 (full refill in ~10s)").getDouble(0.5);
+        this.affinityTailwindFlightDrainPerTick = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindFlightDrainPerTick, 1.0, "Flight reserve spent per tick of actual powered flight (double-jump). Default: 1.0").getDouble(1.0);
+        this.affinityTailwindFlightSpeed = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindFlightSpeed, 0.04, "Movement speed while flying with Tailwind (vanilla creative flight's own speed is 0.05). Default: 0.04 (20%% slower than vanilla creative flight)").getDouble(0.04);
+        this.affinityTailwindFullDepletionRegenDelay = this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindFullDepletionRegenDelay, 60, "Ticks before the flight reserve starts regenerating after being fully drained to zero. Once it starts regenerating, any amount above zero is immediately usable again — this only delays when regen begins, not how much is needed. Default: 60 (3s)").getInt(60);
+        this.affinityTailwindPartialRegenDelay = this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindPartialRegenDelay, 20, "Ticks before the flight reserve starts regenerating after flight ends with some reserve still left (i.e. not fully drained). Default: 20 (1s)").getInt(20);
+        this.affinityEyeOfTheStormMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityEyeOfTheStormMinDepth, 0.9, "Minimum air affinity depth for Eye of the Storm (reactive panic-button gust at critical health). Default: 0.9").getDouble(0.9);
+        this.affinityEyeOfTheStormHealthThreshold = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityEyeOfTheStormHealthThreshold, 0.2, "Eye of the Storm triggers when a hit would leave you at or below this fraction of max HP. Default: 0.2 (20%%)").getDouble(0.2);
+        this.affinityEyeOfTheStormCooldown = this.get(CATEGORY_AFFINITY, this.KEY_AffinityEyeOfTheStormCooldown, 1800, "Cooldown in ticks between Eye of the Storm procs. Default: 1800 (90s)").getInt(1800);
+        this.affinityEyeOfTheStormRadius = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityEyeOfTheStormRadius, 6.0, "Horizontal radius, in blocks, of Eye of the Storm's knockback and fire-extinguish burst. Default: 6.0").getDouble(6.0);
+        this.affinityEyeOfTheStormKnockback = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityEyeOfTheStormKnockback, 1.4, "Knockback velocity applied to nearby mobs when Eye of the Storm triggers. Default: 1.4").getDouble(1.4);
 
         // Burnout Formula
         this.manaBurnoutRatio = (float) this.get(CATEGORY_GENERAL, this.KEY_ManaBurnoutRatio, 0.38, "Fraction of mana cost added as burnout when casting a spell. Default: 0.38").getDouble(0.38);
@@ -2187,6 +2366,10 @@ public class AMConfig extends Configuration {
         return this.forgeSmeltsVillagers;
     }
 
+    public boolean showTailwindReserveRing() {
+        return this.showTailwindReserveRing;
+    }
+
     public boolean showArmorUI() {
         return this.showArmorUI;
     }
@@ -2278,6 +2461,8 @@ public class AMConfig extends Configuration {
         this.get(CATEGORY_MOBS, this.KEY_EarthElementalSpawnUnderground, true).setRequiresMcRestart(true);
         this.get(CATEGORY_MOBS, this.KEY_FireElementalSpawnRate, 12).setRequiresMcRestart(true);
         this.get(CATEGORY_MOBS, this.KEY_LightningElementalSpawnRate, 12).setRequiresMcRestart(true);
+        this.get(CATEGORY_MOBS, this.KEY_AirElementalSpawnRate, 12).setRequiresMcRestart(true);
+        this.get(CATEGORY_MOBS, this.KEY_NatureElementalSpawnRate, 4).setRequiresMcRestart(true);
         this.get(CATEGORY_MOBS, this.KEY_FlickerSpawnRate, 1).setRequiresMcRestart(true);
         this.get(CATEGORY_MOBS, this.KEY_FlickerMaxPerPlayer, 6, "Maximum number of flickers allowed per online player. Default: 6").setRequiresMcRestart(false);
         this.get(CATEGORY_MOBS, this.KEY_FlickerSpawnChance, 10, "Percentage chance (1-100) that a flicker spawn attempt succeeds. Default: 10").setRequiresMcRestart(false);
@@ -2355,6 +2540,16 @@ public class AMConfig extends Configuration {
 
     public int GetIceElementalSpawnRate() {
         Property prop = this.get(CATEGORY_MOBS, this.KEY_IceElementalSpawnRate, 12).setRequiresMcRestart(true);
+        return Math.max(prop.getInt(12), 0);
+    }
+
+    public int GetNatureElementalSpawnRate() {
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_NatureElementalSpawnRate, 4).setRequiresMcRestart(true);
+        return Math.max(prop.getInt(4), 0);
+    }
+
+    public int GetAirElementalSpawnRate() {
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_AirElementalSpawnRate, 12).setRequiresMcRestart(true);
         return Math.max(prop.getInt(12), 0);
     }
 
@@ -2854,6 +3049,11 @@ public class AMConfig extends Configuration {
     public double getIceElementalAttackDamage() { return this.iceElementalAttackDamage; }
     public double getLightningElementalMaxHealth() { return this.lightningElementalMaxHealth; }
     public double getLightningElementalAttackDamage() { return this.lightningElementalAttackDamage; }
+    public double getAirElementalMaxHealth() { return this.airElementalMaxHealth; }
+    public double getNatureElementalMaxHealth() { return this.natureElementalMaxHealth; }
+    public double getAirElementalAttackDamage() { return this.airElementalAttackDamage; }
+    public double getNatureElementalAttackDamage() { return this.natureElementalAttackDamage; }
+    public double getNatureElementalChargeDamageMultiplier() { return this.natureElementalChargeDamageMultiplier; }
     public double getWaterElementalMaxHealth() { return this.waterElementalMaxHealth; }
     public double getManaElementalMaxHealth() { return this.manaElementalMaxHealth; }
     public double getDarkMageMaxHealth() { return this.darkMageMaxHealth; }
@@ -2865,6 +3065,29 @@ public class AMConfig extends Configuration {
     public double getDarklingMaxHealth() { return this.darklingMaxHealth; }
     public double getManaCreeperMaxHealth() { return this.manaCreeperMaxHealth; }
     public double getDryadMaxHealth() { return this.dryadMaxHealth; }
+    public double getDruidMaxHealth() { return this.druidMaxHealth; }
+    public boolean canDruidsDespawn() { return this.canDruidsDespawn; }
+    public int getDruidGuardChance() { return this.druidGuardChance; }
+    public int getDruidGuardSearchRadius() { return this.druidGuardSearchRadius; }
+    public int getDruidDefendRadius() { return this.druidDefendRadius; }
+
+    public int getDruidBuyValueBread() { return this.druidBuyValueBread; }
+    public int getDruidBuyValueMushroomStew() { return this.druidBuyValueMushroomStew; }
+    public int getDruidBuyValueManaPotion() { return this.druidBuyValueManaPotion; }
+    public int getDruidBuyValueVinteumDust() { return this.druidBuyValueVinteumDust; }
+    public int getDruidBuyValueMoonstone() { return this.druidBuyValueMoonstone; }
+    public int getDruidSellValueCerublossom() { return this.druidSellValueCerublossom; }
+    public int getDruidSellValueDesertNova() { return this.druidSellValueDesertNova; }
+    public int getDruidSellValueTarmaRoot() { return this.druidSellValueTarmaRoot; }
+    public int getDruidSellValueWakebloom() { return this.druidSellValueWakebloom; }
+    public int getDruidSellValueAum() { return this.druidSellValueAum; }
+    public int getDruidSellValueNatureEssence() { return this.druidSellValueNatureEssence; }
+    public int getDruidTradeCommonSellQtyMin() { return this.druidTradeCommonSellQtyMin; }
+    public int getDruidTradeCommonSellQtyMax() { return this.druidTradeCommonSellQtyMax; }
+    public int getDruidTradeOrdinaryUsesMin() { return this.druidTradeOrdinaryUsesMin; }
+    public int getDruidTradeOrdinaryUsesMax() { return this.druidTradeOrdinaryUsesMax; }
+    public int getDruidTradeRareUsesMin() { return this.druidTradeRareUsesMin; }
+    public int getDruidTradeRareUsesMax() { return this.druidTradeRareUsesMax; }
     public double getDarkMageArmor() { return this.darkMageArmor; }
     public double getEarthElementalArmor() { return this.earthElementalArmor; }
     public double getHecateArmor() { return this.hecateArmor; }
@@ -2872,6 +3095,8 @@ public class AMConfig extends Configuration {
     public double getFireElementalArmor() { return this.fireElementalArmor; }
     public double getLightMageArmor() { return this.lightMageArmor; }
     public double getLightningElementalArmor() { return this.lightningElementalArmor; }
+    public double getAirElementalArmor() { return this.airElementalArmor; }
+    public double getNatureElementalArmor() { return this.natureElementalArmor; }
     public double getManaElementalArmor() { return this.manaElementalArmor; }
     public double getHellCowArmor() { return this.hellCowArmor; }
 
@@ -2991,6 +3216,11 @@ public class AMConfig extends Configuration {
     /** Affinity Ability Thresholds & Effects **/
     public float getAffinityAgileMinDepth() { return this.affinityAgileMinDepth; }
     public float getAffinityAgileJumpBoost() { return this.affinityAgileJumpBoost; }
+    public float getAffinityImmovableMinDepth() { return this.affinityImmovableMinDepth; }
+    public float getAffinityImmovableMaxResistance() { return this.affinityImmovableMaxResistance; }
+    public float getAffinityHardeningMinDepth() { return this.affinityHardeningMinDepth; }
+    public float getAffinityHardeningStoneDepth() { return this.affinityHardeningStoneDepth; }
+    public float getAffinityHardeningMaxBonusMultiplier() { return this.affinityHardeningMaxBonusMultiplier; }
     public float getAffinityColdBloodedMinDepth() { return this.affinityColdBloodedMinDepth; }
     public float getAffinityThornsMinDepth() { return this.affinityThornsMinDepth; }
     public int getAffinityThornsDamage1() { return this.affinityThornsDamage1; }
@@ -3007,6 +3237,28 @@ public class AMConfig extends Configuration {
     public float getAffinityRimeguardMaxShieldFraction() { return this.affinityRimeguardMaxShieldFraction; }
     public int getAffinityRimeguardCalmTicks() { return this.affinityRimeguardCalmTicks; }
     public int getAffinityRimeguardTicksPerHeart() { return this.affinityRimeguardTicksPerHeart; }
+    public float getAffinityRimeguardShatterDamage() { return this.affinityRimeguardShatterDamage; }
+    public float getAffinityRimeguardShatterRadius() { return this.affinityRimeguardShatterRadius; }
+    public int getAffinityClearCasterCooldown() { return this.affinityClearCasterCooldown; }
+    public float getAffinityWindsweptMinDepth() { return this.affinityWindsweptMinDepth; }
+    public float getAffinityWindsweptMaxDepth() { return this.affinityWindsweptMaxDepth; }
+    public float getAffinityWindsweptKnockback() { return this.affinityWindsweptKnockback; }
+    public float getAffinityGaleFistMinDepth() { return this.affinityGaleFistMinDepth; }
+    public float getAffinityGaleFistKnockback() { return this.affinityGaleFistKnockback; }
+    public int getAffinityGaleFistCooldown() { return this.affinityGaleFistCooldown; }
+    public float getAffinityTailwindMinDepth() { return this.affinityTailwindMinDepth; }
+    public int getAffinityTailwindBaseFuelTicks() { return this.affinityTailwindBaseFuelTicks; }
+    public float getAffinityTailwindMaxDurationMultiplier() { return this.affinityTailwindMaxDurationMultiplier; }
+    public float getAffinityTailwindFuelRegenPerTick() { return this.affinityTailwindFuelRegenPerTick; }
+    public float getAffinityTailwindFlightDrainPerTick() { return this.affinityTailwindFlightDrainPerTick; }
+    public float getAffinityTailwindFlightSpeed() { return this.affinityTailwindFlightSpeed; }
+    public int getAffinityTailwindFullDepletionRegenDelay() { return this.affinityTailwindFullDepletionRegenDelay; }
+    public int getAffinityTailwindPartialRegenDelay() { return this.affinityTailwindPartialRegenDelay; }
+    public float getAffinityEyeOfTheStormMinDepth() { return this.affinityEyeOfTheStormMinDepth; }
+    public float getAffinityEyeOfTheStormHealthThreshold() { return this.affinityEyeOfTheStormHealthThreshold; }
+    public int getAffinityEyeOfTheStormCooldown() { return this.affinityEyeOfTheStormCooldown; }
+    public float getAffinityEyeOfTheStormRadius() { return this.affinityEyeOfTheStormRadius; }
+    public float getAffinityEyeOfTheStormKnockback() { return this.affinityEyeOfTheStormKnockback; }
 
     /** Burnout Formula **/
     public float getManaBurnoutRatio() { return this.manaBurnoutRatio; }

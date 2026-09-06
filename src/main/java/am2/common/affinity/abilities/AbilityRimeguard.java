@@ -1,15 +1,21 @@
 package am2.common.affinity.abilities;
 
 import am2.ArsMagica;
+import am2.api.DamageSources;
 import am2.api.affinity.AbstractAffinityAbility;
 import am2.api.affinity.Affinity;
 import am2.common.extensions.AffinityData;
 import am2.common.registry.Affinities;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+
+import java.util.List;
 
 public class AbilityRimeguard extends AbstractAffinityAbility {
 
@@ -73,6 +79,7 @@ public class AbilityRimeguard extends AbstractAffinityAbility {
             data.addAbilityFloat(SHIELD_KEY, shield);
             if (shield <= 0f) {
                 spawnBreakParticles(player);
+                dealShatterDamage(player);
             }
         }
         data.addAbilityFloat(CALM_TICKS_KEY, 0f);
@@ -103,5 +110,21 @@ public class AbilityRimeguard extends AbstractAffinityAbility {
         world.spawnParticle(EnumParticleTypes.SNOWBALL,
                 player.posX, player.posY + player.height * 0.5D, player.posZ,
                 20, player.width * 0.6D, player.height * 0.5D, player.width * 0.6D, 0.05D);
+    }
+
+    // Excludes other players, same as Eye of the Storm's own nearby-entity burst — a defensive
+    // reaction to taking damage shouldn't also chip-damage a PvP opponent just for breaking it.
+    // Also excludes the player's own tamed/owned entities (wolves, etc.) so a shatter can't hurt
+    // your own pet just for standing near you when your shield goes down.
+    private void dealShatterDamage(EntityPlayer player) {
+        double radius = ArsMagica.config.getAffinityRimeguardShatterRadius();
+        List<EntityLivingBase> nearby = player.world.getEntitiesWithinAABB(EntityLivingBase.class,
+                player.getEntityBoundingBox().grow(radius, radius, radius));
+        DamageSource source = DamageSources.causeFrostDamage(player);
+        for (EntityLivingBase ent : nearby) {
+            if (ent == player || ent instanceof EntityPlayer) continue;
+            if (ent instanceof IEntityOwnable && player.equals(((IEntityOwnable) ent).getOwner())) continue;
+            ent.attackEntityFrom(source, ArsMagica.config.getAffinityRimeguardShatterDamage());
+        }
     }
 }

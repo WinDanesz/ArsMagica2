@@ -11,6 +11,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -132,6 +133,26 @@ public abstract class AbstractAffinityAbility extends IForgeRegistryEntry.Impl<A
     }
 
     public void removeEffects(EntityPlayer player) {
+    }
+
+    /**
+     * Fired when the player's block-breaking speed is being computed, e.g. to boost bare-hand
+     * mining speed against specific materials.
+     *
+     * @param player : the current player
+     * @param event : the break speed event, carrying the block being broken and the speed so far.
+     */
+    public void applyBreakSpeed(EntityPlayer player, PlayerEvent.BreakSpeed event) {
+    }
+
+    /**
+     * Fired when checking whether the player can harvest (get drops from) a block, e.g. to let a
+     * sufficiently-hardened bare hand count as holding the required tool.
+     *
+     * @param player : the current player
+     * @param event : the harvest check event, carrying the block and whether it currently succeeds.
+     */
+    public void applyHarvestCheck(EntityPlayer player, PlayerEvent.HarvestCheck event) {
     }
 
     public boolean hasMax() {

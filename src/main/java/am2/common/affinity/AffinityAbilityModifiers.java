@@ -33,6 +33,13 @@ public class AffinityAbilityModifiers {
     public static final UUID lightningAffinityModifierID = UUID.fromString("3b51a94c-8866-470b-8b69-e1d5cb50a61f");
     public static final AttributeModifier lightningAffinitySpeed = new AttributeModifier(lightningAffinityModifierID, "Lightning Reflexes", 1.20, OPERATION_ADD);
 
+    // Earth Affinity Knockback Resistance Modifier
+    // No fixed AttributeModifier instance here (unlike the others above) since the amount is computed
+    // continuously from depth in AbilityImmovable itself, the same way AbilityReflexes computes its
+    // own speed bonus from lightningAffinityModifierID above rather than using lightningAffinitySpeed's
+    // fixed 1.20 amount.
+    public static final UUID earthAffinityKnockbackResistanceID = UUID.fromString("e6ba1417-3411-4f08-b017-e2be438d9514");
+
     public static final UUID waterWeaknessID = UUID.fromString("3b51a94c-7844-732b-8b69-a1f5cd50a60f");
     public static final AttributeModifier waterWeakness = new AttributeModifier(waterWeaknessID, "Water Weakness (Ender)", -0.25, OPERATION_ADD);
     public static final UUID waterWeaknessFireID = UUID.fromString("3b51a94c-7844-732b-8b69-a1f5cd50a60c");
