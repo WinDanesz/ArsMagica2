@@ -254,10 +254,18 @@ public class GuiCompendiumIndex extends GuiScreen {
 
     @Override
     public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-        // Handle mouse back button (button 3) to close the GUI
-        if (Mouse.getEventButtonState() && Mouse.getEventButton() == 3) {
+        int mouseButton = Mouse.getEventButton();
+        if (Mouse.getEventButtonState() && (mouseButton == 1 || mouseButton == 3)) {
             this.mc.displayGuiScreen(null);
+            return;
+        }
+        super.handleMouseInput();
+
+        int wheel = Mouse.getEventDWheel();
+        if (wheel < 0 && nextPage.visible && nextPage.enabled) {
+            actionPerformed(nextPage);
+        } else if (wheel > 0 && prevPage.visible && prevPage.enabled) {
+            actionPerformed(prevPage);
         }
     }
 

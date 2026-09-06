@@ -37,7 +37,8 @@ fluid.liquid_essence=Liquid Essence
 
 #Item Names
 
-item.arsmagica2\:affinity_tome.name=Affinity Tome: %s
+item.arsmagica2\:affinity_tome.name=Affinity Tome of %s
+item.arsmagica2\:affinity_tome_none.name=Tome of Anti-Affinity
 item.arsmagica2\:ebwiz_spell_binding.name=Unidentified Spell
 item.arsmagica2\:essence.name=%s Essence
 item.arsmagica2\:vinteum_dust.name=Vinteum Dust
@@ -288,6 +289,9 @@ tile.arsmagica2\:liquid_essence_block.name=Liquid Essence
 
 entity.arsmagica2.dark_mage.name=Dark Mage
 entity.arsmagica2.dryad.name=Dryad
+entity.arsmagica2.druid.name=Druid
+entity.arsmagica2.air_elemental.name=Air Elemental
+entity.arsmagica2.nature_elemental.name=Nature Elemental
 entity.arsmagica2.earth_elemental.name=Earth Elemental
 entity.arsmagica2.fire_elemental.name=Fire Elemental
 entity.arsmagica2.ice_elemental.name=Ice Elemental
@@ -332,6 +336,7 @@ key.am2.shape_groups=Cycle Spell Shape Group
 key.am2.aura_customization=Aura Customization
 key.am2.dark_vision=Toggle Dark Vision
 key.am2.wall_climb=Toggle Wall Climb
+key.am2.tailwind=Toggle Tailwind
 key.am2.spellbooknext=Next Spell
 key.am2.spellbookprev=Previous Spell
 key.am2.charmcast=Cast from Charm Slot
@@ -366,20 +371,30 @@ am2.glyph.none=No glyph is stored.
 ##air
 affinityability.agile.name=Agile
 affinityability.agile.desc=Boosts jump height and reduces fall damage, scaling with depth.
-affinityability.lightasafeather.name=Light as a Feather
-affinityability.lightasafeather.desc=50-85%% depth: rain gusts randomly push you around.
+affinityability.windswept.name=Windswept
+affinityability.windswept.desc=Taking a combat hit adds a bonus shove, until you learn to control the wind.
+affinityability.galefist.name=Gale Fist
+affinityability.galefist.desc=Melee hits release a gust and knock the target back, on a cooldown.
+affinityability.tailwind.name=Tailwind
+affinityability.tailwind.desc=Toggle: double-jump into real flight, spent from a reserve of air. Reserve grows with depth past 60%%, up to 6s at full depth.
+affinityability.eyeofthestorm.name=Eye of the Storm
+affinityability.eyeofthestorm.desc=Near death in combat, unleash a gust that repels nearby mobs and douses fire, on a cooldown.
 
 ##arcane
 affinityability.clearcaster.name=Clearcaster
-affinityability.clearcaster.desc=5%% chance per cast to grant Clarity (next spell free). +1%% per depth%% above 90%%.
+affinityability.clearcaster.desc=5%% chance per cast to grant Clarity (consumed on your next cast, making it free), on a 10s cooldown. +1%% chance per depth%% above 90%%.
 affinityability.magicweakness.name=Magic Weakness
 affinityability.magicweakness.desc=You take 10%% more damage from magical sources.
 affinityability.onewithmagic.name=Magical Focus
-affinityability.onewithmagic.desc=-5%% mana/burnout cost. Consumes Clarity for a free cast.
+affinityability.onewithmagic.desc=-5%% mana/burnout cost.
 
 ##earth
 affinityability.solidbones.name=Solid Bones
 affinityability.solidbones.desc=Up to 10%% damage reduction; sink faster in water; less fall tolerance.
+affinityability.immovable.name=Immovable
+affinityability.immovable.desc=Knockback resistance, scaling from none at 30%% depth up to full immunity at 100%%.
+affinityability.hardening.name=Hardening
+affinityability.hardening.desc=Bare-hand mining speed against stone and wood, reaching stone tool efficiency at 80%% depth and 25%% faster than that at 100%%. From 80%%, hands also count as the correct tool for drops.
 affinityability.stoneskin.name=Stone Skin
 
 ##ender
@@ -406,7 +421,7 @@ affinityability.waterweakness_fire.desc=Periodic damage while touching water; fl
 affinityability.coldblooded.name=Cold Blooded
 affinityability.coldblooded.desc=Slows melee attackers; you move slower off ice or snow.
 affinityability.rimeguard.name=Rimeguard
-affinityability.rimeguard.desc=Standing uninjured for 15s builds a frost shield, one heart every 5s, up to 30%% max HP at full depth. Shatters when broken.
+affinityability.rimeguard.desc=Builds a frost shield after being uninjured for 15s. Shatters into a damaging burst when broken.
 affinityability.lavafreeze.name=Frozen Footsteps (Lava)
 affinityability.lavafreeze.desc=Toggle: freeze lava into obsidian beneath your feet.
 affinityability.waterfreeze.name=Frozen Footsteps (Water)
@@ -545,6 +560,7 @@ skill.arsmagica2\:levitate.name=Levitate
 skill.arsmagica2\:flight.name=Flight
 skill.arsmagica2\:self.name=Self
 skill.arsmagica2\:summon.name=Summon
+skill.arsmagica2\:elemental.name=Elemental
 skill.arsmagica2\:contingency_fall.name=Contingency : Fall
 skill.arsmagica2\:life_tap.name=Life Tap
 skill.arsmagica2\:life_drain.name=Life Drain
@@ -701,6 +717,7 @@ skill.arsmagica2\:levitate.occulusdesc=Use the force.
 skill.arsmagica2\:flight.occulusdesc=I'd rather use a plane.
 skill.arsmagica2\:self.occulusdesc=It's all about me.
 skill.arsmagica2\:summon.occulusdesc=Rise creation! Oh you look like the others...
+skill.arsmagica2\:elemental.occulusdesc=Why settle for a stranger's soul when you have plenty of your own affinity to spare?
 skill.arsmagica2\:contingency_fall.occulusdesc=Falling... Well at least now it has a purpose.
 skill.arsmagica2\:life_tap.occulusdesc=I'm borrowing this.
 skill.arsmagica2\:life_drain.occulusdesc=Ahem... I'm taking all of it. Including you.
@@ -935,6 +952,8 @@ am2.tooltip.noMark=No mark to recall to.
 am2.tooltip.noMatchingGate=No matching gate could be found.
 am2.tooltip.noMatchingPlayer=No matching player could be found.
 am2.tooltip.noMoreSummons=You cannot have any more summons.
+am2.tooltip.elementalInsufficientAffinity=Your affinity is not deep enough to summon an elemental.
+am2.tooltip.elementalNoAffinityForm=Your highest affinity has no elemental form.
 am2.tooltip.noPathFound=No path was found between the selected nodes.
 am2.tooltip.noPriIn=Input Markers cannot have a priority level set.
 am2.tooltip.noSupportedPowertypes=The source node doesn't provide any types of power that the destination can use!
@@ -1160,6 +1179,7 @@ am2.chat.disabled=§cDisabled
 am2.chat.ability_ice_bridge=§bFrozen Footsteps
 am2.chat.ability_night_vision=§dDark Vision
 am2.chat.ability_wall_climb=§2Wall Climb
+am2.chat.ability_tailwind=§bTailwind
 
 #Components
 
@@ -1235,6 +1255,7 @@ compendium.component.slow.name=Slow
 compendium.component.slowfall.name=Slowfall
 compendium.component.storm.name=Thunderstorm
 compendium.component.summon.name=Summon
+compendium.component.elemental.name=Elemental
 compendium.component.swift_swim.name=Swift Swim
 compendium.component.telekinesis.name=Telekinesis
 compendium.component.transplace.name=Transplace
@@ -1320,6 +1341,7 @@ compendium.slowfall.page1=Become light as a feather, and fall without fear.
 compendium.storm.page1=The clouds darkened, and rain began to fall. The wind howled, and a flash of lightning streaked across the sky, leaving bright flashes in my vision. The thunder was deafening. Lightning struck all around me at each enemy. The strain of maintaining the storm was immense.
 compendium.summon.page1=You have learned to harvest the souls of creatures you defeat in combat. These souls can be used in creating a spell to summon that creature to protect you. !d To summon a creature, first craft a #5Crystal Phylactery#0. Once you kill something while holding an empty phylactery, that phylactery will become #9attuned#0 to that specific mob. Kill enough of the same mob and you will fill the phylactery. !d During spell creation, you can throw in any filled phylactery when prompted by the lectern. This step is what determines what your spell will summon.
 compendium.summon.page2=Summoned creatures drop no loot, and no xp, but can be interacted with normally, such as breeding, milking cows, or riding horses. Horses are the exception to the item drop rule and will drop saddles and armor given to them. !l Tameable creatures such as wolves and cats are automatically tamed to their owner upon summoning. !d Bosses cannot be trapped in phylacteries in survival/adventure mode.
+compendium.elemental.page1=A more focused expression of the Summon component, this spell reaches into your own attunement rather than a captured soul. !d Once your strongest affinity - fire, water, air, earth, ice, or lightning - reaches at least a quarter of its full depth, casting this spell conjures an elemental bound to that affinity to fight at your side. !d No Crystal Phylactery is needed to craft this spell, but the elemental summoned still counts against your summon cap, and if your strongest affinity has no elemental to call upon, the spell will fail.
 compendium.swift_swim.page1=By manipulating water currents, you can propel yourself along much more quickly underwater.
 compendium.telekinesis.page1=You can use your magic to amplify your brainwaves, giving them physical form. These waves can be used to pull items and XP towards a point in front of you. Rolling the mouse wheel while using the spell can change the distance of the point closer or farther away from you.
 compendium.transplace.page1=Your knowledge of teleportation magic has grown. You can now switch places with your target.
@@ -2031,30 +2053,30 @@ compendium.battlemage_armor.page1=Granted only to mages who have proven themselv
 ##Affinity Tomes
 
 compendium.item.affinity_tomes.affinity_tome.name=Affinity Tome
-compendium.item.affinity_tomes.tome_none.name=Affinity Tome: None
-compendium.item.affinity_tomes.tome_arcane.name=Affinity Tome: Arcane
-compendium.item.affinity_tomes.tome_earth.name=Affinity Tome: Earth
-compendium.item.affinity_tomes.tome_air.name=Affinity Tome: Air
-compendium.item.affinity_tomes.tome_fire.name=Affinity Tome: Fire
-compendium.item.affinity_tomes.tome_water.name=Affinity Tome: Water
-compendium.item.affinity_tomes.tome_nature.name=Affinity Tome: Nature
-compendium.item.affinity_tomes.tome_ice.name=Affinity Tome: Ice
-compendium.item.affinity_tomes.tome_lightning.name=Affinity Tome: Lightning
-compendium.item.affinity_tomes.tome_life.name=Affinity Tome: Life
-compendium.item.affinity_tomes.tome_ender.name=Affinity Tome: Ender
+compendium.item.affinity_tomes.tome_none.name=Tome of Anti-Affinity
+compendium.item.affinity_tomes.tome_arcane.name=Affinity Tome of Arcane
+compendium.item.affinity_tomes.tome_earth.name=Affinity Tome of Earth
+compendium.item.affinity_tomes.tome_air.name=Affinity Tome of Air
+compendium.item.affinity_tomes.tome_fire.name=Affinity Tome of Fire
+compendium.item.affinity_tomes.tome_water.name=Affinity Tome of Water
+compendium.item.affinity_tomes.tome_nature.name=Affinity Tome of Nature
+compendium.item.affinity_tomes.tome_ice.name=Affinity Tome of Ice
+compendium.item.affinity_tomes.tome_lightning.name=Affinity Tome of Lightning
+compendium.item.affinity_tomes.tome_life.name=Affinity Tome of Life
+compendium.item.affinity_tomes.tome_ender.name=Affinity Tome of Ender
 
 compendium.item.affinityTomes.name=Affinity Tomes
-compendium.item.affinity_tome_none.name=Affinity Tome: General
-compendium.item.affinity_tome_arcane.name=Affinity Tome: Arcane
-compendium.item.affinity_tome_water.name=Affinity Tome: Water
-compendium.item.affinity_tome_fire.name=Affinity Tome: Fire
-compendium.item.affinity_tome_earth.name=Affinity Tome: Earth
-compendium.item.affinity_tome_air.name=Affinity Tome: Air
-compendium.item.affinity_tome_lightning.name=Affinity Tome: Lightning
-compendium.item.affinity_tome_ice.name=Affinity Tome: Ice
-compendium.item.affinity_tome_nature.name=Affinity Tome: Nature
-compendium.item.affinity_tome_life.name=Affinity Tome: Life
-compendium.item.affinity_tome_ender.name=Affinity Tome: Ender
+compendium.item.affinity_tome_none.name=Tome of Anti-Affinity
+compendium.item.affinity_tome_arcane.name=Affinity Tome of Arcane
+compendium.item.affinity_tome_water.name=Affinity Tome of Water
+compendium.item.affinity_tome_fire.name=Affinity Tome of Fire
+compendium.item.affinity_tome_earth.name=Affinity Tome of Earth
+compendium.item.affinity_tome_air.name=Affinity Tome of Air
+compendium.item.affinity_tome_lightning.name=Affinity Tome of Lightning
+compendium.item.affinity_tome_ice.name=Affinity Tome of Ice
+compendium.item.affinity_tome_nature.name=Affinity Tome of Nature
+compendium.item.affinity_tome_life.name=Affinity Tome of Life
+compendium.item.affinity_tome_ender.name=Affinity Tome of Ender
 
 compendium.affinity_tome.page1=Affinity tomes contain detailed reports and information gather by magi over the years pertaining to a specific affinity. With the exception of the General affinity tome, they will, when read, give you a 20% boost to that specific affinity, while simultaneously reducing your progress in all other affinities by 5/10/15% depending on the opposition.
 compendium.tome_none.page1=The general affinity tome is special in that it can unlock a locked affinity state. It will reduce all affinity progression by 20% without boosting any of them.

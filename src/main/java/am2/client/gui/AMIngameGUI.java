@@ -11,6 +11,7 @@ import am2.api.math.AMVector2;
 import am2.api.spell.SpellPart;
 import am2.client.commands.ConfigureAMUICommand;
 import am2.common.affinity.abilities.AbilityRimeguard;
+import am2.common.affinity.abilities.AbilityTailwind;
 import am2.client.texture.SpellIconManager;
 import am2.common.armor.ArmorHelper;
 import am2.common.blocks.BlockManaBattery;
@@ -199,6 +200,72 @@ public class AMIngameGUI extends Gui {
         // icons sample garbage from the blocks atlas instead.
         this.mc.renderEngine.bindTexture(mc_gui);
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        GlStateManager.popMatrix();
+    }
+
+    private static final int TAILWIND_RING_RADIUS = 7;
+    private static final int TAILWIND_RING_SEGMENTS = 48;
+    private static final float TAILWIND_RING_WIDTH = 3.0f;
+    // Mostly white with a faint cool gray/light-blue cast, reading as "wind" rather than a generic UI ring.
+    private static final float TAILWIND_RING_R = 0.90f;
+    private static final float TAILWIND_RING_G = 0.94f;
+    private static final float TAILWIND_RING_B = 0.98f;
+
+    // A radial arc around the crosshair showing Tailwind's remaining flight/glide reserve, sweeping
+    // clockwise from the top - full length at a near-empty reserve, shrinking to nothing as it drains.
+    // Hidden entirely at a full reserve (nothing to warn about) and whenever Tailwind isn't currently
+    // relevant (not toggled on, or depth too low to have unlocked it at all).
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void renderTailwindReserve(RenderGameOverlayEvent.Post e) {
+        if (e.getType() != RenderGameOverlayEvent.ElementType.CROSSHAIRS)
+            return;
+        if (!ArsMagica.config.showTailwindReserveRing())
+            return;
+        if (this.mc.gameSettings.thirdPersonView != 0)
+            return;
+        var player = this.mc.player;
+        if (player == null) return;
+
+        AffinityData data = AffinityData.For(player);
+        if (data == null) return;
+        if (!data.getAbilityBoolean(AffinityData.TAILWIND)) return;
+        if (data.getAffinityDepth(Affinities.air) < ArsMagica.config.getAffinityTailwindMinDepth()) return;
+
+        float maxFuel = AbilityTailwind.computeMaxFuel(data);
+        if (maxFuel <= 0f) return;
+        float fraction = Math.max(0f, Math.min(1f, data.getAbilityFloat(AbilityTailwind.FUEL_KEY) / maxFuel));
+        if (fraction >= 1f) return;
+
+        ScaledResolution res = new ScaledResolution(this.mc);
+        float cx = res.getScaledWidth() / 2f;
+        float cy = res.getScaledHeight() / 2f;
+        int segments = Math.max(1, Math.round(TAILWIND_RING_SEGMENTS * fraction));
+
+        GlStateManager.pushMatrix();
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        // Fixed-function line antialiasing: rasterizes coverage at the edges as partial alpha instead
+        // of a hard jaggy stairstep. Needs blending on (already enabled above) to actually show, and is
+        // explicitly disabled again below so it doesn't leak into whatever the game draws next.
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
+        GlStateManager.glLineWidth(TAILWIND_RING_WIDTH);
+        GlStateManager.color(TAILWIND_RING_R, TAILWIND_RING_G, TAILWIND_RING_B, 0.85f);
+
+        GlStateManager.glBegin(GL11.GL_LINE_STRIP);
+        for (int s = 0; s <= segments; s++) {
+            double angle = -Math.PI / 2.0 + (Math.PI * 2.0) * ((double) s / TAILWIND_RING_SEGMENTS);
+            float px = cx + (float) Math.cos(angle) * TAILWIND_RING_RADIUS;
+            float py = cy + (float) Math.sin(angle) * TAILWIND_RING_RADIUS;
+            GlStateManager.glVertex3f(px, py, this.zLevel);
+        }
+        GlStateManager.glEnd();
+
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        GlStateManager.enableTexture2D();
         GlStateManager.popMatrix();
     }
 

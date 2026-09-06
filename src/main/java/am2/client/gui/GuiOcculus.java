@@ -15,6 +15,8 @@ import am2.api.spell.SpellComponent;
 import am2.client.gui.controls.GuiButtonDisciplinePlus;
 import am2.client.gui.controls.GuiButtonSkillTree;
 import am2.client.texture.SpellIconManager;
+import am2.common.affinity.abilities.AbilityEyeOfTheStorm;
+import am2.common.affinity.abilities.AbilityGaleFist;
 import am2.common.affinity.abilities.AbilityHealingTouch;
 import am2.common.affinity.abilities.AbilityRelocation;
 import am2.common.affinity.abilities.AbilityThunderPunch;
@@ -696,6 +698,10 @@ public class GuiOcculus extends GuiScreen {
                                 advancedTooltip += TextFormatting.GRAY.toString() + " [CD: " + (ArsMagica.config.getEnderAffinityAbilityCooldown() / 20) + "s]";
                             } else if (ability instanceof AbilityHealingTouch) {
                                 advancedTooltip += TextFormatting.GRAY.toString() + " [CD: " + (AbilityHealingTouch.COOLDOWN_TICKS / 20) + "s]";
+                            } else if (ability instanceof AbilityGaleFist) {
+                                advancedTooltip += TextFormatting.GRAY.toString() + " [CD: " + (ArsMagica.config.getAffinityGaleFistCooldown() / 20F) + "s]";
+                            } else if (ability instanceof AbilityEyeOfTheStorm) {
+                                advancedTooltip += TextFormatting.GRAY.toString() + " [CD: " + (ArsMagica.config.getAffinityEyeOfTheStormCooldown() / 20) + "s]";
                             }
                             drawString.add(TextFormatting.RESET.toString()
                                     + (ability.isEligible(player) ? TextFormatting.GREEN.toString()

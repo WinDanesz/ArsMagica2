@@ -222,11 +222,20 @@ public class GuiArcaneCompendium extends GuiScreen {
 
     @Override
     public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-        // Handle mouse back button (button 3) to go back to index
-        if (Mouse.getEventButtonState() && Mouse.getEventButton() == 3) {
+        // Consume back clicks before page content can handle them.
+        int mouseButton = Mouse.getEventButton();
+        if (Mouse.getEventButtonState() && (mouseButton == 1 || mouseButton == 3)) {
             navigatingInternally = true;
             Minecraft.getMinecraft().displayGuiScreen(new GuiCompendiumIndex());
+            return;
+        }
+        super.handleMouseInput();
+
+        int wheel = Mouse.getEventDWheel();
+        if (wheel < 0 && nextPage.visible && nextPage.enabled) {
+            actionPerformed(nextPage);
+        } else if (wheel > 0 && prevPage.visible && prevPage.enabled) {
+            actionPerformed(prevPage);
         }
     }
 

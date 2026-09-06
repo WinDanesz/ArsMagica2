@@ -476,6 +476,11 @@
       <desc>You have learned to harvest the souls of creatures you defeat in combat.  These souls can be used in creating a spell to summon that creature to protect you. !d To summon a creature, first craft a #5Crystal Phylactery#0.  Once you kill something while holding an empty phylactery, that phylactery will become #9attuned#0 to that specific mob.  Kill enough of the same mob and you will fill the phylactery. !d During spell creation, you can throw in any filled phylactery when prompted by the lectern.  This step is what determines what your spell will summon. !d Summoned creatures drop no loot, and no xp, but can be interacted with normally, such as breeding, milking cows, or riding horses.  Horses are the exception to the item drop rule and will drop saddles and armor given to them. !l Tameable creatures such as wolves and cats are automatically tamed to their owner upon summoning. !d Bosses cannot be trapped in phylacteries in survival/adventure mode. </desc>
       <modifiedBy>DURATION</modifiedBy>
     </component>
+    <component id="elemental">
+      <name>Elemental</name>
+      <desc>A more focused expression of the Summon component, this spell reaches into your own attunement rather than a captured soul. !d Once your strongest affinity - fire, water, air, earth, ice, or lightning - reaches at least a quarter of its full depth, casting this spell conjures an elemental bound to that affinity to fight at your side. !d No Crystal Phylactery is needed to craft this spell, but the elemental summoned still counts against your summon cap, and if your strongest affinity has no elemental to call upon, the spell will fail.</desc>
+      <modifiedBy>DURATION</modifiedBy>
+    </component>
     <component id="blizzard">
       <name>Blizzard</name>
       <desc>You have learned to summon a fearsome blizzard, which will slow and damage any entities in its radius.  Blizzard has a built-in AoE to it.  A blizzard cannot be summoned within 5 blocks of another existing blizzard.  It initially does less damage than other attacks, but scales more quickly with modifiers.  It also has the unique capability to deal damage more often than regular attacks. Though blizzard will harm all entities in its radius, it will never harm its caster.</desc>
@@ -1804,6 +1809,42 @@
 			</desc>
       <relatedEntries></relatedEntries>
     </mob>
+    <mob id="mob_air_elemental">
+      <name>Air Elemental</name>
+      <desc>
+				Air elementals are restless spirits of the open sky. They
+				form in plains, hills, mountains, and beaches where they can
+				see the sky. They float above the ground, take no fall damage,
+				and arrows pass harmlessly through their shifting form. !d
+				They attack from range with small gusts that deal damage and
+				push their target away. Every eight seconds, an air elemental
+				can close to a short distance, swell as it draws in air, and
+				unleash a sustained torrent with severe knockback. Nearby air
+				elementals facing the same target gather on one side and combine
+				their currents into a stronger blast. !d They sometimes leave
+				behind #5Air Essence#0 and feathers when defeated.
+			</desc>
+      <relatedEntries>essence_air</relatedEntries>
+    </mob>
+    <mob id="mob_nature_elemental">
+      <name>Nature Elemental</name>
+      <desc>
+                Nature elementals take the shape of sturdy, thorn-covered boars.
+                They are relatively rare, roaming jungles, forests, and roofed
+                forests in groups of one or two. They form only at night, but
+                sunlight does not burn them when morning comes. !d
+                When undisturbed, they wander between patches of ground,
+                pausing to lower their snouts and sniff for scents. !d
+                At a distance, a nature elemental lowers its head and paws the
+                ground for two seconds while tracking its target. When the
+                windup ends, it locks onto the target's current position and
+                charges straight ahead. Sidestep as the rush begins, then take
+                advantage of its brief recovery. At close range it attacks with
+                repeated headbutts; its charge normally deals 75%% more damage. !d
+                Defeated nature elementals sometimes leave behind #5Nature Essence#0.
+      </desc>
+      <relatedEntries>essence_nature</relatedEntries>
+    </mob>
     <mob id="earth_elemental">
       <name>Earth Elemental</name>
       <desc>
@@ -2533,6 +2574,8 @@
 					Earth affinity grants a minor defense bonus, due to your hardened skin.  This bonus scales with your affinity depth, unlocks at 50%% depth, and reaches 10%% overall damage reduction (applied before armor) at full depth.
 					!d
 					Starting at that same 50%% depth, you are heavier, and as such you will sink more quickly in water (though never enough that you cannot surface), and you cannot fall as far without taking fall damage.
+					!d
+					From 30%% depth, #5Immovable#0 grants knockback resistance that grows with how deep into the affinity you are, reaching total immunity at full depth.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
@@ -2550,9 +2593,13 @@
       <subitem id="air_affinity">
         <name>Air Affinity</name>
         <desc>
-					Air affinity grants a bonus to jump height and lets you fall farther before taking damage, up to 2 blocks farther at full depth.  Both bonuses unlock at 50%% depth and scale with how deep into the affinity you are.
+					Before you learn to control the wind, it controls you: #5Windswept#0 adds a bonus shove whenever you take a combat hit, strongest at low depth and tapering away as you approach full mastery at 95%% depth.
 					!d
-					Between 50%% and 85%% depth, air affinity mages are hindered by rain and storms: while caught out in the rain, gusts of wind will randomly buffet you around.  #5Sneaking#0 or having a #5Gravity Well#0 spell active protects you from the gusts entirely.
+					Air affinity grants a bonus to jump height and lets you fall farther before taking damage, up to 2 blocks farther at full depth, unlocking at 40%% depth and scaling with how deep into the affinity you are.  At 50%% depth, #5Gale Fist#0 wreathes your melee hits in a gust that knocks the target back.
+					!d
+					At 60%% depth, #5Tailwind#0 becomes available as a toggled ability: double-jump into real flight, spent from a short reserve of air that grows the deeper into the affinity you are, up to 6 seconds at full depth.
+					!d
+					At 90%% depth, mages who find themselves near death in combat will instinctively unleash #5Eye of the Storm#0: an instant gust that knocks back nearby mobs and douses fire on themselves and nearby blocks, once every so often.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
@@ -2581,7 +2628,7 @@
 					!d
 					All ice mages move slightly slower due to being cold blooded once their depth passes 10%%, unless standing on ice or snow.
 					!d
-					Past 60%% depth, standing uninjured for 15 seconds calls forth #5Rimeguard#0: a crust of frost begins to armor you, adding one extra heart every 5 seconds. This shield depletes before your true health and grows larger the deeper your affinity, up to 30%% of your max health at full depth. Taking damage resets the calm before it can grow further, and the crust shatters in a burst of ice if it's ever fully broken.
+					Past 60%% depth, standing uninjured for 15 seconds calls forth #5Rimeguard#0: a crust of frost begins to armor you, adding one extra heart every 5 seconds. This shield depletes before your true health and grows larger the deeper your affinity, up to 30%% of your max health at full depth. Taking damage resets the calm before it can grow further, and the crust shatters in a burst of ice if it's ever fully broken, dealing frost damage to nearby mobs.
 				</desc>
         <relatedEntries></relatedEntries>
       </subitem>
@@ -2608,7 +2655,7 @@
       <subitem id="arcane_affinity">
         <name>Arcane Affinity</name>
         <desc>
-					Once your arcane affinity reaches 40%% depth, each successful spell cast has a 5%% chance to grant you the clarity effect for a few seconds.  Past 90%% depth, that chance climbs by 1%% for every 1%% of extra depth, reaching 15%% at full depth.  At 50%% depth, all spells cost 5%% less mana and burnout, and while clarity is active, your next spell costs 0 mana and burnout entirely.
+					Once your arcane affinity reaches 40%% depth, each successful spell cast has a 5%% chance (on a 10-second cooldown) to grant you the clarity effect, which is consumed by your next cast to make it cost 0 mana and burnout entirely.  Past 90%% depth, that chance climbs by 1%% for every 1%% of extra depth, reaching 15%% at full depth.  Separately, at 50%% depth, Magical Focus reduces the cost of all spells by a flat 5%%.
 					!d
 					As a disadvantage, once your arcane affinity passes 25%% depth, you take 10%% more damage from magical sources.
 				</desc>
@@ -2622,6 +2669,17 @@
 					Due to your dark nature, between 65%% and 95%% depth your maximum health is reduced while standing in direct sunlight during the day, and once your depth reaches 50%%, it is reduced while wet as well.
 				</desc>
         <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="elemental_alliance">
+        <name>Elemental Alliance</name>
+        <desc>
+					The #5Air Elemental#0, #5Earth Elemental#0, #5Fire Elemental#0, #5Ice Elemental#0, #5Lightning Elemental#0, and #5Water Elemental#0 all judge you by how deep your matching affinity runs, on top of however they'd otherwise treat any mage.
+					!d
+					Below 75%% depth, an elemental of that element still hunts you down like prey. Once you cross 75%% depth, it turns neutral towards you: it leaves you alone and no longer seeks you out, though it will still defend itself if you attack it first.
+					!d
+					At 100%% depth, the elemental becomes friendly and looks out for you: if something else strikes you while one is nearby, it will turn on your attacker and fight at your side, unless you were the one who struck first.
+				</desc>
+        <relatedEntries>mob_air_elemental,earth_elemental,mob_fire_elemental,ice_elemental,lightning_elemental,mob_water_elemental,mob_nature_elemental</relatedEntries>
       </subitem>
       <relatedEntries></relatedEntries>
     </mechanic>
