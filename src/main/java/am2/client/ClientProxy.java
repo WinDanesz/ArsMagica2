@@ -178,7 +178,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityManaBattery.class, new TileManaBatteryRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLectern.class, new TileLecternRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityKeystoneReceptacle.class, new TileKeystoneReceptacleRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCrystalMarker.class, new TileCrystalMarkerRenderer());
+        // Crystal Marker uses JSON model now, no TESR needed
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityKeystoneChest.class, new TileKeystoneChestRenderer());
         // Essence Conduit uses JSON model now, no TESR needed
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGroundRuneSpell.class, new TileRuneRenderer());
@@ -234,6 +234,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.registerKeyBinding(Keybindings.SHAPE_GROUP);
         ClientRegistry.registerKeyBinding(Keybindings.NIGHT_VISION);
         ClientRegistry.registerKeyBinding(Keybindings.WALL_CLIMB);
+        ClientRegistry.registerKeyBinding(Keybindings.TAILWIND);
         ClientRegistry.registerKeyBinding(Keybindings.SPELL_BOOK_NEXT);
         ClientRegistry.registerKeyBinding(Keybindings.SPELL_BOOK_PREV);
         ClientRegistry.registerKeyBinding(Keybindings.CHARM_CAST);

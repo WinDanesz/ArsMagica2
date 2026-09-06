@@ -105,14 +105,15 @@ public final class AMModels {
                         }
                     }
                 } else if (item instanceof ItemBlockCrystalMarker) {
-                    // Crystal Marker with metadata variants - use TESR for all variants
-                    item.setTileEntityItemStackRenderer(new AMItemStackRenderer());
-                    ModelResourceLocation loc = new ModelResourceLocation(((ItemBlockCrystalMarker) item).getBlock().getRegistryName().toString());
-                    // Register model for all metadata variants
+                    // Crystal Marker: each metadata variant maps straight onto the block's own per-type
+                    // blockstate model, rendered through the normal vanilla item pipeline (so it picks up
+                    // the model's own "display" transforms) - facing doesn't affect the model/texture, so
+                    // "facing=north" is just a representative variant of the six.
+                    ResourceLocation blockRegistryName = ((ItemBlockCrystalMarker) item).getBlock().getRegistryName();
                     for (int meta = 0; meta <= 8; meta++) {
-                        ModelLoader.setCustomModelResourceLocation(item, meta, loc);
+                        ModelLoader.setCustomModelResourceLocation(item, meta,
+                                new ModelResourceLocation(blockRegistryName, "facing=north,type=" + meta));
                     }
-                    modelResourceLocationList.add(loc);
                 } else if (item instanceof ItemBlockBaked) {
                     // ItemBlocks of blocks that doesn't have any json models
                     item.setTileEntityItemStackRenderer(new AMItemStackRenderer());

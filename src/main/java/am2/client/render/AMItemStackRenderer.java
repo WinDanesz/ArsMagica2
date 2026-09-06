@@ -1,6 +1,5 @@
 package am2.client.render;
 
-import am2.common.blocks.BlockCrystalMarker;
 import am2.common.blocks.tileentity.*;
 import am2.common.registry.AMBlocks;
 import net.minecraft.block.Block;
@@ -37,8 +36,6 @@ public class AMItemStackRenderer extends TileEntityItemStackRenderer {
         register(data(AMBlocks.arcane_reconstructor), new TileEntityArcaneReconstructor());
         register(data(AMBlocks.summoner), new TileEntitySummoner(), 1.7F);
         register(data(AMBlocks.astral_barrier), new TileEntityAstralBarrier(), 1.7F);
-        for (int i = 0; i < BlockCrystalMarker.crystalMarkerTypes.length; ++i)
-            register(data(AMBlocks.crystal_marker, i), new TileEntityCrystalMarker(i), 3.1F); // probably bad solution for TE not having defining data, but will do for now
     }
 
     private ItemData data(Block block) {

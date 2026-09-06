@@ -249,7 +249,7 @@ public class BlockCrystalMarker extends BlockAMContainer {
 
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.INVISIBLE;
+        return EnumBlockRenderType.MODEL;
     }
 
     @Override
