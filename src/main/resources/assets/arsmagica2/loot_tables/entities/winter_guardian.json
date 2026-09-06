@@ -17,6 +17,9 @@
                         {
                             "function": "set_data",
                             "data": 2
+                        },
+                        {
+                            "function": "arsmagica2:fireproof"
                         }
                     ]
                 }
@@ -32,7 +35,12 @@
                 {
                     "type": "item",
                     "name": "arsmagica2:essence_ice",
-                    "weight": 1
+                    "weight": 1,
+                    "functions": [
+                        {
+                            "function": "arsmagica2:fireproof"
+                        }
+                    ]
                 }
             ]
         },
@@ -47,6 +55,9 @@
                     "functions": [
                         {
                             "function": "arsmagica2:soulbind"
+                        },
+                        {
+                            "function": "arsmagica2:fireproof"
                         }
                     ]
                 },
