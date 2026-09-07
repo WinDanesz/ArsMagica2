@@ -153,7 +153,7 @@ public class AMEntities {
         Biome.SpawnListEntry earthElementals = new Biome.SpawnListEntry(EntityEarthElemental.class, ArsMagica.config.GetEarthElementalSpawnRate(), 1, 2);
         Biome.SpawnListEntry fireElementals = new Biome.SpawnListEntry(EntityFireElemental.class, ArsMagica.config.GetFireElementalSpawnRate(), 1, 1);
         Biome.SpawnListEntry lightningElementals = new Biome.SpawnListEntry(EntityLightningElemental.class, ArsMagica.config.GetLightningElementalSpawnRate(), 1, 1);
-        Biome.SpawnListEntry airElementals = new Biome.SpawnListEntry(EntityAirElemental.class, ArsMagica.config.GetAirElementalSpawnRate(), 1, 2);
+        Biome.SpawnListEntry airElementals = new Biome.SpawnListEntry(EntityAirElemental.class, ArsMagica.config.GetAirElementalSpawnRate(), 1, 3);
         Biome.SpawnListEntry natureElementals = new Biome.SpawnListEntry(EntityNatureElemental.class, ArsMagica.config.GetNatureElementalSpawnRate(), 1, 2);
         Biome.SpawnListEntry flickers = new Biome.SpawnListEntry(EntityFlicker.class, ArsMagica.config.GetFlickerSpawnRate(), 1, 1);
 
@@ -188,7 +188,7 @@ public class AMEntities {
 
         initSpawnsForBiomeTypes(lightningElementals, EnumCreatureType.MONSTER, new BiomeDictionary.Type[]{BiomeDictionary.Type.MOUNTAIN, BiomeDictionary.Type.HILLS, BiomeDictionary.Type.BEACH}, new BiomeDictionary.Type[]{BiomeDictionary.Type.END, BiomeDictionary.Type.NETHER, BiomeDictionary.Type.MUSHROOM});
 
-        initSpawnsForBiomeTypes(airElementals, EnumCreatureType.MONSTER, new BiomeDictionary.Type[]{BiomeDictionary.Type.MOUNTAIN, BiomeDictionary.Type.HILLS, BiomeDictionary.Type.PLAINS, BiomeDictionary.Type.BEACH}, new BiomeDictionary.Type[]{BiomeDictionary.Type.END, BiomeDictionary.Type.NETHER, BiomeDictionary.Type.MUSHROOM});
+        initSpawnsForBiomeTypes(airElementals, EnumCreatureType.MONSTER, new BiomeDictionary.Type[]{BiomeDictionary.Type.MOUNTAIN, BiomeDictionary.Type.HILLS, BiomeDictionary.Type.BEACH}, new BiomeDictionary.Type[]{BiomeDictionary.Type.END, BiomeDictionary.Type.NETHER, BiomeDictionary.Type.MUSHROOM});
 
         initSpawnsForBiomeTypes(flickers, EnumCreatureType.AMBIENT, BiomeDictionary.Type.getAll().toArray(new BiomeDictionary.Type[0]), new BiomeDictionary.Type[0]);
         // FOREST includes vanilla roofed forests; the dictionary also supports modded forests/jungles.

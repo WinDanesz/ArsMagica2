@@ -12,6 +12,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -106,6 +107,14 @@ public abstract class AbstractAffinityAbility extends IForgeRegistryEntry.Impl<A
     }
 
     public void applyFall(EntityPlayer player, LivingFallEvent event) {
+    }
+
+    /**
+     * Fired for players whose flight capability causes vanilla to bypass normal
+     * fall damage. Abilities that grant temporary flight can use this to retain
+     * fall damage when the player is not actually flying.
+     */
+    public void applyFlyableFall(EntityPlayer player, PlayerFlyableFallEvent event) {
     }
 
     public void applySpellCast(EntityPlayer player, SpellCastEvent.Post event) {

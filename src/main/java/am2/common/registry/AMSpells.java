@@ -264,7 +264,7 @@ public class AMSpells {
         SpellRegistryHelper.registerSpellComponent(registry, "life_tap", getComponentTexture("LifeTap"), SkillPoint.GREEN_SKILL_POINT, new LifeTap(), SkillTrees.TREE_DEFENSE, 312, 135, "arsmagica2:heal");
         SpellRegistryHelper.registerSpellModifier(registry, "healing", getModifierTexture("Healing"), SkillPoint.RED_SKILL_POINT, new Healing(), SkillTrees.TREE_DEFENSE, 402, 135, "arsmagica2:heal");
         SpellRegistryHelper.registerSpellComponent(registry, "summon", getComponentTexture("Summon"), SkillPoint.GREEN_SKILL_POINT, new Summon(), SkillTrees.TREE_DEFENSE, 267, 135, "arsmagica2:life_tap");
-        SpellRegistryHelper.registerSpellComponent(registry, "elemental", getComponentTexture("Elemental"), SkillPoint.GREEN_SKILL_POINT, new Elemental(), SkillTrees.TREE_DEFENSE, 267, 225, "arsmagica2:summon");
+        SpellRegistryHelper.registerSpellComponent(registry, "elemental", getComponentTexture("Elemental"), SkillPoint.GREEN_SKILL_POINT, new Elemental(), SkillTrees.TREE_DEFENSE, 492, 225, "arsmagica2:summon");
         SpellRegistryHelper.registerSpellShape(registry, "contingency_damage", getShapeTexture("Contingency_Damage"), SkillPoint.GREEN_SKILL_POINT, new Contingency_Hit(), SkillTrees.TREE_DEFENSE, 447, 180, "arsmagica2:healing");
         SpellRegistryHelper.registerSpellComponent(registry, "haste", getComponentTexture("Haste"), SkillPoint.BLUE_SKILL_POINT, new Haste(), SkillTrees.TREE_DEFENSE, 177, 155, "arsmagica2:slowfall");
         SpellRegistryHelper.registerSpellComponent(registry, "slow", getComponentTexture("Slow"), SkillPoint.BLUE_SKILL_POINT, new Slow(), SkillTrees.TREE_DEFENSE, 132, 155, "arsmagica2:slowfall");

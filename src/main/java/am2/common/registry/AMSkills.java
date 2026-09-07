@@ -278,7 +278,7 @@ public class AMSkills {
         registry.register(new Skill("life_tap", getComponentTexture("life_tap"), SkillPoint.GREEN_SKILL_POINT, 312, 135, SkillTrees.TREE_DEFENSE, "arsmagica2:heal"));
         registry.register(new Skill("healing", getModifierTexture("healing"), SkillPoint.RED_SKILL_POINT, 402, 135, SkillTrees.TREE_DEFENSE, "arsmagica2:heal"));
         registry.register(new Skill("summon", getComponentTexture("summon"), SkillPoint.GREEN_SKILL_POINT, 267, 135, SkillTrees.TREE_DEFENSE, "arsmagica2:life_tap"));
-        registry.register(new Skill("elemental", getComponentTexture("elemental"), SkillPoint.GREEN_SKILL_POINT, 267, 225, SkillTrees.TREE_DEFENSE, "arsmagica2:summon"));
+        registry.register(new Skill("elemental", getComponentTexture("elemental"), SkillPoint.GREEN_SKILL_POINT, 492, 225, SkillTrees.TREE_DEFENSE, "arsmagica2:summon"));
         registry.register(new Skill("contingency_damage", getShapeTexture("contingency_damage"), SkillPoint.GREEN_SKILL_POINT, 447, 180, SkillTrees.TREE_DEFENSE, "arsmagica2:healing"));
         registry.register(new Skill("haste", getComponentTexture("haste"), SkillPoint.BLUE_SKILL_POINT, 177, 155, SkillTrees.TREE_DEFENSE, "arsmagica2:slowfall"));
         registry.register(new Skill("slow", getComponentTexture("slow"), SkillPoint.BLUE_SKILL_POINT, 132, 155, SkillTrees.TREE_DEFENSE, "arsmagica2:slowfall"));

@@ -1301,7 +1301,7 @@ public class AMConfig extends Configuration {
         this.iceElementalAttackDamage = this.get(CATEGORY_MOBS, this.KEY_IceElementalAttackDamage, 4.0, "Ice Elemental attack damage. Default: 4").getDouble(4.0);
         this.lightningElementalMaxHealth = this.get(CATEGORY_MOBS, this.KEY_LightningElementalMaxHealth, 25.0, "Lightning Elemental max HP. Default: 25").getDouble(25.0);
         this.lightningElementalAttackDamage = this.get(CATEGORY_MOBS, this.KEY_LightningElementalAttackDamage, 4.0, "Lightning Elemental attack damage. Default: 4").getDouble(4.0);
-        this.airElementalMaxHealth = this.get(CATEGORY_MOBS, this.KEY_AirElementalMaxHealth, 18.0, "Air Elemental max HP. Default: 18").getDouble(18.0);
+        this.airElementalMaxHealth = this.get(CATEGORY_MOBS, this.KEY_AirElementalMaxHealth, 16.0, "Air Elemental max HP. Default: 16").getDouble(16.0);
         this.natureElementalMaxHealth = this.get(CATEGORY_MOBS, this.KEY_NatureElementalMaxHealth, 30.0, "Nature Elemental max HP. Default: 30").getDouble(30.0);
         this.airElementalAttackDamage = this.get(CATEGORY_MOBS, this.KEY_AirElementalAttackDamage, 3.0, "Air Elemental attack damage. Default: 3").getDouble(3.0);
         this.natureElementalAttackDamage = this.get(CATEGORY_MOBS, this.KEY_NatureElementalAttackDamage, 8.0, "Nature Elemental regular headbutt damage. Default: 8", 0.0, 2048.0).getDouble(8.0);

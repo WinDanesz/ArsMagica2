@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 
 /**
  * Toggled with a key bind (see Keybindings.TAILWIND). While on, double-jumping — vanilla's own
@@ -92,6 +93,20 @@ public class AbilityTailwind extends AbstractToggledAffinityAbility {
         data.addAbilityFloat(FUEL_KEY, fuel);
     }
 
+    @Override
+    public void applyFlyableFall(EntityPlayer player, PlayerFlyableFallEvent event) {
+        // Vanilla skips EntityLivingBase.fall() whenever allowFlying is true,
+        // even when the player is merely falling and isFlying is false. Run the
+        // normal fall path for Tailwind freefalls, while preserving the flight
+        // capability for the next input tick.
+        if (player.capabilities.isFlying) return;
+
+        boolean allowFlying = player.capabilities.allowFlying;
+        player.capabilities.allowFlying = false;
+        player.fall(event.getDistance(), event.getMultiplier());
+        player.capabilities.allowFlying = allowFlying;
+    }
+
     // The base reserve is what you get right at the minimum qualifying depth; it then scales
     // linearly up to maxDurationMultiplier times that amount at 100% depth. Never bottoms out at
     // zero — barely qualifying still gets you the full base duration.
@@ -113,7 +128,6 @@ public class AbilityTailwind extends AbstractToggledAffinityAbility {
         player.capabilities.allowFlying = false;
         player.capabilities.isFlying = false;
         player.capabilities.setFlySpeed(VANILLA_FLY_SPEED);
-        player.fallDistance = 0f;
         player.sendPlayerAbilities();
     }
 

@@ -3,7 +3,7 @@
   "modid": "arsmagica2",
   "name": "Ars Magica 2",
   "description": "A look into what Minecraft could become if you add a splash of magic... now in 1.12.2",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "mcversion": "1.12.2",
   "url": "https://legacy.curseforge.com/minecraft/mc-mods/ars-magica-2-on-1-12-2",
   "updateUrl": "https://raw.githubusercontent.com/WinDanesz/ArsMagica2/refs/heads/1.12.2/.forge/update.json",

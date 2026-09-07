@@ -13,6 +13,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -97,6 +98,15 @@ public class AffinityAbilityHelper {
                 if (ability.canApply((EntityPlayer) event.getEntityLiving()))
                     ability.applyFall((EntityPlayer) event.getEntityLiving(), event);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerFlyableFall(PlayerFlyableFallEvent event) {
+        EntityPlayer player = event.getEntityPlayer();
+        for (AbstractAffinityAbility ability : GameRegistry.findRegistry(AbstractAffinityAbility.class).getValues()) {
+            if (ability.canApply(player))
+                ability.applyFlyableFall(player, event);
         }
     }
 
