@@ -122,7 +122,7 @@ public class EntityNatureGuardian extends AM2Boss {
 
     @Override
     public ItemStack getHeldItem(EnumHand hand) {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     public void setItemStackToSlot(EntityEquipmentSlot slotIn, ItemStack stack) {

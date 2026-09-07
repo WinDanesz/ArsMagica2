@@ -23,7 +23,7 @@ import java.util.List;
 
 public class TileEntityInertSpawner extends TileEntityAMPower implements ISidedInventory {
 
-    private ItemStack phylactery;
+    private ItemStack phylactery = ItemStack.EMPTY;
     private float powerConsumed = 0.0f;
 
     private static final ArrayList<PowerTypes> valid = Lists.newArrayList(PowerTypes.DARK);
@@ -51,44 +51,48 @@ public class TileEntityInertSpawner extends TileEntityAMPower implements ISidedI
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return phylactery.isEmpty();
     }
 
     @Override
     public ItemStack getStackInSlot(int i) {
-        if (i < getSizeInventory() && phylactery != null) {
+        if (i == 0) {
             return phylactery;
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack decrStackSize(int i, int j) {
-        if (i < getSizeInventory() && phylactery != null) {
-            ItemStack jar = phylactery;
-            phylactery = null;
+        if (i == 0 && j > 0 && !phylactery.isEmpty()) {
+            ItemStack jar = phylactery.splitStack(j);
+            if (phylactery.isEmpty()) phylactery = ItemStack.EMPTY;
+            markDirty();
             return jar;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack removeStackFromSlot(int i) {
-        if (i < getSizeInventory() && phylactery != null) {
+        if (i == 0 && !phylactery.isEmpty()) {
             ItemStack jar = phylactery;
-            phylactery = null;
+            phylactery = ItemStack.EMPTY;
+            markDirty();
             return jar;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public void setInventorySlotContents(int i, ItemStack itemstack) {
+        if (i != 0) return;
         phylactery = itemstack;
         if (!itemstack.isEmpty() && itemstack.getCount() > getInventoryStackLimit()) {
             itemstack.setCount(getInventoryStackLimit());
         }
+        markDirty();
 
     }
 
@@ -166,10 +170,12 @@ public class TileEntityInertSpawner extends TileEntityAMPower implements ISidedI
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         super.writeToNBT(nbttagcompound);
 
-        if (phylactery != null) {
+        if (!phylactery.isEmpty()) {
             NBTTagCompound phy = new NBTTagCompound();
             phylactery.writeToNBT(phy);
             nbttagcompound.setTag("phylactery", phy);
+        } else {
+            nbttagcompound.removeTag("phylactery");
         }
 
         nbttagcompound.setFloat("powerConsumed", powerConsumed);
@@ -181,6 +187,7 @@ public class TileEntityInertSpawner extends TileEntityAMPower implements ISidedI
         super.readFromNBT(nbttagcompound);
 
 
+        phylactery = ItemStack.EMPTY;
         if (nbttagcompound.hasKey("phylactery")) {
             NBTTagCompound phy = nbttagcompound.getCompoundTag("phylactery");
             phylactery = new ItemStack((phy));
@@ -193,7 +200,7 @@ public class TileEntityInertSpawner extends TileEntityAMPower implements ISidedI
     public void update() {
         super.update();
 
-        if (!world.isRemote && phylactery != null && phylactery.getItem() instanceof ItemCrystalPhylactery && ((ItemCrystalPhylactery) phylactery.getItem()).isFull(phylactery) && world.getStrongPower(pos) == 0) {
+        if (!world.isRemote && !phylactery.isEmpty() && phylactery.getItem() instanceof ItemCrystalPhylactery && ((ItemCrystalPhylactery) phylactery.getItem()).isFull(phylactery) && world.getStrongPower(pos) == 0) {
             if (this.powerConsumed < TileEntityInertSpawner.SUMMON_REQ) {
                 this.powerConsumed += PowerNodeRegistry.For(world).consumePower(
                         this,
@@ -261,8 +268,8 @@ public class TileEntityInertSpawner extends TileEntityAMPower implements ISidedI
 
     @Override
     public void clear() {
-        // TODO Auto-generated method stub
-
+        phylactery = ItemStack.EMPTY;
+        markDirty();
     }
 
     @Override

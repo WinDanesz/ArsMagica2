@@ -292,7 +292,7 @@ public class EntityWinterGuardianArm extends EntityLiving {
 
     @Override
     public ItemStack getHeldItem(EnumHand hand) {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override

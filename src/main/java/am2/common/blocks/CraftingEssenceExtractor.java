@@ -5,15 +5,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 
 public class CraftingEssenceExtractor implements IInventory {
 
-    private ItemStack[] stackList;
+    private final NonNullList<ItemStack> stackList;
     private Container eventHandler;
 
     public CraftingEssenceExtractor(ContainerEssenceRefiner container) {
-        stackList = new ItemStack[getSizeInventory()];
+        stackList = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
         eventHandler = container;
     }
 
@@ -24,7 +25,10 @@ public class CraftingEssenceExtractor implements IInventory {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        for (ItemStack stack : stackList) {
+            if (!stack.isEmpty()) return false;
+        }
+        return true;
     }
 
     @Override
@@ -43,10 +47,10 @@ public class CraftingEssenceExtractor implements IInventory {
     }
 
     public ItemStack getStackInSlot(int i) {
-        if (i >= getSizeInventory()) {
+        if (i < 0 || i >= getSizeInventory()) {
             return ItemStack.EMPTY;
         } else {
-            return stackList[i];
+            return stackList.get(i);
         }
     }
 
@@ -55,26 +59,26 @@ public class CraftingEssenceExtractor implements IInventory {
     }
 
     public ItemStack decrStackSize(int i, int j) {
-        if (stackList[i] != null) {
-            if (stackList[i].getCount() <= j) {
-                ItemStack itemstack = stackList[i];
-                stackList[i] = null;
+        if (j > 0 && !getStackInSlot(i).isEmpty()) {
+            if (stackList.get(i).getCount() <= j) {
+                ItemStack itemstack = stackList.get(i);
+                stackList.set(i, ItemStack.EMPTY);
                 eventHandler.onCraftMatrixChanged(this);
                 return itemstack;
             }
-            ItemStack itemstack1 = stackList[i].splitStack(j);
-            if (stackList[i].getCount() == 0) {
-                stackList[i] = null;
+            ItemStack itemstack1 = stackList.get(i).splitStack(j);
+            if (stackList.get(i).isEmpty()) {
+                stackList.set(i, ItemStack.EMPTY);
             }
             eventHandler.onCraftMatrixChanged(this);
             return itemstack1;
         } else {
-            return null;
+            return ItemStack.EMPTY;
         }
     }
 
     public void setInventorySlotContents(int i, ItemStack itemstack) {
-        stackList[i] = itemstack;
+        stackList.set(i, itemstack);
         eventHandler.onCraftMatrixChanged(this);
     }
 
@@ -87,12 +91,12 @@ public class CraftingEssenceExtractor implements IInventory {
 
     @Override
     public ItemStack removeStackFromSlot(int i) {
-        if (stackList[i] != null) {
-            ItemStack itemstack = stackList[i];
-            stackList[i] = null;
+        if (!getStackInSlot(i).isEmpty()) {
+            ItemStack itemstack = stackList.get(i);
+            stackList.set(i, ItemStack.EMPTY);
             return itemstack;
         } else {
-            return null;
+            return ItemStack.EMPTY;
         }
     }
 
@@ -139,7 +143,7 @@ public class CraftingEssenceExtractor implements IInventory {
 
     @Override
     public void clear() {
-        // TODO Auto-generated method stub
-
+        stackList.clear();
+        eventHandler.onCraftMatrixChanged(this);
     }
 }

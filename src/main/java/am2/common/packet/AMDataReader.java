@@ -142,7 +142,7 @@ public class AMDataReader {
 
     public ItemStack getItemStack() {
         NBTTagCompound compound = getNBTTagCompound();
-        if (compound == null) return null;
+        if (compound == null) return ItemStack.EMPTY;
         ItemStack stack = new ItemStack((compound));
         return stack;
     }

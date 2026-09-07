@@ -288,7 +288,7 @@ public class EntityThrownSickle extends EntityLiving {
 
     @Override
     public ItemStack getHeldItem(EnumHand hand) {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override

@@ -112,7 +112,7 @@ public class EntityWhirlwind extends EntityFlying {
 
     @Override
     public ItemStack getHeldItem(EnumHand hand) {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
