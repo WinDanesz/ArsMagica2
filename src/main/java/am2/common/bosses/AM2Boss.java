@@ -419,10 +419,11 @@ public abstract class AM2Boss extends EntityMob implements IEntityMultiPart, IAr
     }
 
     @Override
-    public void addPotionEffect(PotionEffect effect) {
-        if (effect.getPotion() == AMPotions.silence)
-            return;
-        super.addPotionEffect(effect);
+    public boolean isPotionApplicable(PotionEffect effect) {
+        if (effect.getPotion() == AMPotions.silence
+                || ArsMagica.config.isBossPotionImmune(effect.getPotion().getRegistryName(), EntityList.getKey(this)))
+            return false;
+        return super.isPotionApplicable(effect);
     }
 
     @Override
