@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "arsmagica2:purified_vinteum_dust"
+    },
+    {
+      "item": "arsmagica2:epic_mana_potion"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:legendary_mana_potion"
+  }
+}

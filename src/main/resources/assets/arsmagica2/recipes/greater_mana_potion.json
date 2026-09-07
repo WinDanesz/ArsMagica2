@@ -1,0 +1,15 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "dustVinteum"
+    },
+    {
+      "item": "arsmagica2:standard_mana_potion"
+    }
+  ],
+  "result": {
+    "item": "arsmagica2:greater_mana_potion"
+  }
+}

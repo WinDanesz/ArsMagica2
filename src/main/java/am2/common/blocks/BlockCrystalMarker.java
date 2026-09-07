@@ -268,17 +268,17 @@ public class BlockCrystalMarker extends BlockAMContainer {
 
         switch (facing) {
             case UP: //Bottom, Inventory is above
-                return new AxisAlignedBB(0.35f, (float) ((1 + cm.GetConnectedBoundingBox().minY)) - 0.1f, 0.32f, 0.65f, (float) ((1 + cm.GetConnectedBoundingBox().minY)), 0.68f);
+                return new AxisAlignedBB(0.125f, (float) ((1 + cm.GetConnectedBoundingBox().minY)) - 0.1f, 0.125f, 0.875f, (float) ((1 + cm.GetConnectedBoundingBox().minY)), 0.875f);
             case DOWN: //Top, Inventory is below
-                return new AxisAlignedBB(0.35f, (float) (-1 * (1 - cm.GetConnectedBoundingBox().maxY)), 0.3f, 0.65f, (float) (-1 * (1 - cm.GetConnectedBoundingBox().maxY)) + 0.1f, 0.7f);
+                return new AxisAlignedBB(0.125f, (float) (-1 * (1 - cm.GetConnectedBoundingBox().maxY)), 0.125f, 0.875f, (float) (-1 * (1 - cm.GetConnectedBoundingBox().maxY)) + 0.1f, 0.875f);
             case SOUTH: //North, Inventory is to the south
-                return new AxisAlignedBB(0.35f, 0.32f, (float) (1 + (1 - cm.GetConnectedBoundingBox().maxZ)) - 0.1f, 0.65f, 0.68f, (float) (1 + (1 - cm.GetConnectedBoundingBox().maxZ)));
+                return new AxisAlignedBB(0.125f, 0.125f, (float) (1 + (1 - cm.GetConnectedBoundingBox().maxZ)) - 0.1f, 0.875f, 0.875f, (float) (1 + (1 - cm.GetConnectedBoundingBox().maxZ)));
             case NORTH: //South, Inventory is to the north
-                return new AxisAlignedBB(0.35f, 0.32f, (float) (0 - cm.GetConnectedBoundingBox().minZ), 0.65f, 0.68f, (float) (0 - cm.GetConnectedBoundingBox().minZ) + 0.1f);
+                return new AxisAlignedBB(0.125f, 0.125f, (float) (0 - cm.GetConnectedBoundingBox().minZ), 0.875f, 0.875f, (float) (0 - cm.GetConnectedBoundingBox().minZ) + 0.1f);
             case EAST: //West, Inventory is to the east
-                return new AxisAlignedBB((float) (1 + cm.GetConnectedBoundingBox().minX) - 0.1f, 0.32f, 0.35f, (float) (1 + cm.GetConnectedBoundingBox().minX), 0.68f, 0.65f);
+                return new AxisAlignedBB((float) (1 + cm.GetConnectedBoundingBox().minX) - 0.1f, 0.125f, 0.125f, (float) (1 + cm.GetConnectedBoundingBox().minX), 0.875f, 0.875f);
             case WEST: //East, Inventory is to the west
-                return new AxisAlignedBB((float) (-1 * (1 - cm.GetConnectedBoundingBox().maxX)), 0.32f, 0.35f, (float) (-1 * (1 - cm.GetConnectedBoundingBox().maxX)) + 0.1f, 0.68f, 0.65f);
+                return new AxisAlignedBB((float) (-1 * (1 - cm.GetConnectedBoundingBox().maxX)), 0.125f, 0.125f, (float) (-1 * (1 - cm.GetConnectedBoundingBox().maxX)) + 0.1f, 0.875f, 0.875f);
         }
         return NULL_AABB;
     }

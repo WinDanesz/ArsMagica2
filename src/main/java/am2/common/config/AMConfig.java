@@ -1160,8 +1160,8 @@ public class AMConfig extends Configuration {
         this.showBuffs = this.get(CATEGORY_UI, this.KEY_ShowBuffs, true).getBoolean(true);
         this.showNumerics = this.get(CATEGORY_UI, this.KEY_ShowNumerics, false).getBoolean(false);
         this.showXPAlways = this.get(CATEGORY_UI, this.KEY_ShowXPAlways, false).getBoolean(false);
-        this.showHudBars = this.get(CATEGORY_UI, this.KEY_ShowHUDBars, true).getBoolean(true);
-        this.showHudOrbs = this.get(CATEGORY_UI, this.KEY_ShowHudOrbs, false, "Set this to true to use the Diablo-style liquid orb HUD (blue mana orb bottom-right, red burnout orb bottom-left) instead of the classic bars.").getBoolean(false);
+        this.showHudBars = this.get(CATEGORY_UI, this.KEY_ShowHUDBars, false).getBoolean(false);
+        this.showHudOrbs = this.get(CATEGORY_UI, this.KEY_ShowHudOrbs, true, "Set this to true to use the Diablo-style liquid orb HUD (blue mana orb bottom-right, red burnout orb bottom-left) instead of the classic bars.").getBoolean(true);
         this.hudOrbSize = this.get(CATEGORY_UI, this.KEY_HudOrbSize, 52, "Diameter in pixels of the mana/burnout orbs when show_hud_orbs is enabled.").getInt();
         this.hudOrbBlackBackground = this.get(CATEGORY_UI, this.KEY_HudOrbBlackBackground, false, "Set this to true to give the empty (unfilled) portion of the HUD orbs a dark glass background instead of being fully transparent.").getBoolean(false);
         this.hudOrbAffinityColor = this.get(CATEGORY_UI, this.KEY_HudOrbAffinityColor, true, "Set this to false to keep the mana orb always blue. When true, the mana orb (and its numeric value) shifts toward your highest affinity's color once that affinity's depth exceeds 50%.").getBoolean(true);
