@@ -11,7 +11,6 @@ import am2.common.registry.AMPotions;
 import am2.common.registry.Affinities;
 import am2.common.spell.SpellCastResult;
 import am2.common.utils.AMLineSegment;
-import am2.common.utils.DummyEntityPlayer;
 import am2.common.utils.MathUtilities;
 import am2.common.utils.SpellUtils;
 import com.google.common.base.Optional;
@@ -46,7 +45,8 @@ public class EntitySpellEffect extends Entity {
     private int ticksToExist = 100;
 
     private SpellData spellStack;
-    private EntityPlayer dummycaster;
+    // Keep the actual caster: synthetic EntityPlayers break other mods' player event handlers.
+    private EntityLivingBase caster;
     private int casterEntityID;
     private float moveSpeed;    //used by waves only
 
@@ -74,7 +74,7 @@ public class EntitySpellEffect extends Entity {
 
     public void SetCasterAndStack(EntityLivingBase caster, SpellData spellScroll) {
         this.spellStack = spellScroll;
-        this.dummycaster = DummyEntityPlayer.fromEntityLiving(caster);
+        this.caster = caster;
         casterEntityID = caster.getEntityId();
         if (spellStack != null)
             this.dataManager.set(WATCHER_STACK, Optional.fromNullable(spellStack));
@@ -130,9 +130,6 @@ public class EntitySpellEffect extends Entity {
     @Override
     public void onUpdate() {
 
-        if (dummycaster != null && dummycaster instanceof DummyEntityPlayer)
-            dummycaster.onUpdate();
-
         switch (this.dataManager.get(WATCHER_TYPE)) {
             case TYPE_ZONE:
                 zoneUpdate();
@@ -154,13 +151,6 @@ public class EntitySpellEffect extends Entity {
         if (!world.isRemote && this.ticksExisted >= this.ticksToExist) {
             this.setDead();
         }
-    }
-
-    @Override
-    public void setDead() {
-        if (dummycaster instanceof DummyEntityPlayer)
-            dummycaster.setDead();
-        super.setDead();
     }
 
     private void zoneUpdate() {
@@ -215,13 +205,13 @@ public class EntitySpellEffect extends Entity {
             }
             return;
         }
-        if (dummycaster == null) {
-            dummycaster = DummyEntityPlayer.fromEntityLiving(new EntityDummyCaster(world));
+        if (caster == null) {
+            caster = new EntityDummyCaster(world);
         }
         // Gravitate pull runs every 5 ticks for smooth, continuous attraction.
         if (spellStack != null && spellStack.isModifierPresent(SpellModifiers.GRAVITATE) && ticksToEffect % 5 == 0) {
             float snapRadius = this.dataManager.get(WATCHER_RADIUS);
-            double pullStrength = spellStack.getModifiedValue(0, SpellModifiers.GRAVITATE, Operation.ADD, world, dummycaster, null);
+            double pullStrength = spellStack.getModifiedValue(0, SpellModifiers.GRAVITATE, Operation.ADD, world, caster, null);
             double pullRange = snapRadius + 2 + pullStrength * 4;
             AxisAlignedBB pullArea = new AxisAlignedBB(posX - pullRange, posY - 4, posZ - pullRange, posX + pullRange, posY + 4, posZ + pullRange);
             List<Entity> pullTargets = world.getEntitiesWithinAABB(Entity.class, pullArea);
@@ -246,18 +236,18 @@ public class EntitySpellEffect extends Entity {
             List<Entity> possibleTargets = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(posX - radius, posY - 3, posZ - radius, posX + radius, posY + 3, posZ + radius));
             for (Entity e : possibleTargets) {
                 if (e instanceof EntityLivingBase)
-                    spellStack.copy().execute(world, dummycaster, (EntityLivingBase) e, e.posX, e.posY - 1, e.posZ, null);
+                    spellStack.copy().execute(world, caster, (EntityLivingBase) e, e.posX, e.posY - 1, e.posZ, null);
             }
             if (this.dataManager.get(WATCHER_GRAVITY) < 0 && !firstApply)
-                spellStack.copy().execute(world, dummycaster, null, posX, posY - 1, posZ, null);
+                spellStack.copy().execute(world, caster, null, posX, posY - 1, posZ, null);
             else
-                spellStack.copy().execute(world, dummycaster, null, posX, posY, posZ, null);
+                spellStack.copy().execute(world, caster, null, posX, posY, posZ, null);
             firstApply = false;
             for (float i = -radius; i <= radius; i++) {
                 for (int j = -3; j <= 3; j++) {
                     Vec3d[] blocks = getAllBlockLocationsBetween(new Vec3d(posX + i, posY + j, posZ - radius), new Vec3d(posX + i, posY + j, posZ + radius));
                     for (Vec3d vec : blocks) {
-                        spellStack.pop().applyComponentsToGround(world, dummycaster, new BlockPos(vec), EnumFacing.UP, vec.x + 0.5, vec.y + 0.5, vec.z + 0.5);
+                        spellStack.pop().applyComponentsToGround(world, caster, new BlockPos(vec), EnumFacing.UP, vec.x + 0.5, vec.y + 0.5, vec.z + 0.5);
                     }
                 }
             }
@@ -297,7 +287,7 @@ public class EntitySpellEffect extends Entity {
         } else {
             List<Entity> possibleTargets = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(posX - radius, posY - 1, posZ - radius, posX + radius, posY + 3, posZ + radius));
             for (Entity e : possibleTargets) {
-                if (e != dummycaster) {
+                if (e != caster) {
 
                     double lastVelX = e.motionX;
                     double lastVelY = e.motionY;
@@ -305,7 +295,7 @@ public class EntitySpellEffect extends Entity {
 
                     float damage = 0.75f * this.dataManager.get(WATCHER_DAMAGEBONUS);
 
-                    if (SpellUtils.attackTargetSpecial(null, e, DamageSources.causeFireDamage(dummycaster), damage) && !(e instanceof EntityPlayer))
+                    if (SpellUtils.attackTargetSpecial(null, e, DamageSources.causeFireDamage(caster), damage) && !(e instanceof EntityPlayer))
                         e.hurtResistantTime = 10;
                     e.addVelocity(-(e.motionX - lastVelX), -(e.motionY - lastVelY), -(e.motionZ - lastVelZ));
                 }
@@ -372,7 +362,7 @@ public class EntitySpellEffect extends Entity {
         } else {
             List<Entity> possibleTargets = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(posX - radius, posY - 1, posZ - radius, posX + radius, posY + 3, posZ + radius));
             for (Entity e : possibleTargets) {
-                if (e != dummycaster) {
+                if (e != caster) {
 
                     if (e instanceof EntityLivingBase)
                         ((EntityLivingBase) e).addPotionEffect(new PotionEffect(AMPotions.frost_slow, 80, 3));
@@ -382,7 +372,7 @@ public class EntitySpellEffect extends Entity {
                     double lastVelX = e.motionX;
                     double lastVelY = e.motionY;
                     double lastVelZ = e.motionZ;
-                    if (SpellUtils.attackTargetSpecial(null, e, DamageSources.causeFrostDamage(dummycaster), damage) && !(e instanceof EntityPlayer))
+                    if (SpellUtils.attackTargetSpecial(null, e, DamageSources.causeFrostDamage(caster), damage) && !(e instanceof EntityPlayer))
                         e.hurtResistantTime = 15;
                     e.addVelocity(-(e.motionX - lastVelX), -(e.motionY - lastVelY), -(e.motionZ - lastVelZ));
                 }
@@ -481,8 +471,8 @@ public class EntitySpellEffect extends Entity {
                 return;
             }
 
-            if (dummycaster == null) {
-                dummycaster = DummyEntityPlayer.fromEntityLiving(new EntityDummyCaster(world));
+            if (caster == null) {
+                caster = new EntityDummyCaster(world);
             }
             if (ticksToEffect <= 0) {
                 ticksToEffect = maxTicksToEffect_wall;
@@ -490,7 +480,7 @@ public class EntitySpellEffect extends Entity {
                 List<Entity> possibleTargets = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(posX - radius, posY - 1, posZ - radius, posX + radius, posY + 3, posZ + radius));
 
                 for (Entity e : possibleTargets) {
-                    if (e == this || e == dummycaster || e.getEntityId() == casterEntityID) continue;
+                    if (e == this || e == caster || e.getEntityId() == casterEntityID) continue;
 
                     Vec3d target = new Vec3d(e.posX, e.posY, e.posZ);
 
@@ -511,7 +501,7 @@ public class EntitySpellEffect extends Entity {
                     if (e instanceof EntityLivingBase && hDistance < 1.5f && vDistance < 2) {
                         SpellData copy = spellStack.copy();
                         //Execute the next stage of the spell (e.g., Touch shape)
-                        SpellCastResult result = copy.execute(world, dummycaster, (EntityLivingBase) e, e.posX, e.posY, e.posZ, null);
+                        SpellCastResult result = copy.execute(world, caster, (EntityLivingBase) e, e.posX, e.posY, e.posZ, null);
                     }
                 }
             }
@@ -531,8 +521,8 @@ public class EntitySpellEffect extends Entity {
 
         float radius = this.dataManager.get(WATCHER_RADIUS);
 
-        if (dummycaster == null) {
-            dummycaster = DummyEntityPlayer.fromEntityLiving(new EntityDummyCaster(world));
+        if (caster == null) {
+            caster = new EntityDummyCaster(world);
         }
 
         for (int j = 0; j <= 2; j++) {
@@ -541,7 +531,7 @@ public class EntitySpellEffect extends Entity {
 
             Vec3d[] vecs = getAllBlockLocationsBetween(a, b);
             for (Vec3d vec : vecs) {
-                spellStack.copy().pop().applyComponentsToGround(world, dummycaster, new BlockPos(vec), EnumFacing.UP, vec.x + 0.5, vec.y + 0.5, vec.z + 0.5);
+                spellStack.copy().pop().applyComponentsToGround(world, caster, new BlockPos(vec), EnumFacing.UP, vec.x + 0.5, vec.y + 0.5, vec.z + 0.5);
             }
         }
 
