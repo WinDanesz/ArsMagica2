@@ -1132,8 +1132,8 @@ public class AMConfig extends Configuration {
 
         this.manaHudPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_ManaHudPositionX, 0.7104166746139526).getDouble(0.7104166746139526), this.get(CATEGORY_UI, this.KEY_ManaHudPositionY, 0.9137254953384399).getDouble(0.9137254953384399));
         this.burnoutHudPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_BurnoutHudPositionX, 0.13333334028720856).getDouble(0.13333334028720856), this.get(CATEGORY_UI, this.KEY_BurnoutHudPositionY, 0.9176470637321472).getDouble(0.9176470637321472));
-        this.manaOrbPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_ManaOrbPositionX, 0.82).getDouble(0.82), this.get(CATEGORY_UI, this.KEY_ManaOrbPositionY, 0.73).getDouble(0.73));
-        this.burnoutOrbPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_BurnoutOrbPositionX, 0.016).getDouble(0.016), this.get(CATEGORY_UI, this.KEY_BurnoutOrbPositionY, 0.73).getDouble(0.73));
+        this.manaOrbPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_ManaOrbPositionX, 0.714).getDouble(0.714), this.get(CATEGORY_UI, this.KEY_ManaOrbPositionY, 0.8).getDouble(0.8));
+        this.burnoutOrbPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_BurnoutOrbPositionX, 0.166).getDouble(0.166), this.get(CATEGORY_UI, this.KEY_BurnoutOrbPositionY, 0.8).getDouble(0.8));
         this.positiveBuffsPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_BuffsPositivePositionX, 0.5145833492279053).getDouble(0.5145833492279053), this.get(CATEGORY_UI, this.KEY_BuffsPositivePositionY, 0.47843137383461).getDouble(0.47843137383461));
         this.negativeBuffsPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_BuffsNegativePositionX, 0.46666666865348816).getDouble(0.46666666865348816), this.get(CATEGORY_UI, this.KEY_BuffsNegativePositionY, 0.47843137383461).getDouble(0.47843137383461));
         this.levelPosition = new AMVector2(this.get(CATEGORY_UI, this.KEY_LevelPositionX, 0.49791666865348816).getDouble(0.49791666865348816), this.get(CATEGORY_UI, this.KEY_LevelPositionY, 0.8117647171020508).getDouble(0.8117647171020508));
@@ -1222,7 +1222,7 @@ public class AMConfig extends Configuration {
         this.legendaryManaPotionRegenLevel = this.get(CATEGORY_GENERAL, this.KEY_LegendaryManaPotionRegenLevel, 2, "Mana Regeneration amplifier for the Legendary Mana Potion (0 = level I). Default: 2").getInt();
         this.legendaryManaPotionRegenDuration = this.get(CATEGORY_GENERAL, this.KEY_LegendaryManaPotionRegenDuration, 3000, "Mana Regeneration duration in ticks for the Legendary Mana Potion. Default: 3000 (150s)").getInt();
 
-        this.winterArmFlightTicks = this.get(CATEGORY_GENERAL, this.KEY_WinterArmFlightTicks, 60, "How many ticks the Winter Guardian Arm flies before returning. Lower = shorter range. Default: 60 (3 seconds)").getInt();
+        this.winterArmFlightTicks = this.get(CATEGORY_GENERAL, this.KEY_WinterArmFlightTicks, 30, "How many ticks the Winter Guardian Arm flies before returning. Lower = shorter range. Default: 30 (1.5 seconds)").getInt();
 
         this.lifeWardEnabled = this.get(CATEGORY_GENERAL, this.KEY_LifeWardEnabled, true, "Set this to false to disable the Life Ward item's absorption effect. Note that this makes the item essentially useless.").getBoolean(true);
         this.lifeWardTickInterval = this.get(CATEGORY_GENERAL, this.KEY_LifeWardTickInterval, 80, "How often (in ticks) the Life Ward grants absorption. Default: 80 (4 seconds)").getInt();
@@ -1761,7 +1761,7 @@ public class AMConfig extends Configuration {
         this.affinityTailwindMaxDurationMultiplier = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindMaxDurationMultiplier, 3.0, "How many times the base reserve (affinity_tailwind_base_fuel_ticks) you get at 100%% air depth, ramping linearly from 1x at the minimum depth. Default: 3.0").getDouble(3.0);
         this.affinityTailwindFuelRegenPerTick = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindFuelRegenPerTick, 0.5, "Flight reserve regained per tick while Tailwind is toggled on but not actively flying. Default: 0.5 (full refill in ~10s)").getDouble(0.5);
         this.affinityTailwindFlightDrainPerTick = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindFlightDrainPerTick, 1.0, "Flight reserve spent per tick of actual powered flight (double-jump). Default: 1.0").getDouble(1.0);
-        this.affinityTailwindFlightSpeed = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindFlightSpeed, 0.04, "Movement speed while flying with Tailwind (vanilla creative flight's own speed is 0.05). Default: 0.04 (20%% slower than vanilla creative flight)").getDouble(0.04);
+        this.affinityTailwindFlightSpeed = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindFlightSpeed, 0.03, "Movement speed while flying with Tailwind (vanilla creative flight's own speed is 0.05). Default: 0.03 (25%% lower than the original Tailwind speed)").getDouble(0.03);
         this.affinityTailwindFullDepletionRegenDelay = this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindFullDepletionRegenDelay, 60, "Ticks before the flight reserve starts regenerating after being fully drained to zero. Once it starts regenerating, any amount above zero is immediately usable again — this only delays when regen begins, not how much is needed. Default: 60 (3s)").getInt(60);
         this.affinityTailwindPartialRegenDelay = this.get(CATEGORY_AFFINITY, this.KEY_AffinityTailwindPartialRegenDelay, 20, "Ticks before the flight reserve starts regenerating after flight ends with some reserve still left (i.e. not fully drained). Default: 20 (1s)").getInt(20);
         this.affinityEyeOfTheStormMinDepth = (float) this.get(CATEGORY_AFFINITY, this.KEY_AffinityEyeOfTheStormMinDepth, 0.9, "Minimum air affinity depth for Eye of the Storm (reactive panic-button gust at critical health). Default: 0.9").getDouble(0.9);
@@ -2698,7 +2698,7 @@ public class AMConfig extends Configuration {
                 new AMVector2(0.7104166746139526, 0.9352226853370667),
                 true, false, false, true, false, this.showHudBars,
                 100, 10, 100, 10, this.showHudOrbs, 52, this.hudOrbBlackBackground, this.hudOrbAffinityColor,
-                new AMVector2(0.82, 0.73), new AMVector2(0.016, 0.73));
+                new AMVector2(0.714, 0.8), new AMVector2(0.166, 0.8));
         saveGuiPositions();
     }
 

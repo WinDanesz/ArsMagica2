@@ -354,7 +354,7 @@ public class BlockCrystalMarker extends BlockAMContainer {
 
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.TRANSLUCENT;
+        return BlockRenderLayer.CUTOUT;
     }
 
     @Override

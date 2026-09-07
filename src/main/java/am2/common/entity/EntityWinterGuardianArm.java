@@ -203,7 +203,7 @@ public class EntityWinterGuardianArm extends EntityLiving {
         }
         setPosition(posX, posY, posZ);
 
-        if (this.ticksExisted > 30 && this.ticksExisted < halflife) {
+        if (this.ticksExisted > halflife / 2 && this.ticksExisted < halflife) {
             this.motionX *= 0.8f;
             this.motionY *= 0.8f;
             this.motionZ *= 0.8f;
