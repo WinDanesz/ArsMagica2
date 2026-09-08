@@ -1,6 +1,7 @@
 package am2.common.handler;
 
 import am2.ArsMagica;
+import am2.client.render.EarthArmorArmVisibility;
 import am2.api.ArsMagicaAPI;
 import am2.api.DamageSources;
 import am2.api.SkillPointRegistry;
@@ -623,23 +624,8 @@ public class EntityHandler {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onPlayerRender(RenderPlayerEvent.Pre event) {
-        ItemStack chestPlate = event.getEntityPlayer().inventory.armorInventory.get(2);
-
         ModelBiped mainModel = event.getRenderer().getMainModel();
-
-        if (!ArsMagica.proxy.playerTracker.hasCLS(event.getEntityPlayer().getUniqueID().toString())) {
-            if (chestPlate != null && chestPlate.getItem() == AMItems.earth_armor) {
-                if (mainModel != null) {
-                    mainModel.bipedLeftArm.isHidden = event.getEntityPlayer().getHeldItemOffhand() != null;
-                    mainModel.bipedRightArm.isHidden = event.getEntityPlayer().getHeldItemMainhand() != null;
-                }
-            } else {
-                if (mainModel != null) {
-                    mainModel.bipedLeftArm.isHidden = false;
-                    mainModel.bipedRightArm.isHidden = false;
-                }
-            }
-        }
+        EarthArmorArmVisibility.begin(event.getRenderer(), event.getEntityPlayer());
 
         double dX = Minecraft.getMinecraft().player.posX - event.getEntityPlayer().posX;
         double dY = Minecraft.getMinecraft().player.posY - event.getEntityPlayer().posY;
@@ -694,11 +680,7 @@ public class EntityHandler {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onPlayerRender(RenderPlayerEvent.Post event) {
-        ModelBiped mainModel = event.getRenderer().getMainModel();
-        if (mainModel != null) {
-            mainModel.bipedLeftArm.isHidden = false;
-            mainModel.bipedRightArm.isHidden = false;
-        }
+        EarthArmorArmVisibility.end(event.getRenderer());
 
         if (EntityExtension.For(event.getEntityPlayer()).getFlipRotation() > 0) {
             GL11.glPopMatrix();

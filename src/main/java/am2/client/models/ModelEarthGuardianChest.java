@@ -3,7 +3,6 @@ package am2.client.models;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import org.lwjgl.opengl.GL11;
 
 public class ModelEarthGuardianChest extends ModelBiped {
@@ -84,19 +83,23 @@ public class ModelEarthGuardianChest extends ModelBiped {
         RightShoulder1.render(f5);
 
         GL11.glPushMatrix();
+        // Lower the torso one model pixel before applying its custom scale.
+        GL11.glTranslatef(0, f5, 0);
         GL11.glScalef(1.4f, 1.3f, 0.8f);
         GL11.glTranslatef(0, -0.01f, 0);
+        // Stretch the original textured box from 8 to 10 pixels about its center.
+        // Changing addBox dimensions would move its UVs into adjacent texture regions.
+        GL11.glTranslatef(0, 4F * f5, 0);
+        GL11.glScalef(1F, 1.25F, 1F);
+        GL11.glTranslatef(0, -4F * f5, 0);
         bipedBody.render(f5);
         GL11.glPopMatrix();
 
         GL11.glPushMatrix();
         GL11.glScalef(1.4f, 1.3f, 1.4f);
 
-        // Fix hand position bug: don't render armor arms when player has items in hands
-        if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).getHeldItemMainhand().isEmpty())
-            bipedRightArm.render(f5);
-        if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).getHeldItemOffhand().isEmpty())
-            bipedLeftArm.render(f5);
+        bipedRightArm.render(f5);
+        bipedLeftArm.render(f5);
         GL11.glPopMatrix();
     }
 
