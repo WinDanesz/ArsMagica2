@@ -42,7 +42,7 @@ public class AMArmor extends ItemArmor implements ISpecialArmor {
     public static final String INFUSION_DELIMITER = "\\|";
     private static final String NBT_KEY_DISPLAY = "display";
     private static final String NBT_KEY_COLOR = "color";
-    public static final int DEFAULT_COLOR = 0xA67C52; // lighter tan brown
+    public static final int DEFAULT_COLOR = 0xFFCD6E; // warm gold trim, undyed default
 
     public AMArmor(ArmorMaterial material, ArsMagicaArmorMaterial armorMaterial, int renderIndex, EntityEquipmentSlot equipmentSlot) {
         super(material, renderIndex, equipmentSlot);
