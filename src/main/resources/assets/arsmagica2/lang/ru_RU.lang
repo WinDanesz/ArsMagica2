@@ -188,6 +188,7 @@ tile.arsmagica2:illusion_block_default.name=Блок иллюзий
 tile.arsmagica2:illusion_block_non_collide.name=Эфирный блок иллюзий
 tile.arsmagica2:slipstream_generator.name=Генератор воздушного потока
 tile.arsmagica2:lectern.name=Аналой
+tile.arsmagica2:lectern.name.waila=%s
 tile.arsmagica2:essence_conduit.name=Проводник энергии
 tile.arsmagica2:mana_battery.name=Батарея маны
 tile.arsmagica2:armor_imbuer.name=Стол наполнения доспехов

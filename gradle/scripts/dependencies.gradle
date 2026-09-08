@@ -40,6 +40,13 @@ dependencies {
     // IBauble with @Optional.Interface. Not bundled; remains optional at runtime.
     compileOnly rfg.deobf('curse.maven:baubles-227083:2518667')
 
+    // Hwyla (WAILA) – soft dependency used at compile time so am2.common.compat.hwyla can
+    // implement IWailaPlugin/IWailaDataProvider directly. Not bundled; remains optional at
+    // runtime (Hwyla's own @WailaPlugin discovery is what would ever load these classes, and
+    // that scan simply doesn't run without Hwyla present, so no Loader.isModLoaded gating
+    // is needed for the plugin class itself).
+    compileOnly 'curse.maven:hwyla-253449:2568751'
+
     // Electroblob's Wizardry – soft dependency used only at compile time so that
     // the EBWiz compatibility module can reference EBWiz classes directly.
     // The jar is NOT bundled in the final artifact; EBWiz remains an optional

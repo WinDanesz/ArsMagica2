@@ -236,6 +236,7 @@ item.arsmagica2\:illusion_block_default.tooltip=Solid - blocks movement unless r
 item.arsmagica2\:illusion_block_non_collide.tooltip=Ethereal - entities can always pass through, cannot be revealed by True Sight
 tile.arsmagica2\:slipstream_generator.name=Slipstream Generator
 tile.arsmagica2\:lectern.name=Lectern
+tile.arsmagica2\:lectern.name.waila=%s
 tile.arsmagica2\:essence_conduit.name=Essence Conduit
 tile.arsmagica2\:mana_battery.name=Mana Battery
 am2.tooltip.mana_battery=Requires a redstone signal to act as a consumer

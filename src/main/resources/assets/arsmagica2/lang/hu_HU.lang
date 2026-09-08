@@ -233,6 +233,7 @@ item.arsmagica2\:illusion_block_default.tooltip=Szilárd - blokkolja a mozgást,
 item.arsmagica2\:illusion_block_non_collide.tooltip=Eterikus - entitások mindig áthaladhatnak rajta, Valódi Látással nem fedhető fel
 tile.arsmagica2\:slipstream_generator.name=Légáramlat Generátor
 tile.arsmagica2\:lectern.name=Szószék
+tile.arsmagica2\:lectern.name.waila=%s
 tile.arsmagica2\:essence_conduit.name=Esszencia Csatorna
 tile.arsmagica2\:mana_battery.name=Mana Akkumulátor
 tile.arsmagica2\:armor_imbuer.name=Páncél Itatótábla

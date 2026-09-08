@@ -209,6 +209,7 @@ tile.arsmagica2:illusion_block_default.name=幻影ブロック
 tile.arsmagica2:illusion_block_non_collide.name=エーテリウムの幻影ブロック
 tile.arsmagica2:slipstream_generator.name=スリップストリームジェネレーター
 tile.arsmagica2:lectern.name=書見台
+tile.arsmagica2:lectern.name.waila=%s
 tile.arsmagica2:essence_conduit.name=エッセンス導管
 tile.arsmagica2:mana_battery.name=マナ電池
 tile.arsmagica2:armor_imbuer.name=アーマーインビュメントテーブル
