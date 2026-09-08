@@ -165,7 +165,7 @@ public class EntityNatureElemental extends EntityElemental {
                 charge.stop(now);
             }
         }
-        if (collidedHorizontally || !onGround) charge.stop(now);
+        if (collidedHorizontally || fallDistance > 2.0F) charge.stop(now);
         if (!charge.isCharging(now)) {
             motionX = motionZ = 0.0D;
             dataManager.set(CHARGE_POSE, (byte) 0);
