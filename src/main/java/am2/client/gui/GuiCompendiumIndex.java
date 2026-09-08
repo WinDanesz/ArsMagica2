@@ -96,14 +96,7 @@ public class GuiCompendiumIndex extends GuiScreen {
             });
             for (CompendiumCategory sub : sortedCategories) {
                 if (sub.getParentsString().equals(category.getID())) {
-                    boolean hasSubItems = false;
-                    for (CompendiumEntry entry : sub.getEntries()) {
-                        if (entry.getRenderObject() == null || ArcaneCompendium.For(mc.player).isUnlocked(entry.getID())) {
-                            hasSubItems = true;
-                            break;
-                        }
-                    }
-                    if (!hasSubItems) continue;
+                    if (!hasVisibleEntries(sub)) continue;
                     GuiButtonCompendiumLink tab = new GuiButtonCompendiumLink(idCount++, buttonX, buttonY, fontRenderer, locPage, null, sub);
                     tab.visible = sub.getParentsString().equals(currentCategory.getID()) && page == locPage;
                     buttonY += 12;
@@ -160,6 +153,27 @@ public class GuiCompendiumIndex extends GuiScreen {
         buttonList.add(nextPage);
         buttonList.add(prevPage);
         super.initGui();
+    }
+
+    /**
+     * A category may only contain further subcategories (for example Items ->
+     * Ars Magica Armor -> Mage Armor).  Keep its navigation link visible when
+     * a descendant contains an entry the player can see.
+     */
+    private boolean hasVisibleEntries(CompendiumCategory category) {
+        for (CompendiumEntry entry : category.getEntries()) {
+            if (entry.getRenderObject() == null || ArcaneCompendium.For(mc.player).isUnlocked(entry.getID())) {
+                return true;
+            }
+        }
+
+        for (CompendiumCategory child : categories) {
+            if (child.getParentsString().equals(category.getID()) && hasVisibleEntries(child)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
