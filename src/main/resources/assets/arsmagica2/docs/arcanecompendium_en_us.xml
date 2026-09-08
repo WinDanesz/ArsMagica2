@@ -960,22 +960,22 @@
     <item id="armor_mage">
       <name>Mage Armor</name>
       <desc>A more advanced version of simple robes, mage armor allows for slightly more durability, recharge, and protection.  Mage armor, due to the runes inlaid in it, has very high capability to be enchanted.  It also can repair its condition using mana drawn from its wearer.  When wearing a full suit of mage armor, your mana regen speed is increased and all spells are slightly more effective.</desc>
-      <subitem id="helmet_mage">
+      <subitem id="mage_hood">
         <name>Mage Hood</name>
         <desc></desc>
         <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
       </subitem>
-      <subitem id="chest_mage">
+      <subitem id="mage_robe">
         <name>Mage Robes</name>
         <desc></desc>
         <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
       </subitem>
-      <subitem id="legs_mage">
+      <subitem id="mage_leggings">
         <name>Mage Leggings</name>
         <desc></desc>
         <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
       </subitem>
-      <subitem id="boots_mage">
+      <subitem id="mage_boots">
         <name>Mage Boots</name>
         <desc></desc>
         <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
@@ -985,22 +985,22 @@
     <item id="armor_battlemage">
       <name>Battlemage Armor</name>
       <desc>Granted only to mages who have proven themselves true masters, Battlemage Armor offers a good amount of protection.  It has higher durability than Mage Armor, but has a slower repair rate and less enchantability, as well as giving lesser versions of the magical bonuses that mage armor does.  Battlemage Armor can also be given XP which will unlock protective spells that will come to the aid of its wearer, draining some of the magic within the armor.  The magic will then infuse back over time from your own mana pool.</desc>
-      <subitem id="helmet_battlemage">
+      <subitem id="battlemage_helmet">
         <name>Battlemage Circlet</name>
         <desc></desc>
         <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
       </subitem>
-      <subitem id="chest_battlemage">
+      <subitem id="battlemage_chestplate">
         <name>Battlemage Armor</name>
         <desc></desc>
         <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
       </subitem>
-      <subitem id="legs_battlemage">
+      <subitem id="battlemage_leggings">
         <name>Battlemage Leggings</name>
         <desc></desc>
         <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
       </subitem>
-      <subitem id="boots_battlemage">
+      <subitem id="battlemage_boots">
         <name>Battlemage Boots</name>
         <desc></desc>
         <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
@@ -1148,40 +1148,65 @@
     <item id="mana_potion">
       <name>Mana Potions</name>
       <desc>Mana potions restore mana instantly when imbibed.  You get an empty bottle back after drinking one.  Mana potions can be bundled by combining 3 of the same type of potion with string.  The bundle can be used 3 times and will also return the empty bottles.  The final potion drank will also return the string.</desc>
-      <subitem id="mana_potion_lesser">
+      <subitem id="lesser_mana_potion">
         <name>Lesser Mana Potion</name>
         <desc>The lesser mana potion is the magical equivalent to a cup of coffee:  a short boost, but it won't get you through an entire day.  One use will restore 100 mana.</desc>
         <relatedEntries>mana_cake</relatedEntries>
       </subitem>
-      <subitem id="mana_potion_standard">
+      <subitem id="standard_mana_potion">
         <name>Standard Mana Potion</name>
         <desc>The standard mana potion gives a decently upgraded amount of mana from the lesser one for not much of a material cost.  One use will restore 250 mana.</desc>
         <relatedEntries>mana_cake</relatedEntries>
       </subitem>
-      <subitem id="mana_potion_greater">
+      <subitem id="greater_mana_potion">
         <name>Greater Mana Potion</name>
         <desc>The greater mana potion uses the power of #5vinteum#0 combined with a #9Awkward Potion#0 at a brewing stand to restore a good amount of mana.  One use will restore 2000 mana.  The crafting table recipe is temporary while I figure out the derpy brewing stand.</desc>
         <relatedEntries>mana_cake</relatedEntries>
       </subitem>
-      <subitem id="mana_potion_epic">
+      <subitem id="epic_mana_potion">
         <name>Epic Mana Potion</name>
         <desc>The epic mana potion is created by combining #5arcane ash#0 with a #9Awkward Potion#0 at a brewing stand to restore 5000 mana per potion.  The crafting table recipe is temporary while I figure out the derpy brewing stand.</desc>
         <relatedEntries>mana_cake</relatedEntries>
       </subitem>
-      <subitem id="mana_potion_legendary">
+      <subitem id="legendary_mana_potion">
         <name>Legendary Mana Potion</name>
         <desc>The legendary mana potion is created by combining #5purified vinteum dust#0 with a #9Awkward Potion#0 at a brewing stand.  One potion will restore a whopping 10000 mana!  The crafting table recipe is temporary while I figure out the derpy brewing stand.</desc>
         <relatedEntries>mana_cake</relatedEntries>
       </subitem>
-      <subitem id="mana_boost_potion">
+      <subitem id="liquid_essence_bottle">
         <name>Infused Etherium Potion</name>
         <desc>By taking a #5bucket of Liquid Etherium#0, a mage can combine it with #5chimerite#0 and #5tarma root#0 in order to create a potion to give a temporary boost to maximum mana.  Unfortunately, the process is minimally efficient and much of the Liquid Etherium is lost along the way.</desc>
         <relatedEntries></relatedEntries>
       </subitem>
-	  <subitem id="mana_martini">
+      <subitem id="mana_martini">
         <name>Mana Martini</name>
         <desc>In honour of Mithion's final release of AM2, which happens to be #9version 007#0, you can now make a Mana Martini that, when drunk, will give you a 25%% reduction in burnout gained from casting spells.</desc>
         <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="mana_potion_bundle@3">
+        <name>Lesser Mana Potion Bundle</name>
+        <desc>A bundle of three Lesser Mana Potions.</desc>
+        <relatedEntries>lesser_mana_potion</relatedEntries>
+      </subitem>
+      <subitem id="mana_potion_bundle@259">
+        <name>Standard Mana Potion Bundle</name>
+        <desc>A bundle of three Standard Mana Potions.</desc>
+        <relatedEntries>standard_mana_potion</relatedEntries>
+      </subitem>
+      <subitem id="mana_potion_bundle@515">
+        <name>Greater Mana Potion Bundle</name>
+        <desc>A bundle of three Greater Mana Potions.</desc>
+        <relatedEntries>greater_mana_potion</relatedEntries>
+      </subitem>
+      <subitem id="mana_potion_bundle@771">
+        <name>Epic Mana Potion Bundle</name>
+        <desc>A bundle of three Epic Mana Potions.</desc>
+        <relatedEntries>epic_mana_potion</relatedEntries>
+      </subitem>
+      <subitem id="mana_potion_bundle@1027">
+        <name>Legendary Mana Potion Bundle</name>
+        <desc>A bundle of three Legendary Mana Potions.</desc>
+        <relatedEntries>legendary_mana_potion</relatedEntries>
       </subitem>
       <relatedEntries></relatedEntries>
     </item>
