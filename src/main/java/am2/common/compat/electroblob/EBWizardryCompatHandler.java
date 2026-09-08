@@ -238,6 +238,13 @@ public final class EBWizardryCompatHandler {
             return;
         }
 
+        // The AM2 mana bridge is a player convenience for casters using both systems'
+        // wands/spellbooks. Non-player casters (e.g. EBWiz's own NPC wizards) also carry
+        // the AM2 EntityExtension capability, but their mana pool is pinned to the flat
+        // base-mana config value and never grows - gating their casts on it would cancel
+        // most of their spells outright rather than letting the wand handle its own mana.
+        if (!(caster instanceof EntityPlayer)) return;
+
         IEntityExtension am2Data = EntityExtension.For(caster);
         if (am2Data == null) return;
 
