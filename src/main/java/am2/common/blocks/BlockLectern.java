@@ -4,6 +4,7 @@ import am2.client.gui.AMGuiHelper;
 import am2.common.blocks.tileentity.TileEntityLectern;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.registry.AMItems;
+import am2.common.registry.AMLecternBooks;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -68,8 +69,9 @@ public class BlockLectern extends BlockAMSpecialRenderContainer {
                     }
                 }
             } else {
-                if (world.isRemote) {
-                    openSupportedLecternItem(player, te.getStack());
+                ItemStack lecternStack = te.getStack();
+                if (!AMLecternBooks.openGui(player, world, lecternStack) && world.isRemote) {
+                    openSupportedLecternItem(player, lecternStack);
                 }
                 return true;
             }

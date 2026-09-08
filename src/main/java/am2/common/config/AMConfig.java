@@ -255,6 +255,8 @@ public class AMConfig extends Configuration {
     private final String KEY_SavePowerOnWorldSave = "save_power_on_world_save";
     private final String KEY_MagicResistExtraDamageTypes = "magic_resist_extra_damage_types";
     public static final String KEY_LecternBooks = "lectern_books";
+    public static final String KEY_LecternGuiHandlers = "lectern_gui_handlers";
+    public static final String KEY_LecternBookColors = "lectern_book_colors";
     private final String KEY_ObeliskExtraFuels = "obelisk_extra_fuels";
     private final String KEY_ExtraAltarCaps = "extra_altar_caps";
     private final String KEY_ExtraAltarMain = "extra_altar_main";
@@ -847,6 +849,8 @@ public class AMConfig extends Configuration {
     private double manaDrainRatio;
     private Set<String> magicResistExtraDamageTypes;
     private String[] lecternBooks;
+    private String[] lecternGuiHandlers;
+    private String[] lecternBookColors;
     private String[] obeliskExtraFuels;
     private String[] extraAltarCaps;
     private String[] extraAltarMain;
@@ -1533,6 +1537,62 @@ public class AMConfig extends Configuration {
                 "Additional books that can be placed onto Lectern. "
                 + "Format: modid:item. "
                 + "Example: minecraft:book"
+        ).getStringList();
+
+        this.lecternGuiHandlers = this.get(CATEGORY_INTEGRATION, this.KEY_LecternGuiHandlers,
+                new String[] {
+                        "thaumcraft:thaumonomicon=12",
+                        "botania:lexicon=0,vazkii.botania.common.Botania#proxy.setLexiconStack",
+                        "antiqueatlas:antique_atlas:-1=hunternif.mc.atlas.AntiqueAtlasMod#proxy.openAtlasGUI",
+                        "ancientspellcraft:ancient_spell_book:-1=com.windanesz.ancientspellcraft.client.gui.GuiAncientElementSpellBook",
+                        "ancientspellcraft:ancient_spellcraft_spell_book:-1=com.windanesz.ancientspellcraft.client.gui.GuiAncientElementSpellBook",
+                        "ancientspellcraft:mystic_spell_book:-1=com.windanesz.ancientspellcraft.client.gui.GuiSageSpellBook",
+                        "ancientspellcraft:forbidden_tome:-1=com.windanesz.ancientspellcraft.client.gui.GuiWarlockSpellBook",
+                        "abyssalcraft:necronomicon=com.shinoow.abyssalcraft.client.gui.necronomicon.GuiNecronomicon#currentNecro"
+                },
+                "Books that, like " + KEY_LecternBooks + ", can be placed onto the Lectern, but which ALSO open "
+                + "their own mod's GUI when read there instead of doing nothing (no separate " + KEY_LecternBooks
+                + " entry is needed for these - placement is implied). "
+                + "Format: modid:item[:meta]=token[,token]. Each token is a plain integer (a Forge IGuiHandler gui "
+                + "id, opened via player.openGui(...)), a fully.qualified.Class#staticField.instanceMethod "
+                + "reflective call (invoked with the stack being read), a bare fully.qualified.GuiScreenClass "
+                + "name with an (ItemStack) constructor, shown directly via Minecraft.displayGuiScreen(...), or a "
+                + "fully.qualified.Class#staticField with no trailing .method, whose value is a ready-to-show "
+                + "GuiScreen singleton shown as-is - order doesn't matter, and a mod only needs the token(s) it "
+                + "actually requires: a gui id alone (Thaumcraft's Thaumonomicon) opens directly with no "
+                + "stack-specific state; a call alone (Antique Atlas) is invoked with no gui id involved at all; "
+                + "both together (Botania's Lexicon) invoke the call first - to prime the target mod's proxy with "
+                + "the exact stack being read - then open the gui id; a GuiScreen class alone (AncientSpellcraft's "
+                + "spell books) is instantiated with the stack and shown with no gui id or call involved at all; a "
+                + "bare static field alone (AbyssalCraft's Necronomicon) is read and shown as-is, with no stack, "
+                + "gui id, or method call involved at all. Entries for mods that aren't installed, or whose "
+                + "internals don't match, are skipped automatically - the item just won't be lectern-enabled."
+        ).getStringList();
+
+        this.lecternBookColors = this.get(CATEGORY_INTEGRATION, this.KEY_LecternBookColors,
+                new String[] {
+                        "thaumcraft:thaumonomicon=8B5A2E,4A2E17,FFD23F,F0E2C0",
+                        "botania:lexicon=2D6B3A,163D1F,6EE05C,E8F0DE",
+                        "antiqueatlas:antique_atlas:-1=8B5A2B,4A3018,6B4423,E8D5A3",
+                        "ancientspellcraft:ancient_spell_book:-1=bdc1bf,4A3018,D4AF37,E8D5A3",
+                        "ancientspellcraft:ancient_spellcraft_spell_book:-1=2E3340,1F2330,5C6780,D7DCE3",
+                        "ancientspellcraft:mystic_spell_book:-1=16191C,0E4B4D,39C5C9",
+                        "ancientspellcraft:forbidden_tome:-1=3B2A1E,2A1D12,8B6B3D,8C7355",
+                        "ebwizardry:wizard_handbook=1B2A4A,C9A227,FFD966,E8D9B0",
+                        "arsmagica2:arcane_compendium=4B2E75,331C54,D4AF37,E5DCF0"
+                },
+                "Recolors the floating book model shown on the Lectern (the same animated book used by vanilla's "
+                + "Enchanting Table) for specific books, so different mods' books look distinct instead of all "
+                + "sharing the same vanilla brown. "
+                + "Format: modid:item[:meta]=coverHex,frameHex,pixelsHex[,paperHex] (hex with or without a "
+                + "leading '#'). coverHex recolors the book's main cover panels, frameHex recolors the darker "
+                + "seams/edges around and between them, and pixelsHex recolors the small corner studs. paperHex "
+                + "is optional and tints the pages, preserving their shading (so it looks like colored/aged "
+                + "paper rather than a flat color); omit it, or use white (FFFFFF), to keep plain vanilla pages. "
+                + "Items with no entry here keep the vanilla look. Pick colors with real brightness, not just hue: "
+                + "the model is lit in-world (block light plus per-face shading) on top of whatever you set here, "
+                + "so a color sampled from flat/unlit icon art (or anything with perceived brightness much below "
+                + "vanilla frameHex 774E22's) will commonly read as solid black once placed."
         ).getStringList();
 
         this.obeliskExtraFuels = this.get(CATEGORY_GENERAL, this.KEY_ObeliskExtraFuels,
@@ -2878,6 +2938,14 @@ public class AMConfig extends Configuration {
 
     public String[] getLecternBooks() {
         return this.lecternBooks;
+    }
+
+    public String[] getLecternGuiHandlers() {
+        return this.lecternGuiHandlers;
+    }
+
+    public String[] getLecternBookColors() {
+        return this.lecternBookColors;
     }
 
     public String[] getObeliskExtraFuels() {
