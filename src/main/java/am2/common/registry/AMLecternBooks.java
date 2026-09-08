@@ -75,7 +75,9 @@ public final class AMLecternBooks {
     }
 
     public static boolean isVaild(ItemStack stack) {
-        if(stack == null || stack.isEmpty() || !books.containsKey(stack.getItem()))
+        if (stack == null || stack.isEmpty())
+            return false;
+        if (!books.containsKey(stack.getItem()))
             return false;
         int metadata = books.get(stack.getItem());
         return metadata == OreDictionary.WILDCARD_VALUE || metadata == stack.getMetadata();
@@ -102,7 +104,7 @@ public final class AMLecternBooks {
         if (spec == null)
             return false;
 
-        if (spec.call != null) {
+        if (spec.call != null && spec.call.canInvoke(world)) {
             try {
                 spec.call.invoke(stack);
             } catch (ReflectiveOperationException e) {
@@ -312,10 +314,21 @@ public final class AMLecternBooks {
         }
     }
 
-    /** Resolves a {@code fully.qualified.Class#staticField.instanceMethod} spec into a callable. */
+    /**
+     * Resolves a {@code [client:]fully.qualified.Class#staticField.instanceMethod[(argument)]}
+     * spec into a callable. The default argument is the placed {@link ItemStack}. Supported
+     * explicit arguments are {@code stack}, {@code nbt_string:key}, and
+     * {@code nbt_resource:key}.
+     */
     private static ReflectiveCall tryResolveCall(String spec, String entry, String configLabel) {
+        boolean clientOnly = spec.startsWith("client:");
+        if (clientOnly)
+            spec = spec.substring("client:".length());
+
         int hash = spec.indexOf('#');
-        int dot = spec.lastIndexOf('.');
+        int argumentStart = spec.indexOf('(', hash);
+        int methodEnd = argumentStart < 0 ? spec.length() : argumentStart;
+        int dot = spec.lastIndexOf('.', methodEnd - 1);
         if (dot < hash + 1) {
             ArsMagica.LOGGER.warn("Malformed GUI handler spec '{}' in '{}' ({}). Expected fully.qualified.Class#staticField.instanceMethod. GUI handler skipped.", spec, entry, configLabel);
             return null;
@@ -323,15 +336,67 @@ public final class AMLecternBooks {
 
         String className = spec.substring(0, hash);
         String fieldName = spec.substring(hash + 1, dot);
-        String methodName = spec.substring(dot + 1);
+        String methodName = spec.substring(dot + 1, methodEnd);
+        String argumentSpec = "stack";
+        if (argumentStart >= 0) {
+            if (!spec.endsWith(")")) {
+                ArsMagica.LOGGER.warn("Malformed argument selector in '{}' ({}). GUI handler skipped.", entry, configLabel);
+                return null;
+            }
+            argumentSpec = spec.substring(argumentStart + 1, spec.length() - 1).trim();
+        }
+
+        ReflectiveArgument argument = tryResolveArgument(argumentSpec, entry, configLabel);
+        if (argument == null)
+            return null;
 
         try {
             Field field = Class.forName(className).getField(fieldName);
-            Method method = field.getType().getMethod(methodName, ItemStack.class);
-            return stack -> method.invoke(field.get(null), stack);
+            Method method = field.getType().getMethod(methodName, argument.type);
+            return new ReflectiveCall(field, method, argument, clientOnly);
         } catch (ReflectiveOperationException e) {
             ArsMagica.LOGGER.info("GUI handler target '{}' in {} not resolvable ({}: {}); mod may not be loaded, or its internals changed. GUI handler skipped for this entry.", spec, configLabel, e.getClass().getSimpleName(), e.getMessage());
             return null;
+        }
+    }
+
+    private static ReflectiveArgument tryResolveArgument(String spec, String entry, String configLabel) {
+        if (spec.equals("stack"))
+            return new ReflectiveArgument(ItemStack.class, stack -> stack);
+
+        int colon = spec.indexOf(':');
+        if (colon < 1 || colon == spec.length() - 1) {
+            ArsMagica.LOGGER.warn("Unknown argument selector '{}' in '{}' ({}). GUI handler skipped.", spec, entry, configLabel);
+            return null;
+        }
+
+        String type = spec.substring(0, colon);
+        String key = spec.substring(colon + 1);
+        if (type.equals("nbt_string"))
+            return new ReflectiveArgument(String.class, stack -> getRequiredNbtString(stack, key));
+        if (type.equals("nbt_resource"))
+            return new ReflectiveArgument(ResourceLocation.class, stack -> getRequiredNbtResource(stack, key));
+
+        ArsMagica.LOGGER.warn("Unknown argument selector '{}' in '{}' ({}). GUI handler skipped.", spec, entry, configLabel);
+        return null;
+    }
+
+    private static String getRequiredNbtString(ItemStack stack, String key) throws ReflectiveOperationException {
+        String value = stack.hasTagCompound() ? stack.getTagCompound().getString(key) : "";
+        if (value.isEmpty())
+            throw new ReflectiveOperationException("Placed book has no NBT string '" + key + "'");
+        return value;
+    }
+
+    private static ResourceLocation getRequiredNbtResource(ItemStack stack, String key) throws ReflectiveOperationException {
+        String value = getRequiredNbtString(stack, key);
+        try {
+            return new ResourceLocation(value);
+        } catch (RuntimeException e) {
+            ReflectiveOperationException failure = new ReflectiveOperationException(
+                    "NBT string '" + key + "' is not a valid resource location: " + value);
+            failure.initCause(e);
+            throw failure;
         }
     }
 
@@ -423,8 +488,40 @@ public final class AMLecternBooks {
     }
 
     @FunctionalInterface
-    private interface ReflectiveCall {
-        void invoke(ItemStack stack) throws ReflectiveOperationException;
+    private interface ArgumentResolver {
+        Object resolve(ItemStack stack) throws ReflectiveOperationException;
+    }
+
+    private static final class ReflectiveArgument {
+        final Class<?> type;
+        final ArgumentResolver resolver;
+
+        ReflectiveArgument(Class<?> type, ArgumentResolver resolver) {
+            this.type = type;
+            this.resolver = resolver;
+        }
+    }
+
+    private static final class ReflectiveCall {
+        final Field field;
+        final Method method;
+        final ReflectiveArgument argument;
+        final boolean clientOnly;
+
+        ReflectiveCall(Field field, Method method, ReflectiveArgument argument, boolean clientOnly) {
+            this.field = field;
+            this.method = method;
+            this.argument = argument;
+            this.clientOnly = clientOnly;
+        }
+
+        boolean canInvoke(World world) {
+            return !clientOnly || world.isRemote;
+        }
+
+        void invoke(ItemStack stack) throws ReflectiveOperationException {
+            method.invoke(field.get(null), argument.resolver.resolve(stack));
+        }
     }
 
     /** RGB (0xRRGGBB, no alpha) colors for the paintable regions of the floating book model. */

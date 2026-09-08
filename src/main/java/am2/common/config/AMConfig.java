@@ -1548,14 +1548,17 @@ public class AMConfig extends Configuration {
                         "ancientspellcraft:ancient_spellcraft_spell_book:-1=com.windanesz.ancientspellcraft.client.gui.GuiAncientElementSpellBook",
                         "ancientspellcraft:mystic_spell_book:-1=com.windanesz.ancientspellcraft.client.gui.GuiSageSpellBook",
                         "ancientspellcraft:forbidden_tome:-1=com.windanesz.ancientspellcraft.client.gui.GuiWarlockSpellBook",
+                        "patchouli:guide_book:-1=client:vazkii.patchouli.api.PatchouliAPI#instance.openBookGUI(nbt_resource:patchouli:book)",
                         "abyssalcraft:necronomicon=com.shinoow.abyssalcraft.client.gui.necronomicon.GuiNecronomicon#currentNecro"
                 },
                 "Books that, like " + KEY_LecternBooks + ", can be placed onto the Lectern, but which ALSO open "
                 + "their own mod's GUI when read there instead of doing nothing (no separate " + KEY_LecternBooks
                 + " entry is needed for these - placement is implied). "
-                + "Format: modid:item[:meta]=token[,token]. Each token is a plain integer (a Forge IGuiHandler gui "
+                + "Alright, here be dragons! Format: modid:item[:meta]=token[,token]. Each token is a plain integer (a Forge IGuiHandler gui "
                 + "id, opened via player.openGui(...)), a fully.qualified.Class#staticField.instanceMethod "
-                + "reflective call (invoked with the stack being read), a bare fully.qualified.GuiScreenClass "
+                + "reflective call (invoked with the stack being read), a client:-prefixed reflective call, a "
+                + "reflective call with an argument selector such as (nbt_string:key) or (nbt_resource:key), a "
+                + "bare fully.qualified.GuiScreenClass "
                 + "name with an (ItemStack) constructor, shown directly via Minecraft.displayGuiScreen(...), or a "
                 + "fully.qualified.Class#staticField with no trailing .method, whose value is a ready-to-show "
                 + "GuiScreen singleton shown as-is - order doesn't matter, and a mod only needs the token(s) it "
