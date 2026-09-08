@@ -13,17 +13,18 @@ import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 
 /**
  * Toggled with a key bind (see Keybindings.TAILWIND). While on, double-jumping — vanilla's own
- * creative-flight gesture — burns from a depth-scaled "air" reserve for short bursts of real flight.
- * <p>
- * The flight grant reuses the exact technique {@code BuffEffectFlight} (the Flight spell's potion
- * effect) already relies on — {@code capabilities.allowFlying} plus {@code sendPlayerAbilities()} —
- * just driven by the fuel gauge instead of a potion duration, so it stays server-authoritative and
- * doesn't need any client-side capability prediction.
+ * creative-flight gesture — burns from a depth-scaled "air" reserve for short bursts of real flight,
+ * via {@code capabilities.allowFlying}/{@code sendPlayerAbilities()}.
  */
 public class AbilityTailwind extends AbstractToggledAffinityAbility {
 
     public static final String FUEL_KEY = "tailwind_fuel";
     private static final String REGEN_COOLDOWN_KEY = "TailwindRegen";
+    // Tracks whether Tailwind itself granted the current allowFlying/isFlying state, as opposed to
+    // another mod's item (Thaumcraft's Thaumostatic Harness, Botania's Flugel Tiara, ...) that grants
+    // survival flight through those same vanilla fields — without this, Tailwind would revoke flight
+    // it never granted every time it doesn't apply, i.e. for every player who's never touched it.
+    private static final String GRANTED_FLIGHT_KEY = "tailwind_granted_flight";
     private static final float VANILLA_FLY_SPEED = 0.05f;
 
     public AbilityTailwind() {
@@ -45,9 +46,6 @@ public class AbilityTailwind extends AbstractToggledAffinityAbility {
         return AffinityData.For(player).getAbilityBoolean(AffinityData.TAILWIND);
     }
 
-    // hasClientTick() is deliberately left at its default (false): everything here only touches
-    // capabilities.allowFlying/isFlying, which are server-authoritative and synced to the client via
-    // sendPlayerAbilities() rather than needing client-side motion prediction.
     @Override
     public void applyTick(EntityPlayer player) {
         if (!managesFlightFor(player)) return;
@@ -55,39 +53,33 @@ public class AbilityTailwind extends AbstractToggledAffinityAbility {
         AffinityData data = AffinityData.For(player);
         float maxFuel = computeMaxFuel(data);
         float fuel = Math.min(maxFuel, data.getAbilityFloat(FUEL_KEY));
+        boolean grantedByUs = data.getAbilityBoolean(GRANTED_FLIGHT_KEY);
 
-        if (player.capabilities.isFlying) {
+        if (player.capabilities.isFlying && grantedByUs) {
             fuel -= ArsMagica.config.getAffinityTailwindFlightDrainPerTick();
             if (fuel <= 0f) {
                 fuel = 0f;
-                revokeFlight(player);
+                revokeFlight(player, data);
                 data.addCooldown(REGEN_COOLDOWN_KEY, ArsMagica.config.getAffinityTailwindFullDepletionRegenDelay());
             } else {
-                // Primes the shorter delay in case this turns out to be the last tick of flight (the
-                // player lands, or double-taps jump again to stop) — refreshed every tick while still
-                // flying, so it's a no-op until flight actually ends, at which point whatever this was
-                // last set to (this branch's short delay, or the depletion branch's longer one above)
-                // is what governs the pause before regen resumes.
                 data.addCooldown(REGEN_COOLDOWN_KEY, ArsMagica.config.getAffinityTailwindPartialRegenDelay());
                 spawnTrailParticles(player);
             }
-        } else if (data.getCooldown(REGEN_COOLDOWN_KEY) <= 0) {
+        } else if (!player.capabilities.isFlying && data.getCooldown(REGEN_COOLDOWN_KEY) <= 0) {
             fuel = Math.min(maxFuel, fuel + ArsMagica.config.getAffinityTailwindFuelRegenPerTick());
         }
 
-        // Any reserve above zero is immediately flyable — no separate "banked enough to resume" gate.
-        // The cooldown above only controls when regen begins, never how much is needed once it does;
-        // gating on a banked fraction on top of that was what made a partial refill look available
-        // (fuel ticking up, the crosshair ring shrinking back) while flight still silently refused to
-        // re-engage.
         boolean shouldAllowFlying = fuel > 0f;
-        if (shouldAllowFlying != player.capabilities.allowFlying) {
-            player.capabilities.allowFlying = shouldAllowFlying;
-            // Vanilla creative flight's own speed (flySpeed) otherwise applies unmodified; set here
-            // (and reset back on revoke, including in revokeFlight() below) so Tailwind flight has
-            // its own configurable pace instead of just inheriting creative's.
-            player.capabilities.setFlySpeed(shouldAllowFlying ? ArsMagica.config.getAffinityTailwindFlightSpeed() : VANILLA_FLY_SPEED);
+        grantedByUs = data.getAbilityBoolean(GRANTED_FLIGHT_KEY);
+        // Only claim allowFlying when it's currently off — if another mod's item already has it on,
+        // leave it to that mod so a later fuel depletion doesn't revoke a grant that wasn't ours.
+        if (shouldAllowFlying && !grantedByUs && !player.capabilities.allowFlying) {
+            player.capabilities.allowFlying = true;
+            player.capabilities.setFlySpeed(ArsMagica.config.getAffinityTailwindFlightSpeed());
             player.sendPlayerAbilities();
+            data.addAbilityBoolean(GRANTED_FLIGHT_KEY, true);
+        } else if (!shouldAllowFlying && grantedByUs) {
+            revokeFlight(player, data);
         }
 
         data.addAbilityFloat(FUEL_KEY, fuel);
@@ -95,11 +87,11 @@ public class AbilityTailwind extends AbstractToggledAffinityAbility {
 
     @Override
     public void applyFlyableFall(EntityPlayer player, PlayerFlyableFallEvent event) {
-        // Vanilla skips EntityLivingBase.fall() whenever allowFlying is true,
-        // even when the player is merely falling and isFlying is false. Run the
-        // normal fall path for Tailwind freefalls, while preserving the flight
-        // capability for the next input tick.
+        // Vanilla skips EntityLivingBase.fall() whenever allowFlying is true, even if isFlying is
+        // false. Run the normal fall path for Tailwind freefalls specifically — but only when
+        // Tailwind granted the flight, so this doesn't force fall damage on another mod's flight item.
         if (player.capabilities.isFlying) return;
+        if (!AffinityData.For(player).getAbilityBoolean(GRANTED_FLIGHT_KEY)) return;
 
         boolean allowFlying = player.capabilities.allowFlying;
         player.capabilities.allowFlying = false;
@@ -107,12 +99,7 @@ public class AbilityTailwind extends AbstractToggledAffinityAbility {
         player.capabilities.allowFlying = allowFlying;
     }
 
-    // The base reserve is what you get right at the minimum qualifying depth; it then scales
-    // linearly up to maxDurationMultiplier times that amount at 100% depth. Never bottoms out at
-    // zero — barely qualifying still gets you the full base duration.
-    //
-    // Public/static so the crosshair HUD ring (AMIngameGUI) can compute the same fraction the fuel
-    // gauge itself uses, without duplicating the ramp math or needing a live ability instance.
+    // Public/static so the crosshair HUD ring (AMIngameGUI) can compute the same fraction.
     public static float computeMaxFuel(AffinityData data) {
         float minDepth = ArsMagica.config.getAffinityTailwindMinDepth();
         float baseFuel = ArsMagica.config.getAffinityTailwindBaseFuelTicks();
@@ -124,11 +111,12 @@ public class AbilityTailwind extends AbstractToggledAffinityAbility {
         return baseFuel * multiplier;
     }
 
-    private void revokeFlight(EntityPlayer player) {
+    private void revokeFlight(EntityPlayer player, AffinityData data) {
         player.capabilities.allowFlying = false;
         player.capabilities.isFlying = false;
         player.capabilities.setFlySpeed(VANILLA_FLY_SPEED);
         player.sendPlayerAbilities();
+        data.addAbilityBoolean(GRANTED_FLIGHT_KEY, false);
     }
 
     private void spawnTrailParticles(EntityPlayer player) {
@@ -138,24 +126,17 @@ public class AbilityTailwind extends AbstractToggledAffinityAbility {
                 3, player.width * 0.35D, 0.1D, player.width * 0.35D, 0.01D);
     }
 
-    // Deliberately leaves the banked fuel alone: this only fires when the ability stops applying
-    // (toggled off, or depth dropped below the threshold), and the reserve needs to persist across
-    // that rather than reset. The regen-delay cooldown doesn't need any handling here either — like
-    // every other ability's cooldowns, AffinityAbilityHelper ticks it down unconditionally regardless
-    // of whether this ability currently applies.
     @Override
     public void removeEffects(EntityPlayer player) {
-        if (managesFlightFor(player) && (player.capabilities.allowFlying || player.capabilities.isFlying)) {
-            revokeFlight(player);
+        AffinityData data = AffinityData.For(player);
+        if (managesFlightFor(player) && data.getAbilityBoolean(GRANTED_FLIGHT_KEY)) {
+            revokeFlight(player, data);
         }
     }
 
-    // Spectators get allowFlying=true, isFlying=true forced by GameType.configurePlayerCapabilities
-    // and have no other way to regain them (only creative mode grants allowFlying on its own outside
-    // this ability) — isCreativeMode is false for spectators too, so checking only that let this
-    // ability treat a spectator as "actively flying" every tick, immediately drain to empty, and
-    // permanently revoke allowFlying. With isFlying then forced false but noclip still on, the result
-    // was an uncontrollable fall through the world instead of the spectator's normal free-float.
+    // Spectators get allowFlying=true/isFlying=true forced by vanilla with no other way to regain
+    // them, so treating them like a normal player here would drain to empty and permanently revoke
+    // flight, leaving them falling through the world with noclip still on.
     private static boolean managesFlightFor(EntityPlayer player) {
         return !player.capabilities.isCreativeMode && !player.isSpectator();
     }
