@@ -66,7 +66,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Loader;
@@ -971,7 +970,12 @@ public final class EBWizardryCompatHandler {
         fakeModifiers.set(SpellModifiers.POTENCY, 1.0f, false);
         Spell representative = spellForAffinity(dominantAffinity);
         electroblob.wizardry.event.SpellCastEvent.Pre fakeEvent = new electroblob.wizardry.event.SpellCastEvent.Pre(electroblob.wizardry.event.SpellCastEvent.Source.WAND, representative, player, fakeModifiers);
-        MinecraftForge.EVENT_BUS.post(fakeEvent);
+        // Invoke ItemArtefact's handler directly instead of posting to the shared Forge event
+        // bus. Posting a real SpellCastEvent.Pre here is indistinguishable from an actual wand
+        // cast to every other listener on the bus - notably EBWiz's own Forfeit.onSpellCastPreEvent
+        // (spell-discovery mechanic), which would roll its forfeit chance against this fake event
+        // since the sentinel spell is never "discovered", spuriously punishing the player.
+        ItemArtefact.onSpellCastPreEvent(fakeEvent);
         float potency = fakeModifiers.get(SpellModifiers.POTENCY);
         if (potency <= 1.0f) return 1.0f;
         return 1.0f + (potency - 1.0f) * ratio;
