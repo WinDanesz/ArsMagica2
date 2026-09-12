@@ -427,6 +427,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
+    public void flashLowMana() {
+        AMGuiHelper.instance.flashLowMana();
+    }
+
+    @Override
     public void spawnManaBatterySparkle(TileEntityManaBattery te) {
         float fullness = (float)te.getClientEnergy() / te.getCapacity();
         double rx1 = te.getWorld().rand.nextDouble() - 0.5;

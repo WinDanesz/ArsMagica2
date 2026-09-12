@@ -945,6 +945,7 @@ public class AMConfig extends Configuration {
     private double regenScalingBase;
     private double regenScalingPerLevel;
     private double xpRateMultiplier;
+    private double npcManaRegenMultiplier;
     /** End Mana & Progression **/
 
     /** Power System **/
@@ -1720,6 +1721,7 @@ public class AMConfig extends Configuration {
         this.regenScalingBase = this.get(CATEGORY_GENERAL, this.KEY_RegenScalingBase, 0.75, "Base factor in the regen speed formula: regenTicks = baseTicks * (base - perLevel * level/levelCap). Default: 0.75").getDouble(0.75);
         this.regenScalingPerLevel = this.get(CATEGORY_GENERAL, this.KEY_RegenScalingPerLevel, 0.25, "Per-level scaling factor in the regen speed formula. Higher = more regen improvement at high levels. Default: 0.25").getDouble(0.25);
         this.xpRateMultiplier = this.get(CATEGORY_GENERAL, this.KEY_XPRateMultiplier, 1.0, "Multiplier for magic XP gain rate. Values above 1.0 make leveling faster, below 1.0 make it slower. Default: 1.0").getDouble(1.0);
+        this.npcManaRegenMultiplier = this.get(CATEGORY_GENERAL, this.KEY_NpcManaRegenMultiplier, 4.0, "Extra mana regen speed multiplier applied only to non-player spellcasters (elementals, mages, guardians, etc.), on top of the normal regen formula. Higher = faster. Does not affect players. Default: 4.0").getDouble(4.0);
 
         // Power System
         this.powerSearchRadius = this.get(CATEGORY_POWER, this.KEY_PowerSearchRadius, 10, "The search radius in blocks for finding nearby power nodes. Default: 10").getInt();
@@ -3233,6 +3235,7 @@ public class AMConfig extends Configuration {
     public double getRegenScalingBase() { return this.regenScalingBase; }
     public double getRegenScalingPerLevel() { return this.regenScalingPerLevel; }
     public double getXPRateMultiplier() { return this.xpRateMultiplier; }
+    public double getNpcManaRegenMultiplier() { return this.npcManaRegenMultiplier; }
 
     /** Power System config getters **/
     public int getPowerSearchRadius() { return this.powerSearchRadius; }

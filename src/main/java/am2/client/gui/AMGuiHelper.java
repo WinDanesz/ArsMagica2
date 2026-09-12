@@ -69,9 +69,10 @@ public class AMGuiHelper {
     //=========================================
     //Blackout variables (for the UI)
     //=========================================
-    private final short[] flashTimers = new short[5];
-    private final int[] blackoutTimers = new int[5];
-    private final int[] blackoutTimersMax = new int[5];
+    private final short[] flashTimers = new short[6];
+    private final int[] blackoutTimers = new int[6];
+    private final int[] blackoutTimersMax = new int[6];
+    private static final int LOW_MANA_FLASH_SLOT = 5;
     //=========================================
     // Compendium Variables
     //=========================================
@@ -129,6 +130,11 @@ public class AMGuiHelper {
     public void flashManaBar() {
         if (flashTimers[4] <= 1)
             flashTimers[4] = flashDuration;
+    }
+
+    public void flashLowMana() {
+        if (flashTimers[LOW_MANA_FLASH_SLOT] <= 1)
+            flashTimers[LOW_MANA_FLASH_SLOT] = flashDuration;
     }
 
     public short getFlashTimer(int index) {

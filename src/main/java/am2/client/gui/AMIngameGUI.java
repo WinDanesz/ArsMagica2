@@ -63,6 +63,7 @@ public class AMIngameGUI extends Gui {
     private float zLevel;
 
     private static final short MANA_BAR_FLASH_SLOT = 4;
+    private static final short LOW_MANA_FLASH_SLOT = 5;
 //	private final PotionEffectDurationComparator durationComparator = new PotionEffectDurationComparator();
 
     //	private static final ResourceLocation inv_top = new ResourceLocation(ArsMagica2.MODID, "textures/gui/inventory_top.png");
@@ -365,6 +366,7 @@ public class AMIngameGUI extends Gui {
 
         boolean hasBonusMana = bonusMana > 0;
         boolean hasOverloadMana = mana > (maxMana + 1);
+        Float heldSpellManaCost = this.getHeldItemSpellManaCost();
 
         if (ArsMagica.config.showHudBars()) {
             //handle flashing of mana bar
@@ -486,12 +488,43 @@ public class AMIngameGUI extends Gui {
                 GlStateManager.color(1.0f, 1.0f, 1.0f);
             }
         } else if (ArsMagica.config.showHudOrbs()) {
-            this.RenderManaOrbs(i, j, mana, bonusMana, maxMana, hasBonusMana, hasOverloadMana, Burnout, maxBurnout);
+            this.RenderManaOrbs(i, j, mana, bonusMana, maxMana, hasBonusMana, hasOverloadMana, Burnout, maxBurnout, heldSpellManaCost);
         }
 
         if (ArsMagica.config.showHudBars() && ArsMagica.config.getShowNumerics()) {
             GlStateManager.enableBlend();
             String spellcost = "";
+            if (heldSpellManaCost != null) {
+                spellcost = (EntityExtension.For(Minecraft.getMinecraft().player).hasEnoughMana(heldSpellManaCost) ? ChatFormatting.AQUA.toString() : ChatFormatting.DARK_RED.toString()) + " (" + heldSpellManaCost.intValue() + ")";
+                spellcost += ChatFormatting.RESET.toString();
+            }
+
+            String manaStr = I18n.format("am2.gui.mana") + ": " + Math.round(mana + bonusMana) + "/" + Math.round(maxMana) + spellcost;
+            String burnoutStr = I18n.format("am2.gui.burnout") + ": " + Math.round(props.getCurrentBurnout()) + "/" + Math.round(props.getMaxBurnout());
+            AMVector2 manaNumericPos = this.getShiftedVector(ArsMagica.config.getManaNumericPosition(), i, j);
+            AMVector2 burnoutNumericPos = this.getShiftedVector(ArsMagica.config.getBurnoutNumericPosition(), i, j);
+            int manaTextColor = hasBonusMana ? 0xeae31c : hasOverloadMana ? 0xFF2020 : 0x2080FF;
+            fontRenderer.drawString(manaStr, manaNumericPos.iX, manaNumericPos.iY, this.applyLowManaFlash(manaTextColor));
+            fontRenderer.drawString(burnoutStr, burnoutNumericPos.iX + 25 - fontRenderer.getStringWidth(burnoutStr), burnoutNumericPos.iY, 0xFF2020);
+        }
+        //Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+    }
+
+    // Blinks the mana a few times after a cast attempt
+    private int applyLowManaFlash(int normalColor) {
+        short flashTimer = AMGuiHelper.instance.getFlashTimer(LOW_MANA_FLASH_SLOT);
+        if (flashTimer > 0 && (flashTimer / 4) % 2 == 0) {
+            return 0xFFFFFF;
+        }
+        return normalColor;
+    }
+
+    /**
+     * Mana cost of whatever spell the player is currently holding/casting (spell item, spellbook, arcane
+     * spellbook, an EBWiz-bound item, or an EBWiz wand's active spell), or null if the held item isn't
+     * spell-like. Burnout surcharge and EBWiz discounts are already applied.
+     */
+    private Float getHeldItemSpellManaCost() {
             ItemStack curItem = Minecraft.getMinecraft().player.getHeldItem(EnumHand.MAIN_HAND);
             if (!curItem.isEmpty() && (curItem.getItem() == AMItems.spell
                     || curItem.getItem() == AMItems.spellbook || curItem.getItem() == AMItems.arcane_spellbook)) {
@@ -510,15 +543,13 @@ public class AMIngameGUI extends Gui {
                         if (EBWizardryCompatBootstrap.isActive) {
                             manaCost *= EBWizardryCompatHandler.getAM2SpellDiscount(Minecraft.getMinecraft().player, caster.createSpellData(spellStack));
                         }
-                        spellcost = (EntityExtension.For(Minecraft.getMinecraft().player).hasEnoughMana(manaCost) ? ChatFormatting.AQUA.toString() : ChatFormatting.DARK_RED.toString()) + " (" + (int) (manaCost) + ")";
-                        spellcost += ChatFormatting.RESET.toString();
+                    return manaCost;
                     } else if (AMItems.ebwiz_spell_binding != null && spellStack.getItem() == AMItems.ebwiz_spell_binding) {
                         float manaCost = EBWizardryCompatBootstrap.getEBWizSpellBindingManaCost(spellStack, Minecraft.getMinecraft().player);
                         if (manaCost >= 0) {
                             IEntityExtension ext = EntityExtension.For(Minecraft.getMinecraft().player);
                             if (ext != null && ext.getMaxBurnout() > 0) manaCost *= (1 + (ext.getCurrentBurnout() / ext.getMaxBurnout()));
-                            spellcost = (EntityExtension.For(Minecraft.getMinecraft().player).hasEnoughMana(manaCost) ? ChatFormatting.AQUA.toString() : ChatFormatting.DARK_RED.toString()) + " (" + (int) (manaCost) + ")";
-                            spellcost += ChatFormatting.RESET.toString();
+                        return manaCost;
                         }
                     }
                 }
@@ -527,34 +558,24 @@ public class AMIngameGUI extends Gui {
                 if (manaCost >= 0) {
                     IEntityExtension ext = EntityExtension.For(Minecraft.getMinecraft().player);
                     if (ext != null && ext.getMaxBurnout() > 0) manaCost *= (1 + (ext.getCurrentBurnout() / ext.getMaxBurnout()));
-                    spellcost = (EntityExtension.For(Minecraft.getMinecraft().player).hasEnoughMana(manaCost) ? ChatFormatting.AQUA.toString() : ChatFormatting.DARK_RED.toString()) + " (" + (int) (manaCost) + ")";
-                    spellcost += ChatFormatting.RESET.toString();
+                return manaCost;
                 }
             } else if (AMItems.ebwiz_spell_binding != null && curItem.getItem() == AMItems.ebwiz_spell_binding) {
                 float manaCost = EBWizardryCompatBootstrap.getEBWizSpellBindingManaCost(curItem, Minecraft.getMinecraft().player);
                 if (manaCost >= 0) {
                     IEntityExtension ext = EntityExtension.For(Minecraft.getMinecraft().player);
                     if (ext != null && ext.getMaxBurnout() > 0) manaCost *= (1 + (ext.getCurrentBurnout() / ext.getMaxBurnout()));
-                    spellcost = (EntityExtension.For(Minecraft.getMinecraft().player).hasEnoughMana(manaCost) ? ChatFormatting.AQUA.toString() : ChatFormatting.DARK_RED.toString()) + " (" + (int) (manaCost) + ")";
-                    spellcost += ChatFormatting.RESET.toString();
+                return manaCost;
                 }
             }
-
-            String manaStr = I18n.format("am2.gui.mana") + ": " + Math.round(mana + bonusMana) + "/" + Math.round(maxMana) + spellcost;
-            String burnoutStr = I18n.format("am2.gui.burnout") + ": " + Math.round(props.getCurrentBurnout()) + "/" + Math.round(props.getMaxBurnout());
-            AMVector2 manaNumericPos = this.getShiftedVector(ArsMagica.config.getManaNumericPosition(), i, j);
-            AMVector2 burnoutNumericPos = this.getShiftedVector(ArsMagica.config.getBurnoutNumericPosition(), i, j);
-            fontRenderer.drawString(manaStr, manaNumericPos.iX, manaNumericPos.iY, hasBonusMana ? 0xeae31c : hasOverloadMana ? 0xFF2020 : 0x2080FF);
-            fontRenderer.drawString(burnoutStr, burnoutNumericPos.iX + 25 - fontRenderer.getStringWidth(burnoutStr), burnoutNumericPos.iY, 0xFF2020);
-        }
-        //Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        return null;
     }
 
     /**
      * Diablo2-style alternative HUD: a blue mana orb (bottom-right) and a red burnout orb (bottom-left),
      * each filled with an animated liquid that sloshes and bubbles, behind a pixel-art bezel frame.
      */
-    private void RenderManaOrbs(int i, int j, float mana, float bonusMana, float maxMana, boolean hasBonusMana, boolean hasOverloadMana, float burnout, float maxBurnout) {
+    private void RenderManaOrbs(int i, int j, float mana, float bonusMana, float maxMana, boolean hasBonusMana, boolean hasOverloadMana, float burnout, float maxBurnout, Float heldSpellManaCost) {
         if (maxMana <= 0) {
             maxMana = 100;
             mana = 0;
@@ -600,7 +621,9 @@ public class AMIngameGUI extends Gui {
             GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
             String manaStr = Math.round(renderMana) + "/" + Math.round(maxMana);
             String burnoutStr = Math.round(burnout) + "/" + Math.round(maxBurnout);
-            int manaColor = hasBonusMana ? 0xeae31c : hasOverloadMana ? 0xFF2020 : packRgb(manaTint);
+            boolean notEnoughMana = heldSpellManaCost != null && !EntityExtension.For(this.mc.player).hasEnoughMana(heldSpellManaCost);
+            int manaColor = notEnoughMana ? 0xFF2020 : hasBonusMana ? 0xeae31c : hasOverloadMana ? 0xFF2020 : packRgb(manaTint);
+            manaColor = this.applyLowManaFlash(manaColor);
             this.mc.fontRenderer.drawStringWithShadow(manaStr, manaX + orbSize / 2 - this.mc.fontRenderer.getStringWidth(manaStr) / 2, manaY + orbSize + 2, manaColor);
             this.mc.fontRenderer.drawStringWithShadow(burnoutStr, burnoutX + orbSize / 2 - this.mc.fontRenderer.getStringWidth(burnoutStr) / 2, burnoutY + orbSize + 2, 0xFF2020);
         }
