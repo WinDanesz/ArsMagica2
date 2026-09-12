@@ -178,7 +178,8 @@ public class SpellCaster implements ISpellCaster, ICapabilityProvider, ICapabili
 
                 cost += _cost * _multiplier;
             }
-            if (result != SpellCastResult.FREE_CAST) {
+            boolean isCreativePlayer = caster instanceof EntityPlayer && ((EntityPlayer) caster).capabilities.isCreativeMode;
+            if (result != SpellCastResult.FREE_CAST && !isCreativePlayer) {
                 float totalBurnout = cost * multiplier;
                 if (caster.getAttributeMap() != null && caster.getAttributeMap().getAttributeInstance(ArsMagicaAPI.burnoutGenerationMultiplier) != null) {
                     totalBurnout *= (float) caster.getAttributeMap().getAttributeInstance(ArsMagicaAPI.burnoutGenerationMultiplier).getAttributeValue();
@@ -189,6 +190,9 @@ public class SpellCaster implements ISpellCaster, ICapabilityProvider, ICapabili
                 MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(caster, data, manaCost));
             }
             return result == SpellCastResult.SUCCESS || result == SpellCastResult.FREE_CAST;
+        }
+        if (world.isRemote && caster instanceof EntityPlayer) {
+            ArsMagica.proxy.flashLowMana();
         }
         return false;
     }

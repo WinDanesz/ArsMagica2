@@ -775,9 +775,13 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
         if (this.isGravityDisabled()) {
             this.entity.motionY = 0;
         }
+        boolean isCreativePlayer = this.entity instanceof EntityPlayer && ((EntityPlayer) this.entity).capabilities.isCreativeMode;
+        if (isCreativePlayer && this.getCurrentBurnout() > 0) {
+            this.setCurrentBurnout(0);
+        }
         float actualMaxMana = this.getMaxMana();
         if (this.getCurrentMana() < actualMaxMana) {
-            if (this.entity instanceof EntityPlayer && ((EntityPlayer) this.entity).capabilities.isCreativeMode) {
+            if (isCreativePlayer) {
                 this.setCurrentMana(actualMaxMana);
             } else {
                 if (this.getCurrentMana() < 0) {
@@ -869,7 +873,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
             this.setManaShielding(this.getManaShielding() - toRemove);
         }
 
-        if (this.getCurrentBurnout() > 0) {
+        if (!isCreativePlayer && this.getCurrentBurnout() > 0) {
             // Recompute burnout factor (imbue-enchant scan + attribute lookup) on the same
             // interval as the regen multiplier to avoid per-tick inventory iteration.
             if (this.entity.ticksExisted - this.cachedBurnoutFactorTick >= REGEN_CACHE_INTERVAL) {
@@ -905,7 +909,7 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
         }
 
         // Standing in liquid essence gradually builds burnout, independent of current burnout level
-        if (this.entity instanceof EntityPlayer) {
+        if (!isCreativePlayer && this.entity instanceof EntityPlayer) {
             float maxBurnout = this.getMaxBurnout();
             if (maxBurnout > 0 && this.getCurrentBurnout() < maxBurnout
                     && this.entity.world.getBlockState(new BlockPos(this.entity)).getBlock() == AMBlocks.liquid_essence_block) {

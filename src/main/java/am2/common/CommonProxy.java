@@ -330,6 +330,9 @@ public class CommonProxy implements IGuiHandler {
     public void flashManaBar() {
     }
 
+    public void flashLowMana() {
+    }
+
     public void incrementFlickerCount() {
         this.totalFlickerCount++;
     }
