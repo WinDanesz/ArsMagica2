@@ -64,10 +64,27 @@ public class EntityAIRangedAttackSpell extends EntityAIBase {
 
         if (entityliving == null) {
             return false;
+        } else if (!canAffordAnySpell()) {
+            // Release the movement/look mutex so a lower-priority melee AI can take over
+            // instead of the host standing there failing to cast every cooldown forever..
+            return false;
         } else {
             attackTarget = entityliving;
             return true;
         }
+    }
+
+    private boolean canAfford(IEntityExtension ext, ItemStack spellStack) {
+        ISpellCaster caster = spellStack.getCapability(SpellCaster.INSTANCE, null);
+        return caster != null && ext.hasEnoughMana(caster.getManaCost(world, entityHost));
+    }
+
+    private boolean canAffordAnySpell() {
+        IEntityExtension ext = EntityExtension.For(entityHost);
+        for (ItemStack spellStack : spellStacks) {
+            if (canAfford(ext, spellStack)) return true;
+        }
+        return false;
     }
 
     /**
@@ -176,7 +193,22 @@ public class EntityAIRangedAttackSpell extends EntityAIBase {
     }
 
     protected ItemStack chooseSpell() {
+        IEntityExtension ext = EntityExtension.For(entityHost);
+        int affordableCount = 0;
+        for (ItemStack spellStack : spellStacks) {
+            if (canAfford(ext, spellStack)) affordableCount++;
+        }
+        if (affordableCount == 0) {
         return spellStacks[entityHost.getRNG().nextInt(spellStacks.length)];
+    }
+        int choice = entityHost.getRNG().nextInt(affordableCount);
+        for (ItemStack spellStack : spellStacks) {
+            if (canAfford(ext, spellStack)) {
+                if (choice == 0) return spellStack;
+                choice--;
+            }
+        }
+        return spellStacks[0];
     }
 
     /** Called after the selected spell has been resolved. */

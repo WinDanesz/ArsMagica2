@@ -844,6 +844,9 @@ public class EntityExtension implements IEntityExtension, ICapabilityProvider, I
                 }
 
                 float manaToAdd = (actualMaxMana / regenTicks);
+                if (!(this.entity instanceof EntityPlayer)) {
+                    manaToAdd *= (float) ArsMagica.config.getNpcManaRegenMultiplier();
+                }
 
                 this.setCurrentManaFromRegen(this.getCurrentMana() + manaToAdd);
                 if (this.getCurrentMana() > actualMaxMana) {

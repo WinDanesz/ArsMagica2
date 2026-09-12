@@ -318,6 +318,7 @@ public class AMConfig extends Configuration {
     private final String KEY_RegenScalingBase = "regen_scaling_base";
     private final String KEY_RegenScalingPerLevel = "regen_scaling_per_level";
     private final String KEY_XPRateMultiplier = "xp_rate_multiplier";
+    private final String KEY_NpcManaRegenMultiplier = "npc_mana_regen_multiplier";
     /** End Mana & Progression **/
 
     /** Power System **/
