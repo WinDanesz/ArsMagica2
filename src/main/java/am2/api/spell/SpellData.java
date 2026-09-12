@@ -81,6 +81,10 @@ public class SpellData {
         DataSerializers.registerSerializer(OPTIONAL_SPELL_DATA);
     }
 
+    // No-op; forces this class to load so OPTIONAL_SPELL_DATA registers at a fixed, identical point on every side instead of on first incidental use.
+    public static void init() {
+    }
+
     private List<List<SpellPart>> stages;
     private int exec;
     private NBTTagCompound storedData;

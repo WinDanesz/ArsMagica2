@@ -1,5 +1,6 @@
 package am2;
 
+import am2.api.spell.SpellData;
 import am2.api.spell.SpellPart;
 import am2.common.CommonProxy;
 import am2.common.advancement.AMAdvancementTriggers;
@@ -75,6 +76,8 @@ public class ArsMagica {
 
         Properties props = System.getProperties();
         props.setProperty("forge.verboseMissingModelLoggingCount", "200");
+
+        SpellData.init();
 
         configDir = new File(event.getModConfigurationDirectory(), ArsMagica.MODID);
         config = new AMConfig(new File(configDir, "am2.cfg"));
