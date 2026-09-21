@@ -259,6 +259,7 @@ public class AMSpells {
         SpellRegistryHelper.registerSpellComponent(registry, "leap", getComponentTexture("Leap"), SkillPoint.BLUE_SKILL_POINT, new Leap(), SkillTrees.TREE_DEFENSE, 222, 90, "arsmagica2:self");
         SpellRegistryHelper.registerSpellComponent(registry, "regeneration", getComponentTexture("Regeneration"), SkillPoint.BLUE_SKILL_POINT, new Regeneration(), SkillTrees.TREE_DEFENSE, 357, 90, "arsmagica2:self");
         SpellRegistryHelper.registerSpellComponent(registry, "shrink", getComponentTexture("Shrink"), SkillPoint.BLUE_SKILL_POINT, new Shrink(), SkillTrees.TREE_DEFENSE, 402, 90, "arsmagica2:regeneration");
+        SpellRegistryHelper.registerSpellComponent(registry, "enlarge", getComponentTexture("Enlarge"), SkillPoint.BLUE_SKILL_POINT, new Enlarge(), SkillTrees.TREE_DEFENSE, 447, 90, "arsmagica2:shrink");
         SpellRegistryHelper.registerSpellComponent(registry, "slowfall", getComponentTexture("Slowfall"), SkillPoint.BLUE_SKILL_POINT, new Slowfall(), SkillTrees.TREE_DEFENSE, 222, 135, "arsmagica2:leap");
         SpellRegistryHelper.registerSpellComponent(registry, "heal", getComponentTexture("Heal"), SkillPoint.BLUE_SKILL_POINT, new Heal(), SkillTrees.TREE_DEFENSE, 357, 135, "arsmagica2:regeneration");
         SpellRegistryHelper.registerSpellComponent(registry, "life_tap", getComponentTexture("LifeTap"), SkillPoint.GREEN_SKILL_POINT, new LifeTap(), SkillTrees.TREE_DEFENSE, 312, 135, "arsmagica2:heal");

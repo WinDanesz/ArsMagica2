@@ -35,6 +35,7 @@ public class AMPotions {
     public static final Potion regeneration = placeholder();
     public static final Potion scramble_synapses = placeholder();
     public static final Potion shield = placeholder();
+    public static final Potion enlarge = placeholder();
     public static final Potion shrink = placeholder();
     public static final Potion silence = placeholder();
     public static final Potion slowfall = placeholder();
@@ -76,6 +77,7 @@ public class AMPotions {
         registerPotion(registry, "regeneration", new BuffEffectRegeneration(false, 0xff00ff).setIconIndex(2, 6));
         registerPotion(registry, "scramble_synapses", new BuffEffectScrambleSynapses(true, 0x306600).setIconIndex(3, 7));
         registerPotion(registry, "shield", new BuffEffectShield(false, 0xc4c4c4).setIconIndex(0, 0));
+        registerPotion(registry, "enlarge", new BuffEffectEnlarge(false, 0x00dd00).setIconIndex(0, 5));
         registerPotion(registry, "shrink", new BuffEffectShrink(false, 0x0000dd).setIconIndex(0, 5));
         registerPotion(registry, "silence", new BuffEffectSilence(true, 0xc1c1ff).setIconIndex(4, 6));
         registerPotion(registry, "slowfall", new BuffEffectSlowfall(false, 0xe3ffe3).setIconIndex(2, 2));

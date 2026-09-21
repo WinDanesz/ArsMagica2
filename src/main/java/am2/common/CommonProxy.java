@@ -202,6 +202,7 @@ public class CommonProxy implements IGuiHandler {
             ArtemisLibCompat.register();
         } else {
             MinecraftForge.EVENT_BUS.register(new ShrinkHandler());
+            MinecraftForge.EVENT_BUS.register(new EnlargeHandler());
         }
         MinecraftForge.EVENT_BUS.register(new EventManager());
 
