@@ -30,6 +30,8 @@ public class ShrinkHandler {
             return;
         }
 
+        if (exProps == null) return;
+
         if (exProps.originalSize == null) {
             exProps.originalSize = new AMVector2(player.width, player.height);
         }
