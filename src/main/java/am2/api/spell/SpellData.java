@@ -24,7 +24,6 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
-import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -76,14 +75,6 @@ public class SpellData {
             return Optional.absent();
         }
     };
-
-    static {
-        DataSerializers.registerSerializer(OPTIONAL_SPELL_DATA);
-    }
-
-    // No-op; forces this class to load so OPTIONAL_SPELL_DATA registers at a fixed, identical point on every side instead of on first incidental use.
-    public static void init() {
-    }
 
     private List<List<SpellPart>> stages;
     private int exec;

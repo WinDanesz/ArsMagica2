@@ -1,6 +1,7 @@
 package am2.common.registry;
 
 import am2.ArsMagica;
+import am2.api.spell.SpellData;
 import am2.client.bosses.renderers.*;
 import am2.client.entity.render.*;
 import am2.common.LogHelper;
@@ -18,6 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
+import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Set;
@@ -27,6 +29,14 @@ public class AMEntities {
     public static final AMEntities instance = new AMEntities();
 
     private static int id = 0;
+
+    @SubscribeEvent
+    public static void registerDataSerializers(RegistryEvent.Register<DataSerializerEntry> event) {
+        event.getRegistry().register(
+            new DataSerializerEntry(SpellData.OPTIONAL_SPELL_DATA)
+                .setRegistryName(new ResourceLocation(ArsMagica.MODID, "optional_spell_data"))
+        );
+    }
 
     @SubscribeEvent
     public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
