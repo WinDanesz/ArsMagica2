@@ -14,6 +14,7 @@ import am2.common.affinity.AffinityAbilityHelper;
 import am2.common.armor.ArmorEventHandler;
 import am2.common.blocks.tileentity.*;
 import am2.common.compat.ancientspellcraft.AncientSpellcraftCompatBootstrap;
+import am2.common.compat.artemislib.ArtemisLibCompat;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.compat.potioncore.PotioncoreCompatBootstrap;
 import am2.common.container.*;
@@ -197,7 +198,11 @@ public class CommonProxy implements IGuiHandler {
         MinecraftForge.EVENT_BUS.register(new ArmorEventHandler());
         MinecraftForge.EVENT_BUS.register(playerTracker);
         MinecraftForge.EVENT_BUS.register(new FlickerEvents());
-        MinecraftForge.EVENT_BUS.register(new ShrinkHandler());
+        if (ArtemisLibCompat.isLoaded()) {
+            ArtemisLibCompat.register();
+        } else {
+            MinecraftForge.EVENT_BUS.register(new ShrinkHandler());
+        }
         MinecraftForge.EVENT_BUS.register(new EventManager());
 
         registerInfusions();

@@ -40,6 +40,11 @@ dependencies {
     // IBauble with @Optional.Interface. Not bundled; remains optional at runtime.
     compileOnly rfg.deobf('curse.maven:baubles-227083:2518667')
 
+    // ArtemisLib – soft dependency; when present at runtime, AM2's shrink spell delegates hitbox
+    // resizing to ArtemisLib's attribute system instead of the player-only ShrinkHandler, which
+    // also allows shrinking non-player mobs. Not bundled; remains optional at runtime.
+    compileOnly rfg.deobf('curse.maven:artemislib-313590:2741812')
+
     // Hwyla (WAILA) – soft dependency used at compile time so am2.common.compat.hwyla can
     // implement IWailaPlugin/IWailaDataProvider directly. Not bundled; remains optional at
     // runtime (Hwyla's own @WailaPlugin discovery is what would ever load these classes, and
