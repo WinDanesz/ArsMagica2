@@ -27,6 +27,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
@@ -64,6 +65,9 @@ public class Grow extends SpellComponent {
         if (!(plantState.getBlock() instanceof IPlantable) && world.getBlockState(pos.up()).getBlock() instanceof IPlantable) {
             plantPos = pos.up();
             plantState = world.getBlockState(plantPos);
+        }
+        if (isImmune(block.getBlock()) || isImmune(plantState.getBlock())) {
+            return true;
         }
         if (plantState.getBlock() instanceof IPlantable && !(plantState.getBlock() instanceof BlockMushroom)) {
             if (!world.isRemote && plantState.getBlock().getTickRandomly()) {
@@ -148,6 +152,15 @@ public class Grow extends SpellComponent {
         }
 
         return true;
+    }
+
+    private static boolean isImmune(Block block) {
+        ResourceLocation name = block.getRegistryName();
+        if (name == null) return false;
+        for (String immune : ArsMagica.config.getGrowImmuneBlocks()) {
+            if (name.toString().equalsIgnoreCase(immune.trim())) return true;
+        }
+        return false;
     }
 
     @Override

@@ -475,6 +475,7 @@ public class AMConfig extends Configuration {
     private final String KEY_GatewayRuinFrequency = "gateway_ruin_frequency";
     private final String KEY_GatewayRuinBiomes = "gateway_ruin_biomes";
     private final String KEY_GatewayRuinBiomeBlacklist = "gateway_ruin_biome_blacklist";
+    private final String KEY_GrowImmuneBlocks = "grow_immune_blocks";
     private final String KEY_GatewayRuinChest = "gateway_ruin_chest";
 
     private final String KEY_LostArchiveEnabled = "lost_archive_enabled";
@@ -680,6 +681,7 @@ public class AMConfig extends Configuration {
     private int gatewayRuinFrequency;
     private String[] gatewayRuinBiomes;
     private String[] gatewayRuinBiomeBlacklist;
+    private String[] growImmuneBlocks;
     private boolean gatewayRuinChest;
 
     private boolean lostArchiveEnabled;
@@ -1400,6 +1402,7 @@ public class AMConfig extends Configuration {
         this.gatewayRuinFrequency = this.get(CATEGORY_WORLDGEN, this.KEY_GatewayRuinFrequency, 400, "How rare ruined gateways are. Higher values = rarer. A value of N means a 1-in-N chance per chunk. Default: 400.").getInt(400);
         this.gatewayRuinBiomes = this.get(CATEGORY_WORLDGEN, this.KEY_GatewayRuinBiomes, new String[0], "Whitelist of BiomeDictionary type names (e.g. PLAINS, FOREST, DESERT) where gateway ruins can spawn. Empty = all biomes allowed.").getStringList();
         this.gatewayRuinBiomeBlacklist = this.get(CATEGORY_WORLDGEN, this.KEY_GatewayRuinBiomeBlacklist, new String[]{"NETHER", "END"}, "Blacklist of BiomeDictionary type names where gateway ruins will NOT spawn.").getStringList();
+        this.growImmuneBlocks = this.get(CATEGORY_SPELL_BALANCE, this.KEY_GrowImmuneBlocks, new String[]{}, "Block registry names (e.g. minecraft:wheat, or minecraft:nether_wart) that the Grow spell can NOT accelerate. One per line.").getStringList();
         this.gatewayRuinChest = this.get(CATEGORY_WORLDGEN, this.KEY_GatewayRuinChest, true, "If true, gateway ruins will generate with a loot chest. Set to false to disable the chest.").getBoolean(true);
 
         this.lostArchiveEnabled = this.get(CATEGORY_WORLDGEN, this.KEY_LostArchiveEnabled, true, "Enable or disable the spawning of Lost Archive structures underground.").getBoolean(true);
@@ -2166,6 +2169,10 @@ public class AMConfig extends Configuration {
 
     public String[] getGatewayRuinBiomes() {
         return this.gatewayRuinBiomes;
+    }
+
+    public String[] getGrowImmuneBlocks() {
+        return this.growImmuneBlocks;
     }
 
     public String[] getGatewayRuinBiomeBlacklist() {
