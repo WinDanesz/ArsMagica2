@@ -29,6 +29,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
@@ -37,6 +38,9 @@ import java.util.*;
 
 
 public class Grow extends SpellComponent {
+
+    /** Extra random ticks applied to an existing plant per cast. */
+    private static final int ACCELERATED_TICKS = 6;
 
     private final static ArrayList<Block> growableAMflowers = new ArrayList<>(Arrays.asList(AMBlocks.cerublossom, AMBlocks.desert_nova, AMBlocks.wakebloom, AMBlocks.aum, AMBlocks.tarma_root));
 
@@ -53,8 +57,27 @@ public class Grow extends SpellComponent {
             return true;
         }
 
+        // Existing plants: speed up their random ticks, like the compendium describes.
+        // If the spell hit the soil under a plant (e.g. farmland), accelerate the plant instead.
+        BlockPos plantPos = pos;
+        IBlockState plantState = block;
+        if (!(plantState.getBlock() instanceof IPlantable) && world.getBlockState(pos.up()).getBlock() instanceof IPlantable) {
+            plantPos = pos.up();
+            plantState = world.getBlockState(plantPos);
+        }
+        if (plantState.getBlock() instanceof IPlantable && !(plantState.getBlock() instanceof BlockMushroom)) {
+            if (!world.isRemote && plantState.getBlock().getTickRandomly()) {
+                for (int i = 0; i < ACCELERATED_TICKS; i++) {
+                    IBlockState current = world.getBlockState(plantPos);
+                    if (!(current.getBlock() instanceof IPlantable)) break;
+                    current.getBlock().randomTick(world, plantPos, current, world.rand);
+                }
+            }
+            return true;
+        }
+
         //EoD: Spawn AM2 flowers with 3% chance. This has to be the first one in the list to override all others
-        if (world.rand.nextInt(100) < 3 && block.isNormalCube()) {
+        if (world.rand.nextInt(100) < 3 && block.isNormalCube() && world.isAirBlock(pos.up())) {
             // shuffle the flower list every time we want to try to find one.
             Collections.shuffle(growableAMflowers);
 
@@ -111,9 +134,8 @@ public class Grow extends SpellComponent {
 
         // EoD: Apply vanilla bonemeal effect to growables 30% of the time. This is the generic grow section.
         //      See ItemDye.applyBonemeal().
-        if (block instanceof IGrowable) {
-            IGrowable igrowable = (IGrowable) block;
-            //AMCore.log.getLogger().info("Grow component found IGrowable");
+        if (block.getBlock() instanceof IGrowable) {
+            IGrowable igrowable = (IGrowable) block.getBlock();
 
             if (igrowable.canGrow(world, pos, block, world.isRemote)) {
                 if (!world.isRemote && world.rand.nextInt(10) < 3) {
