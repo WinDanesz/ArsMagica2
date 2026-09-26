@@ -1369,7 +1369,7 @@ public class AMConfig extends Configuration {
         this.burnoutHungerDepletion = this.get(CATEGORY_GENERAL, this.KEY_BurnoutHungerDepletion, true, "If true, having burnout over 75%% will increase hunger depletion, scaling with burnout severity.").getBoolean(true);
 
         this.essenceLakeFrequency = this.get(CATEGORY_WORLDGEN, this.KEY_EssenceLakeFrequency, 28, "How rare underground essence lakes are. Higher values = rarer. A value of N means roughly 1-in-N chance per chunk in magical/forest biomes. Default: 28.").getInt(28);
-        this.tarmaRootFrequency = this.get(CATEGORY_WORLDGEN, this.KEY_TarmaRootFrequency, 10, "How rare tarma root is. Higher values = rarer. A value of N means a 1-in-N chance per chunk. Default: 10.").getInt(10);
+        this.tarmaRootFrequency = this.get(CATEGORY_WORLDGEN, this.KEY_TarmaRootFrequency, 10, "How rare tarma root is. Higher values = rarer. A value of N means a 1-in-N chance per chunk. Default: 3.").getInt(3);
         this.witchwoodFrequency = this.get(CATEGORY_WORLDGEN, this.KEY_WitchwoodFrequency, 105, "How rare witchwood trees are. Higher values = rarer. A value of N means a 1-in-N chance per chunk. Default: 105.").getInt(105);
         this.wakebloomFrequency = this.get(CATEGORY_WORLDGEN, this.KEY_WakebloomFrequency, 3, "How rare wakebloom is in eligible biomes (beach, swamp, jungle, plains, water). Higher values = rarer. A value of N means a 1-in-N chance per chunk. Default: 3.").getInt(3);
         this.ceruBlossomFrequency = this.get(CATEGORY_WORLDGEN, this.KEY_CeruBlossomFrequency, 5, "How rare cerublossom is. Higher values = rarer. A value of N means a 1-in-N chance per chunk. Default: 5.").getInt(5);

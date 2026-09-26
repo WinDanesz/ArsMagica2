@@ -22,6 +22,10 @@ public class AM2FlowerGen extends WorldGenerator {
         this.clusterSize = clusterSize;
     }
 
+    public boolean canPlantAt(World worldIn, BlockPos pos) {
+        return ((BlockAMFlower) this.plantBlock.getBlock()).canBlockStay(worldIn, pos, this.plantBlock);
+    }
+
     public boolean generate(World worldIn, Random rand, BlockPos position) {
         for (int i = 0; i < clusterSize; ++i) {
             BlockPos blockpos = position.add(rand.nextInt(8) - rand.nextInt(8), rand.nextInt(4) - rand.nextInt(4), rand.nextInt(8) - rand.nextInt(8));

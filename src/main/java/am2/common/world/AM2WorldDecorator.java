@@ -5,6 +5,7 @@ import am2.common.entity.SpawnBlacklists;
 import am2.common.registry.AMBlocks;
 import net.minecraft.block.state.pattern.BlockMatcher;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -108,7 +109,7 @@ public class AM2WorldDecorator implements IWorldGenerator {
             generateFlowers(blueOrchid, world, random, chunkX, chunkZ);
         }
         if (random.nextInt(ArsMagica.config.getTarmaRootFrequency()) == 0) {
-            generateFlowers(tarmaRoot, world, random, chunkX, chunkZ);
+            generateTarmaRoot(world, random, chunkX, chunkZ);
         }
 
         Biome biome = world.getBiome(new BlockPos(chunkX << 4, 0, chunkZ << 4));
@@ -236,6 +237,25 @@ public class AM2WorldDecorator implements IWorldGenerator {
         int x = (chunkX * 16) + random.nextInt(16) + 8;
         int z = (chunkZ * 16) + random.nextInt(16) + 8;
         new WorldGenLostArchive().generate(world, random, new BlockPos(x, 0, z));
+    }
+
+    /**
+     * Tarma Root only survives on stone with air above it, i.e. in caves. A single random point almost never
+     * lands in one, so probe several columns and settle the cluster on the first cave floor found.
+     */
+    private void generateTarmaRoot(World world, Random random, int chunkX, int chunkZ) {
+        for (int attempt = 0; attempt < 16; attempt++) {
+            int x = (chunkX << 4) + random.nextInt(16) + 8;
+            int z = (chunkZ << 4) + random.nextInt(16) + 8;
+            int y = 8 + random.nextInt(52);
+            BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos(x, y, z);
+            for (int step = 0; step < 24 && probe.getY() > 5; step++, probe.move(EnumFacing.DOWN)) {
+                if (world.isAirBlock(probe) && tarmaRoot.canPlantAt(world, probe.toImmutable())) {
+                    tarmaRoot.generate(world, random, probe.toImmutable());
+                    return;
+                }
+            }
+        }
     }
 
     private void generateFlowers(AM2FlowerGen flowers, World world, Random random, int chunkX, int chunkZ) {
