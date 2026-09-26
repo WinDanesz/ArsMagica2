@@ -53,7 +53,7 @@ public class PacketSpellCustomize extends AMPacket<PacketSpellCustomize> {
         if (player != null) {
             // Validate input
             if (message.name != null && message.name.length() <= 50 &&
-                    message.iconIndex >= 0 && message.iconIndex < 256) {
+                    message.iconIndex >= 0 && message.iconIndex < Short.MAX_VALUE) {
                 if (player.openContainer instanceof ContainerSpellCustomization) {
                     ((ContainerSpellCustomization) player.openContainer)
                             .setNameAndIndex(message.name, message.iconIndex);
