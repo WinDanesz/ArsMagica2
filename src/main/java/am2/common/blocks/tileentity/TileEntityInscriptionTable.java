@@ -81,6 +81,8 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
     private EntityPlayer currentPlayerUsing;
     private final HashMap<SpellModifiers, Integer> modifierCount;
     private String currentSpellName;
+    /** Client only: the player has typed a name, so incoming table syncs must not overwrite it. */
+    private boolean spellNameEditedLocally;
     private boolean currentSpellIsReadOnly;
 
     private static final byte FULL_UPDATE = 0x1;
@@ -263,6 +265,9 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
             this.currentRecipe.add(tmp.getInteger("Slot"), ArsMagicaAPI.getSpellRegistry().getValue(new ResourceLocation(tmp.getString("ID"))));
         }
         this.numStageGroups = Math.max(nbttagcompound.getInteger("numShapeGroupSlots"), 2);
+        if (!this.spellNameEditedLocally) {
+            this.currentSpellName = nbttagcompound.getString("SpellName");
+        }
     }
 
     @Override
@@ -292,6 +297,7 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
         nbttagcompound.setTag("ShapeGroups", shapeGroups);
         nbttagcompound.setTag("CurrentRecipe", recipe);
         nbttagcompound.setInteger("numShapeGroupSlots", this.numStageGroups);
+        nbttagcompound.setString("SpellName", this.currentSpellName != null ? this.currentSpellName : "");
         return nbttagcompound;
     }
 
@@ -354,6 +360,7 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 
                 this.countModifiers();
                 this.currentSpellName = rdr.getString();
+                this.updateSlotBookDisplayName();
                 this.currentSpellIsReadOnly = rdr.getBoolean();
                 this.numStageGroups = rdr.getInt();
                 break;
@@ -854,14 +861,13 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
             }
             bookstack.getTagCompound().setString("spell_mod_version", ArsMagica.instance.getVersion());
 
-            if (this.currentSpellName.equals(""))
-                this.currentSpellName = "Spell Recipe";
-            bookstack.setStackDisplayName(this.currentSpellName);
+            bookstack.setStackDisplayName(formatSpellRecipeName(this.currentSpellName));
 
             this.currentRecipe.clear();
             for (ArrayList<SpellPart> list : this.shapeGroups)
                 list.clear();
             this.currentSpellName = "";
+            this.spellNameEditedLocally = false;
 
             bookstack.getTagCompound().setBoolean("spellFinalized", true);
 
@@ -905,6 +911,7 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
         for (ArrayList<SpellPart> group : this.shapeGroups)
             group.clear();
         this.currentSpellName = "";
+        this.spellNameEditedLocally = false;
         this.currentSpellIsReadOnly = false;
     }
 
@@ -972,7 +979,33 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 
     public void setSpellName(String name) {
         this.currentSpellName = name;
+        this.spellNameEditedLocally = true;
         this.sendDataToServer();
+        this.updateSlotBookDisplayName();
+    }
+
+    /**
+     * Keeps the unfinished written book sitting in slot 0 named after the spell name currently
+     * typed into the inscription table, so the recipe book in the slot doesn't just say
+     * "Unfinished spell recipe" while a name has already been chosen.
+     */
+    public void updateSlotBookDisplayName() {
+        ItemStack stack = this.getStackInSlot(0);
+        if (stack.isEmpty() || stack.getItem() != Items.WRITTEN_BOOK) return;
+        if (stack.hasTagCompound() && stack.getTagCompound().getBoolean("spellFinalized")) return;
+
+        if (this.currentSpellName != null && !this.currentSpellName.isEmpty()) {
+            stack.setStackDisplayName(I18n.translateToLocalFormatted("am2.tooltip.spellRecipeOf", this.currentSpellName));
+        } else {
+            stack.setStackDisplayName(I18n.translateToLocalFormatted("am2.tooltip.unfinishedSpellRecipe"));
+        }
+    }
+
+    /** "Spell Recipe of &lt;name&gt;", or the plain "Spell Recipe" when no name has been chosen. */
+    public static String formatSpellRecipeName(String spellName) {
+        return spellName == null || spellName.isEmpty()
+                ? I18n.translateToLocalFormatted("am2.tooltip.spellRecipe")
+                : I18n.translateToLocalFormatted("am2.tooltip.spellRecipeOf", spellName);
     }
 
     public String getSpellName() {

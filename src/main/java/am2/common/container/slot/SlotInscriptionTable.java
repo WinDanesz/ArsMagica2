@@ -74,7 +74,10 @@ public class SlotInscriptionTable extends Slot {
             ItemStack stack2 = new ItemStack(Items.WRITTEN_BOOK);
             if (stack.hasTagCompound())
                 stack2.setTagCompound(stack.getTagCompound());
-            stack2.setStackDisplayName(I18n.translateToLocalFormatted("am2.tooltip.unfinishedSpellRecipe"));
+            String spellName = ((TileEntityInscriptionTable) this.inventory).getSpellName();
+            stack2.setStackDisplayName(!spellName.isEmpty()
+                    ? TileEntityInscriptionTable.formatSpellRecipeName(spellName)
+                    : I18n.translateToLocalFormatted("am2.tooltip.unfinishedSpellRecipe"));
             super.putStack(stack2);
         } else {
             super.putStack(stack);
