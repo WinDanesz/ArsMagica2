@@ -106,8 +106,22 @@ public class ItemCrystalPhylactery extends Item {
         getOrCreateTag(stack).setString(TAG_SUMMON_TYPE, key.toString());
     }
 
+    /**
+     * True if {@code entity} can never be captured in a phylactery, either because it's a boss or
+     * because it's on the {@code phylactery_capture_blacklist} config list.
+     */
+    public boolean isCaptureImmune(EntityLiving entity) {
+        if (!entity.isNonBoss()) return true;
+        ResourceLocation key = EntityList.getKey(entity);
+        if (key == null) return false;
+        for (String blacklisted : ArsMagica.config.getPhylacteryCaptureBlacklist()) {
+            if (blacklisted != null && key.toString().equals(blacklisted)) return true;
+        }
+        return false;
+    }
+
     public boolean canStore(ItemStack stack, EntityLiving entity) {
-        if (!entity.isNonBoss()) return false;
+        if (isCaptureImmune(entity)) return false;
         if (stack.getItemDamage() == META_FULL) return false;
         if (!stack.hasTagCompound()) return true;
         ResourceLocation key = EntityList.getKey(entity);

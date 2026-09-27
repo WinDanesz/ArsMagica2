@@ -531,10 +531,11 @@ public class EntityHandler {
 
         if (e.getSource() != null && e.getEntityLiving() != null && e.getEntityLiving() instanceof EntityLiving && e.getSource().getTrueSource() instanceof EntityPlayer) {
             EntityLiving killedEntity = (EntityLiving) e.getEntityLiving();
-            // Entities immune to soul capture (e.g. bosses) must never bind an empty phylactery's
-            // essence type, or the phylactery gets permanently locked to an uncapturable type at 0% fill.
-            if (killedEntity.isNonBoss()) {
-                ItemCrystalPhylactery phylactery = (ItemCrystalPhylactery) AMItems.crystal_phylactery;
+            ItemCrystalPhylactery phylactery = (ItemCrystalPhylactery) AMItems.crystal_phylactery;
+            // Entities immune to soul capture (bosses, or the phylactery_capture_blacklist config) must
+            // never bind an empty phylactery's essence type, or the phylactery gets permanently locked
+            // to an uncapturable type at 0% fill.
+            if (!phylactery.isCaptureImmune(killedEntity)) {
                 EntityPlayer player = (EntityPlayer) e.getSource().getTrueSource();
                 for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                     ItemStack stack = player.inventory.getStackInSlot(i);

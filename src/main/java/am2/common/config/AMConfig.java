@@ -184,6 +184,8 @@ public class AMConfig extends Configuration {
     private final String KEY_CrystallizeHealthThreshold = "crystallize_health_threshold";
     private final String KEY_CrystallizeMobBlacklist = "crystallize_mob_blacklist";
 
+    private final String KEY_PhylacteryCaptureBlacklist = "phylactery_capture_blacklist";
+
     private final String KEY_MeteorMinSpawnLevel = "meteor_spawn_min_level";
     private final String KEY_MeteorSpawnBaseChance = "meteor_spawn_base_chance";
     private final String KEY_MeteorSpawnMoonPhaseMultiplier = "meteor_spawn_moon_phase_multiplier";
@@ -720,6 +722,8 @@ public class AMConfig extends Configuration {
     private int crystallizeMaxHealth;
     private float crystallizeHealthThreshold;
     private String[] crystallizeMobBlacklist;
+
+    private String[] phylacteryCaptureBlacklist;
 
     private int AuraType;
     private int AuraBehaviour;
@@ -1679,6 +1683,9 @@ public class AMConfig extends Configuration {
         String[] crystBL = this.get(CATEGORY_GENERAL, this.KEY_CrystallizeMobBlacklist, new String[0], "List of entity registry names (e.g. minecraft:ender_dragon) that cannot be crystallized.").getStringList();
         this.crystallizeMobBlacklist = crystBL != null ? crystBL : new String[0];
 
+        String[] phyBL = this.get(CATEGORY_GENERAL, this.KEY_PhylacteryCaptureBlacklist, new String[0], "List of entity registry names (e.g. minecraft:ender_dragon) that cannot be captured in a Crystal Phylactery, in addition to bosses (which are always immune).").getStringList();
+        this.phylacteryCaptureBlacklist = phyBL != null ? phyBL : new String[0];
+
         this.frostDamageBase = this.get(CATEGORY_SPELL_DAMAGE, this.KEY_FrostDamageBase, 10.0, "Base frost damage applied by the Frost Damage component (additive). Default: 10").getDouble(10.0);
         this.fireDamageBase = this.get(CATEGORY_SPELL_DAMAGE, this.KEY_FireDamageBase, 6.0, "Base fire damage applied by the Fire Damage component (additive). Default: 6").getDouble(6.0);
         this.lifeDrainBase = this.get(CATEGORY_SPELL_DAMAGE, this.KEY_LifeDrainBase, 4.0, "Base magnitude of the Life Drain component (additive). Default: 4").getDouble(4.0);
@@ -2365,6 +2372,10 @@ public class AMConfig extends Configuration {
 
     public String[] getCrystallizeMobBlacklist() {
         return this.crystallizeMobBlacklist;
+    }
+
+    public String[] getPhylacteryCaptureBlacklist() {
+        return this.phylacteryCaptureBlacklist;
     }
 
     public boolean getHazardousGateways() {
