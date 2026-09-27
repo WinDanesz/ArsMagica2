@@ -530,14 +530,20 @@ public class EntityHandler {
         }
 
         if (e.getSource() != null && e.getEntityLiving() != null && e.getEntityLiving() instanceof EntityLiving && e.getSource().getTrueSource() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) e.getSource().getTrueSource();
-            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-                ItemStack stack = player.inventory.getStackInSlot(i);
-                if (!stack.isEmpty() && stack.getItem() != AMItems.crystal_phylactery) continue; //
-                if (((ItemCrystalPhylactery) AMItems.crystal_phylactery).getSpawnClass(stack) == null)
-                    ((ItemCrystalPhylactery) AMItems.crystal_phylactery).setSpawnClass(stack, e.getEntityLiving().getClass());
-                if (((ItemCrystalPhylactery) AMItems.crystal_phylactery).canStore(stack, (EntityLiving) e.getEntityLiving())) {
-                    ((ItemCrystalPhylactery) AMItems.crystal_phylactery).addFill(stack);
+            EntityLiving killedEntity = (EntityLiving) e.getEntityLiving();
+            // Entities immune to soul capture (e.g. bosses) must never bind an empty phylactery's
+            // essence type, or the phylactery gets permanently locked to an uncapturable type at 0% fill.
+            if (killedEntity.isNonBoss()) {
+                ItemCrystalPhylactery phylactery = (ItemCrystalPhylactery) AMItems.crystal_phylactery;
+                EntityPlayer player = (EntityPlayer) e.getSource().getTrueSource();
+                for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+                    ItemStack stack = player.inventory.getStackInSlot(i);
+                    if (stack.isEmpty() || stack.getItem() != AMItems.crystal_phylactery) continue;
+                    if (phylactery.getSpawnClass(stack) == null)
+                        phylactery.setSpawnClass(stack, killedEntity.getClass());
+                    if (phylactery.canStore(stack, killedEntity)) {
+                        phylactery.addFill(stack);
+                    }
                 }
             }
         }
