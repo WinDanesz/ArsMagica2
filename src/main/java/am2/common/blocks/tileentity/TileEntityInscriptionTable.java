@@ -762,7 +762,7 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
 
                         } else {
                             List<ItemStack> ores = OreDictionary.getOres((String) o);
-                            recipeStack = !ores.isEmpty() ? ores.get(1) : null;
+                            recipeStack = !ores.isEmpty() ? ores.get(0) : ItemStack.EMPTY;
                             materialkey = (String) o;
                         }
                     }
