@@ -83,6 +83,10 @@
 		"apply": {"model":"arsmagica2:inscription_table_right1", "y":270}
 	},
 	{
+		"when": { "AND": [{"left":"false"}, {"tier_2":"true"}, {"facing":"south"}]},
+		"apply": {"model":"arsmagica2:inscription_table_right2", "y":270}
+	},
+	{
 		"when": { "AND": [{"left":"true"}, {"tier_2":"true"}, {"facing":"south"}]},
 		"apply": {"model":"arsmagica2:inscription_table_left2", "y":270}
 	},
@@ -110,6 +114,10 @@
 	{
 		"when": { "AND": [{"left":"false"}, {"tier_1":"true"}, {"facing":"north"}]},
 		"apply": {"model":"arsmagica2:inscription_table_right1", "y":90}
+	},
+	{
+		"when": { "AND": [{"left":"false"}, {"tier_2":"true"}, {"facing":"north"}]},
+		"apply": {"model":"arsmagica2:inscription_table_right2", "y":90}
 	},
 	{
 		"when": { "AND": [{"left":"true"}, {"tier_2":"true"}, {"facing":"north"}]},
