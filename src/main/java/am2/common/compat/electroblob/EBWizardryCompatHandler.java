@@ -908,7 +908,7 @@ public final class EBWizardryCompatHandler {
         map.put("arsmagica2:fling", r("ebwizardry:magic_crystal:6", "minecraft:piston"));
         map.put("arsmagica2:rift", r("ebwizardry:magic_crystal:6", "ebwizardry:magic_crystal", "minecraft:chest", "minecraft:ender_eye"));
         map.put("arsmagica2:charm", r("ebwizardry:magic_crystal:6", "arsmagica2:essence_life", "arsmagica2:crystal_phylactery"));
-        map.put("arsmagica2:invisibility", r("ebwizardry:magic_crystal:6", "arsmagica2:chimerite", "ore:listAllpotionItem"));
+        map.put("arsmagica2:invisibility", r("ebwizardry:magic_crystal:6", "arsmagica2:chimerite", "minecraft:potion:0:{Potion:\"minecraft:invisibility\"}"));
         map.put("arsmagica2:slow", r("ebwizardry:magic_crystal:6", "minecraft:slime_ball"));
         map.put("arsmagica2:haste", r("ebwizardry:magic_crystal:6", "minecraft:redstone", "minecraft:glowstone_dust"));
         map.put("arsmagica2:accelerate", r("ebwizardry:magic_crystal:6", "minecraft:leather_boots", "minecraft:redstone"));
@@ -921,7 +921,7 @@ public final class EBWizardryCompatHandler {
         map.put("arsmagica2:heal", r("ebwizardry:magic_crystal:7", "arsmagica2:aum"));
         map.put("arsmagica2:regeneration", r("ebwizardry:magic_crystal:7", "minecraft:golden_apple"));
         map.put("arsmagica2:absorption", r("ebwizardry:magic_crystal:7", "minecraft:golden_apple", "minecraft:shield"));
-        map.put("arsmagica2:night_vision", r("ebwizardry:magic_crystal:7", "ore:listAllpotionItem"));
+        map.put("arsmagica2:night_vision", r("ebwizardry:magic_crystal:7", "minecraft:potion:0:{Potion:\"minecraft:night_vision\"}"));
         map.put("arsmagica2:true_sight", r("ebwizardry:magic_crystal:7", "arsmagica2:chimerite", "minecraft:glass_pane"));
 
         // ---- Magic / Arcane (magic_crystal:0) --------------------------------
