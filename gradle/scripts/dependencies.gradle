@@ -44,6 +44,7 @@ dependencies {
     // resizing to ArtemisLib's attribute system instead of the player-only ShrinkHandler, which
     // also allows shrinking non-player mobs. Not bundled; remains optional at runtime.
     compileOnly rfg.deobf('curse.maven:artemislib-313590:2741812')
+    runtimeOnly rfg.deobf('curse.maven:artemislib-313590:2741812')
 
     // Hwyla (WAILA) – soft dependency used at compile time so am2.common.compat.hwyla can
     // implement IWailaPlugin/IWailaDataProvider directly. Not bundled; remains optional at
