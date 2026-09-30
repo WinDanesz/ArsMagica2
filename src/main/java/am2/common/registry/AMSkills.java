@@ -82,6 +82,7 @@ public class AMSkills {
     public static final Skill leap = placeholder();
     public static final Skill regeneration = placeholder();
     public static final Skill shrink = placeholder();
+    public static final Skill enlarge = placeholder();
     public static final Skill slowfall = placeholder();
     public static final Skill heal = placeholder();
     public static final Skill life_tap = placeholder();
@@ -273,6 +274,7 @@ public class AMSkills {
         registry.register(new Skill("leap", getComponentTexture("leap"), SkillPoint.BLUE_SKILL_POINT, 222, 90, SkillTrees.TREE_DEFENSE, "arsmagica2:self"));
         registry.register(new Skill("regeneration", getComponentTexture("regeneration"), SkillPoint.BLUE_SKILL_POINT, 357, 90, SkillTrees.TREE_DEFENSE, "arsmagica2:self"));
         registry.register(new Skill("shrink", getComponentTexture("shrink"), SkillPoint.BLUE_SKILL_POINT, 402, 90, SkillTrees.TREE_DEFENSE, "arsmagica2:regeneration"));
+        registry.register(new Skill("enlarge", getComponentTexture("Enlarge"), SkillPoint.BLUE_SKILL_POINT, 447, 90, SkillTrees.TREE_DEFENSE, "arsmagica2:shrink"));
         registry.register(new Skill("slowfall", getComponentTexture("slowfall"), SkillPoint.BLUE_SKILL_POINT, 222, 135, SkillTrees.TREE_DEFENSE, "arsmagica2:leap"));
         registry.register(new Skill("heal", getComponentTexture("heal"), SkillPoint.BLUE_SKILL_POINT, 357, 135, SkillTrees.TREE_DEFENSE, "arsmagica2:regeneration"));
         registry.register(new Skill("life_tap", getComponentTexture("life_tap"), SkillPoint.GREEN_SKILL_POINT, 312, 135, SkillTrees.TREE_DEFENSE, "arsmagica2:heal"));
