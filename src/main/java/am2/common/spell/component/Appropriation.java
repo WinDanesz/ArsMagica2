@@ -5,7 +5,12 @@ import am2.api.affinity.Affinity;
 import am2.api.spell.SpellComponent;
 import am2.api.spell.SpellData;
 import am2.api.spell.SpellPart;
+import am2.common.spell.shape.AoE;
+import am2.common.spell.shape.Cone;
+import am2.common.spell.shape.Puddle;
+import am2.common.spell.shape.Wall;
 import am2.common.spell.shape.Wave;
+import am2.common.spell.shape.Zone;
 import am2.api.spell.SpellModifiers;
 import am2.client.particles.AMParticle;
 import am2.client.particles.ParticleOrbitPoint;
@@ -151,12 +156,13 @@ public class Appropriation extends SpellComponent {
         }
     }
 
-    private static boolean isAppliedByWave(SpellData spell) {
+    private static boolean isAppliedByAreaShape(SpellData spell) {
         int stage = spell.getExecutionStage() - 1;
         List<List<SpellPart>> stages = spell.getStages();
         if (stage < 0 || stage >= stages.size()) return false;
         for (SpellPart part : stages.get(stage)) {
-            if (part instanceof Wave) return true;
+            if (part instanceof Wave || part instanceof AoE || part instanceof Zone || part instanceof Wall
+                    || part instanceof Cone || part instanceof Puddle) return true;
         }
         return false;
     }
@@ -228,9 +234,9 @@ public class Appropriation extends SpellComponent {
             if (!s.isEmpty() && state.getBlock().getRegistryName().toString().equals(s))
                 return false;
 
-        // A wave sweeps over everything in its path; it should pass through containers/machines
+        // Area shapes (wave, AoE, zone, wall, cone, puddle) sweep over everything in range; it should pass through containers/machines
         // instead of swallowing them (or trying to place on top of them).
-        if (isAppliedByWave(spell) && world.getTileEntity(blockPos) != null)
+        if (isAppliedByAreaShape(spell) && world.getTileEntity(blockPos) != null)
             return false;
 
         if (!world.isRemote) {
