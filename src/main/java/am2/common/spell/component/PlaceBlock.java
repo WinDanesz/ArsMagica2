@@ -3,6 +3,7 @@ package am2.common.spell.component;
 import am2.api.affinity.Affinity;
 import am2.api.spell.SpellComponent;
 import am2.api.spell.SpellData;
+import am2.common.items.ItemSpellBook;
 import am2.api.spell.SpellModifiers;
 import am2.common.registry.Affinities;
 import am2.common.utils.InventoryUtilities;
@@ -30,7 +31,7 @@ import java.util.Set;
 
 public class PlaceBlock extends SpellComponent {
 
-    private static final String KEY_STATE = "PlaceState";
+    public static final String KEY_STATE = "PlaceState";
 
     @Override
     public Object[] getRecipe() {
@@ -43,17 +44,23 @@ public class PlaceBlock extends SpellComponent {
     }
 
     private IBlockState getPlaceBlock(SpellData spell) {
+        // The source stack is what persists (the spell's stored data is only a per-cast copy)
+        NBTTagCompound sourceTag = spell.getSource().getTagCompound();
+        if (sourceTag != null && sourceTag.hasKey(KEY_STATE)) {
+            return Block.getStateById(sourceTag.getInteger(KEY_STATE));
+        }
         if (spell.getStoredData().hasKey(KEY_STATE)) {
             return Block.getStateById(spell.getStoredData().getInteger(KEY_STATE));
         }
         return null;
     }
 
-    private void setPlaceBlock(SpellData spell, IBlockState state) {
+    private void setPlaceBlock(SpellData spell, EntityLivingBase caster, IBlockState state) {
         spell.getStoredData().setInteger(KEY_STATE, Block.getStateId(state));
 
         if (!spell.getSource().hasTagCompound())
             spell.getSource().setTagCompound(new NBTTagCompound());
+        spell.getSource().getTagCompound().setInteger(KEY_STATE, Block.getStateId(state));
         //set lore entry so that the stack displays the name of the block to place
         if (!spell.getSource().getTagCompound().hasKey("Lore"))
             spell.getSource().getTagCompound().setTag("Lore", new NBTTagList());
@@ -70,6 +77,7 @@ public class PlaceBlock extends SpellComponent {
         tagList.appendTag(new NBTTagString(String.format(I18n.translateToLocalFormatted("am2.tooltip.placeBlockSpell"), blockStack.getDisplayName())));
 
         spell.getSource().getTagCompound().setTag("Lore", tagList);
+        ItemSpellBook.persistFromSpell(caster, spell);
     }
 
     @Override
@@ -103,7 +111,7 @@ public class PlaceBlock extends SpellComponent {
             }
         } else if (caster.isSneaking()) {
             if (!world.isRemote && !world.isAirBlock(pos)) {
-                setPlaceBlock(spell, world.getBlockState(pos));
+                setPlaceBlock(spell, caster, world.getBlockState(pos));
             }
             return true;
         }

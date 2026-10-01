@@ -20,6 +20,10 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import am2.api.spell.SpellData;
+import am2.common.spell.SpellCaster;
+import am2.common.spell.component.Appropriation;
+import am2.common.spell.component.PlaceBlock;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -177,7 +181,79 @@ public class ItemSpellBook extends Item implements IBauble {
                 // Dispatch to the active scroll's own item so that subclasses
                 // (e.g. ItemEBWizSpellBinding) can handle casting differently.
                 currentSpellStack.getItem().onPlayerStoppedUsing(currentSpellStack, world, entityLiving, timeLeft);
+                persistAppropriationData(stack, currentSpellStack);
             }
+        }
+    }
+
+    /** Spell stack tags that components modify during a cast and that must survive in the book. */
+    private static final String[] CAST_PERSISTED_KEYS = {Appropriation.storageKey, PlaceBlock.KEY_STATE, "Lore"};
+
+    /**
+     * Spells are cast from a copy of the book's active stack, so anything Appropriation
+     * stores on (or removes from) that copy has to be written back to the book,
+     * otherwise the captured block/entity is lost and can never be placed again.
+     */
+    public void persistAppropriationData(ItemStack bookStack, ItemStack castStack) {
+        if (bookStack.isEmpty() || castStack.isEmpty()) return;
+        persistToSlot(bookStack, getActiveSlot(bookStack), castStack);
+    }
+
+    /**
+     * For spells that apply their components later than the cast (projectiles, orbs, runes...),
+     * the book's stack is long gone. Finds the spell in the caster's book by UUID and writes the
+     * changed tags back to it. Does nothing if the spell did not come from a spell book.
+     */
+    public static void persistFromSpell(EntityLivingBase caster, SpellData spell) {
+        if (!(caster instanceof EntityPlayer) || caster.world.isRemote) return;
+        ItemStack source = spell.getSource();
+        if (source.isEmpty()) return;
+
+        ItemStack bookStack = findSpellBook((EntityPlayer) caster);
+        if (bookStack.isEmpty() || !(bookStack.getItem() instanceof ItemSpellBook)) return;
+
+        ItemStack[] slots = getMyInventory(bookStack);
+        for (int i = 0; i < slots.length; i++) {
+            ItemStack slot = slots[i];
+            if (slot.isEmpty() || !slot.hasCapability(SpellCaster.INSTANCE, null)) continue;
+            if (spell.getUUID().equals(SpellCaster.of(slot).getSpellUUID())) {
+                ((ItemSpellBook) bookStack.getItem()).persistToSlot(bookStack, i, source);
+                return;
+            }
+        }
+    }
+
+    private void persistToSlot(ItemStack bookStack, int slotIndex, ItemStack castStack) {
+        ItemStack[] slots = getMyInventory(bookStack);
+        if (slotIndex < 0 || slotIndex >= slots.length) return;
+        ItemStack stored = slots[slotIndex].copy();
+        if (stored.isEmpty()) return;
+
+        NBTTagCompound castTag = castStack.getTagCompound();
+        boolean changed = false;
+
+        for (String key : CAST_PERSISTED_KEYS) {
+            NBTTagCompound storedTag = stored.getTagCompound();
+            boolean castHas = castTag != null && castTag.hasKey(key);
+            boolean storedHas = storedTag != null && storedTag.hasKey(key);
+
+            if (castHas) {
+                if (storedHas && castTag.getTag(key).equals(storedTag.getTag(key))) continue;
+                if (storedTag == null) {
+                    storedTag = new NBTTagCompound();
+                    stored.setTagCompound(storedTag);
+                }
+                storedTag.setTag(key, castTag.getTag(key).copy());
+                changed = true;
+            } else if (storedHas) {
+                storedTag.removeTag(key);
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            slots[slotIndex] = stored;
+            updateStackTagCompound(bookStack, slots);
         }
     }
 
@@ -302,6 +378,7 @@ public class ItemSpellBook extends Item implements IBauble {
         if (!scrollStack.isEmpty()) {
             // Dispatch to the active scroll's own item (same pattern as onPlayerStoppedUsing).
             scrollStack.getItem().onUsingTick(scrollStack, player, count);
+            persistAppropriationData(stack, scrollStack);
         }
     }
 

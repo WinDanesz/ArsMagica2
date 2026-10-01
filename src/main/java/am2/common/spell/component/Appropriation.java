@@ -4,9 +4,12 @@ import am2.ArsMagica;
 import am2.api.affinity.Affinity;
 import am2.api.spell.SpellComponent;
 import am2.api.spell.SpellData;
+import am2.api.spell.SpellPart;
+import am2.common.spell.shape.Wave;
 import am2.api.spell.SpellModifiers;
 import am2.client.particles.AMParticle;
 import am2.client.particles.ParticleOrbitPoint;
+import am2.common.items.ItemSpellBook;
 import am2.common.registry.AMBlocks;
 import am2.common.registry.Affinities;
 import am2.common.utils.DummyEntityPlayer;
@@ -41,7 +44,7 @@ import java.util.Set;
 
 public class Appropriation extends SpellComponent {
 
-    private static final String storageKey = "stored_data";
+    public static final String storageKey = "stored_data";
     private static final String storageType = "storage_type";
 
     @Override
@@ -75,6 +78,7 @@ public class Appropriation extends SpellComponent {
         if (!world.isRemote) {
             if (originalSpellStack.getTagCompound().hasKey(storageKey)) {
                 restore((EntityPlayer) caster, world, originalSpellStack, target.getPosition(), target.posX, target.posY + target.getEyeHeight(), target.posZ);
+                ItemSpellBook.persistFromSpell(caster, spell);
             } else {
                 NBTTagCompound data = new NBTTagCompound();
                 data.setString("class", target.getClass().getName());
@@ -91,6 +95,7 @@ public class Appropriation extends SpellComponent {
                 data.setTag("targetNBT", targetData);
 
                 originalSpellStack.getTagCompound().setTag(storageKey, data);
+                ItemSpellBook.persistFromSpell(caster, spell);
 
                 target.setDead();
             }
@@ -144,6 +149,16 @@ public class Appropriation extends SpellComponent {
 
             stack.getTagCompound().removeTag(storageKey);
         }
+    }
+
+    private static boolean isAppliedByWave(SpellData spell) {
+        int stage = spell.getExecutionStage() - 1;
+        List<List<SpellPart>> stages = spell.getStages();
+        if (stage < 0 || stage >= stages.size()) return false;
+        for (SpellPart part : stages.get(stage)) {
+            if (part instanceof Wave) return true;
+        }
+        return false;
     }
 
     private static boolean isNBTTooDeepOrContains(NBTBase nbt, String key, int currentDepth, int maxDepth) {
@@ -213,6 +228,11 @@ public class Appropriation extends SpellComponent {
             if (!s.isEmpty() && state.getBlock().getRegistryName().toString().equals(s))
                 return false;
 
+        // A wave sweeps over everything in its path; it should pass through containers/machines
+        // instead of swallowing them (or trying to place on top of them).
+        if (isAppliedByWave(spell) && world.getTileEntity(blockPos) != null)
+            return false;
+
         if (!world.isRemote) {
             if (originalSpellStack.getTagCompound().hasKey(storageKey)) {
 
@@ -250,10 +270,12 @@ public class Appropriation extends SpellComponent {
                     if (nbt != null) {
                         spell.setStoredData(nbt);
                     }
+                    // Forge dereferences the facing (getOpposite), so it must never be null
+                    EnumFacing eventFace = blockFace != null ? blockFace : EnumFacing.UP;
                     if (blockSnapshots.size() > 1) {
-                        placeEvent = ForgeEventFactory.onPlayerMultiBlockPlace(casterPlayer, blockSnapshots, blockFace, EnumHand.MAIN_HAND);
+                        placeEvent = ForgeEventFactory.onPlayerMultiBlockPlace(casterPlayer, blockSnapshots, eventFace, EnumHand.MAIN_HAND);
                     } else if (blockSnapshots.size() == 1) {
-                        placeEvent = ForgeEventFactory.onPlayerBlockPlace(casterPlayer, blockSnapshots.get(0), blockFace, EnumHand.MAIN_HAND);
+                        placeEvent = ForgeEventFactory.onPlayerBlockPlace(casterPlayer, blockSnapshots.get(0), eventFace, EnumHand.MAIN_HAND);
                     }
 
                     if (placeEvent != null && (placeEvent.isCanceled())) {
@@ -284,6 +306,7 @@ public class Appropriation extends SpellComponent {
                     }
                     world.capturedBlockSnapshots.clear();
 
+                    ItemSpellBook.persistFromSpell(caster, spell);
                     // restore((EntityPlayer)caster, world, originalSpellStack, blockx, blocky, blockz, impactX, impactY, impactZ);
                 }
             } else {
@@ -328,6 +351,7 @@ public class Appropriation extends SpellComponent {
                 }
 
                 originalSpellStack.getTagCompound().setTag(storageKey, data);
+                ItemSpellBook.persistFromSpell(caster, spell);
 
                 world.setBlockToAir(blockPos);
             }

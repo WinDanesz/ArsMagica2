@@ -78,5 +78,7 @@ public class PacketCharmCast extends AMPacket<PacketCharmCast> {
             default:
                 break;
         }
+
+        book.persistAppropriationData(bookStack, spellStack);
     }
 }
