@@ -26,14 +26,21 @@ public class GuiSpellCustomization extends GuiContainer {
 
     private GuiButtonVariableDims btnNext;
     private GuiButtonVariableDims btnPrev;
+    private GuiButtonVariableDims btnFinalize;
     private GuiTextField spellName;
+
+    // 10 rows of icons, leaving room for the finalize button at the bottom
+    private static final int ICON_GRID_BOTTOM = 189;
+    private static final int TEXTURE_HEIGHT = 255;
+    private static final int ySizeShrunk = 222;
+    private static final int FOOTER_HEIGHT = 8;
 
     private static final ResourceLocation background = new ResourceLocation(ArsMagica.MODID, "textures/gui/spell_customization.png");
 
     public GuiSpellCustomization(EntityPlayer player) {
         super(new ContainerSpellCustomization(player));
         this.xSize = 176;
-        this.ySize = 255;
+        this.ySize = ySizeShrunk;
     }
 
     @Override
@@ -51,6 +58,12 @@ public class GuiSpellCustomization extends GuiContainer {
     @Override
     protected void actionPerformed(GuiButton par1GuiButton) throws IOException {
         super.actionPerformed(par1GuiButton);
+
+        if (par1GuiButton.id == btnFinalize.id) {
+            ((ContainerSpellCustomization) this.inventorySlots).sendPacketToServer();
+            this.mc.player.closeScreen();
+            return;
+        }
 
         if (par1GuiButton.id == btnPrev.id) {
             if (page > 0) {
@@ -109,6 +122,9 @@ public class GuiSpellCustomization extends GuiContainer {
         this.buttonList.add(btnPrev);
         this.buttonList.add(btnNext);
 
+        btnFinalize = new GuiButtonVariableDims(2, l + (xSize - 100) / 2, i1 + ySize - 28, I18n.format("am2.gui.finalizeSpell")).setDimensions(100, 20);
+        this.buttonList.add(btnFinalize);
+
         int IIcon_start_x = l + 12;
         int IIcon_start_y = i1 + 50;
 
@@ -129,7 +145,7 @@ public class GuiSpellCustomization extends GuiContainer {
             if (btnX > (l + xSize) - 15) {
                 btnX = IIcon_start_x;
                 btnY += 14;
-                if (btnY > (i1 + ySize - 10)) {
+                if (btnY > (i1 + ICON_GRID_BOTTOM)) {
                     btnY = IIcon_start_y;
                     curPage++;
                 }
@@ -151,8 +167,18 @@ public class GuiSpellCustomization extends GuiContainer {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         int l = (width - xSize) / 2;
         int i1 = (height - ySize) / 2;
-        drawTexturedModalRect(l, i1, 0, 0, xSize, ySize);
+        // draw the top of the texture, then its bottom edge, skipping the removed middle section
+        drawTexturedModalRect(l, i1, 0, 0, xSize, ySize - FOOTER_HEIGHT);
+        drawTexturedModalRect(l, i1 + ySize - FOOTER_HEIGHT, 0, TEXTURE_HEIGHT - FOOTER_HEIGHT, xSize, FOOTER_HEIGHT);
+        boolean empty = spellName.getText().isEmpty();
+        boolean focused = spellName.isFocused();
+        // hide the caret while empty so it doesn't overlap the placeholder
+        if (empty && focused) spellName.setFocused(false);
         spellName.drawTextBox();
+        if (empty && focused) spellName.setFocused(true);
+        if (empty) {
+            fontRenderer.drawStringWithShadow(I18n.format("am2.gui.spellNamePlaceholder"), spellName.x + 4, spellName.y + 4, 0x707070);
+        }
     }
 
 }
