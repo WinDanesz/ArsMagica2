@@ -157,6 +157,9 @@ public class SpellData {
     }
 
     public SpellCastResult execute(World world, EntityLivingBase caster, EntityLivingBase target, double x, double y, double z, @Nullable EnumFacing side) {
+        // All stages already ran: the spell is finished, not failed.
+        if (exec > 0 && exec >= stages.size())
+            return SpellCastResult.SUCCESS;
         if (exec < 0 || exec >= stages.size())
             return SpellCastResult.EFFECT_FAILED;
         List<SpellPart> parts = this.stages.get(exec);
