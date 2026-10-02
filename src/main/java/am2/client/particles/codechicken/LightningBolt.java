@@ -23,6 +23,7 @@ import java.util.Iterator;
 public class LightningBolt extends Particle {
     private int type = 0;
     private int overrideColor = -1;
+    private int ticksAlive = 0;
     private LightningBoltCommon main;
 
     public LightningBolt(World world, AMVector3 jammervec, AMVector3 targetvec, long seed) {
@@ -122,7 +123,9 @@ public class LightningBolt extends Particle {
     @Override
     public void onUpdate() {
         this.main.onUpdate();
-        if (this.main.particleAge >= this.main.particleMaxAge) {
+        ticksAlive++;
+        // Short bolts advance past their max age in a single tick; guarantee at least one rendered frame
+        if (this.main.particleAge >= this.main.particleMaxAge && ticksAlive >= 2) {
             setExpired();
         }
     }
@@ -139,7 +142,8 @@ public class LightningBolt extends Particle {
         if (pass == 0) mainalpha = (1.0F - boltage) * 0.9F;
         else if (pass == 1) mainalpha = 1.0F - boltage * 0.6F;
         else mainalpha = 1.0F - boltage * 0.3F;
-        int renderlength = (int) ((this.main.particleAge + partialframe + (int) (this.main.length * 3.0F)) / (int) (this.main.length * 3.0F) * this.main.numsegments0);
+        int lead = Math.max(1, (int) (this.main.length * 3.0F));
+        int renderlength = (int) ((this.main.particleAge + partialframe + lead) / lead * this.main.numsegments0);
         for (Iterator<Segment> iterator = this.main.segments.iterator(); iterator.hasNext(); ) {
             LightningBoltCommon.Segment rendersegment = iterator.next();
             if (rendersegment.segmentno <= renderlength) {
@@ -201,9 +205,6 @@ public class LightningBolt extends Particle {
             // Buffer wasn't drawing, that's fine
         }
 
-        GlStateManager.pushMatrix();
-        GL11.glPushAttrib(GL11.GL_TEXTURE_BIT | GL11.GL_COLOR_BUFFER_BIT);
-
         GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -216,43 +217,43 @@ public class LightningBolt extends Particle {
                 this.particleRed = 0.1F;
                 this.particleGreen = 0.1F;
                 this.particleBlue = 0.6F;
-                GL11.glBlendFunc(770, 1);
+                GlStateManager.blendFunc(770, 1);
                 break;
             case 1:
                 this.particleRed = 0.6F;
                 this.particleGreen = 0.6F;
                 this.particleBlue = 0.1F;
-                GL11.glBlendFunc(770, 1);
+                GlStateManager.blendFunc(770, 1);
                 break;
             case 2:
                 this.particleRed = 0.6F;
                 this.particleGreen = 0.1F;
                 this.particleBlue = 0.6F;
-                GL11.glBlendFunc(770, 1);
+                GlStateManager.blendFunc(770, 1);
                 break;
             case 3:
                 this.particleRed = 0.1F;
                 this.particleGreen = 1.0F;
                 this.particleBlue = 0.1F;
-                GL11.glBlendFunc(770, 1);
+                GlStateManager.blendFunc(770, 1);
                 break;
             case 4:
                 this.particleRed = 0.1F;
                 this.particleGreen = 0.1F;
                 this.particleBlue = 0.1F;
-                GL11.glBlendFunc(770, 771);
+                GlStateManager.blendFunc(770, 771);
                 break;
             case 5:
                 this.particleRed = 0.6F;
                 this.particleGreen = 0.3F;
                 this.particleBlue = 0.6F;
-                GL11.glBlendFunc(770, 771);
+                GlStateManager.blendFunc(770, 771);
                 break;
             case 6:
                 this.particleRed = 0.1f;
                 this.particleGreen = 0.1f;
                 this.particleBlue = 0.1f;
-                GL11.glBlendFunc(770, 1);
+                GlStateManager.blendFunc(770, 1);
                 break;
         }
 
@@ -289,19 +290,19 @@ public class LightningBolt extends Particle {
                 this.particleRed = 0.6F;
                 this.particleGreen = 0.1F;
                 this.particleBlue = 0.1F;
-                GL11.glBlendFunc(770, 771);
+                GlStateManager.blendFunc(770, 771);
                 break;
             case 5:
                 this.particleRed = 1.0F;
                 this.particleGreen = 1.0F;
                 this.particleBlue = 0.1F;
-                GL11.glBlendFunc(770, 771);
+                GlStateManager.blendFunc(770, 771);
                 break;
             case 6:
                 this.particleRed = 0.6f;
                 this.particleGreen = 0.1f;
                 this.particleBlue = 0.6f;
-                GL11.glBlendFunc(770, 1);
+                GlStateManager.blendFunc(770, 1);
                 break;
         }
 
@@ -337,19 +338,19 @@ public class LightningBolt extends Particle {
                 this.particleRed = 0.1F;
                 this.particleGreen = 0.1F;
                 this.particleBlue = 0.1F;
-                GL11.glBlendFunc(770, 771);
+                GlStateManager.blendFunc(770, 771);
                 break;
             case 5:
                 this.particleRed = 1.0F;
                 this.particleGreen = 1.0F;
                 this.particleBlue = 0.1F;
-                GL11.glBlendFunc(770, 771);
+                GlStateManager.blendFunc(770, 771);
                 break;
             case 6:
                 this.particleRed = 0.6f;
                 this.particleGreen = 0.1f;
                 this.particleBlue = 0.6f;
-                GL11.glBlendFunc(770, 1);
+                GlStateManager.blendFunc(770, 1);
                 break;
         }
 
@@ -362,12 +363,10 @@ public class LightningBolt extends Particle {
         renderBolt(worldRendererIn, partialTicks, cosyaw, cospitch, sinyaw, cossinpitch, 2);
         tessellator.draw();
 
-        GlStateManager.disableBlend();
-        GL11.glDepthMask(true);
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
-
-        // Restore vanilla particle rendering state
+        // Restore vanilla particle rendering state (through GlStateManager so its cache stays accurate)
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.depthMask(false);
         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/particle/particles.png"));
         worldRendererIn.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
     }
