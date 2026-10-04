@@ -91,6 +91,12 @@ public class SpellBookBakedModel implements IBakedModel {
             SpellBookBakedModel.this.cachedStack = stack;
             SpellBookBakedModel.this.cachedEntity = entity;
 
+            // Hand the stack to the inner model right away. The dynamic model returned below
+            // renders the inner book model directly (without going through handlePerspective of
+            // this wrapper), so without this the arcane spell book's built-in renderer would still
+            // hold an empty/stale stack and draw nothing (e.g. in the hotbar after relogging).
+            parent.bookModel.getOverrides().handleItemState(parent.bookModel, stack, world, entity);
+
             // Check if this is being rendered for a player holding the book and has an active spell
             if (entity instanceof EntityPlayer &&
                     stack.getItem() instanceof ItemSpellBook) {
