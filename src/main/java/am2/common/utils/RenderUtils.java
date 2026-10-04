@@ -131,12 +131,13 @@ public class RenderUtils {
         GlStateManager.rotate(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(renderManager.playerViewX, Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F, 0.0F, 0.0F);
         GlStateManager.scale(-f1, -f1, f1);
-        GL11.glDisable(GL11.GL_LIGHTING);
+        // Drawn fully on top of the world so surrounding blocks never cut into or darken the label
+        GlStateManager.disableLighting();
         GlStateManager.depthMask(false);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableTexture2D();
 
         int Y = charHeight * lines + lineSpace * (lines - 1);
         Tessellator tessellator = Tessellator.getInstance();
@@ -147,19 +148,15 @@ public class RenderUtils {
         tessellator.getBuffer().pos(textHalfWidth + 1, -1 + dy, 0.0D).color(0.0F, 0.0F, 0.0F, 1.0F).endVertex();
         tessellator.draw();
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GlStateManager.enableTexture2D();
         for(String t: texts) {
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GlStateManager.depthMask(false);
-            fontrenderer.drawString(t, -fontrenderer.getStringWidth(t) / 2, dy, 0x20FFFFFF);
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-            GlStateManager.depthMask(true);
             fontrenderer.drawString(t, -fontrenderer.getStringWidth(t) / 2, dy, 0xFFFFFFFF);
             dy += charHeight + lineSpace;
         }
-        GlStateManager.disableAlpha();
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_BLEND);
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
+        GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
         GlStateManager.popMatrix();

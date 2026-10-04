@@ -311,6 +311,9 @@ public class CommonProxy implements IGuiHandler {
         return null;
     }
 
+    public void renderPendingPowerLabel() {
+    }
+
     public void drawPowerOnBlockHighlight(EntityPlayer player, RayTraceResult target, float partialTicks) {
     }
 

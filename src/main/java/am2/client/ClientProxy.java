@@ -375,7 +375,6 @@ public class ClientProxy extends CommonProxy {
                 PowerNodeEntry data = ArsMagica.proxy.getTrackedData();
                 IBlockState state = player.world.getBlockState(target.getBlockPos());
                 Block block = state.getBlock();
-                float yOff = 0.5f;
                 if (data != null && te instanceof IPowerNode<?>) {
                     IPowerNode<?> node = (IPowerNode<?>) te;
                     StringJoiner message = new StringJoiner("\n");
@@ -405,14 +404,27 @@ public class ClientProxy extends CommonProxy {
 
                     Vec3d dir = new Vec3d(pX - bX, (pY + player.getEyeHeight()) - bY, pZ - bZ).normalize().scale(0.5);
 
-                    RenderUtils.drawTextInWorldAtOffset(message.toString(),
-                            bX - pX + dir.x,
-                            target.getBlockPos().getY() + yOff - pY + block.getBoundingBox(state, player.world, target.getBlockPos()).maxY * 0.8f + dir.y,
-                            bZ - pZ + dir.z
-                    );
+                    // Deferred to RenderWorldLastEvent: the highlight event fires before translucent blocks,
+                    // entities and particles, which would otherwise paint over the label.
+                    String text = message.toString();
+                    double lX = bX - pX + dir.x;
+                    // Bottom line sits just above the block's top face; only pulled toward the camera horizontally
+                    double lY = target.getBlockPos().getY() + block.getBoundingBox(state, player.world, target.getBlockPos()).maxY + 0.25 - pY;
+                    double lZ = bZ - pZ + dir.z;
+                    pendingPowerLabel = () -> RenderUtils.drawTextInWorldAtOffset(text, lX, lY, lZ);
                 }
             }
         }
+    }
+
+    private Runnable pendingPowerLabel;
+
+    @Override
+    public void renderPendingPowerLabel() {
+        Runnable label = pendingPowerLabel;
+        pendingPowerLabel = null;
+        if (label != null)
+            label.run();
     }
 
     @Override
