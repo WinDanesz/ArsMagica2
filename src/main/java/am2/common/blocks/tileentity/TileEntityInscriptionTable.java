@@ -78,6 +78,8 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
     public static int inkIndex = 3;
     /** Slot index for the writable book in EBWiz-preserve mode (config: EBWiz_Preserve_Spell_Book). */
     public static int ebwizWritableBookIndex = 4;
+    /** Recipe book NBT key holding the plain spell name (the display name is "Spell Recipe of &lt;name&gt;"). */
+    public static final String SPELL_NAME_TAG = "spellName";
     private EntityPlayer currentPlayerUsing;
     private final HashMap<SpellModifiers, Integer> modifierCount;
     private String currentSpellName;
@@ -862,6 +864,8 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
             bookstack.getTagCompound().setString("spell_mod_version", ArsMagica.instance.getVersion());
 
             bookstack.setStackDisplayName(formatSpellRecipeName(this.currentSpellName));
+            // Raw name for the Crafting Altar, so it doesn't suggest "Spell Recipe of <name>" for the spell
+            bookstack.getTagCompound().setString(SPELL_NAME_TAG, this.currentSpellName != null ? this.currentSpellName : "");
 
             this.currentRecipe.clear();
             for (ArrayList<SpellPart> list : this.shapeGroups)
@@ -1006,6 +1010,28 @@ public class TileEntityInscriptionTable extends TileEntity implements IInventory
         return spellName == null || spellName.isEmpty()
                 ? I18n.translateToLocalFormatted("am2.tooltip.spellRecipe")
                 : I18n.translateToLocalFormatted("am2.tooltip.spellRecipeOf", spellName);
+    }
+
+    /**
+     * The spell name a recipe book was written for, without the "Spell Recipe of" wrapper.
+     * Books written before the raw name was stored fall back to unwrapping the display name.
+     */
+    public static String getSpellNameFromRecipe(ItemStack book) {
+        if (book.hasTagCompound() && book.getTagCompound().hasKey(SPELL_NAME_TAG)) {
+            return book.getTagCompound().getString(SPELL_NAME_TAG);
+        }
+        String display = book.getDisplayName();
+        if (display.equals(I18n.translateToLocalFormatted("am2.tooltip.spellRecipe"))) return "";
+        String format = I18n.translateToLocal("am2.tooltip.spellRecipeOf");
+        int idx = format.indexOf("%s");
+        if (idx >= 0) {
+            String prefix = format.substring(0, idx);
+            String suffix = format.substring(idx + 2);
+            if (display.length() > prefix.length() + suffix.length() && display.startsWith(prefix) && display.endsWith(suffix)) {
+                return display.substring(prefix.length(), display.length() - suffix.length());
+            }
+        }
+        return display;
     }
 
     public String getSpellName() {

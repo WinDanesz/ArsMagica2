@@ -691,7 +691,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
                 if (lecternStack.hasTagCompound()) {
                     spellGuide = NBTUtils.getItemStackArray(lecternStack.getTagCompound(), "spell_combo");
                     outputCombo = lecternStack.getTagCompound().getIntArray("output_combo");
-                    currentSpellName = lecternStack.getDisplayName();
+                    currentSpellName = TileEntityInscriptionTable.getSpellNameFromRecipe(lecternStack);
 
                     int numShapeGroups = lecternStack.getTagCompound().getInteger("numShapeGroups");
                     shapeGroupGuide = new int[numShapeGroups][];
