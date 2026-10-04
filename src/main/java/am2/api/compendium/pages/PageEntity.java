@@ -47,7 +47,6 @@ public class PageEntity extends CompendiumPage<Entity> {
             RenderHelper.enableStandardItemLighting();
 
             GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
             try {
                 if (element instanceof AM2Boss) {
                     float scaleFactorX = (1 / element.width);
@@ -73,11 +72,6 @@ public class PageEntity extends CompendiumPage<Entity> {
                 renderManager.setRenderShadow(false);
                 renderManager.renderEntity(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
                 renderManager.setRenderShadow(true);
-
-                GlStateManager.disableRescaleNormal();
-                GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-                GlStateManager.disableTexture2D();
-                GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
             } catch (Exception e) {
                 if (!loggedRenderError) {
                     loggedRenderError = true;
@@ -85,9 +79,15 @@ public class PageEntity extends CompendiumPage<Entity> {
                 }
             }
             GlStateManager.popMatrix();
-            GlStateManager.popAttrib();
 
+            // Same cleanup as GuiInventory.drawEntityOnScreen. Not using push/popAttrib: those restore raw
+            // GL state behind GlStateManager's cache, which leaves the cache stale and washes out the GUI.
             RenderHelper.disableStandardItemLighting();
+            GlStateManager.disableRescaleNormal();
+            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+            GlStateManager.disableTexture2D();
+            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+            GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
         } catch (Exception e) {
             if (!loggedRenderError) {
                 loggedRenderError = true;
