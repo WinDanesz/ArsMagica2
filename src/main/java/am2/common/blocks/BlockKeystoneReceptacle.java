@@ -116,7 +116,7 @@ public class BlockKeystoneReceptacle extends BlockAMPowered {
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
                                    boolean willHarvest) {
         IKeystoneLockable<?> lockable = (IKeystoneLockable<?>) world.getTileEntity(pos);
-        if (KeystoneUtilities.instance.getKeyFromRunes(lockable.getRunesInKey()) != 0) {
+        if (!player.capabilities.isCreativeMode && KeystoneUtilities.instance.getKeyFromRunes(lockable.getRunesInKey()) != 0) {
             if (!world.isRemote)
                 player.sendMessage(new TextComponentTranslation("am2.tooltip.clearKey"));
             return false;

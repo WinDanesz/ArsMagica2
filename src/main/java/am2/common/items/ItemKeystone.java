@@ -126,10 +126,10 @@ public class ItemKeystone extends Item {
         }
         for (int i = 0; i < values.length; ++i) {
             ItemStack stack = values[i];
-            if (stack == ItemStack.EMPTY) {
+            if (stack.isEmpty()) {
                 itemStack.getTagCompound().removeTag("keystonemeta" + i);
             } else if (stack.getItem() == AMItems.rune) {
-                itemStack.getTagCompound().setInteger("keystonemeta" + i, itemStack.getItemDamage());
+                itemStack.getTagCompound().setInteger("keystonemeta" + i, stack.getItemDamage());
             }
         }
 

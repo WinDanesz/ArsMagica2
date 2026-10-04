@@ -32,6 +32,7 @@ Add /am respec command returning spent occulus points and unlearning skills
 - feat: New Crystal Marker model (texture by Foreck)
 - feat: New name for Mana Drain block -> Draining Well. Fixed item texture of Draining Well, and added new texture for the block.
 - fix: AM Spell books no longer directly accept and convert EbWizardry spells into AM spell items. Craft those books into spell items using the Inscription Table -> Crafting Altar
+- fix: Keystones no longer turn every rune into a black rune when saved, which locked players out of their own Keystone Receptacles. Locked receptacles can now be broken in creative mode
 - fix: Changed Fire affinity's water weakness: now it deals damage like it did in 1.7.10 instead of reducing max hp
 - fix: Changed Water affinity's fire weakness: now it deals damage like it did in 1.7.10 instead of reducing max hp
 - fix: Corrected more affinity buff/debuff quirks, updated compendium docs to be more concrete.
