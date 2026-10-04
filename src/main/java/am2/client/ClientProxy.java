@@ -408,8 +408,10 @@ public class ClientProxy extends CommonProxy {
                     // entities and particles, which would otherwise paint over the label.
                     String text = message.toString();
                     double lX = bX - pX + dir.x;
-                    // Bottom line sits just above the block's top face; only pulled toward the camera horizontally
-                    double lY = target.getBlockPos().getY() + block.getBoundingBox(state, player.world, target.getBlockPos()).maxY + 0.25 - pY;
+                    // Bottom line sits just above the block's top face (capped at one block, so tall bounds like the
+                    // Obelisk's don't float it away); only pulled toward the camera horizontally
+                    double topY = Math.min(block.getBoundingBox(state, player.world, target.getBlockPos()).maxY, 1.0);
+                    double lY = target.getBlockPos().getY() + topY + 0.25 - pY;
                     double lZ = bZ - pZ + dir.z;
                     pendingPowerLabel = () -> RenderUtils.drawTextInWorldAtOffset(text, lX, lY, lZ);
                 }
