@@ -268,12 +268,43 @@ public class ItemSpellBook extends Item implements IBauble {
         }
         ItemStackHelper.saveAllItems(itemStack.getTagCompound(), nonNullList);
 
-        ItemStack active = getActiveItemStack(itemStack);
-        boolean soulbound = EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, itemStack) > 0;
+        mirrorActiveSpellEnchantments(itemStack);
+    }
+
+    /** Persistent flag so soulbound survives anything that rewrites the book's enchantment list. */
+    private static final String KEY_SOULBOUND = "SpellbookSoulbound";
+
+    private static boolean isSoulbound(ItemStack book) {
+        if (EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, book) > 0) return true;
+        return book.hasTagCompound() && book.getTagCompound().getBoolean(KEY_SOULBOUND);
+    }
+
+    /**
+     * Makes the book carry the active spell's enchantments (as in 1.7.10) while never losing
+     * its own soulbound enchantment, which is remembered in {@link #KEY_SOULBOUND}.
+     */
+    private void mirrorActiveSpellEnchantments(ItemStack book) {
+        boolean soulbound = isSoulbound(book);
+        ItemStack active = getActiveItemStack(book);
         if (!active.isEmpty())
-            AMEnchantmentHelper.copyEnchantments(active, itemStack);
+            AMEnchantmentHelper.copyEnchantments(active, book);
         if (soulbound)
-            AMEnchantmentHelper.soulbindStack(itemStack);
+            ensureSoulbound(book);
+    }
+
+    private static void ensureSoulbound(ItemStack book) {
+        if (EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, book) <= 0)
+            AMEnchantmentHelper.soulbindStack(book);
+        if (!book.hasTagCompound()) book.setTagCompound(new NBTTagCompound());
+        book.getTagCompound().setBoolean(KEY_SOULBOUND, true);
+    }
+
+    /** Restores soulbound if the enchantment went missing from a book that was soulbound before. */
+    private static void healSoulbound(ItemStack book) {
+        if (book.hasTagCompound() && book.getTagCompound().getBoolean(KEY_SOULBOUND)
+                && EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, book) <= 0) {
+            AMEnchantmentHelper.soulbindStack(book);
+        }
     }
 
     public void setActiveSlot(ItemStack itemStack, int slot) {
@@ -284,12 +315,7 @@ public class ItemSpellBook extends Item implements IBauble {
         if (slot > 7) slot = 7;
         itemStack.getTagCompound().setInteger("SpellbookActiveSlot", slot);
 
-        ItemStack active = getActiveItemStack(itemStack);
-        boolean Soulbound = EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, itemStack) > 0;
-        if (!active.isEmpty())
-            AMEnchantmentHelper.copyEnchantments(active, itemStack);
-        if (Soulbound)
-            AMEnchantmentHelper.soulbindStack(itemStack);
+        mirrorActiveSpellEnchantments(itemStack);
     }
 
     public int setNextSlot(ItemStack itemStack) {
@@ -404,9 +430,21 @@ public class ItemSpellBook extends Item implements IBauble {
 
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void onUpdate(ItemStack stack, World world, Entity entity, int par4, boolean par5) {
         super.onUpdate(stack, world, entity, par4, par5);
+        if (!world.isRemote) {
+            // Remember soulbound on the book itself and put it back if the enchantment list got rewritten.
+            if (EnchantmentHelper.getEnchantmentLevel(AMEnchantments.soulbound, stack) > 0)
+                ensureSoulbound(stack);
+            else
+                healSoulbound(stack);
+        } else {
+            clientUpdate(entity);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void clientUpdate(Entity entity) {
         if (entity instanceof EntityPlayerSP) {
             EntityPlayerSP player = (EntityPlayerSP) entity;
             ItemStack usingItem = player.getActiveItemStack();

@@ -45,14 +45,17 @@ public class Dig extends SpellComponent {
             return false;
         if (world.isRemote)
             return true;
+        // Enchant a throwaway copy: the source can be the live spell stack in the player's hand,
+        // and silk touch / fortune must not stick to it (or leak to a spell book mirroring it).
+        ItemStack tool = spell.getSource().copy();
         if (spell.isModifierPresent(SpellModifiers.SILKTOUCH_LEVEL)) {
-            if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, spell.getSource()) <= 0) {
-                spell.getSource().addEnchantment(Enchantments.SILK_TOUCH, 1);
+            if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, tool) <= 0) {
+                tool.addEnchantment(Enchantments.SILK_TOUCH, 1);
             }
         } else if (spell.isModifierPresent(SpellModifiers.FORTUNE_LEVEL)) {
 
-            if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, spell.getSource()) <= 0) {
-                spell.getSource().addEnchantment(Enchantments.FORTUNE, spell.getModifierCount(SpellModifiers.FORTUNE_LEVEL));
+            if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, tool) <= 0) {
+                tool.addEnchantment(Enchantments.FORTUNE, spell.getModifierCount(SpellModifiers.FORTUNE_LEVEL));
             }
         }
 
@@ -68,7 +71,7 @@ public class Dig extends SpellComponent {
                 int xp = ForgeHooks.onBlockBreakEvent(world, ((EntityPlayerMP) caster).interactionManager.getGameType(), (EntityPlayerMP) caster, blockPos);
                 if (xp == -1) return false;
             }
-            state.getBlock().harvestBlock(world, (EntityPlayer) caster, blockPos, state, null, spell.getSource());
+            state.getBlock().harvestBlock(world, (EntityPlayer) caster, blockPos, state, null, tool);
             world.destroyBlock(blockPos, false);
             EntityExtension.For(caster).deductMana(hardness * 1.28f);
         }
