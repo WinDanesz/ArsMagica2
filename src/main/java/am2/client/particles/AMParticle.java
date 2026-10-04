@@ -37,7 +37,37 @@ public class AMParticle extends Particle {
     private boolean doVelocityUpdates = true;
     private boolean ignoreLight = false;
 
+    // Optional window into the sprite (fractions 0-1), so a tiny particle shows a crisp patch of a block texture
+    private float subU = 0;
+    private float subV = 0;
+    private float subSize = 1;
+
+    // Tumbling 3D cube mode (rotation in radians, spin in radians per tick)
+    private boolean cube = false;
+    private float rotX, rotY, rotZ, prevRotX, prevRotY, prevRotZ;
+    private float spinX, spinY, spinZ;
+
     public static String[] particleTypes;
+
+    /** Render this particle as a small tumbling cube instead of a camera-facing quad. */
+    public AMParticle setTumblingCube(float maxSpinRadians) {
+        this.cube = true;
+        this.rotX = this.prevRotX = rand.nextFloat() * 6.2832f;
+        this.rotY = this.prevRotY = rand.nextFloat() * 6.2832f;
+        this.rotZ = this.prevRotZ = rand.nextFloat() * 6.2832f;
+        this.spinX = (rand.nextFloat() * 2 - 1) * maxSpinRadians;
+        this.spinY = (rand.nextFloat() * 2 - 1) * maxSpinRadians;
+        this.spinZ = (rand.nextFloat() * 2 - 1) * maxSpinRadians;
+        return this;
+    }
+
+    /** Show only a {@code size} x {@code size} patch of the sprite, starting at ({@code u}, {@code v}); all in 0-1 sprite fractions. */
+    public AMParticle setTextureSubRegion(float u, float v, float size) {
+        this.subU = u;
+        this.subV = v;
+        this.subSize = size;
+        return this;
+    }
 
     public void setParticleAge(int age) {
         this.particleAge = age;
@@ -203,6 +233,15 @@ public class AMParticle extends Particle {
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
 
+        if (cube) {
+            prevRotX = rotX;
+            prevRotY = rotY;
+            prevRotZ = rotZ;
+            rotX += spinX;
+            rotY += spinY;
+            rotZ += spinZ;
+        }
+
         if (isAffectedByGravity)
             this.motionY -= 0.04D * this.particleGravity;
         if (doVelocityUpdates)
@@ -264,20 +303,104 @@ public class AMParticle extends Particle {
             float scaleFactorY = this.getParticleScaleY();
             float scaleFactorZ = this.getParticleScaleZ();
 
-            float min_u = this.particleTexture.getMinU();
-            float min_v = this.particleTexture.getMinV();
-            float max_u = this.particleTexture.getMaxU();
-            float max_v = this.particleTexture.getMaxV();
+            float spriteMinU = this.particleTexture.getMinU();
+            float spriteMinV = this.particleTexture.getMinV();
+            float spanU = this.particleTexture.getMaxU() - spriteMinU;
+            float spanV = this.particleTexture.getMaxV() - spriteMinV;
+            float min_u = spriteMinU + spanU * subU;
+            float min_v = spriteMinV + spanV * subV;
+            float max_u = min_u + spanU * subSize;
+            float max_v = min_v + spanV * subSize;
 
             int brightness = this.getBrightnessForRender(partialTicks);
             int j = brightness >> 16 & 65535;
             int k = brightness & 65535;
+
+            if (cube) {
+                renderCube(buffer, partialTicks, f11, f12, f13, scaleFactorX, min_u, min_v, max_u, max_v, j, k);
+                return;
+            }
 
             buffer.pos(f11 - cosyaw * scaleFactorX - sinsinpitch * scaleFactorX, f12 - cospitch * scaleFactorY, f13 - sinyaw * scaleFactorZ - cossinpitch * scaleFactorZ).tex(max_u, max_v).color(this.GetParticleRed(), this.GetParticleGreen(), this.GetParticleBlue(), this.GetParticleAlpha()).lightmap(j, k).endVertex();
             buffer.pos(f11 - cosyaw * scaleFactorX + sinsinpitch * scaleFactorX, f12 + cospitch * scaleFactorY, f13 - sinyaw * scaleFactorZ + cossinpitch * scaleFactorZ).tex(max_u, min_v).color(this.GetParticleRed(), this.GetParticleGreen(), this.GetParticleBlue(), this.GetParticleAlpha()).lightmap(j, k).endVertex();
             buffer.pos(f11 + cosyaw * scaleFactorX + sinsinpitch * scaleFactorX, f12 + cospitch * scaleFactorY, f13 + sinyaw * scaleFactorZ + cossinpitch * scaleFactorZ).tex(min_u, min_v).color(this.GetParticleRed(), this.GetParticleGreen(), this.GetParticleBlue(), this.GetParticleAlpha()).lightmap(j, k).endVertex();
             buffer.pos(f11 + cosyaw * scaleFactorX - sinsinpitch * scaleFactorX, f12 - cospitch * scaleFactorY, f13 + sinyaw * scaleFactorZ - cossinpitch * scaleFactorZ).tex(min_u, max_v).color(this.GetParticleRed(), this.GetParticleGreen(), this.GetParticleBlue(), this.GetParticleAlpha()).lightmap(j, k).endVertex();
         }
+    }
+
+    /**
+     * Draws the particle as a cube with edge length {@code 2 * half}, centered on (cx, cy, cz) relative to the camera.
+     * Only faces turned towards the camera are emitted, so translucent textures don't show the cube's insides.
+     */
+    private void renderCube(BufferBuilder buffer, float partialTicks, float cx, float cy, float cz, float half,
+                            float minU, float minV, float maxU, float maxV, int lightU, int lightV) {
+        float ax = prevRotX + (rotX - prevRotX) * partialTicks;
+        float ay = prevRotY + (rotY - prevRotY) * partialTicks;
+        float az = prevRotZ + (rotZ - prevRotZ) * partialTicks;
+        float sinX = (float) Math.sin(ax), cosX = (float) Math.cos(ax);
+        float sinY = (float) Math.sin(ay), cosY = (float) Math.cos(ay);
+        float sinZ = (float) Math.sin(az), cosZ = (float) Math.cos(az);
+
+        float[] n = new float[3];
+        float[] u = new float[3];
+        float[] v = new float[3];
+        float[] corner = new float[3];
+        float[] us = {0, 1, 1, 0};
+        float[] vs = {1, 1, 0, 0};
+        float[] signU = {-1, 1, 1, -1};
+        float[] signV = {-1, -1, 1, 1};
+
+        for (int axis = 0; axis < 3; axis++) {
+            for (int sign = -1; sign <= 1; sign += 2) {
+                // Face normal, plus tangent axes ordered so u x v = normal (corners come out counter-clockwise from outside)
+                java.util.Arrays.fill(n, 0);
+                java.util.Arrays.fill(u, 0);
+                java.util.Arrays.fill(v, 0);
+                n[axis] = sign;
+                u[(axis + (sign > 0 ? 1 : 2)) % 3] = 1;
+                v[(axis + (sign > 0 ? 2 : 1)) % 3] = 1;
+
+                rotateCubeVector(n, sinX, cosX, sinY, cosY, sinZ, cosZ);
+                rotateCubeVector(u, sinX, cosX, sinY, cosY, sinZ, cosZ);
+                rotateCubeVector(v, sinX, cosX, sinY, cosY, sinZ, cosZ);
+
+                // Skip faces pointing away from the camera: (camera - faceCenter) . normal <= 0
+                float toCamera = -(cx + n[0] * half) * n[0] - (cy + n[1] * half) * n[1] - (cz + n[2] * half) * n[2];
+                if (toCamera <= 0) continue;
+
+                // Block-style shading: lighter on top, darker underneath
+                float shade = 0.8f + 0.2f * n[1];
+                float r = this.GetParticleRed() * shade;
+                float g = this.GetParticleGreen() * shade;
+                float b = this.GetParticleBlue() * shade;
+
+                for (int c = 0; c < 4; c++) {
+                    for (int i = 0; i < 3; i++) {
+                        corner[i] = (n[i] + u[i] * signU[c] + v[i] * signV[c]) * half;
+                    }
+                    buffer.pos(cx + corner[0], cy + corner[1], cz + corner[2])
+                            .tex(minU + (maxU - minU) * us[c], minV + (maxV - minV) * vs[c])
+                            .color(r, g, b, this.GetParticleAlpha())
+                            .lightmap(lightU, lightV).endVertex();
+                }
+            }
+        }
+    }
+
+    private static void rotateCubeVector(float[] p, float sinX, float cosX, float sinY, float cosY, float sinZ, float cosZ) {
+        float x = p[0], y = p[1], z = p[2];
+        float t = y * cosX - z * sinX;
+        z = y * sinX + z * cosX;
+        y = t;
+        t = x * cosY + z * sinY;
+        z = -x * sinY + z * cosY;
+        x = t;
+        t = x * cosZ - y * sinZ;
+        y = x * sinZ + y * cosZ;
+        x = t;
+        p[0] = x;
+        p[1] = y;
+        p[2] = z;
     }
 
     private void renderRadiant(Tessellator tessellator, float partialFrame) {

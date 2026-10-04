@@ -1,9 +1,30 @@
 package am2.client.particles;
 
+import am2.ArsMagica;
 import am2.api.affinity.Affinity;
 import am2.common.registry.Affinities;
+import net.minecraft.world.World;
 
 public class AMParticleDefs {
+
+    /**
+     * Spawns the particle for an affinity, sized and coloured for the effect that uses it. Water gets a mix of bubbles
+     * and water cubes, every other affinity its usual sprite.
+     *
+     * @param scale particle size, or 0 or less to keep the default
+     * @param color spell colour, or -1 for the affinity's default look
+     */
+    public static AMParticle spawnForAffinity(World world, Affinity aff, double x, double y, double z, float scale, int color) {
+        if (Affinities.water.equals(aff)) {
+            return WaterParticles.bubbleOrCube(world, x, y, z, color, scale);
+        }
+        AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, getParticleForAffinity(aff), x, y, z);
+        if (particle != null) {
+            if (scale > 0) particle.setParticleScale(scale);
+            if (color != -1) particle.setRGBColorI(color & 0xFFFFFF);
+        }
+        return particle;
+    }
 
     public static String getParticleForAffinity(Affinity aff) {
         if (aff.equals(Affinities.air)) return "wind";

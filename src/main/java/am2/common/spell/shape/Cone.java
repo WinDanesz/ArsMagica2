@@ -131,7 +131,6 @@ public class Cone extends SpellShape {
         double startZ = caster.posZ + lookVec.z * 0.5;
         Affinity affinity = spell.getMainShift();
         int color = spell.getColor(world, caster, null);
-        String particleType = AMParticleDefs.getParticleForAffinity(affinity);
 
         // Spawn particles near the caster and give them outward motion
         int particleCount = ArsMagica.config.getGFXLevel() * 3 + 3;
@@ -159,14 +158,10 @@ public class Cone extends SpellShape {
                 double vy = -Math.sin(pitchRad) * particleSpeed;
                 EBWizardryCompatBootstrap.spawnDirectedFrostParticle(world, px, py, pz, vx, vy, vz);
             } else {
-                AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, particleType, px, py, pz);
+                AMParticle particle = AMParticleDefs.spawnForAffinity(world, affinity, px, py, pz, 0.1f + world.rand.nextFloat() * 0.1f, color);
                 if (particle != null) {
                     particle.setMaxAge(8 + world.rand.nextInt(5));
-                    particle.setParticleScale(0.1f + world.rand.nextFloat() * 0.1f);
                     particle.setIgnoreMaxAge(false);
-                    if (color != -1) {
-                        particle.setRGBColorI(color);
-                    }
                     // Move outward in the cone direction (yaw + 90 matches codebase convention for ParticleMoveOnHeading)
                     particle.AddParticleController(new ParticleMoveOnHeading(particle, particleYaw, particlePitch, particleSpeed, 1, false));
                     particle.AddParticleController(new ParticleFadeOut(particle, 1, false).setFadeSpeed(0.1f).setKillParticleOnFinish(true));

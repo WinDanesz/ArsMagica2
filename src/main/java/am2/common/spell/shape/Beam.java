@@ -123,13 +123,10 @@ public class Beam extends SpellShape {
         }
 
         for (int i = 0; i < ArsMagica.config.getGFXLevel() + 1; ++i) {
-            AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, AMParticleDefs.getParticleForAffinity(affinity), beamHitVec.x, beamHitVec.y, beamHitVec.z);
+            AMParticle particle = AMParticleDefs.spawnForAffinity(world, affinity, beamHitVec.x, beamHitVec.y, beamHitVec.z, 0.1f, color);
             if (particle != null) {
                 particle.setMaxAge(2);
-                particle.setParticleScale(0.1f);
                 particle.setIgnoreMaxAge(false);
-                if (color != -1)
-                    particle.setRGBColorI(color);
                 particle.AddParticleController(new ParticleMoveOnHeading(particle, world.rand.nextDouble() * 360, world.rand.nextDouble() * 360, world.rand.nextDouble() * 0.2 + 0.02f, 1, false));
             }
         }

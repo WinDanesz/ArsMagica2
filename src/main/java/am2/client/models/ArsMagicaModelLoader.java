@@ -97,6 +97,7 @@ public class ArsMagicaModelLoader implements ICustomModelLoader {
         registerParticle(e.getMap(), "sparkle");
         registerParticle(e.getMap(), "sparkle2");
         registerParticle(e.getMap(), "water_ball");
+        registerParticle(e.getMap(), "water_drop");
         registerParticle(e.getMap(), "wind");
         registerParticle(e.getMap(), "witchwood_leaf");
         e.getMap().registerSprite(new ResourceLocation("arsmagica2:blocks/custom/black_aurem"));

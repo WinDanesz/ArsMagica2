@@ -1,6 +1,7 @@
 package am2.common.spell.shape;
 
 import am2.ArsMagica;
+import am2.api.affinity.Affinity;
 import am2.api.spell.Operation;
 import am2.api.spell.SpellData;
 import am2.api.spell.SpellModifiers;
@@ -92,26 +93,29 @@ public class AoE extends SpellShape {
     private void spawnAoEParticles(SpellData stack, EntityLivingBase caster, World world, double x, double y, double z, int radius) {
         if (!world.isRemote) return; // Only spawn particles on client side
 
-        String pfxName = AMParticleDefs.getParticleForAffinity(stack.getMainShift());
+        Affinity affinity = stack.getMainShift();
+        boolean water = Affinities.water.equals(affinity);
+        // The trail behind each particle is made of bubbles for water
+        String trailName = water ? WaterParticles.BUBBLE : AMParticleDefs.getParticleForAffinity(affinity);
         float speed = 0.08f * radius;
 
-        int color = stack.getColor(world, caster, null) & 0xFFFFFF;
+        int color = stack.getColor(world, caster, null); // -1 without a Color modifier
+        int trailColor = water ? WaterParticles.trailColor(color) : color & 0xFFFFFF;
 
         int angleStep = ArsMagica.config.FullGFX() ? 20 : ArsMagica.config.LowGFX() ? 40 : 60;
         // Create spherical particle explosion with both horizontal and vertical components
         for (int i = 0; i < 360; i += angleStep) {
             // Add particles at multiple vertical angles to create a sphere
             for (int pitch = -60; pitch <= 60; pitch += angleStep) {
-                AMParticle effect = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, pfxName, x, y + 1.5f, z);
+                AMParticle effect = AMParticleDefs.spawnForAffinity(world, affinity, x, y + 1.5f, z, 0, color);
                 if (effect != null) {
                     effect.setIgnoreMaxAge(true);
                     effect.AddParticleController(new ParticleMoveOnHeading(effect, i, pitch, speed, 1, false));
-                    effect.setRGBColorI(color);
                     effect.AddParticleController(new ParticleFadeOut(effect, 1, false).setFadeSpeed(0.05f).setKillParticleOnFinish(true));
                     effect.AddParticleController(
-                            new ParticleLeaveParticleTrail(effect, pfxName, false, 5, 1, false)
+                            new ParticleLeaveParticleTrail(effect, trailName, false, 5, 1, false)
                                     .addControllerToParticleList(new ParticleFadeOut(effect, 1, false).setFadeSpeed(0.1f).setKillParticleOnFinish(true))
-                                    .setParticleRGB_I(color)
+                                    .setParticleRGB_I(trailColor)
                                     .addRandomOffset(0.2f, 0.2f, 0.2f)
                     );
                 }

@@ -149,8 +149,8 @@ public class EntitySpellPuddle extends Entity {
         if (this.ticksExisted % interval != 0) return;
 
         float radius = getRadius();
-        int color = getColor();
-        String particleName = AMParticleDefs.getParticleForAffinity(sd.getMainShift());
+        // The puddle's own colour falls back to the affinity's; spawnForAffinity wants -1 when the spell has no Color modifier
+        int color = Affinities.water.equals(sd.getMainShift()) ? sd.getColor(world, null, null) : getColor();
 
         int count = ArsMagica.config.FullGFX() ? 3 : ArsMagica.config.LowGFX() ? 1 : 2;
         for (int i = 0; i < count; i++) {
@@ -161,12 +161,10 @@ public class EntitySpellPuddle extends Entity {
             double pz = posZ + Math.sin(angle) * dist;
             double py = posY + 0.05;
 
-            AMParticle particle = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, particleName, px, py, pz);
+            AMParticle particle = AMParticleDefs.spawnForAffinity(world, sd.getMainShift(), px, py, pz, 0.12f + PARTICLE_RAND.nextFloat() * 0.08f, color);
             if (particle != null) {
-                particle.setRGBColorI(color);
                 particle.setIgnoreMaxAge(false);
                 particle.setMaxAge(15 + PARTICLE_RAND.nextInt(20));
-                particle.setParticleScale(0.12f + PARTICLE_RAND.nextFloat() * 0.08f);
                 // Upward drift with a small random horizontal kick
                 float upSpeed = 0.03f + PARTICLE_RAND.nextFloat() * 0.06f;
                 particle.AddParticleController(new ParticleFloatUpward(particle, 0, upSpeed, 1, false));

@@ -170,7 +170,7 @@ public class EntitySpellEffect extends Entity {
                 }
                 spellStack = spellStack.copy();
 
-                int color = spellStack.getColor(world, null, null) & 0xFFFFFF;
+                int color = spellStack.getColor(world, null, null); // -1 without a Color modifier
 
                 boolean isIceZone = Affinities.ice.equals(spellStack.getMainShift());
                 if ((ArsMagica.config.FullGFX() && this.ticksExisted % 2 == 0) || this.ticksExisted % 8 == 0) {
@@ -179,12 +179,10 @@ public class EntitySpellEffect extends Entity {
                         double x = this.posX - Math.cos(3.141 / 180 * (_rotation)) * dist;
                         double z = this.posZ - Math.sin(3.141 / 180 * (_rotation)) * dist;
                         if (!isIceZone || !EBWizardryCompatBootstrap.spawnFrostParticles(world, x, posY, z, 1, rand, 0.15, 0.05)) {
-                            AMParticle effect = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, AMParticleDefs.getParticleForAffinity(spellStack.getMainShift()), x, posY, z);
+                            AMParticle effect = AMParticleDefs.spawnForAffinity(world, spellStack.getMainShift(), x, posY, z, 0.15f, color);
                             if (effect != null) {
                                 effect.setIgnoreMaxAge(false);
                                 effect.setMaxAge(20);
-                                effect.setParticleScale(0.15f);
-                                effect.setRGBColorI(color);
                                 effect.AddParticleController(new ParticleFloatUpward(effect, 0, 0.07f, 1, false));
                                 if (ArsMagica.config.LowGFX()) {
                                     effect.AddParticleController(new ParticleOrbitPoint(effect, posX, posY, posZ, 2, false).setIgnoreYCoordinate(true).SetOrbitSpeed(0.05f).SetTargetDistance(dist).setRotateDirection(true));
@@ -401,13 +399,14 @@ public class EntitySpellEffect extends Entity {
 
             double dist = getRadius();
 
-            int color = spellStack.getColor(world, null, null) & 0xFFFFFF;
+            int color = spellStack.getColor(world, null, null); // -1 without a Color modifier
 
             double px = Math.cos(3.141 / 180 * (rotationYaw + 90)) * 0.1f;
             double pz = Math.sin(3.141 / 180 * (rotationYaw + 90)) * 0.1f;
             double py = 0.1f;
 
             boolean isIceSweep = Affinities.ice.equals(spellStack.getMainShift());
+            boolean isWaterWave = dataManager.get(WATCHER_TYPE) == TYPE_WAVE && Affinities.water.equals(spellStack.getMainShift());
 
             // Only spawn particles on certain ticks to avoid overwhelming batches
             if (!ArsMagica.config.NoGFX() && ((ArsMagica.config.FullGFX() && this.ticksExisted % 2 == 0) || this.ticksExisted % 4 == 0)) {
@@ -417,17 +416,25 @@ public class EntitySpellEffect extends Entity {
                 for (int p = 0; p < particlesToSpawn; p++) {
                     float i = (float) (rand.nextDouble() * dist);
 
+                    if (isWaterWave) {
+                        double cx = Math.cos(Math.toRadians(rotationYaw)) * i;
+                        double cz = Math.sin(Math.toRadians(rotationYaw)) * i;
+                        spawnWaterSpray(this.posX - cx, this.posZ - cz, px, pz, color);
+                        spawnWaterSpray(this.posX + cx, this.posZ + cz, px, pz, color);
+                        spawnWaterCube(this.posX - cx, this.posZ - cz, px, pz, color);
+                        spawnWaterCube(this.posX + cx, this.posZ + cz, px, pz, color);
+                        continue;
+                    }
+
                     double x = this.posX - Math.cos(3.141 / 180 * (rotationYaw)) * i;
                     double z = this.posZ - Math.sin(3.141 / 180 * (rotationYaw)) * i;
 
                     if (!isIceSweep || !EBWizardryCompatBootstrap.spawnFrostParticles(world, x, posY, z, 1, rand, 0)) {
-                        AMParticle effect = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, AMParticleDefs.getParticleForAffinity(spellStack.getMainShift()), x, posY, z);
+                        AMParticle effect = AMParticleDefs.spawnForAffinity(world, spellStack.getMainShift(), x, posY, z, 0.15f, color);
                         if (effect != null) {
                             effect.setIgnoreMaxAge(false);
                             effect.setMaxAge(15 + rand.nextInt(10));
                             effect.addRandomOffset(1, 1, 1);
-                            effect.setParticleScale(0.15f);
-                            effect.setRGBColorI(color);
                             if (dataManager.get(WATCHER_TYPE) == TYPE_WALL) {
                                 effect.AddParticleController(new ParticleFloatUpward(effect, 0, 0.07f, 1, false));
                             } else {
@@ -442,13 +449,11 @@ public class EntitySpellEffect extends Entity {
                     z = this.posZ - Math.sin(Math.toRadians(rotationYaw)) * -i;
 
                     if (!isIceSweep || !EBWizardryCompatBootstrap.spawnFrostParticles(world, x, posY, z, 1, rand, 0)) {
-                        AMParticle effect = (AMParticle) ArsMagica.proxy.particleManager.spawn(world, AMParticleDefs.getParticleForAffinity(spellStack.getMainShift()), x, posY, z);
+                        AMParticle effect = AMParticleDefs.spawnForAffinity(world, spellStack.getMainShift(), x, posY, z, 0.15f, color);
                         if (effect != null) {
                             effect.setIgnoreMaxAge(false);
                             effect.addRandomOffset(1, 1, 1);
                             effect.setMaxAge(15 + rand.nextInt(10));
-                            effect.setParticleScale(0.15f);
-                            effect.setRGBColorI(color);
                             if (dataManager.get(WATCHER_TYPE) == TYPE_WALL) {
                                 effect.AddParticleController(new ParticleFloatUpward(effect, 0, 0.07f, 1, false));
                             } else {
@@ -538,6 +543,36 @@ public class EntitySpellEffect extends Entity {
             }
         }
 
+    }
+
+    /**
+     * One bubble of a water Wave's spray: thrown up and forward in a short arc, then fading out like splashed water.
+     * {@code color} is the spell colour, or -1 for the water tints.
+     */
+    private void spawnWaterSpray(double x, double z, double forwardX, double forwardZ, int color) {
+        AMParticle drop = WaterParticles.bubble(world, x, posY + rand.nextDouble() * 0.8, z, color, 0);
+        if (drop == null) return;
+
+        double forward = 0.5 + rand.nextDouble();
+        drop.setAffectedByGravity();
+        drop.setDontRequireControllers();
+        drop.addVelocity(forwardX * forward + rand.nextGaussian() * 0.03, 0.1 + rand.nextDouble() * 0.22, forwardZ * forward + rand.nextGaussian() * 0.03);
+        drop.AddParticleController(new ParticleFadeOut(drop, 2, false).setFadeSpeed(0.05f));
+    }
+
+    /**
+     * A little tumbling cube of water thrown out of a water Wave, like the chips from a broken block.
+     * {@code color} is the spell colour, or -1 to tint it like the local biome's water.
+     */
+    private void spawnWaterCube(double x, double z, double forwardX, double forwardZ, int color) {
+        AMParticle cube = WaterParticles.cube(world, x, posY + rand.nextDouble() * 0.8, z, color, 0);
+        if (cube == null) return;
+
+        double forward = 0.4 + rand.nextDouble() * 0.8;
+        cube.setAffectedByGravity();
+        cube.setDontRequireControllers();
+        cube.addVelocity(forwardX * forward + rand.nextGaussian() * 0.03, 0.08 + rand.nextDouble() * 0.2, forwardZ * forward + rand.nextGaussian() * 0.03);
+        cube.AddParticleController(new ParticleFadeOut(cube, 2, false).setFadeSpeed(0.04f));
     }
 
     private Vec3d[] getAllBlockLocationsBetween(Vec3d a, Vec3d b) {

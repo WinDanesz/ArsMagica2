@@ -54,6 +54,9 @@ public class AMParticleIcons {
         loadAndInitIcon("sparkle", "sparkle", textureMap);
         loadAndInitIcon("sparkle2", "sparkle2", textureMap);
         loadAndInitIcon("water_ball", "water_ball", textureMap);
+        loadAndInitIcon("water_drop", "water_drop", textureMap);
+        // The vanilla (animated) water block texture, for little cubes of water
+        icons.put("water_cube", textureMap.registerSprite(new ResourceLocation("minecraft", "blocks/water_still")));
         loadAndInitIcon("wind", "wind", textureMap);
         loadAndInitIcon("witchwood_leaf", "witchwood_leaf", textureMap);
 
