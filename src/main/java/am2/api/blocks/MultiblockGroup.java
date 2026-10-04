@@ -151,6 +151,14 @@ public class MultiblockGroup implements IMultiblockGroup {
         return group;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public boolean isIgnoreState() {
+        return ignoreState;
+    }
+
     @Override
     public ImmutableList<BlockPos> getPositions() {
         return ImmutableList.copyOf(positions);

@@ -5,7 +5,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiPredicate;
 
 public class TypedMultiblockGroup extends MultiblockGroup {
@@ -40,6 +43,13 @@ public class TypedMultiblockGroup extends MultiblockGroup {
 
     public int getGroup(BlockPos pos) {
         return groups.get(pos);
+    }
+
+    /**
+     * @return every material variant this group accepts, each mapping a type id (see {@link #addBlock(BlockPos, int)}) to its state
+     */
+    public List<Map<Integer, IBlockState>> getVariants() {
+        return Collections.unmodifiableList(states);
     }
 
     /**

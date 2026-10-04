@@ -4,6 +4,7 @@
 
 ### Features
 
+- feat: Right-clicking an incomplete Crafting Altar now lists the blocks still needed and the ones facing the wrong way, once enough of the structure is built to tell what was intended
 - feat: Added Grounding spell component, which prevents flight (including creative flight), Levitation and elytra gliding. Teleportation is already prevented by Astral Distortion
 Add /am respec command returning spent occulus points and unlearning skills
 - feat: Added Druids with trading. Druids spawn in the world with dryads and defend them

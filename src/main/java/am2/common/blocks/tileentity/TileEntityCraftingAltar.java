@@ -60,9 +60,12 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 public class TileEntityCraftingAltar extends TileEntityAMPower implements IMultiblockController, ITileEntityAMBase {
@@ -169,7 +172,7 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
         }
     }
 
-    private HashMap<Integer, IBlockState> createStateMap(IBlockState block, IBlockState stairs) {
+    private static HashMap<Integer, IBlockState> createStateMap(IBlockState block, IBlockState stairs) {
         HashMap<Integer, IBlockState> map = new HashMap<>();
         map.put(BLOCKID, block);
         map.put(STAIR_NORTH, stairs.withProperty(BlockStairs.FACING, EnumFacing.NORTH));
@@ -499,6 +502,53 @@ public class TileEntityCraftingAltar extends TileEntityAMPower implements IMulti
     @Override
     public IMultiblock getMultiblockStructure() {
         return secondary;
+    }
+
+    /** Below this completion the structure is considered not started, and no missing-block hints are given. */
+    private static final float MIN_COMPLETION_FOR_DIAGNOSIS = 0.25f;
+
+    /**
+     * Works out which blocks are still needed for the structure, using whichever orientation is closest to being finished.
+     *
+     * @return the diagnosis, or null if the structure is valid or too little of it has been built to tell what was intended
+     */
+    @Nullable
+    public MultiblockDiagnosis diagnoseStructure() {
+        if (world == null || structureValid) return null;
+        MultiblockDiagnosis diagnosis = MultiblockDiagnosis.diagnoseBest(world, pos, TileEntityCraftingAltar::getOreDictWoodVariant, primary, secondary);
+        if (diagnosis == null || diagnosis.getProblems().isEmpty() || diagnosis.getCompletion() < MIN_COMPLETION_FOR_DIAGNOSIS)
+            return null;
+        return diagnosis;
+    }
+
+    /**
+     * Mirrors {@link #matchesOreDictWood}: offers the most common oredict plank and stair blocks already placed
+     * in the structure group as a material variant, so modded woods get sensible suggestions too.
+     */
+    private static List<Map<Integer, IBlockState>> getOreDictWoodVariant(TypedMultiblockGroup group, World w, BlockPos altarPos) {
+        if (!group.getName().startsWith("out")) return Collections.emptyList();
+        Map<IBlockState, Integer> planks = new HashMap<>();
+        Map<Block, Integer> stairs = new HashMap<>();
+        for (BlockPos offset : group.getPositions()) {
+            IBlockState state = w.getBlockState(altarPos.add(offset));
+            if (group.getGroup(offset) == BLOCKID) {
+                if (isInOreDict(state, "plankWood")) planks.merge(state, 1, Integer::sum);
+            } else if (state.getBlock() instanceof BlockStairs) {
+                stairs.merge(state.getBlock(), 1, Integer::sum);
+            }
+        }
+        if (planks.isEmpty()) return Collections.emptyList();
+
+        IBlockState plank = Collections.max(planks.entrySet(), Map.Entry.comparingByValue()).getKey();
+        Map<Integer, IBlockState> variant;
+        if (stairs.isEmpty()) {
+            variant = new HashMap<>();
+            variant.put(BLOCKID, plank); // stair material unknown: left out so it's reported generically
+        } else {
+            Block stair = Collections.max(stairs.entrySet(), Map.Entry.comparingByValue()).getKey();
+            variant = createStateMap(plank, stair.getDefaultState());
+        }
+        return Collections.singletonList(variant);
     }
 
     public ItemStack getNextPlannedItem() {
