@@ -2052,6 +2052,7 @@
 				namesake. Surrounded by frigid winds that sap the
 				strength of all who near it, the Winter Guardian pummels
 				its frozen foes and shatters them with powerful strikes.
+				!l Recommended level: 75
 				!p To summon the Winter Guardian, seek out an area in
 				the grips of winter. Place a gold inlay circle on the
 				ground and build an effigy to the Winter Guardian in the
@@ -2116,7 +2117,7 @@
     </boss>
     <boss id="boss_lightning_guardian">
       <name>Lightning Guardian</name>
-      <desc>The lightning guardian is as unpredictable as it is powerful.  It can fire bolts of lightning at extreme range, and has been known to mess with the synapses inside the brains of living creatures.  It has also on occasion been able to replicate an effect similar to telekinesis using massive amounts of concentrated static electricity, which leaves the unfortunate victim open to several other effects. !d To summon the lightning guardian, create a #5Gold Inlay Ring#0 and place a mana battery in the middle.  Then, place 2 iron bars on top, creating a lightning rod.  !d  Finally, wait for a storm. !d This guardian is capable of doing extreme damage in a short amount of time.  Make sure you are well protected.  Recommended Level: 70</desc>
+      <desc>The lightning guardian is as unpredictable as it is powerful.  It can fire bolts of lightning at extreme range, and has been known to mess with the synapses inside the brains of living creatures.  It has also on occasion been able to replicate an effect similar to telekinesis using massive amounts of concentrated static electricity, which leaves the unfortunate victim open to several other effects. !d To summon the lightning guardian, create a #5Gold Inlay Ring#0 and place a mana battery in the middle.  Then, place 2 iron bars on top, creating a lightning rod.  !d  Finally, wait for a storm. !d This guardian is capable of doing extreme damage in a short amount of time.  Make sure you are well protected.  !l Recommended Level: 70</desc>
       <relatedEntries></relatedEntries>
     </boss>
     <boss id="boss_ender_guardian">
