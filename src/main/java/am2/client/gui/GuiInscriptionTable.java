@@ -141,7 +141,7 @@ public class GuiInscriptionTable extends GuiContainer {
         int l = (width - xSize) / 2;
         int i1 = (height - ySize) / 2;
 
-        createSpellButton = new GuiButtonVariableDims(0, l - 65, i1, I18n.format("am2.gui.makeSpell"));
+        createSpellButton = new GuiButtonVariableDims(0, l + 39, i1 + 72, I18n.format("am2.gui.makeSpell"));
         createSpellButton.setDimensions(60, 20);
 
         resetSpellButton = new GuiButtonVariableDims(1, l + 120, i1 + 72, I18n.format("am2.gui.resetSpell"));
@@ -441,9 +441,9 @@ public class GuiInscriptionTable extends GuiContainer {
             createSpellButton.setDimensions(btnW, 20);
             createSpellButton.visible = true;
         } else {
-            // Normal position (left of GUI, creative only)
-            createSpellButton.x = l - 65;
-            createSpellButton.y = i1;
+            // Normal position (left of the slot, inside the GUI, creative only)
+            createSpellButton.x = l + 39;
+            createSpellButton.y = i1 + 72;
             createSpellButton.setDimensions(60, 20);
             createSpellButton.visible = usingPlayer.capabilities.isCreativeMode;
         }
