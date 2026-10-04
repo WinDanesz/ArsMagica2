@@ -237,13 +237,8 @@ public class CompendiumXMLLoader {
             entry.setCategory(CompendiumCategory.MECHANIC_RITUALS);
             if (name != null) entry.setName(name);
 
-            // Add description pages
-            if (desc != null) {
-                String[] pages = desc.split("!p");
-                for (String page : pages) {
-                    addTextWithAutoPagination(entry, page);
-                }
-            }
+            // Add description pages (!p splits pages inside addTextWithAutoPagination)
+            addTextWithAutoPagination(entry, desc);
 
             // Add related entries
             if (relatedEntriesStr != null && !relatedEntriesStr.trim().isEmpty()) {
@@ -296,13 +291,8 @@ public class CompendiumXMLLoader {
             entry.setCategory(CompendiumCategory.MECHANIC_RITUALS);
             if (name != null) entry.setName(name);
 
-            // Add description pages
-            if (desc != null) {
-                String[] pages = desc.split("!p");
-                for (String page : pages) {
-                    addTextWithAutoPagination(entry, page);
-                }
-            }
+            // Add description pages (!p splits pages inside addTextWithAutoPagination)
+            addTextWithAutoPagination(entry, desc);
 
             // Add the ritual shape as a page so it gets rendered
             if (ritualShape != null) {
@@ -814,13 +804,8 @@ public class CompendiumXMLLoader {
             if (name != null) entry.setName(name);
             if (order != -1) entry.setOrder(order);
 
-            // Add description pages - use !p for page breaks
-            if (desc != null) {
-                String[] pages = desc.split("!p");
-                for (String page : pages) {
-                    addTextWithAutoPagination(entry, page);
-                }
-            }
+            // Add description pages (!p splits pages inside addTextWithAutoPagination)
+            addTextWithAutoPagination(entry, desc);
 
             CompendiumRegistry.registerEntry(entry);
         } catch (Exception e) {
@@ -1281,8 +1266,13 @@ public class CompendiumXMLLoader {
             return;
         }
 
-        String converted = convertDescriptionText(text);
-        entry.addObject(converted);
+        // !p marks a hard page break
+        for (String page : text.split("!p")) {
+            if (page.trim().isEmpty()) {
+                continue;
+            }
+            entry.addObject(convertDescriptionText(page.trim()));
+        }
     }
 
     /**
