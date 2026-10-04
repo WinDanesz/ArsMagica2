@@ -330,7 +330,8 @@ public class AMParticle extends Particle {
 
     /**
      * Draws the particle as a cube with edge length {@code 2 * half}, centered on (cx, cy, cz) relative to the camera.
-     * Only faces turned towards the camera are emitted, so translucent textures don't show the cube's insides.
+     * Faces turned away from the camera are drawn first (a little darker), then the near ones over them, so a translucent
+     * cube still looks solid from every angle instead of being open at the back.
      */
     private void renderCube(BufferBuilder buffer, float partialTicks, float cx, float cy, float cz, float half,
                             float minU, float minV, float maxU, float maxV, int lightU, int lightV) {
@@ -350,38 +351,41 @@ public class AMParticle extends Particle {
         float[] signU = {-1, 1, 1, -1};
         float[] signV = {-1, -1, 1, 1};
 
-        for (int axis = 0; axis < 3; axis++) {
-            for (int sign = -1; sign <= 1; sign += 2) {
-                // Face normal, plus tangent axes ordered so u x v = normal (corners come out counter-clockwise from outside)
-                java.util.Arrays.fill(n, 0);
-                java.util.Arrays.fill(u, 0);
-                java.util.Arrays.fill(v, 0);
-                n[axis] = sign;
-                u[(axis + (sign > 0 ? 1 : 2)) % 3] = 1;
-                v[(axis + (sign > 0 ? 2 : 1)) % 3] = 1;
+        for (int pass = 0; pass < 2; pass++) {
+            boolean nearPass = pass == 1;
+            for (int axis = 0; axis < 3; axis++) {
+                for (int sign = -1; sign <= 1; sign += 2) {
+                    // Face normal, plus tangent axes ordered so u x v = normal (corners come out counter-clockwise from outside)
+                    java.util.Arrays.fill(n, 0);
+                    java.util.Arrays.fill(u, 0);
+                    java.util.Arrays.fill(v, 0);
+                    n[axis] = sign;
+                    u[(axis + (sign > 0 ? 1 : 2)) % 3] = 1;
+                    v[(axis + (sign > 0 ? 2 : 1)) % 3] = 1;
 
-                rotateCubeVector(n, sinX, cosX, sinY, cosY, sinZ, cosZ);
-                rotateCubeVector(u, sinX, cosX, sinY, cosY, sinZ, cosZ);
-                rotateCubeVector(v, sinX, cosX, sinY, cosY, sinZ, cosZ);
+                    rotateCubeVector(n, sinX, cosX, sinY, cosY, sinZ, cosZ);
+                    rotateCubeVector(u, sinX, cosX, sinY, cosY, sinZ, cosZ);
+                    rotateCubeVector(v, sinX, cosX, sinY, cosY, sinZ, cosZ);
 
-                // Skip faces pointing away from the camera: (camera - faceCenter) . normal <= 0
-                float toCamera = -(cx + n[0] * half) * n[0] - (cy + n[1] * half) * n[1] - (cz + n[2] * half) * n[2];
-                if (toCamera <= 0) continue;
+                    // A face points towards the camera when (camera - faceCenter) . normal > 0
+                    float toCamera = -(cx + n[0] * half) * n[0] - (cy + n[1] * half) * n[1] - (cz + n[2] * half) * n[2];
+                    if ((toCamera > 0) != nearPass) continue;
 
-                // Block-style shading: lighter on top, darker underneath
-                float shade = 0.8f + 0.2f * n[1];
-                float r = this.GetParticleRed() * shade;
-                float g = this.GetParticleGreen() * shade;
-                float b = this.GetParticleBlue() * shade;
+                    // Block-style shading: lighter on top, darker underneath, and darker still on the far side
+                    float shade = (0.8f + 0.2f * n[1]) * (nearPass ? 1f : 0.85f);
+                    float r = this.GetParticleRed() * shade;
+                    float g = this.GetParticleGreen() * shade;
+                    float b = this.GetParticleBlue() * shade;
 
-                for (int c = 0; c < 4; c++) {
-                    for (int i = 0; i < 3; i++) {
-                        corner[i] = (n[i] + u[i] * signU[c] + v[i] * signV[c]) * half;
+                    for (int c = 0; c < 4; c++) {
+                        for (int i = 0; i < 3; i++) {
+                            corner[i] = (n[i] + u[i] * signU[c] + v[i] * signV[c]) * half;
+                        }
+                        buffer.pos(cx + corner[0], cy + corner[1], cz + corner[2])
+                                .tex(minU + (maxU - minU) * us[c], minV + (maxV - minV) * vs[c])
+                                .color(r, g, b, this.GetParticleAlpha())
+                                .lightmap(lightU, lightV).endVertex();
                     }
-                    buffer.pos(cx + corner[0], cy + corner[1], cz + corner[2])
-                            .tex(minU + (maxU - minU) * us[c], minV + (maxV - minV) * vs[c])
-                            .color(r, g, b, this.GetParticleAlpha())
-                            .lightmap(lightU, lightV).endVertex();
                 }
             }
         }
