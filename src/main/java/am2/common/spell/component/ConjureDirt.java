@@ -42,6 +42,11 @@ public class ConjureDirt extends SpellComponent {
     }
 
     @Override
+    public boolean isHarmful() {
+        return false;
+    }
+
+    @Override
     public float manaCost() {
         return 15;
     }

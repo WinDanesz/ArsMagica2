@@ -478,9 +478,12 @@ public class EntitySpellEffect extends Entity {
                 ticksToEffect = maxTicksToEffect_wall;
                 float radius = this.dataManager.get(WATCHER_RADIUS);
                 List<Entity> possibleTargets = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(posX - radius, posY - 1, posZ - radius, posX + radius, posY + 3, posZ + radius));
+                // The caster is only spared from harmful spells; heals, buffs and the like affect them like anyone else
+                boolean spareCaster = spellStack.hasHarmfulComponent();
 
                 for (Entity e : possibleTargets) {
-                    if (e == this || e == caster || e.getEntityId() == casterEntityID) continue;
+                    if (e == this) continue;
+                    if (spareCaster && (e == caster || e.getEntityId() == casterEntityID)) continue;
 
                     Vec3d target = new Vec3d(e.posX, e.posY, e.posZ);
 

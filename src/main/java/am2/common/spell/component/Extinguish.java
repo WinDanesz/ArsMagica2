@@ -65,6 +65,11 @@ public class Extinguish extends SpellComponent {
     }
 
     @Override
+    public boolean isHarmful() {
+        return false;
+    }
+
+    @Override
     public float manaCost() {
         return 18;
     }

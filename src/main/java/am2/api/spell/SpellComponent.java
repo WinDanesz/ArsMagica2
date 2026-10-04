@@ -101,6 +101,15 @@ public abstract class SpellComponent extends SpellPart {
     }
 
     /**
+     * Whether this component can hurt or hinder whoever it is applied to. Area shapes such as Wall skip the caster
+     * when any component of the spell is harmful, but affect the caster like anyone else when none is (heals, buffs, ...).
+     * Defaults to {@code true} so unclassified components, including those from addons, stay safe for the caster.
+     */
+    public boolean isHarmful() {
+        return true;
+    }
+
+    /**
      * Gets the amount (before diminishing returns) that this component, when successfully applied,
      * shifts the caster's affinity
      *

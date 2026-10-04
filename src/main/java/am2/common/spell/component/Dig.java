@@ -87,6 +87,11 @@ public class Dig extends SpellComponent {
     }
 
     @Override
+    public boolean isHarmful() {
+        return false;
+    }
+
+    @Override
     public float manaCost() {
         return 10;
     }

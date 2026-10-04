@@ -50,6 +50,11 @@ public class WaterBreathing extends SpellComponent implements IRitualInteraction
     }
 
     @Override
+    public boolean isHarmful() {
+        return false;
+    }
+
+    @Override
     public float manaCost() {
         return 80;
     }

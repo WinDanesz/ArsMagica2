@@ -70,6 +70,11 @@ public class Plant extends SpellComponent {
     }
 
     @Override
+    public boolean isHarmful() {
+        return false;
+    }
+
+    @Override
     public float manaCost() {
         return 80;
     }

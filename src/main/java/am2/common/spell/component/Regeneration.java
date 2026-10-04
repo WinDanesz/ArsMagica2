@@ -47,6 +47,11 @@ public class Regeneration extends SpellComponent {
     }
 
     @Override
+    public boolean isHarmful() {
+        return false;
+    }
+
+    @Override
     public float manaCost() {
         return 540;
     }

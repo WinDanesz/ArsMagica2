@@ -73,6 +73,11 @@ public class ChronoAnchor extends SpellComponent {
     }
 
     @Override
+    public boolean isHarmful() {
+        return false;
+    }
+
+    @Override
     public float manaCost() {
         return 80;
     }

@@ -421,6 +421,19 @@ public class SpellData {
         return this;
     }
 
+    /**
+     * Whether any component in the stages that have yet to run is harmful, see {@link SpellComponent#isHarmful()}.
+     */
+    public boolean hasHarmfulComponent() {
+        for (int i = exec; i < stages.size(); i++) {
+            for (SpellPart part : stages.get(i)) {
+                if (part instanceof SpellComponent && ((SpellComponent) part).isHarmful())
+                    return true;
+            }
+        }
+        return false;
+    }
+
     public int getExecutionStage() {
         return exec;
     }
