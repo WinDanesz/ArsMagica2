@@ -16,6 +16,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -27,6 +28,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -201,6 +203,15 @@ public class PotionEffectHandler {
             if (effect.getAmplifier() <= 0)
                 return;
             e.entityLiving.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration(), effect.getAmplifier() - 1));
+        }
+    }
+
+    @SubscribeEvent
+    public void denyFlightWhileGrounded(PotionEvent.PotionApplicableEvent e) {
+        Potion potion = e.getPotionEffect().getPotion();
+        if ((potion == AMPotions.flight || potion == AMPotions.levitation || potion == MobEffects.LEVITATION)
+                && e.getEntityLiving().isPotionActive(AMPotions.grounded)) {
+            e.setResult(Event.Result.DENY);
         }
     }
 

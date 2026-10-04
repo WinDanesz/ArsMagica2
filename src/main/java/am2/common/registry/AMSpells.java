@@ -122,6 +122,7 @@ public class AMSpells {
     public static final SpellPart entangle = placeholder();
     public static final SpellPart appropriation = placeholder();
     public static final SpellPart flight = placeholder();
+    public static final SpellPart grounding = placeholder();
     public static final SpellPart shield = placeholder();
     public static final SpellPart contingency_health = placeholder();
     public static final SpellPart rune = placeholder();
@@ -284,6 +285,7 @@ public class AMSpells {
         SpellRegistryHelper.registerSpellComponent(registry, "accelerate", getComponentTexture("Accelerate"), SkillPoint.GREEN_SKILL_POINT, new Accelerate(), SkillTrees.TREE_DEFENSE, 177, 245, "arsmagica2:swift_swim");
         SpellRegistryHelper.registerSpellComponent(registry, "entangle", getComponentTexture("Entangle"), SkillPoint.GREEN_SKILL_POINT, new Entangle(), SkillTrees.TREE_DEFENSE, 132, 245, "arsmagica2:repel");
         SpellRegistryHelper.registerSpellComponent(registry, "appropriation", getComponentTexture("Appropriation"), SkillPoint.RED_SKILL_POINT, new Appropriation(), SkillTrees.TREE_DEFENSE, 87, 245, "arsmagica2:entangle");
+        SpellRegistryHelper.registerSpellComponent(registry, "grounding", getComponentTexture("grounding"), SkillPoint.RED_SKILL_POINT, new Grounding(), SkillTrees.TREE_DEFENSE, 267, 270, "arsmagica2:flight");
         SpellRegistryHelper.registerSpellComponent(registry, "flight", getComponentTexture("Flight"), SkillPoint.RED_SKILL_POINT, new Flight(), SkillTrees.TREE_DEFENSE, 222, 270, "arsmagica2:levitate");
         SpellRegistryHelper.registerSpellComponent(registry, "shield", getComponentTexture("Shield"), SkillPoint.BLUE_SKILL_POINT, new Shield(), SkillTrees.TREE_DEFENSE, 357, 270, "arsmagica2:zone");
         SpellRegistryHelper.registerSpellShape(registry, "contingency_health", getShapeTexture("Contingency_Health"), SkillPoint.RED_SKILL_POINT, new Contingency_Health(), SkillTrees.TREE_DEFENSE, 402, 270, "arsmagica2:shield");

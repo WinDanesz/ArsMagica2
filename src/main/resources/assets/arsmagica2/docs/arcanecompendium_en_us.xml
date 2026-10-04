@@ -220,6 +220,11 @@
       <desc>As I tried to step into the void, the warp shimmered and seemed to solidify.  I walked face first into it, much to the amusement of my students.  This effect seemed to prevent my teleportation abilities entirely.  I had to turn this against Endermen as well.</desc>
       <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
     </component>
+    <component id="grounding">
+      <name>Grounding</name>
+      <desc>Gravity itself tightened its grip. The target can no longer fly: creative-mode flight and Tailwind are suppressed for the duration, and anyone mid-air drops. Levitation, Flight and elytra gliding are cancelled as well, and cannot be applied while Grounded. Modified by Duration and Buff Power.</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
     <component id="fling">
       <name>Fling</name>
       <desc>Wind whirled around under the creeper and suddenly all at once blew straight up, sending it skyward.</desc>

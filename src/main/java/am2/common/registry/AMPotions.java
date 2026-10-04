@@ -25,6 +25,7 @@ public class AMPotions {
     public static final Potion frost_slow = placeholder();
     public static final Potion fury = placeholder();
     public static final Potion gravity_well = placeholder();
+    public static final Potion grounded = placeholder();
     public static final Potion haste = placeholder();
     public static final Potion illumination = placeholder();
     public static final Potion instant_mana = placeholder();
@@ -67,6 +68,7 @@ public class AMPotions {
         registerPotion(registry, "frost_slow", new BuffEffectFrostSlowed(true, 0x1fffdd).setIconIndex(3, 3));
         registerPotion(registry, "fury", new BuffEffectFury(true, 0xff8033).setIconIndex(3, 6));
         registerPotion(registry, "gravity_well", new BuffEffectGravityWell(true, 0xa400ff).setIconIndex(0, 6));
+        registerPotion(registry, "grounded", new BuffEffectGrounded(true, 0x7a5c3a).setIconIndex(0, 4));
         registerPotion(registry, "haste", new BuffEffectHaste(false, 0xf1f1f1).setIconIndex(2, 3));
         registerPotion(registry, "illumination", new BuffEffectIllumination(false, 0xffffbe).setIconIndex(1, 0));
         registerPotion(registry, "instant_mana", new BuffEffectInstantMana(false, 0x00ffff).setIconIndex(0, 0));

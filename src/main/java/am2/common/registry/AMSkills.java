@@ -108,6 +108,7 @@ public class AMSkills {
     public static final Skill entangle = placeholder();
     public static final Skill appropriation = placeholder();
     public static final Skill flight = placeholder();
+    public static final Skill grounding = placeholder();
     public static final Skill shield = placeholder();
     public static final Skill contingency_health = placeholder();
     public static final Skill rune = placeholder();
@@ -300,6 +301,7 @@ public class AMSkills {
         registry.register(new Skill("entangle", getComponentTexture("entangle"), SkillPoint.GREEN_SKILL_POINT, 132, 245, SkillTrees.TREE_DEFENSE, "arsmagica2:repel"));
         registry.register(new Skill("appropriation", getComponentTexture("appropriation"), SkillPoint.RED_SKILL_POINT, 87, 245, SkillTrees.TREE_DEFENSE, "arsmagica2:entangle"));
         registry.register(new Skill("flight", getComponentTexture("flight"), SkillPoint.RED_SKILL_POINT, 222, 270, SkillTrees.TREE_DEFENSE, "arsmagica2:levitate"));
+        registry.register(new Skill("grounding", getComponentTexture("grounding"), SkillPoint.RED_SKILL_POINT, 267, 270, SkillTrees.TREE_DEFENSE, "arsmagica2:flight"));
         registry.register(new Skill("shield", getComponentTexture("shield"), SkillPoint.BLUE_SKILL_POINT, 357, 270, SkillTrees.TREE_DEFENSE, "arsmagica2:zone"));
         registry.register(new Skill("contingency_health", getShapeTexture("contingency_health"), SkillPoint.RED_SKILL_POINT, 402, 270, SkillTrees.TREE_DEFENSE, "arsmagica2:shield"));
         registry.register(new Skill("rune", getShapeTexture("rune"), SkillPoint.GREEN_SKILL_POINT, 157, 315, SkillTrees.TREE_DEFENSE, "arsmagica2:accelerate", "arsmagica2:entangle"));
