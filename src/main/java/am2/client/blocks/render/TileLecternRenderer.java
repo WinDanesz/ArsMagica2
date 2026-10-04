@@ -129,24 +129,24 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
 		}
 
 		Random rand = new Random(432L);
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-		GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_ENABLE_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glShadeModel(GL11.GL_SMOOTH);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-		GL11.glDisable(GL11.GL_ALPHA_TEST);
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glDepthMask(false);
+        // Lighting must be off: an enchanted/potion item's glint (rendered just before) turns it back on,
+        // which washes these untextured vertex-colored flares out to solid white.
+        GlStateManager.disableLighting();
+        GlStateManager.disableTexture2D();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        GlStateManager.disableAlpha();
+        GlStateManager.enableCull();
+        GlStateManager.depthMask(false);
 
         Tessellator t= Tessellator.getInstance();
 
 		for (int i = 0; i < 20; ++i){
-			GL11.glPushMatrix();
-			GL11.glRotatef(podium.tickCount % 360, 0.0F, 1.0F, 0.0F);
-			GL11.glRotatef(rand.nextFloat() * 180, 1.0F, 0.0F, 0.0F);
-			GL11.glRotatef(rand.nextFloat() * -180, 1.0F, 0.0F, 0.0F);
+			GlStateManager.pushMatrix();
+			GlStateManager.rotate(podium.tickCount % 360, 0.0F, 1.0F, 0.0F);
+			GlStateManager.rotate(rand.nextFloat() * 180, 1.0F, 0.0F, 0.0F);
+			GlStateManager.rotate(rand.nextFloat() * -180, 1.0F, 0.0F, 0.0F);
             BufferBuilder buf = t.getBuffer();
             buf.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
 			float w = rand.nextFloat() * 2.0F + 1.0F + rescale * 2.0F;
@@ -162,11 +162,14 @@ public class TileLecternRenderer extends TileEntitySpecialRenderer<TileEntityLec
 			buf.pos(0.0D, h, w).color(r, g, b, 0.0F).endVertex();
 			buf.pos(-0.866D * w, h, -0.5F * w).color(r, g, b, 0.0F).endVertex();
 			t.draw();
-			GL11.glPopMatrix();
+			GlStateManager.popMatrix();
 		}
 
-        GL11.glDepthMask(true);
-        GL11.glPopAttrib();
+        GlStateManager.depthMask(true);
+        GlStateManager.enableAlpha();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.enableTexture2D();
 		RenderHelper.enableStandardItemLighting();
     }
 
