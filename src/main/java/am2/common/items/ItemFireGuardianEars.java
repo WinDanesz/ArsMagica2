@@ -2,8 +2,7 @@ package am2.common.items;
 
 import am2.client.utils.ModelLibrary;
 import am2.common.armor.ArsMagicaArmorMaterial;
-import baubles.api.BaubleType;
-import baubles.api.IBauble;
+import am2.common.compat.baubles.IBaubleItem;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -17,15 +16,13 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles")
-public class ItemFireGuardianEars extends AMArmor implements IBauble {
+public class ItemFireGuardianEars extends AMArmor implements IBaubleItem {
 
     public ItemFireGuardianEars(ArmorMaterial inheritFrom, ArsMagicaArmorMaterial enumarmormaterial, int par3, EntityEquipmentSlot par4) {
         super(inheritFrom, enumarmormaterial, par3, par4);
@@ -70,13 +67,11 @@ public class ItemFireGuardianEars extends AMArmor implements IBauble {
     // ---------------------------------------------------------------
 
     @Override
-    @Optional.Method(modid = "baubles")
-    public BaubleType getBaubleType(ItemStack stack) {
-        return BaubleType.HEAD;
+    public BaubleSlot getBaubleSlot(ItemStack stack) {
+        return BaubleSlot.HEAD;
     }
 
     @Override
-    @Optional.Method(modid = "baubles")
     public void onWornTick(ItemStack stack, EntityLivingBase entity) {
         if (entity.ticksExisted % 20 == 0) {
             applyFireResistance(entity);

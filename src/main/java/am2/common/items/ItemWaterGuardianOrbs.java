@@ -2,8 +2,7 @@ package am2.common.items;
 
 import am2.client.utils.ModelLibrary;
 import am2.common.armor.ArsMagicaArmorMaterial;
-import baubles.api.BaubleType;
-import baubles.api.IBauble;
+import am2.common.compat.baubles.IBaubleItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -23,15 +22,13 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles")
-public class ItemWaterGuardianOrbs extends AMArmor implements IBauble {
+public class ItemWaterGuardianOrbs extends AMArmor implements IBaubleItem {
 
     public ItemWaterGuardianOrbs(ArmorMaterial inheritFrom, ArsMagicaArmorMaterial enumarmormaterial, int par3, EntityEquipmentSlot par4) {
         super(inheritFrom, enumarmormaterial, par3, par4);
@@ -75,13 +72,11 @@ public class ItemWaterGuardianOrbs extends AMArmor implements IBauble {
     // ---------------------------------------------------------------
 
     @Override
-    @Optional.Method(modid = "baubles")
-    public BaubleType getBaubleType(ItemStack stack) {
-        return BaubleType.BELT;
+    public BaubleSlot getBaubleSlot(ItemStack stack) {
+        return BaubleSlot.BELT;
     }
 
     @Override
-    @Optional.Method(modid = "baubles")
     public void onWornTick(ItemStack stack, EntityLivingBase entity) {
         if (entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) entity;

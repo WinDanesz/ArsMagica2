@@ -1,8 +1,7 @@
 package am2.common.items;
 
 import am2.ArsMagica;
-import baubles.api.BaubleType;
-import baubles.api.IBauble;
+import am2.common.compat.baubles.IBaubleItem;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -11,15 +10,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles")
-public class ItemLifeWard extends Item implements IBauble {
+public class ItemLifeWard extends Item implements IBaubleItem {
 
     public ItemLifeWard() {
         super();
@@ -48,13 +45,11 @@ public class ItemLifeWard extends Item implements IBauble {
     // ---------------------------------------------------------------
 
     @Override
-    @Optional.Method(modid = "baubles")
-    public BaubleType getBaubleType(ItemStack stack) {
-        return BaubleType.BODY;
+    public BaubleSlot getBaubleSlot(ItemStack stack) {
+        return BaubleSlot.BODY;
     }
 
     @Override
-    @Optional.Method(modid = "baubles")
     public void onWornTick(ItemStack stack, EntityLivingBase entity) {
         if (!ArsMagica.config.getLifeWardEnabled()) return;
         int tickInterval = ArsMagica.config.getLifeWardTickInterval();

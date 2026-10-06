@@ -1,14 +1,13 @@
 package am2.common.items;
 
 import am2.ArsMagica;
+import am2.common.compat.baubles.BaublesCompat;
+import am2.common.compat.baubles.IBaubleItem;
 import am2.common.container.InventorySpellBook;
 import am2.common.defs.IDDefs;
 import am2.common.enchantments.AMEnchantmentHelper;
 import am2.common.extensions.SkillData;
 import am2.common.registry.AMEnchantments;
-import baubles.api.BaubleType;
-import baubles.api.BaublesApi;
-import baubles.api.IBauble;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
@@ -32,19 +31,14 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-@Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles")
-public class ItemSpellBook extends Item implements IBauble {
+public class ItemSpellBook extends Item implements IBaubleItem {
 
     public static final byte ID_NEXT_SPELL = 0;
     public static final byte ID_PREV_SPELL = 1;
@@ -460,9 +454,8 @@ public class ItemSpellBook extends Item implements IBauble {
     // ---- Baubles integration ----
 
     @Override
-    @Optional.Method(modid = "baubles")
-    public BaubleType getBaubleType(ItemStack itemstack) {
-        return BaubleType.CHARM;
+    public BaubleSlot getBaubleSlot(ItemStack itemstack) {
+        return BaubleSlot.CHARM;
     }
 
     /**
@@ -474,10 +467,7 @@ public class ItemSpellBook extends Item implements IBauble {
         if (!mainHand.isEmpty() && mainHand.getItem() instanceof ItemSpellBook) {
             return mainHand;
         }
-        if (Loader.isModLoaded("baubles")) {
-            return findSpellBookInBaubles(player);
-        }
-        return ItemStack.EMPTY;
+        return BaublesCompat.findSpellBook(player);
     }
 
     /**
@@ -489,8 +479,7 @@ public class ItemSpellBook extends Item implements IBauble {
         if (!mainHand.isEmpty() && mainHand.getItem() instanceof ItemSpellBook) {
             return false;
         }
-        if (!Loader.isModLoaded("baubles")) return false;
-        return !findSpellBookInBaubles(player).isEmpty();
+        return !BaublesCompat.findSpellBook(player).isEmpty();
     }
 
     /**
@@ -498,33 +487,7 @@ public class ItemSpellBook extends Item implements IBauble {
      * Used by ContainerSpellBook on close when the book was opened from baubles.
      */
     public static void writeSpellBookToBaubles(EntityPlayer player, ItemStack bookStack) {
-        if (!Loader.isModLoaded("baubles")) return;
-        writeSpellBookToBaublesImpl(player, bookStack);
-    }
-
-    @Optional.Method(modid = "baubles")
-    private static ItemStack findSpellBookInBaubles(EntityPlayer player) {
-        IItemHandler handler = BaublesApi.getBaublesHandler(player);
-        for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stack = handler.getStackInSlot(i);
-            if (!stack.isEmpty() && stack.getItem() instanceof ItemSpellBook) {
-                return stack;
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
-    @Optional.Method(modid = "baubles")
-    private static void writeSpellBookToBaublesImpl(EntityPlayer player, ItemStack bookStack) {
-        IItemHandlerModifiable handler =
-                (IItemHandlerModifiable) BaublesApi.getBaublesHandler(player);
-        for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stack = handler.getStackInSlot(i);
-            if (!stack.isEmpty() && stack.getItem() instanceof ItemSpellBook) {
-                handler.setStackInSlot(i, bookStack);
-                return;
-            }
-        }
+        BaublesCompat.writeSpellBook(player, bookStack);
     }
 }
 

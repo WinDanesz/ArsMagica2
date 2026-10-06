@@ -2,8 +2,7 @@ package am2.common.items;
 
 import am2.api.math.AMVector3;
 import am2.common.utils.MathUtilities;
-import baubles.api.BaubleType;
-import baubles.api.IBauble;
+import am2.common.compat.baubles.IBaubleItem;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,15 +17,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles")
-public class ItemLightningCharm extends Item implements IBauble {
+public class ItemLightningCharm extends Item implements IBaubleItem {
 
     private static final String KEY_ACTIVE = "IsActive";
 
@@ -108,13 +105,11 @@ public class ItemLightningCharm extends Item implements IBauble {
     // ---------------------------------------------------------------
 
     @Override
-    @Optional.Method(modid = "baubles")
-    public BaubleType getBaubleType(ItemStack stack) {
-        return BaubleType.AMULET;
+    public BaubleSlot getBaubleSlot(ItemStack stack) {
+        return BaubleSlot.AMULET;
     }
 
     @Override
-    @Optional.Method(modid = "baubles")
     public void onWornTick(ItemStack stack, EntityLivingBase entity) {
         if (isActive(stack) && entity instanceof EntityPlayer) {
             attractItems(entity.world, entity);

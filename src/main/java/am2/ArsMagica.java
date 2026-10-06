@@ -37,6 +37,8 @@ import java.util.Properties;
         name = ArsMagica.NAME,
         version = ArsMagica.VERSION,
         acceptedMinecraftVersions = "1.12.2",
+        // Soft ordering only: Baubles/Wizardry are optional, but when present they must be constructed first.
+        dependencies = "after:baubles;after:ebwizardry",
         guiFactory = "am2.client.config.AMGuiFactory")
 public class ArsMagica {
 

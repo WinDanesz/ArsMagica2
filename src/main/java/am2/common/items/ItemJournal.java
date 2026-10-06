@@ -1,8 +1,7 @@
 package am2.common.items;
 
 import am2.common.utils.EntityUtils;
-import baubles.api.BaubleType;
-import baubles.api.IBauble;
+import am2.common.compat.baubles.IBaubleItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,13 +13,11 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles")
-public class ItemJournal extends Item implements IBauble {
+public class ItemJournal extends Item implements IBaubleItem {
 
     private static final String KEY_NBT_XP = "Stored_XP";
     private static final String KEY_NBT_OWNER = "Owner";
@@ -111,9 +108,8 @@ public class ItemJournal extends Item implements IBauble {
     // ---------------------------------------------------------------
 
     @Override
-    @Optional.Method(modid = "baubles")
-    public BaubleType getBaubleType(ItemStack stack) {
-        return BaubleType.CHARM;
+    public BaubleSlot getBaubleSlot(ItemStack stack) {
+        return BaubleSlot.CHARM;
     }
 
 }

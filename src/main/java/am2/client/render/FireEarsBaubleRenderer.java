@@ -3,16 +3,14 @@ package am2.client.render;
 import am2.ArsMagica;
 import am2.client.models.ModelFireGuardianEars;
 import am2.client.utils.ModelLibrary;
+import am2.common.compat.baubles.BaublesCompat;
 import am2.common.registry.AMItems;
-import baubles.api.BaublesApi;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -26,14 +24,12 @@ public final class FireEarsBaubleRenderer {
 
     @SubscribeEvent
     public static void onPlayerRenderPost(RenderPlayerEvent.Post event) {
-        if (!Loader.isModLoaded("baubles")) return;
         checkAndRender(event);
     }
 
-    @Optional.Method(modid = "baubles")
     private static void checkAndRender(RenderPlayerEvent.Post event) {
         EntityPlayer player = event.getEntityPlayer();
-        if (BaublesApi.isBaubleEquipped(player, AMItems.fire_ears) < 0) return;
+        if (!BaublesCompat.isEquipped(player, AMItems.fire_ears)) return;
         renderEars(event, player);
     }
 

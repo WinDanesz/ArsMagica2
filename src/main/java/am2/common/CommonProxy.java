@@ -15,6 +15,7 @@ import am2.common.armor.ArmorEventHandler;
 import am2.common.blocks.tileentity.*;
 import am2.common.compat.ancientspellcraft.AncientSpellcraftCompatBootstrap;
 import am2.common.compat.artemislib.ArtemisLibCompat;
+import am2.common.compat.baubles.BaublesCompat;
 import am2.common.compat.electroblob.EBWizardryCompatBootstrap;
 import am2.common.compat.potioncore.PotioncoreCompatBootstrap;
 import am2.common.container.*;
@@ -226,6 +227,7 @@ public class CommonProxy implements IGuiHandler {
         CapabilityManager.INSTANCE.register(IArcaneCompendium.class, new IArcaneCompendium.Storage(), new IArcaneCompendium.Factory());
         CapabilityManager.INSTANCE.register(ISpellCaster.class, new ISpellCaster.Storage(), () -> null);
         EBWizardryCompatBootstrap.registerBookshelfPreInit();
+        BaublesCompat.register();
     }
 
     public void init() {
