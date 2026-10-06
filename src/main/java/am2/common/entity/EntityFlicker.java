@@ -82,7 +82,8 @@ public class EntityFlicker extends EntityAmbientCreature {
     }
 
     public Affinity getFlickerAffinity() {
-        return ArsMagicaAPI.getAffinityRegistry().getValuesCollection().toArray(new Affinity[0])[dataManager.get(WATCHER_FLICKERTYPE)];
+        // The stored value is Affinity#getID(), which is not the same as the affinity's position in the registry
+        return Affinity.byNetworkID(dataManager.get(WATCHER_FLICKERTYPE));
     }
 
     @Override
