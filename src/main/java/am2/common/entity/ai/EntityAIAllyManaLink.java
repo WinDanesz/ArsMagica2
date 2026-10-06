@@ -16,7 +16,7 @@ import net.minecraft.item.ItemStack;
 public class EntityAIAllyManaLink extends EntityAIBase {
 
     private EntityCreature host;
-    private ItemStack spellStack;
+    private ItemStack spellStack = ItemStack.EMPTY;
 
     private ItemStack getSpellStack() {
         if (spellStack.isEmpty()) {
