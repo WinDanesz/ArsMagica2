@@ -37,6 +37,7 @@ Add /am respec command returning spent occulus points and unlearning skills
 - fix: Guardian boss drops in the creative tab (Arcane Spellbook, Nature Scythe, Winter Arm, Air Sled, Earth Armor, Ender Boots, Fire Ears, Life Ward, Lightning Charm, Water Orbs) are now Soulbound, like the ones the bosses drop
 - fix: The Arcane Spellbook no longer turns invisible in the hotbar after logging back in
 - fix: Baubles items (Arcane Spellbook, Fire Ears, Water Orbs, Life Ward, Lightning Charm, Journal) no longer break loading when Baubles is missing or loads late
+- fix: The Enlarge skill in the Occulus, its potion effect and its Arcane Compendium entry now have proper names and descriptions instead of raw translation keys
 - fix: Spell books no longer lose their Soulbound enchantment, and Dig's Silk Touch / Fortune no longer stays on the spell that cast it
 - fix: Keystones no longer turn every rune into a black rune when saved, which locked players out of their own Keystone Receptacles. Locked receptacles can now be broken in creative mode
 - fix: AM Spell books no longer directly accept and convert EbWizardry spells into AM spell items. Craft those books into spell items using the Inscription Table -> Crafting Altar

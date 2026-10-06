@@ -566,6 +566,11 @@
       <desc>You can make yourself tiny!  When this effect is active, you are physically smaller, so you can fit through 1x1 gaps.  Due to your light weight, you fall slowly enough that landing doesn't hurt either.  However, all damage you do is halved.</desc>
       <modifiedBy>DURATION,BUFF_POWER</modifiedBy>
     </component>
+    <component id="enlarge">
+      <name>Enlarge</name>
+      <desc>You can grow to twice your normal size!  When this effect is active, you are physically larger, so you tower over everything around you.  Bosses cannot be enlarged.</desc>
+      <modifiedBy>DURATION,BUFF_POWER</modifiedBy>
+    </component>
     <component id="place_block">
       <name>Place Block</name>
       <desc>You can use this spell part to place blocks!  Can be extremely powerful when combined with different shape combinations.  In order to place a block, you need to set the spell to place it, and you need to have at least one of said block in your inventory.  No creating them out of thin air, sorry!  To set the block to be placed, cast the spell on a block while sneaking.  You need to be sneaking when the spell actually applies, so keep that in mind when using something like Projectile.  It's recommended to not use AoE to set the block, as it can sometimes set it to something you don't expect (as it will apply to everything in a radius, setting the block over and over).  To see what block the spell will place, hover your mouse over it in your inventory and press SHIFT.</desc>
