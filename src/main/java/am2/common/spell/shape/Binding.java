@@ -20,11 +20,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.EnumSet;
 
 public class Binding extends SpellShape {
+
+    private static final String KEY_BINDING_TYPE = "BindingType";
 
     @Override
     public SpellCastResult beginStackStage(SpellData spell, EntityLivingBase caster, EntityLivingBase target, World world, double x, double y, double z, EnumFacing side, boolean giveXP, int useCount) {
@@ -123,23 +126,24 @@ public class Binding extends SpellShape {
 //	}
 
     public int getBindingType(SpellData spell) {
-        int type = 0;
-        try {
-            type = spell.getStoredData().getInteger("BindingType");
-        } catch (Throwable t) {
-
-        }
-        return type;
+        return readBindingType(spell.getStoredData());
     }
 
     public int getBindingType(ISpellCaster spell) {
-        int type = 0;
-        try {
-            type = spell.getCommonStoredData().getInteger("BindingType");
-        } catch (Throwable t) {
+        return readBindingType(spell.getCommonStoredData());
+    }
 
+    private static int readBindingType(NBTTagCompound data) {
+        if (data == null || !data.hasKey(KEY_BINDING_TYPE)) return ItemBindingCatalyst.META_PICK;
+        // Older spells saved the type as a String, which getInteger() silently reads as 0 (a pickaxe).
+        if (data.hasKey(KEY_BINDING_TYPE, Constants.NBT.TAG_STRING)) {
+            try {
+                return Integer.parseInt(data.getString(KEY_BINDING_TYPE).trim());
+            } catch (NumberFormatException e) {
+                return ItemBindingCatalyst.META_PICK;
+            }
         }
-        return type;
+        return data.getInteger(KEY_BINDING_TYPE);
     }
 
     @Override
@@ -148,7 +152,7 @@ public class Binding extends SpellShape {
             if (obj instanceof ItemStack) {
                 ItemStack is = (ItemStack) obj;
                 if (is.getItem().equals(AMItems.binding_catalyst))
-                    tag.setString("BindingType", "" + is.getItemDamage());
+                    tag.setInteger(KEY_BINDING_TYPE, is.getItemDamage());
             }
         }
     }
