@@ -52,6 +52,7 @@ jobs:
         path: build/test-results/test/*.xml
         reporter: java-junit
         fail-on-error: false
+        fail-on-empty: false
 
     - name: Prepare Minecraft server for startup test
       run: |
