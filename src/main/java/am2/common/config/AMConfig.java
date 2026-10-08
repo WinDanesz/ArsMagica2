@@ -2558,20 +2558,20 @@ public class AMConfig extends Configuration {
     public void initDirectProperties() {
         this.get(CATEGORY_MOBS, this.KEY_HecateSpawnRate, 2).setRequiresMcRestart(true);
         this.get(CATEGORY_MOBS, this.KEY_MageSpawnRate, 1).setRequiresMcRestart(true);
-        this.get(CATEGORY_MOBS, this.KEY_WaterElementalSpawnRate, 12).setRequiresMcRestart(true);
-        this.get(CATEGORY_MOBS, this.KEY_ManaElementalSpawnRate, 12).setRequiresMcRestart(true);
-        this.get(CATEGORY_MOBS, this.KEY_DryadSpawnRate, 5).setRequiresMcRestart(true);
+        this.get(CATEGORY_MOBS, this.KEY_WaterElementalSpawnRate, 20).setRequiresMcRestart(true);
+        this.get(CATEGORY_MOBS, this.KEY_ManaElementalSpawnRate, 20).setRequiresMcRestart(true);
+        this.get(CATEGORY_MOBS, this.KEY_DryadSpawnRate, 15).setRequiresMcRestart(true);
         this.get(CATEGORY_MOBS, this.KEY_DryadCropGrowthEnabled, true);
         this.get(CATEGORY_MOBS, this.KEY_DryadBonemealEnabled, true);
         this.get(CATEGORY_MOBS, this.KEY_DryadPlantGrowthRate, 300);
         this.get(CATEGORY_MOBS, this.KEY_ManaCreeperSpawnRate, 3).setRequiresMcRestart(true);
         this.get(CATEGORY_MOBS, this.KEY_DarklingSpawnRate, 5).setRequiresMcRestart(true);
-        this.get(CATEGORY_MOBS, this.KEY_EarthElementalSpawnRate, 12).setRequiresMcRestart(true);
+        this.get(CATEGORY_MOBS, this.KEY_EarthElementalSpawnRate, 20).setRequiresMcRestart(true);
         this.get(CATEGORY_MOBS, this.KEY_EarthElementalSpawnUnderground, true).setRequiresMcRestart(true);
-        this.get(CATEGORY_MOBS, this.KEY_FireElementalSpawnRate, 12).setRequiresMcRestart(true);
-        this.get(CATEGORY_MOBS, this.KEY_LightningElementalSpawnRate, 12).setRequiresMcRestart(true);
-        this.get(CATEGORY_MOBS, this.KEY_AirElementalSpawnRate, 12).setRequiresMcRestart(true);
-        this.get(CATEGORY_MOBS, this.KEY_NatureElementalSpawnRate, 4).setRequiresMcRestart(true);
+        this.get(CATEGORY_MOBS, this.KEY_FireElementalSpawnRate, 20).setRequiresMcRestart(true);
+        this.get(CATEGORY_MOBS, this.KEY_LightningElementalSpawnRate, 20).setRequiresMcRestart(true);
+        this.get(CATEGORY_MOBS, this.KEY_AirElementalSpawnRate, 20).setRequiresMcRestart(true);
+        this.get(CATEGORY_MOBS, this.KEY_NatureElementalSpawnRate, 20).setRequiresMcRestart(true);
         this.get(CATEGORY_MOBS, this.KEY_FlickerSpawnRate, 1).setRequiresMcRestart(true);
         this.get(CATEGORY_MOBS, this.KEY_FlickerMaxPerPlayer, 6, "Maximum number of flickers allowed per online player. Default: 6").setRequiresMcRestart(false);
         this.get(CATEGORY_MOBS, this.KEY_FlickerSpawnChance, 10, "Percentage chance (1-100) that a flicker spawn attempt succeeds. Default: 10").setRequiresMcRestart(false);
@@ -2588,18 +2588,18 @@ public class AMConfig extends Configuration {
     }
 
     public int GetWaterElementalSpawnRate() {
-        Property prop = this.get(CATEGORY_MOBS, this.KEY_WaterElementalSpawnRate, 12).setRequiresMcRestart(true);
-        return Math.max(prop.getInt(12), 0);
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_WaterElementalSpawnRate, 20).setRequiresMcRestart(true);
+        return Math.max(prop.getInt(20), 0);
     }
 
     public int GetManaElementalSpawnRate() {
-        Property prop = this.get(CATEGORY_MOBS, this.KEY_ManaElementalSpawnRate, 12).setRequiresMcRestart(true);
-        return Math.max(prop.getInt(12), 0);
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_ManaElementalSpawnRate, 20).setRequiresMcRestart(true);
+        return Math.max(prop.getInt(20), 0);
     }
 
     public int GetDryadSpawnRate() {
-        Property prop = this.get(CATEGORY_MOBS, this.KEY_DryadSpawnRate, 5).setRequiresMcRestart(true);
-        return Math.max(prop.getInt(5), 0);
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_DryadSpawnRate, 15).setRequiresMcRestart(true);
+        return Math.max(prop.getInt(15), 0);
     }
 
     public boolean GetDryadCropGrowthEnabled() {
@@ -2628,8 +2628,8 @@ public class AMConfig extends Configuration {
     }
 
     public int GetEarthElementalSpawnRate() {
-        Property prop = this.get(CATEGORY_MOBS, this.KEY_EarthElementalSpawnRate, 12).setRequiresMcRestart(true);
-        return Math.max(prop.getInt(12), 0);
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_EarthElementalSpawnRate, 20).setRequiresMcRestart(true);
+        return Math.max(prop.getInt(20), 0);
     }
 
     public boolean GetEarthElementalSpawnUnderground() {
@@ -2638,28 +2638,28 @@ public class AMConfig extends Configuration {
     }
 
     public int GetFireElementalSpawnRate() {
-        Property prop = this.get(CATEGORY_MOBS, this.KEY_FireElementalSpawnRate, 12).setRequiresMcRestart(true);
-        return Math.max(prop.getInt(12), 0);
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_FireElementalSpawnRate, 20).setRequiresMcRestart(true);
+        return Math.max(prop.getInt(20), 0);
     }
 
     public int GetLightningElementalSpawnRate() {
-        Property prop = this.get(CATEGORY_MOBS, this.KEY_LightningElementalSpawnRate, 12).setRequiresMcRestart(true);
-        return Math.max(prop.getInt(12), 0);
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_LightningElementalSpawnRate, 20).setRequiresMcRestart(true);
+        return Math.max(prop.getInt(20), 0);
     }
 
     public int GetIceElementalSpawnRate() {
-        Property prop = this.get(CATEGORY_MOBS, this.KEY_IceElementalSpawnRate, 12).setRequiresMcRestart(true);
-        return Math.max(prop.getInt(12), 0);
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_IceElementalSpawnRate, 20).setRequiresMcRestart(true);
+        return Math.max(prop.getInt(20), 0);
     }
 
     public int GetNatureElementalSpawnRate() {
-        Property prop = this.get(CATEGORY_MOBS, this.KEY_NatureElementalSpawnRate, 4).setRequiresMcRestart(true);
-        return Math.max(prop.getInt(4), 0);
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_NatureElementalSpawnRate, 20).setRequiresMcRestart(true);
+        return Math.max(prop.getInt(20), 0);
     }
 
     public int GetAirElementalSpawnRate() {
-        Property prop = this.get(CATEGORY_MOBS, this.KEY_AirElementalSpawnRate, 12).setRequiresMcRestart(true);
-        return Math.max(prop.getInt(12), 0);
+        Property prop = this.get(CATEGORY_MOBS, this.KEY_AirElementalSpawnRate, 20).setRequiresMcRestart(true);
+        return Math.max(prop.getInt(20), 0);
     }
 
     public int GetFlickerSpawnRate() {
