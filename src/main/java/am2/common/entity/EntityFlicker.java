@@ -31,6 +31,9 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
@@ -84,6 +87,23 @@ public class EntityFlicker extends EntityAmbientCreature {
     public Affinity getFlickerAffinity() {
         // The stored value is Affinity#getID(), which is not the same as the affinity's position in the registry
         return Affinity.byNetworkID(dataManager.get(WATCHER_FLICKERTYPE));
+    }
+
+    @Override
+    public String getName() {
+        if (hasCustomName())
+            return getCustomNameTag();
+        return I18n.translateToLocalFormatted(
+                "entity.arsmagica2.flicker.typed.name",
+                I18n.translateToLocal(getFlickerAffinity().getTranslationKey()));
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        if (hasCustomName())
+            return super.getDisplayName();
+        return new TextComponentTranslation(
+                "entity.arsmagica2.flicker.typed.name", getFlickerAffinity().getNameForTranslation());
     }
 
     @Override

@@ -306,6 +306,8 @@ entity.arsmagica2.broom.name=Broom
 entity.arsmagica2.darkling.name=Darkling
 entity.arsmagica2.hell_cow.name=Hell Cow
 entity.arsmagica2.air_sled.name=Air Sled
+entity.arsmagica2.flicker.name=Flicker
+entity.arsmagica2.flicker.typed.name=%s Flicker
 
 entity.arsmagica2.winter_guardian.name=Winter Guardian
 entity.arsmagica2.lightning_guardian.name=Lightning Guardian
