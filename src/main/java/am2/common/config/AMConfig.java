@@ -485,6 +485,7 @@ public class AMConfig extends Configuration {
     private final String KEY_LostArchiveBiomeBlacklist = "lost_archive_biome_blacklist";
 
     private final String KEY_AllowCreativeTargets = "allow_creative_targets";
+    private final String KEY_RegisterInstantAltarPlacer = "register_instant_altar_placer";
     private final String KEY_StaffDurability = "staff_durability";
     private final String KEY_StaffPresets = "staff_presets";
 
@@ -691,6 +692,7 @@ public class AMConfig extends Configuration {
     private String[] lostArchiveBiomeBlacklist;
 
     private boolean allowCreativeTargets;
+    private boolean registerInstantAltarPlacer;
 
     private int essenceLakeFrequency;
     private int tarmaRootFrequency;
@@ -1208,6 +1210,7 @@ public class AMConfig extends Configuration {
         this.witchwoodForestRarity = this.get(CATEGORY_WORLDGEN, this.KEY_WitchwoodForestRarity, 6, "Sets how rare witchwood forests are.  Lower is more rare.").getInt();
 
         this.allowCreativeTargets = this.get(CATEGORY_GENERAL, this.KEY_AllowCreativeTargets, true, "Disable this to prevent spell effects on creative players").getBoolean(true);
+        this.registerInstantAltarPlacer = this.get(CATEGORY_GENERAL, this.KEY_RegisterInstantAltarPlacer, true, "Register the creative-only Instant Altar Placer item, which builds a working Spell Crafting Altar with one click. Useful for testing; set to false to remove the item. Requires a restart.").getBoolean(true);
 
         this.moonstoneMeteorsDestroyTerrain = this.get(CATEGORY_GENERAL, this.KEY_MoonstoneMeteorsDestroyTerrain, true, "Should moonstone meteors destroy terrain when landing?  Keep in mind they will never land on anything other than grass.").getBoolean(true);
 
@@ -2974,6 +2977,10 @@ public class AMConfig extends Configuration {
 
     public String[] getObeliskExtraFuels() {
         return this.obeliskExtraFuels;
+    }
+
+    public boolean registerInstantAltarPlacer() {
+        return this.registerInstantAltarPlacer;
     }
 
     public String[] getExtraAltarCaps() {

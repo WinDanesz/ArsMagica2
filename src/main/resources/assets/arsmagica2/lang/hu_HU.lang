@@ -50,6 +50,7 @@ item.arsmagica2\:arcane_ash.name=Arkán hamu
 item.arsmagica2\:vinteum_infused_ingot.name=Vinteummal átitatott rúd
 item.arsmagica2\:arcane_compound.name=Arkán vegyület
 item.arsmagica2\:crystallized_entity.name=Kristályosított entitás
+item.arsmagica2\:instant_altar_placer.name=Azonnali oltárlerakó
 item.arsmagica2\:spell_parchment.name=Varázstekercs
 item.arsmagica2\:etherium.name=Eterium
 
@@ -800,6 +801,9 @@ potion.potency.8=IX
 
 am2.tooltip.air_sled=§3Repülj a levegőn át a legnagyobb könnyedséggel...§f
 am2.tooltip.altarStructureValid=§aAz oltár szerkezete teljes!§r
+am2.tooltip.creativeOnly=Csak kreatív módban
+am2.tooltip.instantAltarPlacer=Kattints jobb gombbal egy blokkra, hogy működő varázslatkészítő oltár épüljön előtted
+am2.tooltip.instantAltarPlaced=Oltár lerakva
 am2.tooltip.altarStructureInvalid=§cAz oltár szerkezete hiányos!§r
 am2.tooltip.altarStructureNeeded=§eMég hiányzik: §r%s
 am2.tooltip.altarStructureWrongFacing=§eRossz irányba néz: §r%s
