@@ -2,6 +2,7 @@ package am2.common.entity;
 
 import am2.api.affinity.Affinity;
 import am2.api.spell.SpellData;
+import am2.api.spell.SpellModifiers;
 import am2.common.registry.AMItems;
 import am2.common.registry.Affinities;
 import am2.common.utils.NBTUtils;
@@ -82,6 +83,8 @@ public class EntitySpellOrb extends Entity {
         if (mainAff.equals(Affinities.ender)) this.getDataManager().set(DW_COLOR, COLOR_ENDER);
         else if (mainAff.equals(Affinities.ice)) this.getDataManager().set(DW_COLOR, COLOR_ICE);
         else if (mainAff.equals(Affinities.life)) this.getDataManager().set(DW_COLOR, COLOR_LIFE);
+        if (spell.isModifierPresent(SpellModifiers.COLOR))
+            this.getDataManager().set(DW_COLOR, spell.getColor(world, null, null) & 0xFFFFFF);
     }
 
     public void setIcon(String icon) {

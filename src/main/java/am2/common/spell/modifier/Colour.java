@@ -4,6 +4,7 @@ import am2.api.spell.SpellModifier;
 import am2.api.spell.SpellModifiers;
 import am2.common.registry.AMItems;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -43,7 +44,8 @@ public class Colour extends SpellModifier {
     @Override
     public float getModifier(SpellModifiers type, EntityLivingBase caster, Entity target, World world, NBTTagCompound nbt) {
         if (type == SpellModifiers.COLOR) {
-            return nbt.getInteger("Color");
+            // Stored as a dye metadata (0-15); consumers expect an RGB value
+            return EnumDyeColor.byDyeDamage(nbt.getInteger("Color") & 15).getColorValue();
         }
         return 0;
     }

@@ -360,6 +360,8 @@ public class EntitySpellProjectile extends Entity {
         if (mainAff.equals(Affinities.ender)) this.getDataManager().set(DW_COLOR, 0x550055);
         else if (mainAff.equals(Affinities.ice)) this.getDataManager().set(DW_COLOR, 0xEEF6FF);
         else if (mainAff.equals(Affinities.life)) this.getDataManager().set(DW_COLOR, 0x22FF44);
+        if (spell.isModifierPresent(SpellModifiers.COLOR))
+            this.getDataManager().set(DW_COLOR, spell.getColor(world, null, null) & 0xFFFFFF);
     }
 
     public void setBounces(int projectileBounce) {
