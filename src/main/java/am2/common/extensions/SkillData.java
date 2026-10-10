@@ -14,6 +14,7 @@ import am2.api.spell.SpellPart;
 import am2.api.spell.SpellShape;
 import am2.common.advancement.AMAdvancementTriggers;
 import am2.common.lore.ArcaneCompendium;
+import am2.common.lore.CompendiumUnlockHandler;
 import am2.common.packet.AMDataReader;
 import am2.common.packet.AMDataWriter;
 import am2.common.skill.Discipline;
@@ -109,22 +110,7 @@ public class SkillData implements ISkillData, ICapabilityProvider, ICapabilitySe
         if (currentLevel >= skill.getMaxLevel()) return;
 
         if (currentLevel == 0) {
-            for (CompendiumEntry entry : CompendiumCategory.getAllEntries()) {
-                if (ArsMagicaAPI.getSpellRegistry().getValue(skill.getRegistryName()) != null) {
-                    SpellPart part = ArsMagicaAPI.getSpellRegistry().getValue(skill.getRegistryName());
-                    for (Object obj : entry.getObjects()) {
-                        if (obj == part) {
-                            ArcaneCompendium.For(this.player).unlockEntry(entry.getID());
-                        }
-                    }
-                } else {
-                    for (Object obj : entry.getObjects()) {
-                        if (obj == skill) {
-                            ArcaneCompendium.For(this.player).unlockEntry(entry.getID());
-                        }
-                    }
-                }
-            }
+            CompendiumUnlockHandler.unlockEntriesForSkill(this.player, skill);
         }
 
         this.setSkillPoint(skill.getPoint(), this.getSkillPoint(skill.getPoint()) - 1);

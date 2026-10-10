@@ -542,7 +542,7 @@ public class ClientProxy extends CommonProxy {
         SystemToast.addOrUpdate(
                 mc.getToastGui(),
                 SystemToast.Type.TUTORIAL_HINT,
-                new TextComponentTranslation("advancement.arsmagica2.compendium_data.title"),
+                new TextComponentTranslation("arsmagica2.compendium.toast.title"),
                 new TextComponentString(entry.getName())
         );
     }

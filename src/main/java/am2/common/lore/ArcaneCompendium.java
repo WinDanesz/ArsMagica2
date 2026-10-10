@@ -33,6 +33,7 @@ public class ArcaneCompendium implements IArcaneCompendium, ICapabilityProvider,
     private EntityPlayer player;
     private String path = "";
     private int syncCode = 0;
+    private boolean receivedFirstSync = false;
 
     private ArrayList<String> compendium;
 
@@ -44,22 +45,38 @@ public class ArcaneCompendium implements IArcaneCompendium, ICapabilityProvider,
         if (!isUnlocked(name)) {
             compendium.add(name);
             syncCode |= SYNC_COMPENDIUM;
-            ArsMagica.proxy.showCompendiumToast(name);
+            // The server only syncs; the client toasts when the unlock arrives (see handleUpdatePacket).
+            // The integrated server shares the client proxy and must not toast from the server thread.
+            if (player == null || player.world.isRemote)
+                ArsMagica.proxy.showCompendiumToast(name);
         }
     }
 
     public boolean isUnlocked(String name) {
         if (!ArsMagica.config.stagedCompendium())
             return true;
-        // entry.getID() returns "category.id" but unlock calls may store just "id" (bare name)
-        // so compare only the last segment of each to handle both cases
-        String simpleName = name.contains(".") ? name.substring(name.lastIndexOf('.') + 1) : name;
         for (String str : compendium) {
-            String simpleStr = str.contains(".") ? str.substring(str.lastIndexOf('.') + 1) : str;
-            if (simpleStr.equalsIgnoreCase(simpleName))
+            if (matches(str, name))
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Full ids ("category.id") must match exactly so entries sharing a last segment in different
+     * categories stay independent. Unlock calls may pass a bare id ("id"); then only the last
+     * segment of the stored id is compared.
+     */
+    private static boolean matches(String stored, String requested) {
+        if (stored.equalsIgnoreCase(requested))
+            return true;
+        boolean storedQualified = stored.contains(".");
+        boolean requestedQualified = requested.contains(".");
+        if (storedQualified && requestedQualified)
+            return false;
+        String simpleStored = storedQualified ? stored.substring(stored.lastIndexOf('.') + 1) : stored;
+        String simpleRequested = requestedQualified ? requested.substring(requested.lastIndexOf('.') + 1) : requested;
+        return simpleStored.equalsIgnoreCase(simpleRequested);
     }
 
     public void init(EntityPlayer player) {
@@ -164,11 +181,20 @@ public class ArcaneCompendium implements IArcaneCompendium, ICapabilityProvider,
         AMDataReader reader = new AMDataReader(bytes, false);
         int syncCode = reader.getInt();
         if ((syncCode & SYNC_COMPENDIUM) == SYNC_COMPENDIUM) {
+            ArrayList<String> previous = new ArrayList<>(compendium);
             compendium.clear();
             int size = reader.getInt();
             for (int i = 0; i < size; i++) {
                 compendium.add(reader.getString());
             }
+            // The first sync after joining carries the whole book; only later syncs are new unlocks
+            if (receivedFirstSync) {
+                for (String id : compendium) {
+                    if (!previous.contains(id))
+                        ArsMagica.proxy.showCompendiumToast(id);
+                }
+            }
+            receivedFirstSync = true;
         }
     }
 
