@@ -15,6 +15,8 @@ public class BlockWitchwoodStairs extends BlockStairs {
         this.setResistance(2.0f);
         this.setHarvestLevel("axe", 2);
         this.setCreativeTab(AMTabs.AMBLOCKS);
+        // vanilla only sets this for its own stairs in Block.registerBlocks(), so modded stairs render dark without it
+        this.useNeighborBrightness = true;
     }
 
     @Override
