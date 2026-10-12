@@ -1,0 +1,2502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compendium>
+  <version>1.0.4</version>
+  <categories>
+    <category id="guide" name="ガイド"/>
+    <category id="mechanic" name="仕組み"/>
+    <category id="mechanic.affinity" name="親和性"/>
+    <category id="mechanic.enchants" name="エンチャント"/>
+    <category id="mechanic.infusions" name="魔導付与"/>
+    <category id="mechanic.rituals" name="儀式"/>
+    <category id="mechanic.structures" name="建造物"/>
+    <category id="item" name="アイテム"/>
+    <category id="item.ore" name="AM2の鉱石"/>
+    <category id="item.essence" name="エッセンス"/>
+    <category id="item.rune" name="ルーン"/>
+    <category id="item.armor" name="AM2の防具"/>
+    <category id="item.armor.mage" name="魔導師の防具"/>
+    <category id="item.armor.battlemage" name="戦闘魔導師の防具"/>
+    <category id="item.affinity_tomes" name="親和の書"/>
+    <category id="item.foci" name="レンズ"/>
+    <category id="item.mana_potion" name="マナポーション"/>
+    <category id="item.binding_catalyst" name="具現の触媒"/>
+    <category id="item.flickerfocus" name="フリッカーレンズ"/>
+    <category id="item.inscription_upgrades" name="文机アップグレード"/>
+    <category id="block" name="ブロック"/>
+    <category id="block.illusionblocks" name="幻影ブロック"/>
+    <category id="block.crystalmarker" name="クリスタルマーカー"/>
+    <category id="block.inlays" name="象嵌"/>
+    <category id="shape" name="形態"/>
+    <category id="component" name="主効果"/>
+    <category id="modifier" name="補正効果"/>
+    <category id="talent" name="才能"/>
+    <category id="mob" name="モブ"/>
+    <category id="mob.flicker" name="フリッカー"/>
+    <category id="structure" name="建造物"/>
+    <category id="boss" name="ボス"/>
+  </categories>
+  <shapes zeroItemText="まだ習得した形態はなく、習得する資格もありません。">
+    <shape id="projectile">
+      <name>射撃</name>
+      <desc>意志を凝縮した球に集中させ、前方へ撃ち出すことができます。射撃は5秒間飛び続けるか、何かに命中するまで続きます。非固体ブロック対象の補正効果を加えない限り、水や当たり判定のないブロックを通り抜けます。</desc>
+      <modifiedBy>SPEED,GRAVITY,BOUNCE,DURATION,PIERCING,TARGET_NONSOLID_BLOCKS</modifiedBy>
+    </shape>
+    <shape id="channel">
+      <name>集中詠唱</name>
+      <desc>強く集中することで、魔導師は自分自身に魔力の流れを保ち続けられます。念動力、回復、引き寄せ、雷雨などに便利です。</desc>
+      <modifiedBy></modifiedBy>
+    </shape>
+    <shape id="beam">
+      <name>光線</name>
+      <desc>集中詠唱から光線へ切り替えるのは、精神的にはそれほど大きな変化ではありません。ただし、その負担の大きさは別の話です。光線は、集中詠唱の呪文をはるかに精密に制御したものです。</desc>
+      <modifiedBy>RANGE,TARGET_NONSOLID_BLOCKS</modifiedBy>
+    </shape>
+    <shape id="self">
+      <name>自己</name>
+      <desc>魔法の最も単純な使い方の一つが、自分自身に魔法をかけることです。距離は短く、対象も同意の上です。うっかり自分に火をつけてしまわないことを祈るばかりです。</desc>
+      <modifiedBy></modifiedBy>
+    </shape>
+    <shape id="touch">
+      <name>接触</name>
+      <desc>手に魔力をまとわせ、手を伸ばすだけです。接触は射程がとても短い形態で、ブロックのハイライト表示には従いません。接触が効果を発揮するには、ブロックにぶつかりそうなほど近づく必要があります。</desc>
+      <modifiedBy>TARGET_NONSOLID_BLOCKS</modifiedBy>
+    </shape>
+    <shape id="zone">
+      <name>結界</name>
+      <desc>意志を集中させ、一定時間持続する範囲効果にできるようになりました。</desc>
+      <modifiedBy>RADIUS,GRAVITY,DURATION</modifiedBy>
+    </shape>
+    <shape id="puddle">
+      <name>魔法溜まり</name>
+      <desc>魔力を、地面に平らに広がり、その場に留まるエネルギーの溜まりに形作れるようになりました。魔法溜まりは、その上を歩くあらゆる生物に効果を及ぼします。結界とは違い、魔法溜まりは地面に張り付き、平らではっきりした範囲を持ちます。置きたい場所の地面を狙ってください。面が見つからない場合は、足元にできます。</desc>
+      <modifiedBy>RADIUS,DURATION</modifiedBy>
+    </shape>
+    <shape id="aoe">
+      <name>範囲</name>
+      <desc>呪文をチャージした後、発動地点から外側へ広がる爆発に変えられます。重力を加えた場合、範囲は下方向のブロックを探して効果を及ぼします。丘の自然な形を変えずに低くするなど、様々な用途に便利です。範囲の呪文は術者には効果を及ぼしません。</desc>
+      <modifiedBy>RADIUS,GRAVITY</modifiedBy>
+    </shape>
+    <shape id="chain">
+      <name>連鎖</name>
+      <desc>魔力を、対象から対象へと跳び移る爆発に形作れます。連鎖には、接触に似た射程8ブロック前後（射程が拡張されています）の効果が最初から組み込まれているため、段階を追加する必要はありません。ただし、たとえば射撃を加えて連鎖の開始地点を別の場所にするなど、追加しても構いません。連鎖の呪文は術者には効果を及ぼしません。連鎖の跳躍距離は#5射程#0で延ばせ、跳躍回数は#5ルーン発動回数#0で増やせます。</desc>
+      <modifiedBy>RANGE,PROCS</modifiedBy>
+    </shape>
+    <shape id="rune">
+      <name>ルーン</name>
+      <desc>地面に魔力を帯びたルーンを作り出せます。作動すると、強力なバフを与える…あるいは、命を奪う罠になります。</desc>
+      <modifiedBy>PROCS,TARGET_NONSOLID_BLOCKS</modifiedBy>
+    </shape>
+    <shape id="contingency_fall">
+      <name>誘発：落下</name>
+      <desc>落下中、地面に激突する直前に発動する呪文の形態を編み出しました。 !d ああ重力よ、お前はなんて薄情な… !d 誘発は同時に1つしか有効にできません。</desc>
+      <modifiedBy></modifiedBy>
+    </shape>
+    <shape id="contingency_damage">
+      <name>誘発：被ダメージ</name>
+      <desc>ダメージを受けたときにだけ発動する呪文を、作り出すことに成功しました。 !d やられたら、やり返す。 !d 誘発は同時に1つしか有効にできません。</desc>
+      <modifiedBy></modifiedBy>
+    </shape>
+    <shape id="contingency_fire">
+      <name>誘発：炎上</name>
+      <desc>燃えているのはもうこりごりだと思ったあなたは、自分が燃え始めたとたんに発動する呪文を作りました。 !d 誘発は同時に1つしか有効にできません。</desc>
+      <modifiedBy></modifiedBy>
+    </shape>
+    <shape id="contingency_health">
+      <name>誘発：体力低下</name>
+      <desc>どれほど手練れの魔導師でも、肩甲骨の間に突き立てられたナイフは、動きを大きく鈍らせます。あなたは、そんな真似をした相手に後悔させる方法を見つけたと思っています。あるいは、ナイフが2本必要になるかもしれません。 !d この誘発は、体力が最大値の3分の1以下になると発動します。 !d 誘発は同時に1つしか有効にできません。</desc>
+      <modifiedBy></modifiedBy>
+    </shape>
+    <shape id="contingency_death">
+      <name>誘発：死亡</name>
+      <desc>俺を倒せても、お前がそれにかける数秒のうちに、お前を道連れにするだけの時間は十分に残っている。 !d 誘発は同時に1つしか有効にできません。</desc>
+      <modifiedBy></modifiedBy>
+    </shape>
+    <shape id="binding">
+      <name>具現</name>
+      <desc>何もないところから固体の物体を作り出せます。具現の形態では道具を自分に具現でき、具現している間は常にマナを消費し、使用時には耐久値の代わりにマナを一気に消費します。ドロップのホットキー（デフォルトはQ）でアイテムを捨てると、代わりに具現が解除されます。</desc>
+      <modifiedBy></modifiedBy>
+      <relatedEntries>binding_catalyst@0,binding_catalyst@1,binding_catalyst@2,binding_catalyst@3,binding_catalyst@4,binding_catalyst@5</relatedEntries>
+    </shape>
+    <shape id="wall">
+      <name>壁</name>
+      <desc>目の前に壁を出現させられます。壁は、今向いている方向と直角に伸びます。壁は結界と似た働きをしますが、形が異なります。また、壁はより素早く効果を及ぼします。</desc>
+      <modifiedBy>RADIUS,GRAVITY,DURATION</modifiedBy>
+    </shape>
+    <shape id="wave">
+      <name>波動</name>
+      <desc>目の前に魔力の波を放ちます。波は前方へ転がるように進み、通り道にあるすべてに効果を及ぼします。</desc>
+      <modifiedBy>RADIUS,DURATION,SPEED,GRAVITY,PIERCING</modifiedBy>
+    </shape>
+    <!-- <shape id="slice">
+      <name>Slice</name>
+      <desc>You have learned to condense your magic into a wide, razor-thin disc of arcane force that spins through the air as it travels.  Unlike a projectile, the disc does not stop when it hits a creature - it cuts through every entity in its path, applying the spell to each one.  Only solid terrain will halt its flight.  Use the #5Speed#0 modifier to control how fast it travels, and #5Duration#0 to extend its range.</desc>
+      <modifiedBy>SPEED,DURATION,COLOR</modifiedBy>
+    </shape> -->
+    <shape id="orbs">
+      <name>オーブ</name>
+      <desc>自分の周りを回る魔力の球を呼び出し、近づきすぎたものを打ち据えられます。オーブは近くの敵を自動的に探し、接触すると効果を及ぼします。オーブの数は#5バフ強化#0で増やせ、オーブの寿命は#5持続時間#0で延ばせます。</desc>
+      <modifiedBy>DURATION,COLOR,BUFF_POWER</modifiedBy>
+    </shape>
+    <shape id="cone">
+      <name>円錐</name>
+      <desc>注意深く集中することで、魔力を目の前の広い円錐状に放ち、通り道にあるすべてを吹き飛ばせます。この集中詠唱の形態は、円錐の範囲に入ったエンティティとブロックの両方に命中するため、敵の集団を一掃したり、広い範囲に効果を及ぼしたりするのに有効です。円錐の到達距離は#5射程#0で延ばせます。</desc>
+      <modifiedBy>RANGE,TARGET_NONSOLID_BLOCKS</modifiedBy>
+    </shape>
+    <shape id="toggle">
+      <name>切り替え</name>
+      <desc>切り替えは、効果を一度適用して終わるのではなく、もう一度唱えるまで持続します。最初に唱えると呪文が有効になり、バックグラウンドで動き続けます。同じ呪文をもう一度唱えると無効になります。そのため、好きなときにオン・オフしたい継続的なバフやオーラに最適です。呪文を維持し続ける必要はなく、開始するだけでよいため、マナコストは通常の70%%だけです。</desc>
+      <modifiedBy></modifiedBy>
+    </shape>
+  </shapes>
+  <components zeroItemText="まだ習得した主効果はなく、習得する資格もありません。">
+    <component id="physical_damage">
+      <name>物理ダメージ</name>
+      <desc>若い魔導師は、たいてい単純な物理的な力から修行を始めます。そしてたいていは、同僚の後頭部をさらに強い物理的な力で叩くことで、修行を続けます。物理ダメージは防具を貫通しません。</desc>
+      <modifiedBy>DAMAGE</modifiedBy>
+    </component>
+    <component id="magic_damage">
+      <name>魔法ダメージ</name>
+      <desc>魔法ダメージは物理ダメージと違い、多くの種類の防具をすり抜けて、対象のオーラを直接攻撃します。それは同じくらい、あるいはそれ以上に致命的になりえます。そのため、召喚された生物や魅了された生物は特に弱く、3倍のダメージを受けます。</desc>
+      <modifiedBy>DAMAGE</modifiedBy>
+    </component>
+    <component id="frost_damage">
+      <name>氷結ダメージ</name>
+        <desc>冷気の力を見くびっている人は多くいます。忍び寄る冷気は多くの防具をすり抜け、ネザーの住人には壊滅的な威力を発揮します。氷結ダメージは命中時に、短時間、相手の動きを遅くする効果も与えます。</desc>
+      <modifiedBy>DAMAGE,BUFF_POWER</modifiedBy>
+    </component>
+    <component id="lightning_damage">
+      <name>雷ダメージ</name>
+      <desc>目の前に両手をかざすと、鋭い破裂音とともに、まばゆい白の稲妻が空を裂いた。彼の金属の鎧が避雷針となり、落ちてくる稲妻をすべて彼の体へと引き込んでいた。雷ダメージは並外れた威力を持ちますが、マナコストもかなり高くなります。</desc>
+      <modifiedBy>DAMAGE</modifiedBy>
+    </component>
+    <component id="fire_damage">
+      <name>炎ダメージ</name>
+      <desc>一言とともに意志を解き放つと、目の前から炎が噴き出し、通り道のすべてを焼き尽くした。炎ダメージは強烈ですが、ネザーのモブの多くには効果がありません。</desc>
+      <modifiedBy>DAMAGE</modifiedBy>
+    </component>
+    <component id="ignition">
+      <name>着火</name>
+      <desc>多くの魔導師は、炎を傷つけ破壊する力だと考えます。それは確かに事実かもしれません。しかし、「炎」と聞いて、かまどや焚き火、ろうそくに火を灯すことを思い浮かべる人が、どれだけいるでしょうか。</desc>
+      <modifiedBy>DURATION</modifiedBy>
+    </component>
+    <component id="forge">
+      <name>精錬</name>
+      <desc>炎を細かく操れるようになり、ブロックを焦がして灰にすることなく、その場で魔法によって精錬できます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="blind">
+      <name>盲目</name>
+      <desc>闇の魔導師に火の玉を投げつけられるのは素晴らしいことです。さらに、相手の視界まで奪って反撃できなくするなら、なお素晴らしいでしょう。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+      <relatedEntries>rituals_overview</relatedEntries>
+    </component>
+    <component id="poison">
+      <name>毒</name>
+      <desc>エイラは早くから、すべての死が一瞬で訪れるわけではないと学んでいた。的確に仕込まれた毒は、どれほど強大な敵でも、苦悶の鼓動を一つずつ刻ませながら、膝を屈させる。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="wither">
+      <name>衰弱</name>
+      <desc>ただの苦痛では済まない病もあります。衰弱の呪いは対象の本質そのものを蝕み、内側から心の臓を消耗させます。どれほど強大な戦士でも、この暗黒の魔法の前には崩れ落ちます。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="freeze">
+      <name>凍結</name>
+      <desc>エイラは深く息を吸い、目を開けた。山々の頂は雪で白く輝き、荘厳な霜があたり一面を覆っていた。水は氷と化していた。敵は這うような速さでしか動けない。完璧だ。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="knockback">
+      <name>ノックバック</name>
+      <desc>近接戦闘の間合いに身を置きたい魔導師は、多くありません。ノックバックなら、その状況を正せます。</desc>
+      <modifiedBy>VELOCITY_ADDED</modifiedBy>
+    </component>
+    <component id="storm">
+      <name>雷雨</name>
+      <desc>雲が暗くなり、雨が降り始めた。風が吠え、稲光が空を駆け抜けて、目の奥にまばゆい残像を残した。雷鳴は耳をつんざくほどだった。私の周囲では、敵の一人ひとりを狙って稲妻が落ちた。嵐を維持する負担は計り知れなかった。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="astral_distortion">
+      <name>アストラルの歪み</name>
+      <desc>虚空へ踏み出そうとしたとき、歪みが揺らめいて、固まったように見えた。私はそれに正面から突っ込み、生徒たちの笑いものになった。この効果は、私のテレポート能力を完全に封じているようだった。これはエンダーマンにも向けて使うしかなかった。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="grounding">
+      <name>飛行阻害</name>
+      <desc>重力そのものが、締めつけを強めた。対象はもう飛べません。持続時間のあいだ、クリエイティブモードの飛行と追い風は抑え込まれ、空中にいる者は墜落します。浮遊、飛行、エリトラの滑空も打ち消され、飛行阻害状態の間は付与できません。持続時間とバフ強化で補正されます。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="fling">
+      <name>打ち上げ</name>
+      <desc>クリーパーの足元で風が渦を巻き、突然一気に真上へ吹き上げて、空高く打ち上げた。</desc>
+      <modifiedBy>VELOCITY_ADDED</modifiedBy>
+    </component>
+    <component id="watery_grave">
+      <name>水葬</name>
+      <desc>水がまるで生きているかのようだった。水の触手が光の魔導師に絡みつき、黒く押し潰すような深みへと彼を引きずり込んだ。岸にいる彼の友人は、ただ無力に見ているしかなかった。水に飛び込めば、同じ運命をたどるからだ。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="leap">
+      <name>跳躍</name>
+      <desc>周囲に風を集め、私は宙へ身を躍らせた。跳躍のあいだ風を身近に留め、着地の瞬間に上向きの爆風として解き放つことで、落下から身を守った。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="regeneration">
+      <name>再生能力</name>
+      <desc>腕に癒やしの光をまとわせると、最後の痣まで、あらゆる傷がゆっくりと目の前で消えていくのが見えた。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="slowfall">
+      <name>低速落下</name>
+      <desc>羽根のように軽くなり、恐れることなく落下できます。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="life_tap">
+      <name>ライフタップ</name>
+      <desc>切羽詰まってマナが乏しいとき、魔導師は自分自身の生命力を呪文の燃料にできます。</desc>
+      <modifiedBy>DAMAGE</modifiedBy>
+    </component>
+    <component id="heal">
+      <name>回復</name>
+      <desc>再生効果に注ぎ込む魔力を大幅に増やすことで、魔導師はほとんどどんな傷でも縫い合わせるように癒やせます。ただし、その消耗は激しくなります。</desc>
+      <modifiedBy>HEALING</modifiedBy>
+    </component>
+    <component id="slow">
+      <name>鈍足</name>
+      <desc>魔法の鉄球と足枷に相当するものをはめることで、魔導師は対象の動きを大きく鈍らせられます。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="haste">
+      <name>俊足</name>
+      <desc>対象の脚を神秘のエネルギーで包み込むことで、魔導師は移動速度を大幅に高められます。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="gravity_well">
+      <name>重力井戸</name>
+      <desc>対象の足元に局所的な重力井戸を作り出し、落下する速さを大幅に高められるようになりました。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="life_drain">
+      <name>ライフドレイン</name>
+      <desc>対象の生命力との不吉な繋がりを作ることで、それを自分の生命力へと吸い上げ、自分の体力を高められます。</desc>
+      <modifiedBy>DAMAGE</modifiedBy>
+    </component>
+    <component id="dispel">
+      <name>ディスペル</name>
+      <desc>局所的な欠乏の場を作り出し、対象にかかっている複数の効果を取り除けます。ディスペルは召喚された生物にも大打撃を与え、エーテルの中へと送り返します。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="repel">
+      <name>斥力</name>
+      <desc>空間に特異点を作り出せます。維持している間、特異点は斥力の波を放射し続け、敵を押しのけ、矢をあなたから遠ざけるように弾きます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="swift_swim">
+      <name>高速遊泳</name>
+      <desc>水流を操ることで、水中をはるかに素早く進めます。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="levitate">
+      <name>浮遊</name>
+      <desc>風の魔法を鍛えたことで、空中に自分を浮かせたまま保てるようになりました。小さな風の流れを使えば、浮いたままゆっくり動き回れます。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="mana_drain">
+      <name>マナドレイン</name>
+      <desc>対象のオーラと寄生的な結びつきを作り、そのマナを吸い取って自分のマナを高められます。</desc>
+      <modifiedBy>DAMAGE</modifiedBy>
+    </component>
+    <component id="entangle">
+      <name>拘束</name>
+      <desc>あなたの命令で、地面からつるが噴き出して対象を絡めとり、完全に動けなくします。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="flight">
+      <name>飛行</name>
+      <desc>一言唱えると、私は空へ舞い上がり、雲と空に溶け込んだ。難なく、素早く軽やかに飛んだ。空は私だけのものだった。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="shield">
+      <name>防壁</name>
+      <desc>神秘のエネルギーを呼び出して、自分を守る防壁にできます。この防壁は、受けるダメージをすべて軽減します。反射と同時には有効にできません。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="reflect">
+      <name>反射</name>
+      <desc>防壁の構成を変えて、物理ダメージを軽減する代わりに、呪文を跳ね返せるようになります。防壁と同時には有効にできません。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="chrono_anchor">
+      <name>時の錨</name>
+      <desc>自分を時間に固定できます。タイマーが尽きると、この呪文を唱えた場所へ送り戻され、体力、マナ、魔術疲労、満腹度が、呪文を最初に唱えた時点の状態に戻ります。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="charm">
+      <name>魅了</name>
+      <desc>生物を魅了して、自分のために戦わせることができ、魅了された生物の中には特別な行動を取るものもいます。また、魅了は生物を繁殖させます（ほかの手段でも繁殖できる生物に限ります）。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="alchemical_infusion">
+      <name>錬金注入</name>
+      <desc>ポーションを投げる必要がどこにあるでしょう。念じるだけで投げつけられるのです。触媒として#5スプラッシュポーション#0が必要で、唱えるとポーションは消費されます。 !d エンティティを直接狙った場合、ポーションの効果は全力でそのエンティティに適用されます。#5バフ強化#0を重ねるほど効果レベルが上がり、#5持続時間#0を重ねるほど効果時間が延びます。 !d ブロックを狙った場合はスプラッシュとして働き、範囲内のすべてのエンティティに、距離に応じて減衰する効果が及びます（近い対象ほど、より強く、より長い効果を受けます）。#5半径#0で、スプラッシュの範囲が広がります。</desc>
+      <modifiedBy>RADIUS,DURATION,BUFF_POWER</modifiedBy>
+    </component>
+    <component id="crystallize">
+      <name>結晶化</name>
+      <desc>生物のエッセンスを水晶の牢獄に閉じ込められるようになりました。対象は十分に弱っている必要があり、本当に強大な存在はこの呪文を完全に拒みます。 !d 唱えるたびに、触媒として#5ダイヤモンド#0を1つ消費します。成功すると、生物は持ち運べる結晶に封じられ、右クリックで後から解放できます。 !d 結晶化できない生物もいます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="metamorphosis">
+      <name>変異</name>
+      <desc>敵の姿そのものを作り替えます。対象の生物を別の亜種に変えます。スケルトンはストレイに、ブタはゾンビピッグマンになる、といった具合です。スニークしながら唱えると、変化が元に戻ります。一部の生物にのみ有効です。 !d Electroblob's Wizardryが導入されている必要があります。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="dig">
+      <name>掘削</name>
+      <desc>指を鳴らすと、地面が砕け散ります。硬いブロックほど、壊すのに多くのマナが必要です。掘削は鉄のツルハシ相当から始まり、#5採掘力#0で強化できます。</desc>
+      <modifiedBy>MINING_POWER,FORTUNE_LEVEL,SILKTOUCH_LEVEL</modifiedBy>
+    </component>
+    <component id="light">
+      <name>光</name>
+      <desc>魔法で一帯を照らせます。光は、設置した後でも染料で右クリックすることで色を変えられます。染料には、Forgeの鉱石辞書に登録されたものも使えます。</desc>
+      <modifiedBy>COLOR</modifiedBy>
+    </component>
+    <component id="disarm">
+      <name>武装解除</name>
+      <desc>手元に道具を召喚できるようになったのですから、相手に持っているものを落とさせることは、ほんの小さな一歩でした。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="rift">
+      <name>裂け目収納</name>
+      <desc>空間に裂け目を開き、アイテムを収納できる小さな異空間を利用できます。裂け目は60秒後に自動的に閉じます。バフ強化を増やすほど、利用できる収納が増えます。裂け目が開いたら、スニーク＋右クリックで閉じられます。</desc>
+      <modifiedBy>BUFF_POWER</modifiedBy>
+    </component>
+    <component id="attract">
+      <name>引き寄せ</name>
+      <desc>自分の周囲に負圧の領域を作り出し、生きているものすべてを自分のほうへ引き寄せます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="telekinesis">
+      <name>念動力</name>
+      <desc>魔力で脳波を増幅し、物理的な形を与えられます。この波で、アイテムや経験値を目の前の一点へ引き寄せられます。呪文の使用中にマウスホイールを回すと、その点を自分に近づけたり遠ざけたりできます。念動力は、レバー、ボタン、ドア、トラップドア、フェンスゲートといった操作できるブロックを、離れた場所から作動させることにも使えます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="harvest_plants">
+      <name>収穫</name>
+      <desc>あらゆる植物、葉、花を収穫できます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="plow">
+      <name>耕作</name>
+      <desc>命令一つで大地を耕し、植え付けに適した深い畝を作れます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="create_water">
+      <name>水の生成</name>
+      <desc>周囲の空気中の水分を一か所に集め、水のなかった場所に水を作り出せます。ネザーでは使えません。大釜を満たすこともできます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="extinguish">
+      <name>消火</name>
+      <desc>水魔法を集中して放ち、近くの炎のブロックを消し止め、燃えている生物の火を消せます。火に耐性のあるエンティティには効果がなく、ネザーの消えない炎を消すこともできません。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="grow">
+      <name>成長促進</name>
+      <desc>数か月話しかけ続けたのに相当するエネルギーを植物に注ぎ込むと、植物がより速く成長します。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="banish_rain">
+      <name>雨払い</name>
+      <desc>雨よ雨よ、どこかへ行け。また別の日に来ておくれ。まさかこれが呪文の言葉だったとは、誰が思ったでしょう。対応する儀式で使うと、この呪文は雨を呼ぶこともできます。詳しくは#5儀式#0のページを参照してください。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="water_breathing">
+      <name>水中呼吸</name>
+      <desc>魔力を使って水中から酸素を引き出し、溺れずにいられるだけの酸素を得られます。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="night_vision">
+      <name>暗視</name>
+      <desc>光に関する知識から、光の明るさを増幅する呪文を考案できました。暗闇の中でも、事実上見通せるようになります。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="true_sight">
+      <name>真実の視界</name>
+      <desc>魔法の視覚によって、物事をありのままの姿で見られます。どんな美しいもの…そして恐ろしいものが見つかるかは、誰にもわかりません。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="reveal">
+      <name>透視</name>
+      <desc>生物に神秘の光で印をつけ、光らせて、固い壁越しにも見えるようにできます。透明な敵でも、この呪文からは逃れられません。</desc>
+      <modifiedBy>DURATION</modifiedBy>
+    </component>
+    <component id="invisibility">
+      <name>透明化</name>
+      <desc>自分の周囲で光を曲げ、事実上透明になれます。</desc>
+      <modifiedBy>BUFF_POWER,DURATION</modifiedBy>
+    </component>
+    <component id="random_teleport">
+      <name>ランダムテレポート</name>
+      <desc>対象をランダムに、少し離れた場所へテレポートさせられます。</desc>
+      <modifiedBy>RANGE</modifiedBy>
+    </component>
+    <component id="blink">
+      <name>ブリンク</name>
+      <desc>向いている方向のまっすぐ前へ、短い距離をテレポートできます。ブリンクは固い壁も通り抜けられますが、壁の中に埋まらないよう、できる限り配慮されます。</desc>
+      <modifiedBy>RANGE</modifiedBy>
+    </component>
+    <component id="transplace">
+      <name>位置交換</name>
+      <desc>テレポート魔法への理解が深まり、対象と位置を入れ替えられるようになりました。</desc>
+      <modifiedBy></modifiedBy>
+	  <relatedEntries>rituals_overview,otherworldly_ritual</relatedEntries>
+    </component>
+    <component id="phase_shift">
+      <name>位相シフト</name>
+      <desc>固体物質の構造そのものを解きほぐす術を会得し、ブロックを自由に通り抜けられる幽体のような状態に変えられます。効果は一時的で、しばらくするとブロックは元の実体に戻ります。</desc>
+      <modifiedBy>DURATION</modifiedBy>
+    </component>
+    <component id="mark">
+      <name>目印</name>
+      <desc>場所に魔法で目印を付けておけば、ほぼどこからでもその場所へ帰還できます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="recall">
+      <name>帰還</name>
+      <desc>テレポート魔法を調整して、残しておいた目印へ向かうようにできます。自分または対象を、目印の場所へ送り返します。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="ender_intervention">
+      <name>エンダーの介入</name>
+      <desc>テレポート魔法を極めた結果、次元の壁さえ越えられるようになりました。ほぼどこからでもネザーへ入れます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="divine_intervention">
+      <name>神の介入</name>
+      <desc>テレポート魔法を極めた結果、次元の壁さえ越えられるようになりました。ほぼどこからでもオーバーワールドへ入れます。すでにオーバーワールドにいる時に唱えると、ベッドへ戻されます。ベッドがない場合は、スポーン地点へ戻されます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="summon">
+      <name>召喚</name>
+      <desc>戦闘で倒した生物の魂を回収できるようになりました。この魂を使って、その生物を呼び出して身を守らせる呪文を作れます。 !d 生物を召喚するには、まず#5クリスタルの魂器#0を作ります。空の魂器を持ったまま何かを倒すと、その魂器はその種類のモブに#9同調#0します。同じモブを十分な数だけ倒すと、魂器がいっぱいになります。 !d 呪文作成の途中で書見台から求められたら、いっぱいになった魂器を投入できます。この工程で、呪文が何を召喚するかが決まります。 !d 召喚された生物は戦利品も経験値も落としませんが、繁殖させる、ウシの乳を搾る、ウマに乗るなど、通常どおりに関われます。ただしウマだけは例外で、持たせたサドルや馬鎧をドロップします。 !l オオカミやネコなどの飼いならせる生物は、召喚と同時に召喚者に自動的に手なずけられます。 !d サバイバル／アドベンチャーモードでは、ボスを魂器に封じることはできません。</desc>
+      <modifiedBy>DURATION</modifiedBy>
+    </component>
+    <component id="elemental">
+      <name>精霊</name>
+      <desc>召喚の主効果をより特化させたもので、捕らえた魂ではなく、自分自身の親和を利用します。 !d 最も高い親和（炎、水、風、大地、氷、雷のいずれか）の親和度が最大値の4分の1以上に達していれば、この呪文を唱えることでその親和に結び付いた精霊を呼び出し、そばで戦わせます。 !d この呪文の作成にクリスタルの魂器は必要ありません。ただし、呼び出した精霊も召喚上限に数えられます。最も高い親和に対応する精霊がいない場合、呪文は失敗します。</desc>
+      <modifiedBy>DURATION</modifiedBy>
+    </component>
+    <component id="blizzard">
+      <name>吹雪</name>
+      <desc>猛烈な吹雪を呼び出せるようになりました。範囲内のエンティティの動きを遅くし、ダメージを与えます。吹雪には範囲効果が組み込まれています。既存の吹雪から5ブロック以内には、新たな吹雪を呼び出せません。威力は最初のうち他の攻撃より低めですが、補正効果による伸びは大きくなります。通常の攻撃より高い頻度でダメージを与えられるという独自の特長もあります。吹雪は範囲内のすべてのエンティティを傷つけますが、術者だけは決して傷つけません。</desc>
+      <modifiedBy>RADIUS,DAMAGE,DURATION</modifiedBy>
+    </component>
+    <component id="daylight">
+      <name>日の出</name>
+      <desc>時間を操る力を得ました。この呪文は、時間を夜明けまで進めます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="falling_star">
+      <name>星落とし</name>
+      <desc>空から星を呼び寄せ、爆発範囲内のすべてのエンティティに衝突させます。味方も傷つけますが、術者は傷つけません。唱えてから着弾するまでには、短い間があります。地下では効果がありません（星は地表に落ちます）。</desc>
+      <modifiedBy>DAMAGE</modifiedBy>
+    </component>
+    <component id="fire_rain">
+      <name>炎の嵐</name>
+      <desc>恐ろしい炎の嵐を呼び出せるようになりました。範囲内のエンティティに大きなダメージを与えます。炎の嵐には範囲効果が組み込まれています。既存の炎の嵐から5ブロック以内には、新たな炎の嵐を呼び出せません。威力は最初のうち他の攻撃より低めですが、補正効果による伸びは大きくなります。通常の攻撃より高い頻度でダメージを与えられるという独自の特長もあります。炎の嵐は地面に火を付けません。範囲内のすべてのエンティティを傷つけますが、術者だけは決して傷つけません。</desc>
+      <modifiedBy>RADIUS,DAMAGE,DURATION</modifiedBy>
+    </component>
+    <component id="mana_link">
+      <name>マナリンク</name>
+      <desc>自分のマナを他のエンティティと結び付ける秘訣を見つけました。この呪文を唱えると、対象は自分のマナであるかのように、あなたのマナを使えるようになります。 !d 対象はまず自分のマナを使い、それが尽きるとあなたのマナを使い始めます。 !d 効果範囲には限りがありますが、お望みなら半径の補正効果で広げられます。対象が範囲の外へ出ても、リンクは切れず、一時的に無効になるだけです。範囲内に戻ると、リンクは再び有効になります。リンクを解除するには、同じ対象にもう一度この呪文を唱えます。 !d 自分のマナを複数のエンティティとリンクさせることも、他の複数の相手から自分へのリンクを受けることもできます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="mana_shield">
+      <name>マナシールド</name>
+      <desc>対象は残りマナによって守られ、半ハートぶんのダメージを吸収するたびに250マナを消費します。体力へのダメージは完全に防がれます。</desc>
+      <modifiedBy>DURATION,BUFF_POWER</modifiedBy>
+    </component>
+    <component id="moonrise">
+      <name>月の出</name>
+      <desc>時間を操る力を得ました。この呪文は、時間を夕暮れまで進めます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="drought">
+      <name>干ばつ</name>
+      <desc>水を生み出す知識を逆に用い、その過程を反転させました。この呪文は命中したものから水を奪います。水ブロックを消し、土、草ブロック、砂岩、菌糸を砂に変え、命中した植物を枯らし、石を丸石に変えます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="plant">
+      <name>植え付け</name>
+      <desc>インベントリ内の種を、育つ条件が整っている地面に植えられます。範囲など、広く届く形態と組み合わせると、素早く植え付けられて便利です。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="accelerate">
+      <name>時間加速</name>
+      <desc>この呪文は、対象のブロックの更新を速めます。タイルエンティティは速くなりません。実際に効果が出るには何度も唱える必要があるので、光線、壁、結界のような形態との組み合わせが向いています。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="drown">
+      <name>溺水</name>
+      <desc>対象の肺の中に直接水を生み出し、溺水ダメージを与えます。</desc>
+      <modifiedBy>DAMAGE</modifiedBy>
+    </component>
+    <component id="wizards_autumn">
+      <desc>掘削の魔法を小さな範囲に集中させ、葉だけに直接作用させられるようになりました。この主効果には範囲効果が組み込まれており、半径の補正効果で広げられます。手の届きにくい厄介な葉を片付けるのに使えます。</desc>
+      <name>魔導師の秋</name>
+      <modifiedBy>RADIUS</modifiedBy>
+    </component>
+    <component id="fury">
+      <name>激昂</name>
+      <desc>自分を激しい怒りの状態に追い込みます。与えるダメージが増え、非常に素早く動け、自然に体力が回復し、人間離れした速さで採掘できます。効果が切れると、しばらく疲れ果てた状態になり、回復する必要があります。</desc>
+      <modifiedBy>DURATION,BUFF_POWER</modifiedBy>
+    </component>
+    <component id="appropriation">
+      <name>接収</name>
+      <desc>ブロックまたはエンティティを1つ、呪文の中へ接収できます。もう一度唱えると、拾い上げたエンティティやブロックを、狙った場所に置きます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="silence">
+      <name>沈黙</name>
+      <desc>他のエンティティを沈黙させ、短時間、あらゆる呪文の詠唱を妨げます。持続時間は延長できません。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="shrink">
+      <name>縮小化</name>
+      <desc>自分の体を小さくできます。この効果が続いている間は体が物理的に小さくなり、1x1の隙間も通り抜けられます。体が軽いので落下がゆっくりになり、着地してもダメージを受けません。ただし、与えるダメージはすべて半分になります。</desc>
+      <modifiedBy>DURATION,BUFF_POWER</modifiedBy>
+    </component>
+    <component id="enlarge">
+      <name>巨大化</name>
+      <desc>自分の体を通常の2倍の大きさにできます。この効果が続いている間は体が物理的に大きくなり、周囲のあらゆるものを見下ろせます。ボスは巨大化できません。</desc>
+      <modifiedBy>DURATION,BUFF_POWER</modifiedBy>
+    </component>
+    <component id="place_block">
+      <name>ブロック設置</name>
+      <desc>この呪文要素でブロックを設置できます。さまざまな形態と組み合わせると、非常に強力になります。ブロックを設置するには、設置するブロックを呪文に設定し、そのブロックを少なくとも1個インベントリに持っている必要があります。何もない所からブロックを生み出すことはできません。設置するブロックを設定するには、スニークしながらブロックに呪文を唱えます。呪文が実際に効果を発揮する時にもスニークしている必要があるので、射撃などと組み合わせる場合は注意してください。ブロックの設定に範囲を使うのはおすすめしません。範囲内のすべてに作用し、ブロックを何度も上書きするため、意図しないブロックが設定されることがあるからです。呪文がどのブロックを設置するかは、インベントリ内でその呪文にマウスを合わせてShiftキーを押すと確認できます。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="conjure_dirt">
+      <name>土の生成</name>
+      <desc>土の生成は、ただの土ブロックを生み出し、狙った面に設置します。ブロック設置と違い、インベントリにブロックを持っている必要はありません。設置されるのは通常の土であり、草ブロックではありません。</desc>
+      <modifiedBy></modifiedBy>
+    </component>
+    <component id="channel_etherium">
+      <name>エーテリウム供給</name>
+      <desc>あらゆる魔法の根底にある神秘の流れへ意志を向けることで、自分のマナの一部を少しずつ生の中立エーテリウムへ変換し、対象のエーテリウムノードへ直接送り込めます。マナとエーテリウムの橋渡しをする際にロスが生じ、変換は不完全です。得られるエーテリウムより、かなり多くのマナを消費すると考えてください。直接の供給経路がない時に、オベリスクなどのエーテリウムノードを補充するのに使います。#5バフ強化#0の補正効果を加えると、1回の詠唱で送れる量が増えます。</desc>
+      <modifiedBy>BUFF_POWER</modifiedBy>
+    </component>
+    <component id="absorption">
+      <name>衝撃吸収</name>
+      <desc>対象のオーラに生命エネルギーを満たし、金色のハートを与えられるようになりました。このハートが、本来の体力に触れる前にダメージを吸収します。追加されるハートの数は、呪文に加えた#5バフ強化#0の補正効果の数に応じて増え、持続時間は#5持続時間#0の補正効果で延ばせます。 !d リンゴと金の粒を触媒にした砂時計の儀式の一部として唱えると、ボーナスとして持続時間が大幅に延びます。</desc>
+      <modifiedBy>DURATION,BUFF_POWER</modifiedBy>
+    </component>
+    <component id="resistance">
+      <name>耐性</name>
+      <desc>対象の体を衝撃にも魔法にも強く鍛え上げ、あらゆるダメージに対する一時的な耐性を与えます。#5バフ強化#0の補正効果1つで効果が最大の強さ（耐性II）になり、持続時間は#5持続時間#0の補正効果で延ばせます。</desc>
+      <modifiedBy>DURATION,BUFF_POWER</modifiedBy>
+    </component>
+  </components>
+  <modifiers zeroItemText="まだ習得した補正効果はなく、習得する資格もありません。">
+    <modifier id="gravity">
+      <name>重力</name>
+      <desc>一部の呪文の形態に重力を強めて作用させます。結界と射撃が重力の影響を受けるようになります。範囲の呪文は、地形に作用する際に有効な場所をより下まで探すので、地形に沿って広がるようになり便利です。</desc>
+      <modifies>GRAVITY</modifies>
+    </modifier>
+    <modifier id="bounce">
+      <name>跳弾</name>
+      <desc>射撃の形態が、表面で跳ね返るようになります。</desc>
+      <modifies>BOUNCE</modifies>
+    </modifier>
+    <modifier id="damage">
+      <name>ダメージ増加</name>
+      <desc>呪文が与えるダメージを増幅します。</desc>
+      <modifies>DAMAGE</modifies>
+    </modifier>
+    <modifier id="healing">
+      <name>回復強化</name>
+      <desc>呪文による回復量、または回復呪文がアンデッドに与えるダメージを増幅します。</desc>
+      <modifies>HEALING</modifies>
+    </modifier>
+    <modifier id="speed">
+      <name>速度</name>
+      <desc>速度を変化させる呪文の効果と、射撃の速度を強化します。</desc>
+      <modifies>SPEED</modifies>
+    </modifier>
+    <modifier id="duration">
+      <name>持続時間</name>
+      <desc>あらゆるバフ／デバフ効果の持続時間を強化し、結界の持続時間を延ばします。</desc>
+      <modifies>DURATION</modifies>
+    </modifier>
+    <modifier id="range">
+      <name>射程</name>
+      <desc>射撃と光線の呪文の射程を延ばします。</desc>
+      <modifies>RANGE</modifies>
+    </modifier>
+    <modifier id="radius">
+      <name>半径</name>
+      <desc>結界と範囲の呪文形態の半径を広げます。</desc>
+      <modifies>RADIUS</modifies>
+    </modifier>
+    <modifier id="rune_procs">
+      <name>ルーン発動回数</name>
+      <desc>ルーンが破壊されるまでに効果を発動できる回数を増やします。</desc>
+      <modifies>PROCS</modifies>
+    </modifier>
+    <modifier id="velocity_added">
+      <name>加速量</name>
+      <desc>#5打ち上げ#0など、呪文要素が加える速度の量を増やします。</desc>
+      <modifies>VELOCITY_ADDED</modifies>
+    </modifier>
+    <modifier id="target_non_solid">
+      <name>非固体ブロック対象</name>
+      <desc>呪文が非固体ブロック（草、水、溶岩）をすり抜けず、それらを対象にできるようになります。</desc>
+      <modifies>TARGET_NONSOLID_BLOCKS</modifies>
+    </modifier>
+    <modifier id="lunar">
+      <name>月</name>
+      <desc>夜間に呪文を強化します。時刻が真夜中に近いほど（夕暮れから始まります）、呪文のダメージと回復量が増えます。真夜中を過ぎて夜明けが近づくと、呪文は弱くなっていきます。射程、持続時間、半径も、該当する場合は月の満ち欠けに応じて増加します（満月に近いほど強力です）。夜は昼ほど長くないため、太陽より強力です。</desc>
+      <modifies>DAMAGE,HEALING,RANGE,RADIUS,DURATION</modifies>
+    </modifier>
+    <modifier id="solar">
+      <name>太陽</name>
+      <desc>昼間に呪文を強化します。時刻が正午に近いほど（夜明けから始まります）、呪文のダメージと回復量が増えます。正午を過ぎて夕暮れが近づくと、呪文は弱くなっていきます。射程、持続時間、半径も、該当する場合は月の満ち欠けに応じて増加します（新月に近いほど強力です）。</desc>
+      <modifies>DAMAGE,HEALING,RANGE,RADIUS,DURATION</modifies>
+    </modifier>
+    <modifier id="piercing">
+      <name>貫通</name>
+      <desc>呪文がエンティティやブロックを貫通できるようになります。補正効果1つにつき貫通回数が2増え、最大6までです。</desc>
+      <modifies>PIERCING</modifies>
+    </modifier>
+    <modifier id="mining_power">
+      <name>採掘力</name>
+      <desc>掘削の呪文により強い力を込められるようになりました。より良いツルハシが必要な、硬いブロックも掘れるようになります。補正効果1つにつき、呪文のツール等級が1段階上がります。基本の掘削呪文は、鉄のツルハシの採掘レベルで働きます。</desc>
+      <modifies>MINING_POWER</modifies>
+    </modifier>
+    <modifier id="prosperity">
+      <name>繁栄</name>
+      <desc>幸運が訪れます。掘削の呪文が追加の鉱石をドロップしやすくなり、ダメージを与える呪文は、敵がより良い戦利品をドロップしやすくなります。補正効果1つにつき、呪文に幸運／ドロップ増加を1レベル付けたのと同じ効果があります。</desc>
+      <modifies>FORTUNE_LEVEL</modifies>
+    </modifier>
+    <modifier id="ebwiz_blast">
+      <name>EBWiz爆風</name>
+      <desc>Electroblob's Wizardryの呪文の爆発半径を広げます。文机でEBWizの呪文書にのみ適用でき、通常のArs Magicaの呪文には効果がありません。</desc>
+      <modifies>RADIUS</modifies>
+    </modifier>
+    <modifier id="buff_power">
+      <name>バフ強化</name>
+      <desc>バフにより強い力を込められます。補正効果1つにつき、付与されるバフのレベルが上がります。持続時間には影響しません。</desc>
+      <modifies>BUFF_POWER</modifies>
+    </modifier>
+    <modifier id="gravitate">
+      <name>引力</name>
+      <desc>結界や魔法溜まりの呪文に、引力を織り込めるようになりました。近くのエンティティは、通常の効果範囲の外にいても、呪文の中心へ向かって絶えず引き寄せられます。補正効果1つにつき、引く力が強まり、引き寄せる範囲も広がります。大地のエッセンス、水のエッセンス、コンパスでクラフトします。</desc>
+      <modifies>GRAVITATE</modifies>
+    </modifier>
+    <modifier id="dismembering">
+      <name>首狩り</name>
+      <desc>あなたは記念品が好きだと気付きました。それが高じて、ダメージを与える呪文に、体の一部を無傷で残させる方法まで見つけ出したのです。補正効果1つにつき、敵を倒した時に頭をドロップする確率が5%%増えます。</desc>
+      <modifies>DISMEMBERING_LEVEL</modifies>
+    </modifier>
+    <modifier id="feather_touch">
+      <name>フェザータッチ</name>
+      <desc>大いなる力には、壊れる貴重品が付きものです。掘削の呪文をより慎重に唱えることを覚え、物を壊す頻度が減りました。補正効果1つにつき、呪文にシルクタッチを1レベル付けたのと同じ効果があります。</desc>
+      <modifies>SILKTOUCH_LEVEL</modifies>
+    </modifier>
+  </modifiers>
+  <talents zeroItemText="まだ習得した才能はなく、習得する資格もありません。">
+    <talent id="affinity_gains">
+      <name>親和上昇促進</name>
+      <desc>神秘の知識より、元素との同調のほうが大切だと決めました。魔法経験値の獲得が遅くなる代わりに、親和の上昇が促進されます。これは永続する効果です。</desc>
+    </talent>
+    <talent id="augmented_casting">
+      <name>強化詠唱</name>
+      <desc>呪文の詠唱に、持てるすべてを注ぎ込む方法を会得しました。あなたの呪文はすべて強力になります。持続時間は延び、半径は広がり、ダメージは増加します。</desc>
+    </talent>
+    <talent id="extra_summons">
+      <name>召喚枠追加</name>
+      <desc>自分でやるより、他人にやらせたほうがいいでしょう？召喚した生物、魅了した生物、仲間にした魔導師（#5随行魔導師#0の才能を持っている場合）を、あと1体多く連れられるようになります。</desc>
+    </talent>
+    <talent id="mage_posse_i">
+      <name>随行魔導師I</name>
+      <desc>魔導師としての才能が周囲に感銘を与え、あなたの評判が先に広まっています。光の魔導師に、付き従って護衛してくれるよう頼めます。これは召喚上限に数えられます。</desc>
+    </talent>
+    <talent id="mage_posse_ii">
+      <name>随行魔導師II</name>
+      <desc>他の魔導師たちから信頼を得て、自分たちの魔法をあなたの魔法と安心して結べるようになりました。光の魔導師と親しくなるたび、その魔導師はあなたとマナリンクを結びます。</desc>
+    </talent>
+    <talent id="mana_regen_i">
+      <name>マナ回復強化I</name>
+      <desc>体内を流れるエネルギーへの同調が深まりました。マナの回復が、通常よりわずかに速くなります。</desc>
+    </talent>
+    <talent id="mana_regen_ii">
+      <name>マナ回復強化II</name>
+      <desc>体内を流れるエネルギーへの同調が深まりました。マナの回復が、通常より速くなります。この効果は、マナ回復強化Iのボーナスに置き換わります。</desc>
+    </talent>
+    <talent id="mana_regen_iii">
+      <name>マナ回復強化III</name>
+      <desc>体内を流れるエネルギーへの同調が深まりました。マナの回復が、通常よりかなり速くなります。この効果は、マナ回復強化IIのボーナスに置き換わります。</desc>
+    </talent>
+    <talent id="spell_motion">
+      <name>移動詠唱</name>
+      <desc>俊敏さこそが鍵だと悟りました。そこで鍛錬を積み、呪文を使っている間も通常の速度で動けるようになりました。</desc>
+    </talent>
+    <talent id="colour">
+      <name>色</name>
+      <desc>この補正効果で、呪文のパーティクルの色を変えられます。緑色の火の玉が欲しい？どうぞご自由に。色は、クラフトの途中で投入した染料の色で決まります。書見台が何を要求していても、どの染料でも受け付けられます。</desc>
+    </talent>
+  </talents>
+  <items>
+    <item id="ores">
+      <name>AM2の鉱石</name>
+      <desc>Ars Magicaは、集めて精製する必要のある新しい鉱石をいくつか追加します。</desc>
+      <subitem id="vinteum_dust">
+        <name>ヴィンテウムの粉</name>
+        <desc>クリーパーが枯れ井戸に落ちた小さな村で発見されたヴィンテウム鉱石は、かまどで焼くと貴重な魔法の粉になることがすぐに知れ渡りました。</desc>
+        <relatedEntries>vinteum_ore,calefactor,vinteum_torch</relatedEntries>
+      </subitem>
+      <subitem id="arcane_compound">
+        <name>神秘の混合物</name>
+        <desc>複数の世界の素材を組み合わせたこの神秘の混合物は、神秘の灰を得るために必要な基礎資源です。</desc>
+        <relatedEntries>arcane_ash,calefactor</relatedEntries>
+      </subitem>
+      <subitem id="arcane_ash">
+        <name>神秘の灰</name>
+        <desc>#5神秘の混合物#0をかまどで燃やして作ります。エーテリウムを蓄える能力が高く、高度な魔法機械の要となっています。</desc>
+        <relatedEntries>arcane_compound,calefactor</relatedEntries>
+      </subitem>
+      <subitem id="purified_vinteum_dust">
+        <name>精製ヴィンテウムの粉</name>
+        <desc>魔法の性質を強めるために#5神秘の灰#0を加え、触媒として#5ケルブロッサム#0を、不安定さを解き放つために#5デザートノヴァ#0を加えると、ヴィンテウムの粉は、はるかに多くのエーテリウムを蓄えられる精製された状態になります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="chimerite">
+        <name>カイメライト</name>
+        <desc>あらゆる色に姿を変え、絶えず状態が移ろうカイメライトは、大規模な変化や幻惑を必要とする呪文に使われます。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="blue_topaz">
+        <name>ブルートパーズ</name>
+        <desc>比較的ありふれた宝石で、魔導師がエーテリウムを集束させる入門用のクリスタルとしてよく使います。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="sunstone">
+        <name>サンストーン</name>
+        <desc>サンストーンは、マインクラフトとその先の世界の中でも、特に激しく熱い場所でしか見つかりません。形成には猛烈な熱が必要ですが、圧力は非常に低くて済みます。ネザーの溶岩の湖でよく見つかり、運が良ければオーバーワールドの溶岩だまりにも存在します。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="moonstone">
+        <name>ムーンストーン</name>
+        <desc>夜の適切な時間に空を見上げれば、空から降りてくる流星が見えるかもしれません。この流星には、希少な鉱物ムーンストーンが含まれています。その流星がどこから来たのかは、誰にも分かりません。しかし、ムーンストーンの魔法の性質は、この世界で見つかる他のどんなものをもはるかにしのぎます。研究によると、流星は月が満ちるにつれて頻繁に落ち、新月に向かって欠けていくにつれて再び減っていきます。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <relatedEntries>calefactor</relatedEntries>
+    </item>
+    <item id="essence">
+      <name>エッセンスとエッセンス袋</name>
+      <desc>エッセンスは、魔法のアイテムのクラフトにも、呪文の触媒にも使われます。元素のエッセンスはそれぞれの守護者がドロップし、すべてのエッセンスは#5エッセンス精製器#0でもクラフトできます。</desc>
+      <subitem id="essence_arcane">
+        <name>神秘のエッセンス</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="essence_earth">
+        <name>大地のエッセンス</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="essence_air">
+        <name>風のエッセンス</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="essence_fire">
+        <name>炎のエッセンス</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="essence_water">
+        <name>水のエッセンス</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="essence_nature">
+        <name>自然のエッセンス</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="essence_ice">
+        <name>氷のエッセンス</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="essence_lightning">
+        <name>雷のエッセンス</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="essence_life">
+        <name>生命のエッセンス</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="essence_ender">
+        <name>エンダーのエッセンス</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="core@2">
+        <name>純粋なエッセンス</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="core@1">
+        <name>上位エッセンスコア</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="core@0">
+        <name>基本エッセンスコア</name>
+        <desc></desc>
+        <relatedEntries>essence_bag,essence_refiner</relatedEntries>
+      </subitem>
+      <subitem id="essence@13">
+        <name>エーテリウム</name>
+        <desc>これはAM2の力であるエーテリウムを表しており、一部の呪文レシピに表示されます。これが表示されたら、創造の祭壇が正しい種類のエーテリウムに接続されていることを確認し（書見台の上の本を見て、色で判断してください）、創造の祭壇のレバーを入れてください。</desc>
+        <relatedEntries>altar_of_creation</relatedEntries>
+      </subitem>
+      <subitem id="essence_bag">
+        <name>エッセンス袋</name>
+        <desc>エッセンス袋はクラフトでき、冒険中の追加の収納として使えます。</desc>
+        <relatedEntries>essence_refiner</relatedEntries>
+      </subitem>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="runes">
+      <name>ルーン</name>
+      <desc>ルーンは呪文の構成部品です。他の複数のアイテムと正しい組み合わせにすると、魔法の呪文スクロールを作成できます。</desc>
+      <subitem id="rune@0" unlocked="true">
+        <name>黒色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@1" unlocked="true">
+        <name>空のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@2" unlocked="true">
+        <name>青色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@3" unlocked="true">
+        <name>茶色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@4" unlocked="true">
+        <name>青緑色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@5" unlocked="true">
+        <name>灰色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@6" unlocked="true">
+        <name>緑色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@7" unlocked="true">
+        <name>空色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@8" unlocked="true">
+        <name>薄灰色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@9" unlocked="true">
+        <name>黄緑色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@10" unlocked="true">
+        <name>赤紫色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@11" unlocked="true">
+        <name>橙色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@12" unlocked="true">
+        <name>桃色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@13" unlocked="true">
+        <name>紫色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@14" unlocked="true">
+        <name>赤色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@15" unlocked="true">
+        <name>白色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune@16" unlocked="true">
+        <name>黄色のルーン</name>
+        <desc></desc>
+        <relatedEntries>runebag,keystone</relatedEntries>
+      </subitem>
+      <subitem id="rune_bag" unlocked="true">
+        <name>ルーン袋</name>
+        <desc>ルーン袋にはルーンを少数収納でき、インベントリの節約になります。ルーン袋にルーンが入っていれば、楔石はその中のルーンにも作用して、現在選択している組み合わせを切り替えられます。</desc>
+        <relatedEntries>keystone</relatedEntries>
+      </subitem>
+      <relatedEntries>keystone</relatedEntries>
+    </item>
+    <item id="armor_mage">
+      <name>魔導師の防具</name>
+      <desc>魔導師の防具は簡素なローブの上位版で、耐久力、修復速度、防御力がやや高くなっています。ルーンが織り込まれているため、非常に高いエンチャント適性があります。また、装備者から吸い上げたマナで自らの状態を修復できます。魔導師の防具を一式すべて身に着けると、マナの回復速度が上がり、すべての呪文の効果がわずかに高まります。</desc>
+      <subitem id="mage_hood">
+        <name>魔導師のフード</name>
+        <desc></desc>
+        <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
+      </subitem>
+      <subitem id="mage_robe">
+        <name>魔導師のローブ</name>
+        <desc></desc>
+        <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
+      </subitem>
+      <subitem id="mage_leggings">
+        <name>魔導師のレギンス</name>
+        <desc></desc>
+        <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
+      </subitem>
+      <subitem id="mage_boots">
+        <name>魔導師のブーツ</name>
+        <desc></desc>
+        <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
+      </subitem>
+      <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
+    </item>
+    <item id="armor_battlemage">
+      <name>戦闘魔導師の防具</name>
+      <desc>真の達人と認められた魔導師にのみ授けられる戦闘魔導師の防具は、優れた防御力を備えています。魔導師の防具より耐久力は高いものの、修復速度は遅く、エンチャント適性も低く、魔法の恩恵も劣ります。戦闘魔導師の防具には経験値を与えることもでき、それによって装備者を助ける防護の呪文が解放され、防具に宿る魔力を消費します。消費した魔力は、時間とともにあなた自身のマナから再び注入されます。</desc>
+      <subitem id="battlemage_helmet">
+        <name>戦闘魔導師の冠</name>
+        <desc></desc>
+        <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
+      </subitem>
+      <subitem id="battlemage_chestplate">
+        <name>戦闘魔導師の鎧</name>
+        <desc></desc>
+        <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
+      </subitem>
+      <subitem id="battlemage_leggings">
+        <name>戦闘魔導師のレギンス</name>
+        <desc></desc>
+        <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
+      </subitem>
+      <subitem id="battlemage_boots">
+        <name>戦闘魔導師のブーツ</name>
+        <desc></desc>
+        <relatedEntries>infusion,armor_xp_infusion</relatedEntries>
+      </subitem>
+      <relatedEntries>infusion</relatedEntries>
+    </item>
+    <item id="affinity_tomes">
+      <name>親和の書</name>
+      <desc>親和の書には、長年にわたり魔導師たちが特定の親和性についてまとめた詳細な報告や情報が記されています。全般の親和の書を除き、読むとその親和性の進行度が20%%上がり、同時に他のすべての親和性の進行度が20%%下がります。</desc>
+      <subitem id="affinity_tome_none">
+        <name>親和の書：全般</name>
+        <desc>全般の親和の書は特別で、ロックされた親和性の状態を解除できます。どの親和性も上げることなく、すべての親和性の進行度を20%%下げます。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="affinity_tome_arcane">
+        <name>親和の書：神秘</name>
+        <desc>この書を読むと、神秘の親和性が20%%上がり、他のすべての親和性が20%%下がります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="affinity_tome_water">
+        <name>親和の書：水</name>
+        <desc>この書を読むと、水の親和性が20%%上がり、他のすべての親和性が20%%下がります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="affinity_tome_fire">
+        <name>親和の書：炎</name>
+        <desc>この書を読むと、炎の親和性が20%%上がり、他のすべての親和性が20%%下がります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="affinity_tome_earth">
+        <name>親和の書：大地</name>
+        <desc>この書を読むと、大地の親和性が20%%上がり、他のすべての親和性が20%%下がります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="affinity_tome_air">
+        <name>親和の書：風</name>
+        <desc>この書を読むと、風の親和性が20%%上がり、他のすべての親和性が20%%下がります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="affinity_tome_lightning">
+        <name>親和の書：雷</name>
+        <desc>この書を読むと、雷の親和性が20%%上がり、他のすべての親和性が20%%下がります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="affinity_tome_ice">
+        <name>親和の書：氷</name>
+        <desc>この書を読むと、氷の親和性が20%%上がり、他のすべての親和性が20%%下がります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="affinity_tome_nature">
+        <name>親和の書：自然</name>
+        <desc>この書を読むと、自然の親和性が20%%上がり、他のすべての親和性が20%%下がります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="affinity_tome_life">
+        <name>親和の書：生命</name>
+        <desc>この書を読むと、生命の親和性が20%%上がり、他のすべての親和性が20%%下がります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="affinity_tome_ender">
+        <name>親和の書：エンダー</name>
+        <desc>この書を読むと、エンダーの親和性が20%%上がり、他のすべての親和性が20%%下がります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="foci">
+      <name>レンズ</name>
+      <desc>レンズはAM2の特定の機械の内部で使用し、機械の動作を変化させます。</desc>
+      <subitem id="charge_focus">
+        <name>チャージレンズ</name>
+        <desc>チャージレンズは、AM2の機械のチャージ速度を上げるために使用します。#9加熱器#0と#9神秘の再構成器#0では、機械が作業を行う速度も上がります。</desc>
+        <relatedEntries>summoner,arcanereconstructor,arcane_deconstructor</relatedEntries>
+      </subitem>
+      <subitem id="mana_focus">
+        <name>マナレンズ</name>
+        <desc>マナレンズは、AM2の機械の稼働コストを下げるために使用します。</desc>
+        <relatedEntries>summoner,calefactor</relatedEntries>
+      </subitem>
+      <subitem id="lesser_focus">
+        <name>下級レンズ</name>
+        <desc>下級レンズはAM2の様々な機械で使用し、機械にそれぞれ異なる動作をさせます。</desc>
+        <relatedEntries>blockseerstone</relatedEntries>
+      </subitem>
+      <subitem id="standard_focus">
+        <name>中級レンズ</name>
+        <desc>中級レンズはAM2の様々な機械で使用し、機械にそれぞれ異なる動作をさせます。</desc>
+        <relatedEntries>blockseerstone</relatedEntries>
+      </subitem>
+      <subitem id="greater_focus">
+        <name>上級レンズ</name>
+        <desc>上級レンズはAM2の様々な機械で使用し、機械にそれぞれ異なる動作をさせます。</desc>
+        <relatedEntries>blockseerstone</relatedEntries>
+      </subitem>
+      <subitem id="item_focus">
+        <name>アイテムレンズ</name>
+        <desc>アイテムレンズは#9見者の石#0で使用し、近くの地面に落ちているアイテムを探させます。</desc>
+        <relatedEntries>blockseerstone</relatedEntries>
+      </subitem>
+      <subitem id="player_focus">
+        <name>プレイヤーレンズ</name>
+        <desc>プレイヤーレンズは#9見者の石#0で使用し、近くのプレイヤーを探させます。</desc>
+        <relatedEntries>blockseerstone</relatedEntries>
+      </subitem>
+      <subitem id="monster_focus">
+        <name>モンスターレンズ</name>
+        <desc>モンスターレンズは#9見者の石#0で使用し、近くのモブ（ゾンビやスケルトンなど）を探させます。</desc>
+        <relatedEntries>blockseerstone</relatedEntries>
+      </subitem>
+      <subitem id="creature_focus">
+        <name>生物レンズ</name>
+        <desc>生物レンズは#9見者の石#0で使用し、近くの動物（ヒツジやウシなど）を探させます。</desc>
+        <relatedEntries>blockseerstone</relatedEntries>
+      </subitem>
+      <relatedEntries>flicker_lure</relatedEntries>
+    </item>
+    <item id="keystone">
+      <name>楔石</name>
+      <desc>楔石は、転移門どうしをつなげたり、AM2の機械へのアクセスを制限したりするために使用します。同じルーンの組み合わせの楔石を持っていないと、これらのブロックのUIは開きません。</desc>
+      <relatedEntries>keystonechest,blockkeystonerecepticle,blockastralbarrier,blockseerstone,keystoneDoors,gateways</relatedEntries>
+    </item>
+    <item id="mana_cake">
+      <name>マナケーキ</name>
+      <desc>マナケーキは満腹度を回復し、さらにマナの回復速度も高めます。しかも、ケーキです！</desc>
+      <relatedEntries>mana_potion</relatedEntries>
+    </item>
+    <item id="mana_potion">
+      <name>マナポーション</name>
+      <desc>マナポーションは飲むとマナを即座に回復します。飲んだ後は空き瓶が戻ってきます。同じ種類のマナポーション3本を糸と合わせると、束にできます。束は3回使用でき、空き瓶も返ってきます。最後の1本を飲んだときには、糸も返ってきます。</desc>
+      <subitem id="lesser_mana_potion">
+        <name>下級マナポーション</name>
+        <desc>下級マナポーションは、魔法版のコーヒーのようなものです。短時間の活力にはなりますが、一日中は持ちません。1回の使用でマナを100回復します。</desc>
+        <relatedEntries>mana_cake</relatedEntries>
+      </subitem>
+      <subitem id="standard_mana_potion">
+        <name>中級マナポーション</name>
+        <desc>中級マナポーションは、わずかな材料費で、下級よりもかなり多くのマナを回復します。1回の使用でマナを250回復します。</desc>
+        <relatedEntries>mana_cake</relatedEntries>
+      </subitem>
+      <subitem id="greater_mana_potion">
+        <name>上級マナポーション</name>
+        <desc>上級マナポーションは、#5ヴィンテウム#0の力を使い、醸造台で#9奇妙なポーション#0と合わせて作ります。かなりの量のマナを回復します。1回の使用でマナを2000回復します。作業台でのレシピは暫定のもので、醸造台の厄介な仕様をどうにかするまでの間に合わせです。</desc>
+        <relatedEntries>mana_cake</relatedEntries>
+      </subitem>
+      <subitem id="epic_mana_potion">
+        <name>特級マナポーション</name>
+        <desc>特級マナポーションは、醸造台で#5神秘の灰#0と#9奇妙なポーション#0を合わせて作ります。1本あたりマナを5000回復します。作業台でのレシピは暫定のもので、醸造台の厄介な仕様をどうにかするまでの間に合わせです。</desc>
+        <relatedEntries>mana_cake</relatedEntries>
+      </subitem>
+      <subitem id="legendary_mana_potion">
+        <name>伝説級マナポーション</name>
+        <desc>伝説級マナポーションは、醸造台で#5精製ヴィンテウムの粉#0と#9奇妙なポーション#0を合わせて作ります。1本でなんとマナを10000も回復します！作業台でのレシピは暫定のもので、醸造台の厄介な仕様をどうにかするまでの間に合わせです。</desc>
+        <relatedEntries>mana_cake</relatedEntries>
+      </subitem>
+      <subitem id="liquid_essence_bottle">
+        <name>エーテリウム注入ポーション</name>
+        <desc>魔導師は、#5液体エッセンスのバケツ#0を#5カイメライト#0と#5タルマの根#0と合わせることで、最大マナを一時的に高めるポーションを作れます。残念ながらこの製法の効率はごく低く、液体エッセンスの多くは途中で失われてしまいます。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="mana_martini">
+        <name>マナマティーニ</name>
+        <desc>MithionによるAM2の最終リリースが、ちょうど#9バージョン007#0だったことにちなんで、マナマティーニを作れるようになりました。飲むと、呪文の発動で溜まる魔術疲労が25%%軽減されます。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="mana_potion_bundle@3">
+        <name>下級マナポーションの束</name>
+        <desc>下級マナポーション3本の束です。</desc>
+        <relatedEntries>lesser_mana_potion</relatedEntries>
+      </subitem>
+      <subitem id="mana_potion_bundle@259">
+        <name>中級マナポーションの束</name>
+        <desc>中級マナポーション3本の束です。</desc>
+        <relatedEntries>standard_mana_potion</relatedEntries>
+      </subitem>
+      <subitem id="mana_potion_bundle@515">
+        <name>上級マナポーションの束</name>
+        <desc>上級マナポーション3本の束です。</desc>
+        <relatedEntries>greater_mana_potion</relatedEntries>
+      </subitem>
+      <subitem id="mana_potion_bundle@771">
+        <name>特級マナポーションの束</name>
+        <desc>特級マナポーション3本の束です。</desc>
+        <relatedEntries>epic_mana_potion</relatedEntries>
+      </subitem>
+      <subitem id="mana_potion_bundle@1027">
+        <name>伝説級マナポーションの束</name>
+        <desc>伝説級マナポーション3本の束です。</desc>
+        <relatedEntries>legendary_mana_potion</relatedEntries>
+      </subitem>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="crystal_wrench">
+      <name>クリスタルレンチ</name>
+      <desc>クリスタルレンチには多くの用途があります。エーテリウムの供給網を通して、目的の場所へ導けます。そのためには、まず#9使用したいエーテリウムの供給源を右クリック#0します。これで供給源のブロックが記録されます。次に、#9レンチを持ったまま、送り先を右クリック#0します。#5途中のエーテリウム導管をクリックする必要はありません。最後のブロックだけをクリックしてください。供給網が、近くのエーテリウム導管を通る経路を自動的に探します#0。何らかの理由で失敗した場合は、通知が表示されます。これは強制的にペアリングを行い、エーテリウムを狙った先へ確実に送ります。 !d #9供給源をスニークしながら右クリック#0すると、レンチのクリスタルが緑色に変わります。これは、クリスタルレンチが供給源ブロックの位置を記憶していることを意味し、供給源に戻らなくても、続けて複数の送り先をクリックできます。この状態で右クリックした送り先はそれぞれ、（可能であれば）記憶した供給源とペアリングされます。 !d エーテリウムノードの接続を解除することもできます。#5動力のないブロック#0を#9スニーク＋右クリック#0してください。これでレンチのモードが接続から切断に切り替わります。レンチのクリスタルが赤色に変わるので、変化がわかります。元に戻すには、同じようにスニーク＋右クリックをして、クリスタルを紫色に戻します。位置を記憶している場合は、先にそれを消去しないとモードを切り替えられません（これも動力のないブロックをスニーク＋右クリックして行います）。 !p クリスタルレンチは、隠れているパーティクルエミッタを表示するためにも使えます。切断モードで右クリックすると、その設定をコピーできます。コピーした設定は、別のエミッタを右クリックして貼り付けられます。設定を「貼り付ける」たびに、他のエミッタにも貼り付けたい場合は、もう一度コピーする必要があります。</desc>
+      <relatedEntries>obelisk,mana_battery</relatedEntries>
+    </item>
+    <item id="spell_parchment">
+      <name>呪文羊皮紙</name>
+      <desc>杖やワンドのような道具なしで呪文を唱えたい魔導師は、呪文を書き留めるものが必要です。この方法は何千年も前から使われており、驚くことに、これ以上効果的なものはいまだ発明されていません。</desc>
+      <relatedEntries>altarOfCreation,inscriptionTable</relatedEntries>
+    </item>
+    <item id="crystal_phylactery">
+      <name>クリスタルの魂器</name>
+      <desc>クリスタルの魂器は、生命力を捕らえる装置です。これをインベントリに持っている魔法の使い手は、倒した敵の魂のかけらを閉じ込めることができます。魂器がいっぱいになると、それを呪文の要素として使い、その生物自体を召喚して使役できます。</desc>
+      <relatedEntries>Summon</relatedEntries>
+    </item>
+    <item id="attuning_staff">
+      <name>同調の杖</name>
+	  <desc>同調の杖は、呪文の杖を改造したもので、周囲のマナに同調します。杖を手に持ってブロックを右クリックすると、動力ブロックのエーテリウムの量を感知できます。#9魔導ゴーグル#0を装備していると、さらに機能が増えます。 !d 同調の杖は#9魔法の箒#0を回収するためにも使えます。杖を手に持って箒を右クリックするだけで回収できます。</desc>
+      <relatedEntries>magitech_goggles,magic_broom</relatedEntries>
+    </item>
+    <item id="spell_book">
+      <name>呪文書</name>
+      <desc>呪文書は便利なアイテムで、魔導師は呪文を整理でき、同時に場所も節約できます。呪文書を装備している間は、x/zキー（初期設定）を押すか、スニークしながらマウスホイールを回すことで、呪文を切り替えられます。呪文書は様々な色に染められます。また、便利な力を持つ#5エンチャント#0も付けられます。</desc>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="magic_broom">
+      <name>魔法の箒</name>
+	  <desc>神秘の灰の魔力を箒と組み合わせました。なぜ？あなた自身もよくわかっていません。ただ、この箒は周りをきれいに保つのが大好きで、近くに落ちているアイテムを拾い集め、割り当てられたチェストに入れてくれます。クラフトした箒を設置するには、箒を装備した状態で、#5インベントリを持つブロック#0を右クリックします。そうしないと機能しません。現在、箒は落ちているアイテムをすべて拾いますが、今後設定できるようになる予定です。 !d 箒は、#9同調の杖#0を手に持って右クリックすると回収できます。</desc>
+      <relatedEntries>attuning_staff</relatedEntries>
+    </item>
+    <item id="nature_scythe">
+      <name>自然の大鎌</name>
+      <desc>自然そのものの守護者から奪ったこの大鎌は、計り知れない力を振るいます。葉や植物を驚くべき効率で刈り取れます。右クリックでブーメランのように投げられますが、それには250マナかかります。植物を刈り取る効果はすべて投げている間も有効で、ダメージも増加します。</desc>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="arcane_spellbook">
+      <name>神秘の呪文書</name>
+      <desc>古の魔導師たちによって、はかり知れないエンチャントが込められた神秘の呪文書は、#9そこから唱えるすべての呪文の効果を高めます#0。ダメージが増加し、マナコストが下がります。持続時間や半径などは変化しません。</desc>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="winter_arm">
+      <name>冬の掌握</name>
+      <desc>冬の守護者から奪ったこの腕は、鈍器として使えます。この世のものとは思えない冷気を宿したままで、これで殴った相手を大きく鈍足にし、弱体化させます。250マナで投げることができ、腕が命中したエンティティを自分のもとへ引き寄せ、より強力な鈍足と弱体化の効果を与えます。</desc>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="air_sled">
+      <name>風のそり</name>
+      <desc>風のそりを使えば、楽々と空へ飛び立てます。クリエイティブモードの飛行よりわずかに速いものの、同じほど自在には操れません。</desc>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="earth_armor">
+      <name>大地の鎧</name>
+      <desc>大地の鎧は、大地の守護者の胸当てです。防具1つとしては、非常に高い物理ダメージ耐性があります。素手（アイテムを何も装備していない状態）での攻撃に、かなりのダメージ（+4）とノックバックを加えます。</desc>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="water_orbs">
+      <name>水のオーブ</name>
+      <desc>水のオーブがあれば、水を無意識に操れます。装備している間（脚の装備枠のアイテムです）、流れる液体に押されなくなります。また、水中でも息が無限に続きます。</desc>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="fire_ears">
+      <name>炎の守護者のアンテナ</name>
+      <desc>炎の守護者のアンテナを身に着けると、炎と溶岩のダメージを完全に無効化できます。</desc>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="workbench_upgrade">
+      <name>作業台グリッド拡張</name>
+      <desc>魔導師の作業台のアップグレードの作り方を見つけました。これで、副グリッドが2x2から3x3になります。クラフトして、設置済みの作業台を右クリックするだけで適用できます。ただし、この改造はかなり壊れやすく、作業台が壊されると外れてしまうため、作り直す必要があります。</desc>
+      <relatedEntries>magiciansWorkbench</relatedEntries>
+    </item>
+    <item id="binding_catalysts">
+      <name>具現の触媒</name>
+      <desc>具現の触媒は、#5具現#0の形態で、どの種類の道具や武器を具現化するかを決めるために使います。</desc>
+      <subitem id="binding_catalyst@0">
+        <name>具現の触媒：ツルハシ</name>
+        <desc></desc>
+        <relatedEntries>Binding</relatedEntries>
+      </subitem>
+      <subitem id="binding_catalyst@1">
+        <name>具現の触媒：斧</name>
+        <desc></desc>
+        <relatedEntries>Binding</relatedEntries>
+      </subitem>
+      <subitem id="binding_catalyst@2">
+        <name>具現の触媒：剣</name>
+        <desc></desc>
+        <relatedEntries>Binding</relatedEntries>
+      </subitem>
+      <subitem id="binding_catalyst@3">
+        <name>具現の触媒：シャベル</name>
+        <desc></desc>
+        <relatedEntries>Binding</relatedEntries>
+      </subitem>
+      <subitem id="binding_catalyst@4">
+        <name>具現の触媒：クワ</name>
+        <desc></desc>
+        <relatedEntries>Binding</relatedEntries>
+      </subitem>
+      <subitem id="binding_catalyst@5">
+        <name>具現の触媒：弓</name>
+        <desc>これはまだ実装されていません。近いうちにご期待ください！</desc>
+        <relatedEntries>Binding</relatedEntries>
+      </subitem>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="warding_candle">
+      <name>ウォーディングキャンドル</name>
+	  <desc>ウォーディングキャンドルは、手に持つと、持ち主とともに動く光源になります。また、#9キャンドルを持ったまま特定のブロックをスニーク＋右クリック#0することで、そのブロックに#9同調#0させることもできます。そうすると、指定したブロックから15ブロック以内ではキャンドルの炎が青に、5ブロック以内では赤に変わります。ウォーディングキャンドルは15分間燃え続けますが、装備していないと消えてしまいます。 !d ウォーディングキャンドルは#5儀式#0にも使われ、配置の一部として地面に設置します。同調済みのウォーディングキャンドルは、儀式には使えません。</desc>
+      <relatedEntries>rituals_overview</relatedEntries>
+    </item>
+    <item id="flicker_jar">
+      <name>フリッカーの瓶</name>
+      <desc>フリッカーの瓶は、フリッカーを捕まえるために使います。フリッカーを右クリックするだけで、瓶の中に閉じ込められます。簡単そうでしょう？まあ、楽しんでください…</desc>
+      <relatedEntries>Flicker</relatedEntries>
+    </item>
+    <item id="ender_boots">
+      <name>エンダーブーツ</name>
+      <desc>エンダーブーツは、#5エンダーの守護者#0からまれにドロップします。このブーツを履いている間、#9スニークしながらジャンプすると重力が反転します#0！これは自分自身にのみ作用し、上向きに落下します。通常の落下ダメージは受けます。空中にいる間は重力を反転できません。</desc>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="lightning_charm">
+      <name>雷のお守り</name>
+      <desc>雷のお守りは、#5雷の守護者#0からまれにドロップします。スニーク＋右クリックでオンとオフが切り替わります。オンの間は、静電気で近くのアイテムを自動的に引き寄せます。</desc>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="life_ward">
+      <name>生命の護り</name>
+      <desc>生命の護りは、#5生命の守護者#0からまれにドロップします。ホットバーに入れておくと、受けるダメージを吸収する防護の力場がゆっくりと自分の周りに生成されます。一時的な体力を最大20まで追加で生成します。護りをインベントリから外しても追加の体力は残りますが、護りがないと自然には回復しません。</desc>
+      <relatedEntries></relatedEntries>
+    </item>
+    <item id="magitech_goggles">
+      <name>魔導ゴーグル</name>
+      <desc>魔導ゴーグルは、#9同調の杖#0と対になる装備です。装備すると、同調の杖で動力ブロックをスニーク＋右クリックできるようになります。すると、選択した機械に入ってくるすべての動力の種類と、その供給元が見えます。また、ゴーグルを通すと壊れたパワーリンクも見えます。かつて動力の経路があったのに、何かが原因で途切れた場所です（例えば、導管が壊れた場合など）。壊れたパワーリンクのブロックは手では壊せませんが、どんなブロックでも置き換えられます。</desc>
+      <relatedEntries>attuning_staff,brokenLink</relatedEntries>
+    </item>
+    <item id="flicker_focus">
+      <name>フリッカーレンズ</name>
+      <desc>フリッカーレンズは、#9フリッカーの住処#0の中で、フリッカーが暮らせる環境を作るために使います。これによりフリッカーはいくつかの作業を行えるようになります。それぞれの詳細は右のページに記されています。</desc>
+      <relatedEntries>flickerHabitat,Flicker,crystalMarker</relatedEntries>
+      <subitem id="flicker_focus@7">
+        <name>フリッカーレンズ：アイテム輸送</name>
+        <desc>このクリスタルに宿る風のフリッカーは、アイテムの移動に同調しています。これを#9フリッカーの住処#0に入れると、#9クリスタルマーカー#0と連携させて、アイテムの入ったインベントリとやり取りできます。このレンズを入れた住処を#9クリスタルマーカー#0と連携させるには、#9フリッカーの住処#0を右クリックしてから、#9クリスタルマーカー#0を右クリックします。このレンズは、フリッカーの入った#9フリッカーの住処#0を追加することで強化できます。このレンズはエーテリウムなしでも動作しますが、非常に遅くなります。動力を加えると速度が上がり、取り付けた強化も利用できるようになります。 !d 神秘： !l 中にいるフリッカーが一度に運べるアイテムの数が増えます。1体目の神秘のフリッカーで32個になり、以降は1体増えるごとに、風のフリッカーの運搬容量が32個ずつ増えます。 !d 雷： !l 雷のフリッカーは、フリッカーがアイテムを運ぶ速度を上げます。2体目以降の雷のフリッカーも速度を上げますが、効果は逓減します。魔導技師の多くは、雷のフリッカーを3体より多くしても無駄だと考えています。</desc>
+        <relatedEntries>flickerFocus,crystalMarker</relatedEntries>
+      </subitem>
+      <subitem id="flicker_focus@6">
+        <name>フリッカーレンズ：封鎖</name>
+        <desc>神秘と風のフリッカーが力を合わせると、十分なエーテリウムを与えられた場合に、住処の周囲に壁を作り出せます。このレンズを#9フリッカーの住処#0に入れてエーテリウムを供給すると、#9フリッカーの住処#0を中心に半径6ブロックの、ほとんど目に見えない壁が作られます。#9エンダーのフリッカーの瓶#0で強化すると、#9収容#0の効果も同時に発揮されます。 !d このレンズに#9氷のフリッカーによる強化#0を加えると、氷のフリッカー1つにつき収容フィールドの半径が1ずつ広がります。</desc>
+        <relatedEntries>flickerFocus</relatedEntries>
+      </subitem>
+      <subitem id="flicker_focus@1">
+        <name>フリッカーレンズ：収容</name>
+        <desc>エンダーと風のフリッカーが協力すると、必要なエーテリウムを与えられた場合に、#9フリッカーの住処#0を囲む壁を作り出せます。このレンズを住処に入れてエーテリウムを供給すると、#9フリッカーの住処#0を中心に半径6ブロックの、ほとんど目に見えない壁が作られ、プレイヤー以外のエンティティは外へ出られなくなります。#9神秘のフリッカーの瓶#0で強化すると、#9封鎖#0の効果も同時に発揮されます。 !d このレンズに#9氷のフリッカーによる強化#0を加えると、氷のフリッカー1つにつき収容フィールドの半径が1ずつ広がります。</desc>
+        <relatedEntries>flickerFocus</relatedEntries>
+      </subitem>
+      <subitem id="flicker_focus@11">
+        <name>フリッカーレンズ：大地圧縮</name>
+        <desc>このレンズに入った大地のフリッカーは、住処の下にあるインベントリに貯蔵された素材を使って、#9フリッカーの住処#0を中心に半径6ブロックの地形を平らにならします。エーテリウムがなくても作業できますが、動力源があるとはるかに速くなります。</desc>
+        <relatedEntries>flickerFocus</relatedEntries>
+      </subitem>
+      <subitem id="flicker_focus@4">
+        <name>フリッカーレンズ：整地</name>
+        <desc>このレンズに入った大地と氷のフリッカーは、#9フリッカーの住処#0を中心に半径6ブロックの範囲を平らにならします。動力がなくても作業できますが、エーテリウムの供給源につなぐとはるかに効率が上がります。</desc>
+        <relatedEntries>flickerFocus</relatedEntries>
+      </subitem>
+      <subitem id="flicker_focus@12">
+        <name>フリッカーレンズ：繁殖</name>
+        <desc>このレンズに入った生命のフリッカーは、エーテリウムを使って、8ブロック以内の動物を繁殖させます。1回の動作ごとに、種類を問わずエーテリウムが必要です。標準の動作間隔は2000ティック（100秒）ですが、元の住処に隣接して住処を追加し、そこに雷のフリッカーの瓶を入れると短縮できます。最短は600ティック（30秒）なので、4つを超えて追加してもあまり意味はありません。強化1つごとに現在の間隔が0.75倍になるため、効果は逓減します。</desc>
+        <relatedEntries>flickerFocus</relatedEntries>
+      </subitem>
+      <subitem id="flicker_focus@0">
+        <name>フリッカーレンズ：屠殺</name>
+        <desc>このレンズに入ったフリッカーたちは、常に対立しています。炎のフリッカーは周囲の生命を焼き尽くそうとし、生命のフリッカーはそれを守ろうとします。この争いの末に保たれる均衡は、このレンズを入れた#9フリッカーの住処#0を中心に半径6ブロック以内の動物が、種類ごとに2匹だけを残して、いずれ殺されるというものです。ただし、炎のフリッカーがその陰惨な仕事をするためのエーテリウムを得られる場合に限ります。</desc>
+        <relatedEntries>flickerFocus</relatedEntries>
+      </subitem>
+      <subitem id="flicker_focus@9">
+        <name>フリッカーレンズ：月の潮汐</name>
+        <desc>このレンズに入った3体のフリッカーは、力を合わせて、#9フリッカーの住処#0から128ブロック以内に落ちるはずのムーンストーンの隕石を、8ブロック以内に落ちるよう引き寄せます。ただし、隕石を見逃さないよう警戒を続けるために、少量のエーテリウムが必要です。</desc>
+        <relatedEntries>flickerFocus</relatedEntries>
+      </subitem>
+      <subitem id="flicker_focus@8">
+        <name>フリッカーレンズ：光</name>
+        <desc>このレンズに入った炎と雷のフリッカーは、レンズの製作に使われたサンストーンの力で、#9フリッカーの住処#0を中心に半径16ブロックを明るく照らします。</desc>
+        <relatedEntries>flickerFocus</relatedEntries>
+      </subitem>
+      <subitem id="flicker_focus@2">
+        <name>フリッカーレンズ：森林伐採</name>
+        <desc>このレンズに入った自然のフリッカーは、#9フリッカーの住処#0を中心に半径6ブロック以内の木を探します。木を見つけると、雷のフリッカーがその木を1ブロックずつ伐採します。動力源がなくても作業できますが、エーテリウムを燃料にするとはるかに速くなります。 !d 雷のフリッカーを強化として加えると、作業をさらに速められます。 !d 自然のフリッカーを強化として加えると、フリッカーは隣接するチェストから苗木を取り出して植え直すようになります。</desc>
+        <relatedEntries>flickerFocus</relatedEntries>
+      </subitem>
+      <subitem id="flicker_focus@5">
+        <name>フリッカーレンズ：優しい雨</name>
+        <desc>このレンズに入った水のフリッカーは、#9フリッカーの住処#0を中心に半径6ブロックの地面を潤します。</desc>
+        <relatedEntries>flickerFocus</relatedEntries>
+      </subitem>
+      <subitem id="flicker_focus@10">
+        <name>フリッカーレンズ：自然の恵み</name>
+        <desc>このレンズに入った生命、自然、水のフリッカーは、協力して半径6ブロック以内の全ての植物の成長を早めます。働き者のフリッカーたちはエーテリウムがなくても近くの植物を助けますが、動力源を与えるとより速く働きます。動力がある状態でこの住処を#9水のフリッカーの瓶#0で強化すると、#9優しい雨#0の効果も同時に発揮されます。</desc>
+        <relatedEntries>flickerFocus</relatedEntries>
+      </subitem>
+	  <subitem id="flicker_focus@3">
+        <name>フリッカーレンズ：釣り</name>
+        <desc>水と自然のフリッカーが組み合わさると、水中に生きる生物を見つけられるようになります。ただし、フリッカーは短時間で広い範囲を探し回るため、探索を続けるには動力が必要です。雷のフリッカーを入れた住処を隣接させて強化すると、フリッカーはさらに速く動けるようになり、自然と魚を見つける頻度が上がります。その分、全体の動力の消費量も増えます。 !d このレンズが機能するには、下に3x3の範囲の水があり、さらにその深さが2ブロック以上ある必要があります。隣接するインベントリがあれば釣った魚をそこに出力し、なければアイテムとしてドロップします。 !d フリッカーが動き出すには、レッドストーン信号を与える必要があります。</desc>
+        <relatedEntries>flickerFocus</relatedEntries>
+      </subitem>
+    </item>
+    <item id="wizard_chalk">
+      <name>魔導師のチョーク</name>
+      <desc>魔導師のチョークは、地面に正しい形を描いて#9儀式#0を行うために使います。</desc>
+      <relatedEntries>corruption,purification,hourglass,rituals_overview</relatedEntries>
+    </item>
+    <item id="colored_chalk">
+      <name>色付きチョーク</name>
+      <desc>色付きチョークは、表面に方向を示す矢印を描ける簡単な道しるべ用の道具です。固体の表面を右クリックすると矢印を設置できます。ブロックの上面をクリックすると床の矢印、下面なら天井の矢印、側面なら壁の矢印になります。 !d チョーク1本で32回まで使え、使い切ると崩れてなくなります。 !d 色付きチョークには、バニラの染料1種類につき1色、合計16色があります。作業台のクラフト欄で、粘土玉、火打ち石、紙、好きな染料を組み合わせて作ります。色付きチョークは、儀式に使う、ヴィンテウムの粉が必要な#9魔導師のチョーク#0とは別物です。</desc>
+      <relatedEntries>wizard_chalk</relatedEntries>
+    </item>
+    <item id="player_journal">
+      <name>日誌</name>
+      <desc>日誌には#9自分の経験値を記録#0して、後で使えます。記録した経験値は、#9日誌を読むことで後から取り戻せます#0。</desc>
+      <relatedEntries />
+    </item>
+	<item id="deficit_crystal">
+      <name>欠乏クリスタル</name>
+      <desc>魔法の反物質とも呼ばれる欠乏は、現実の織り目に空いた虚無を表します。その精製された結晶を作り出すことに成功しました。このようなクリスタルは、物を無に帰すために使われることが多いです。</desc>
+      <relatedEntries>essence_refiner,arcane_deconstructor</relatedEntries>
+    </item>
+    <item id="inscription_upgrades">
+		<name>文机アップグレード</name>
+		<desc>これらのアップグレードで#9文机#0の機能が向上し、より多くの形態のグループを使えるようになります。</desc>
+		<subitem id="inscription_upgrade@0">
+			<name>第1段階アップグレード</name>
+			<desc></desc>
+			<relatedEntries>inscriptionTable</relatedEntries>
+		</subitem>
+		<subitem id="inscription_upgrade@1">
+			<name>第2段階アップグレード</name>
+			<desc></desc>
+			<relatedEntries>inscriptionTable</relatedEntries>
+		</subitem>
+		<subitem id="inscription_upgrade@2">
+			<name>第3段階アップグレード</name>
+			<desc></desc>
+			<relatedEntries>inscriptionTable</relatedEntries>
+		</subitem>
+		<relatedEntries>inscriptionTable</relatedEntries>
+	</item>
+  </items>
+  <structures>
+    <structure id="obelisk_structure">
+      <name>オベリスク</name>
+      <controller>TileEntityObelisk</controller>
+      <desc>オベリスクは魔法の炉のようなものです。#5ヴィンテウムの粉#0か、バケツに入った#5液体エッセンス#0を燃やして、エーテリウムを生み出します。オベリスクが生み出すのは#5中立エーテリウム#0です。 !d ここに描かれている構造物は、一度にすべて建てる必要はなく、段階的に建設できます。#9魔導師のチョークの円#0は単独のアップグレードで、完成するとオベリスクの燃焼による出力が増えます。#9柱#0も別のアップグレードで、オベリスクの出力をさらに高めます。 !d 場所が足りない場合は、これらのアップグレードがなくてもオベリスクは動作します。</desc>
+      <relatedEntries>obelisk,crystal_wrench,attuning_staff,magitech_goggles,rituals_overview</relatedEntries>
+    </structure>
+    <structure id="mana_drain_block">
+      <name>吸魔の井戸</name>
+      <controller>TileEntityManaDrain</controller>
+      <desc>吸魔の井戸は、魔導師が自分のマナを#5中立エーテリウム#0に変換する手段です。井戸の水盤の中に立っている生きたエンティティは、マナを少しずつ吸い取られ、1ティックあたり最大マナの1%%（最小1マナ）の割合でエーテリウムに変換されます。吸い取ったマナ1ポイントにつき、#910の中立エーテリウム#0が生み出されます。マナが尽きたエンティティは、代わりに1秒ごとに#41の神聖ダメージ#0を受け、得られるエーテリウムは少なくなります。 !d 吸魔の井戸に#9強いレッドストーン信号#0を与えると、動作が#9逆転#0します。井戸に蓄えられたエーテリウムがマナに戻され、水盤の中に立っている#5プレイヤー#0に与えられます。 !d 吸魔の井戸が機能するには、次の複合構造物が必要です。 !l コントローラーを囲むように、同じY座標に#9魔法の壁#0ブロックを8個、リング状に並べます。 !l 東西南北の4方向に、高さ+1と+2の位置に#9柱状のクォーツブロック#0の柱を立てます（計8ブロック）。 !l 柱の最上部（高さ+3、柱1本につき1個）に#9ブルートパーズブロック#0を載せます。</desc>
+      <relatedEntries>obelisk,magic_wall,powerTypes</relatedEntries>
+    </structure>
+    <structure id="blackaurem_structure">
+      <name>ブラックアウレム</name>
+      <controller>TileEntityBlackAurem</controller>
+      <desc>ブラックアウレムは不気味な構造物で、周囲の生物をゆっくりと、しかし確実に中心へ引き寄せます。中心に着いた生物には純粋な闇の稲妻が襲いかかり、生命力を引き裂きます。ブラックアウレムが生み出すのは#4闇のエーテリウム#0です。アウレムに倒されたモブは、経験値もアイテムもドロップしません。 !d ブラックアウレムは、#9オベリスク#0に#9腐敗の儀式#0を行って作ります。オベリスクと同様に、周囲に特定の複合構造物を加えることで強化できます。最初は#5魔導師のチョークの円#0で、アウレムが取り込んだモブ1体あたりの発電量が増えます。2つ目の強化は#5柱#0で、発電量がさらに増えます。柱には専用の#5キャップアップグレード#0も付けられ、効果の大きさが変わります。 !d キャップに使うブロックのうち、黒曜石とカイメライトは効果が同等で、サンストーンは発電量を大きく増やします。 !d チョークの円も柱も、アウレムの動作には必須ではありません。</desc>
+      <relatedEntries>obelisk,corruption,crystal_wrench,attuning_staff</relatedEntries>
+    </structure>
+    <structure id="celestialprism_structure">
+      <name>天のプリズム</name>
+      <controller>TileEntityCelestialPrism</controller>
+      <desc>天のプリズムは、オベリスクを浄化した姿で、#9光のエーテリウム#0を生み出します。発電はゆっくりですが、自動的に行われ、必要なのは日光だけです。クリスタルの周りに力のルーンが渦巻き始めたら、発電している合図です。 !d 天のプリズムを作るには、#9オベリスク#0に#9浄化の儀式#0を行います。オベリスクと同様に、周囲に特定の複合構造物を加えて強化できます。最初は#5魔導師のチョークの円#0で、プリズムの発電量が増えます。2つ目は#5柱#0で、発電速度がさらに上がります。柱には専用の#5キャップアップグレード#0も付けられ、効果の大きさが変わります。 !d 最も顕著な効果があるのは#9ムーンストーンのキャップ#0で、発電量を大幅に増やしますが、プリズムが日中ではなく夜に充電されるようになります。</desc>
+      <relatedEntries>obelisk,rituals_overview,crystal_wrench,attuning_staff</relatedEntries>
+    </structure>
+    <structure id="gateways">
+      <name>転移門</name>
+      <controller>TileEntityKeystoneRecepticle</controller>
+      <desc>転移門は近距離では非常に効率的ですが、距離が長くなると大幅に多くのエーテリウムが必要になります。転移門の最大射程は約12kmと検証されていますが、それほどの距離を渡るには途方もない量のエーテリウムが必要です。楔石を楔石ソケットに挿入すると、転移門をその楔石のルーンの組み合わせに固定できます。固定された転移門に到着できるのは、一致する楔石を使って別の転移門を起動したときだけです。起動時に楔石が一致しない場合や、楔石をまったく持っていない場合、固定された転移門は存在しないかのように扱われます。この方法で、転移門ネットワークのどこに出るかを制御できます。</desc>
+      <relatedEntries>rituals_overview</relatedEntries>
+    </structure>
+    <structure id="crafting_altar">
+      <name>創造の祭壇</name>
+      <controller>TileEntityCraftingAltar</controller>
+      <desc>創造の力を操る創造の祭壇によって、魔導師は魔法の奇跡を起こせます。Ars Magicaの呪文は全てここで作成します。この構造物は、キャップとメイン素材の2つの主要グループでアップグレードできます。どちらのグループも、それぞれ祭壇の使える力を高め、より強力な呪文を作れるようにします。メインのブロックは、強い順に次のとおりです。 !l &lt;main_power_map&gt; !l キャップ（構造物に合計5個）は、次の順に強くなります。 !l &lt;caps_power_map&gt; !l これらは累積します。たとえば、木材とガラスのキャップなら呪文の効果は最大2つ、石レンガとレッドストーンのキャップなら最大4つです。現在、1つの呪文に付けられる効果の最大数は&lt;max_spell_data&gt;です。</desc>
+      <relatedEntries></relatedEntries>
+    </structure>
+    <structure id="inlays_structure">
+      <name>象嵌の輪</name>
+      <desc>象嵌の輪は、象嵌ブロックを中央を空けた3x3のリング状に並べて作ります。ブロックは全て同じY座標に置き、全て同じ種類の象嵌ブロックにする必要があります。ブロックにルーンが浮かび上がれば、正しく機能している合図です。</desc>
+      <relatedEntries></relatedEntries>
+    </structure>
+    <ritual id="rituals_overview">
+      <name>儀式</name>
+      <desc>儀式は、魔導師のチョークとウォーディングキャンドルを使って行います。正しい模様に並べると、本当に強力な魔法を使えるようになります。 !d 儀式を成功させるには、たいてい追加のアイテムを地面に投げ入れる必要があります。これらのアイテムは、魔導師のチョークの半径内であれば、地面のどこに投げても構いません。 !d 儀式の準備とアイテムの投入が済んだら、全てを始動させるために適切な呪文を唱えます。必要な触媒は唱える呪文によって異なり、順番も重要です。たとえば、儀式で転移門への帰還のためにルーンを投げ入れる場合、ルーンを投げた順番が楔石の組み合わせになります。 !d 呪文は、儀式のちょうど中心のブロックを対象にする必要があります。高さはチョークやキャンドルと同じY座標です。通常は中央に置いたブロックか、中央に立つエンティティを対象にします。 !d うまくいかない場合は、自分がチョークの中央にいるか、配置が正しいか、その儀式に正しい触媒を用意したかを確認してください！</desc>
+      <relatedEntries>wizardChalk,warding_candle</relatedEntries>
+      <subitem id="purification">
+        <name>浄化の儀式</name>
+        <desc>浄化の儀式は、#9オベリスク#0を#9天のプリズム#0に変え、光のエーテリウムを生み出せるようにします。 !d まず、小さな平らな場所の中央にオベリスクを置きます。オベリスクに液体エッセンスやヴィンテウムの粉を入れておく必要はありません。#9魔導師のチョーク#0で、オベリスクの周りに「X」の形を描きます。チョークの模様の外側の四隅に、それぞれ#9ウォーディングキャンドル#0を置きます。キャンドルは未同調のままにしてください。どのブロックにも結びつけてはいけません。 !d チョークの模様の外側に立って、#9ムーンストーン#0と#9マナレンズ#0を儀式の範囲に投げ入れます。 !d 最後に、#9射撃#0と#9光#0を含む呪文を、オベリスクに向けて直接唱えます。正しく行えば、オベリスクが輝く力に包まれ、天のプリズムへと変わります。</desc>
+        <relatedEntries>obelisk,celestial_prism,wizardChalk,warding_candle</relatedEntries>
+        <ritualName>purification</ritualName>
+        <ritualController>Light</ritualController>
+      </subitem>
+      <subitem id="corruption_prism">
+        <name>腐敗の儀式（オベリスク）</name>
+        <desc>腐敗の儀式は、オベリスクを腐敗させてブラックアウレムに変えるために行います。</desc>
+        <relatedEntries>obelisk,wizardChalk,warding_candle</relatedEntries>
+        <ritualName>corruption</ritualName>
+        <ritualController>FireDamage</ritualController>
+      </subitem>
+      <subitem id="corruption_obelisk">
+        <name>腐敗の儀式（モンスタースポナー）</name>
+        <desc>腐敗の儀式を使うと、モンスタースポナーを拾い上げて後で使えます。この儀式でスポナーの出現能力は失われるため、何らかの方法で再び付与する必要があります。裂け目やライフタップでも行えるため、どの系統を専門にしていてもこの儀式を行えます。触媒は、3つの呪文のどれでも共通です。</desc>
+        <relatedEntries>Rift,LifeTap,wizardChalk,warding_candle</relatedEntries>
+        <ritualName>corruption</ritualName>
+        <ritualController>AstralDistortion</ritualController>
+      </subitem>
+      <subitem id="extend_blind">
+        <name>砂時計の儀式（盲目）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Blind</ritualController>
+      </subitem>
+      <subitem id="extend_charm">
+        <name>砂時計の儀式（魅了）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Charm</ritualController>
+      </subitem>
+      <subitem id="extend_entangle">
+        <name>砂時計の儀式（拘束）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Entangle</ritualController>
+      </subitem>
+      <subitem id="extend_flight">
+        <name>砂時計の儀式（飛行）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Flight</ritualController>
+      </subitem>
+      <subitem id="extend_freeze">
+        <name>砂時計の儀式（凍結）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Freeze</ritualController>
+      </subitem>
+      <subitem id="extend_fury">
+        <name>砂時計の儀式（激昂）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Fury</ritualController>
+      </subitem>
+      <subitem id="extend_gravitywell">
+        <name>砂時計の儀式（重力井戸）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>GravityWell</ritualController>
+      </subitem>
+      <subitem id="extend_haste">
+        <name>砂時計の儀式（俊足）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Haste</ritualController>
+      </subitem>
+      <subitem id="extend_invisibility">
+        <name>砂時計の儀式（透明化）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Invisibility</ritualController>
+      </subitem>
+      <subitem id="extend_leap">
+        <name>砂時計の儀式（跳躍）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Leap</ritualController>
+      </subitem>
+      <subitem id="extend_levitation">
+        <name>砂時計の儀式（浮遊）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Levitate</ritualController>
+      </subitem>
+      <subitem id="extend_manashield">
+        <name>砂時計の儀式（マナシールド）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>ManaShield</ritualController>
+      </subitem>
+      <subitem id="extend_nightvision">
+        <name>砂時計の儀式（暗視）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>NightVision</ritualController>
+      </subitem>
+      <subitem id="extend_shield">
+        <name>砂時計の儀式（防壁）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Shield</ritualController>
+      </subitem>
+      <subitem id="extend_slow">
+        <name>砂時計の儀式（鈍足）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Slow</ritualController>
+      </subitem>
+      <subitem id="extend_slowfall">
+        <name>砂時計の儀式（低速落下）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Slowfall</ritualController>
+      </subitem>
+      <subitem id="extend_swiftswim">
+        <name>砂時計の儀式（高速遊泳）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>SwiftSwim</ritualController>
+      </subitem>
+      <subitem id="extend_truesight">
+        <name>砂時計の儀式（真実の視界）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>TrueSight</ritualController>
+      </subitem>
+      <subitem id="extend_waterbreathing">
+        <name>砂時計の儀式（水中呼吸）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>WaterBreathing</ritualController>
+      </subitem>
+      <subitem id="extend_waterygrave">
+        <name>砂時計の儀式（水葬）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>WateryGrave</ritualController>
+      </subitem>
+      <subitem id="extend_shrink">
+        <name>砂時計の儀式（縮小化）</name>
+        <desc>砂時計の儀式を使うと、バフの持続時間を大幅に延長できます。延長される時間は180秒で、バフと同じ段階に含まれるバフ強化1つにつき、さらに180秒が加わります。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>Shrink</ritualController>
+      </subitem>
+	  <subitem id="call_rain">
+        <name>砂時計の儀式（雨乞い）</name>
+        <desc>砂時計の儀式を使うと、雨払いの効果を逆転させ、代わりに雨を呼び寄せるようにできます。</desc>
+        <relatedEntries>wizardChalk</relatedEntries>
+        <ritualName>hourglass</ritualName>
+        <ritualController>BanishRain</ritualController>
+      </subitem>
+      <subitem id="recall_to_gateway">
+        <name>転移門への帰還</name>
+        <desc>輪付き十字の儀式を使うと、帰還の行き先を変更できます。目印の場所ではなく、指定した転移門へ移動するようになります。使用する3つのルーンは、転移門の組み合わせと一致している必要があります。チョークとルーンは、テレポートの際に消費されます。</desc>
+        <relatedEntries>wizardChalk,warding_candle</relatedEntries>
+        <ritualName>ringedCross</ritualName>
+        <ritualController>Recall</ritualController>
+      </subitem>
+      <subitem id="recall_other">
+        <name>他者の帰還</name>
+        <desc>輪付き十字の儀式を使うと、帰還の対象を変更し、他のプレイヤーを自分のもとへ呼び寄せられます。組み合わせは、対象のプレイヤーが真実の視界で入手でき、長さはプレイヤーごとに異なります。自分のプレイヤー用ルーンの組み合わせを他人に教えるときは注意してください。それを使われると、自分だけを狙い撃ちされてしまいます。この帰還は、ディメンションをまたいでも機能します。</desc>
+        <relatedEntries>TrueSight,wizardChalk,warding_candle</relatedEntries>
+        <ritualName>ringedCross</ritualName>
+        <ritualController>Recall</ritualController>
+      </subitem>
+	  <subitem id="otherworldly_ritual">
+        <name>異界の儀式</name>
+        <desc>輪付き十字の儀式を使うと、#5不活性スポナー#0を面白い形で再び活性化できます。スポナーが#5異界のオーラ#0に変化します！</desc>
+        <relatedEntries>wizardChalk,warding_candle</relatedEntries>
+        <ritualName>ringedCross</ritualName>
+        <ritualController>Transplace</ritualController>
+      </subitem>
+      <relatedEntries>wizardChalk</relatedEntries>
+    </ritual>
+  </structures>
+  <mobs>
+    <mob id="mob_hecate">
+      <name>ヘカテー</name>
+      <desc>ヘカテーはネザーに棲む闇の霊です。ときどきネザーとオーバーワールドを隔てる壁が弱まり、ヘカテーがオーバーワールドに出現することがあります。ヘカテーは暗殺者で、非常に素早く動き、攻撃するときは短時間だけ透明になれます。与えるダメージは大きいものの、幸い打たれ弱い相手です。ゆっくり静かに動けば、近づきすぎない限り気づかれずに通り抜けられるという噂があります。</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="mob_mana_elemental">
+      <name>マナの精霊</name>
+      <desc>マナの精霊は、ヴィンテウムの破片がエーテリウムの稲妻で結びつけられてできた存在です。身の丈が3mに達することも多い、巨大な生物です。生のマナの稲妻を放って攻撃し、与えるダメージは小さいものの、マナを奪います。奪ったマナの量に応じて、自身が回復します。物理ダメージへの耐性が非常に高く、マナをすべて吸い尽くされると死亡します。</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="mob_mana_creeper">
+      <name>マナクリーパー</name>
+      <desc>マナクリーパーは通常のクリーパーの変種です。激しい爆発の代わりにマナの渦へと崩壊し、周囲のあらゆるもののマナを吸い取ります。渦は時間がたつほど大きくなりますが、幸いどの渦も数秒しか持ちません。渦は所持マナが多いほど多く吸い取るため、最強の魔導師にとっても脅威です。</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="mob_light_mage">
+      <name>光の魔導師</name>
+      <desc>光の魔導師は白の評議会に属しています。光の力に身を捧げた、強力な魔導師です。友好的なプレイヤーを回復し、Minecraftの世界を脅かすさまざまな敵との戦いを助けてくれます。闇の魔導師を特に嫌っています。</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="mob_dark_mage">
+      <name>闇の魔導師</name>
+      <desc>闇の魔導師は黒の宮廷に属しています。恐ろしい魔法の技をやってのける、不気味な術者です。しかしその代償は大きく、闇の魔導師は忌み嫌われ、歪んだ存在となっています。アンデッド（そもそも厳密には「生きて」いません）とクリーパー以外の、生きているものすべてと戦います。光の魔導師とは、わざわざ出向いてでも戦います。</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="mob_fire_elemental">
+      <name>炎の精霊</name>
+      <desc>炎の精霊は純粋な炎でできた存在です。破壊的で、通り道にあるものすべてに火をつけます。ネザーの生まれですが、暑く乾燥したオーバーワールドのバイオームにも、溶岩だまりの近くに潜んでいます。 !d 炎によって生かされており、炎や溶岩の中に立つと、時間とともに回復します。</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="mob_water_elemental">
+      <name>水の精霊</name>
+      <desc>水の精霊は純粋な水でできた存在です。水が豊富な場所ならどこにでもいます。集団で襲いかかり、水の力で標的を押したり引いたりします。水葬を標的にかけることもあり、不用心な者は押し潰されるような暗黒の深みへと引きずり込まれます。</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="mob_air_elemental">
+      <name>風の精霊</name>
+      <desc>風の精霊は広大な空に棲む、落ち着きのない霊です。空が見える平原、丘陵、山岳、ビーチに出現します。地面から浮いており、落下ダメージを受けず、矢は揺らめく体をむなしくすり抜けます。 !d 遠距離からは小さな突風で攻撃し、ダメージを与えて標的を押し返します。8秒ごとに、短い距離まで間合いを詰め、空気を吸い込んで膨らみ、強烈なノックバックを伴う持続的な奔流を放ちます。同じ標的に向かう近くの風の精霊同士は片側に集まり、気流を合わせてより強力な突風にします。 !d 倒されると、#5風のエッセンス#0と羽根を落とすことがあります。</desc>
+      <relatedEntries>essence_air</relatedEntries>
+    </mob>
+    <mob id="mob_nature_elemental">
+      <name>自然の精霊</name>
+      <desc>自然の精霊は、トゲに覆われた頑丈なイノシシの姿をしています。比較的珍しく、ジャングル、森、暗い森に1～2体の群れでうろついています。夜にだけ出現しますが、朝になっても日光で燃えることはありません。 !d 邪魔されていないときは、地面のあちこちをさまよい、立ち止まっては鼻先を下げて匂いを嗅ぎます。 !d 離れた場所では、標的を追いながら頭を下げ、2秒間地面を蹴ります。溜め動作が終わると、その時点の標的の位置に狙いを定めて、まっすぐ突進します。突進が始まったら横にかわし、その後の短い隙を突きましょう。近距離では連続の頭突きで攻撃します。突進のダメージは、通常より75%%大きくなります。 !d 倒された自然の精霊は、#5自然のエッセンス#0を落とすことがあります。</desc>
+      <relatedEntries>essence_nature</relatedEntries>
+    </mob>
+    <mob id="earth_elemental">
+      <name>大地の精霊</name>
+      <desc>大地の精霊は、洞窟の奥深くで眠っていたり、山岳バイオームの岩だらけの峰をうろついたりしています。生まれつき敵対的で、侵入者を見つけ次第攻撃します。物理ダメージへの耐性が極めて高く、体力も多いため、召喚の方法を学んだ者は、まさに最強のタンク役を呼び出せるでしょう。攻撃するときは標的をつかんで絞め上げ、その場に押さえつけたまま命を握りつぶします。</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="lightning_elemental">
+      <name>雷の精霊</name>
+      <desc>雷の精霊は、純粋な電気エネルギーでできた、パチパチと音を立てる存在です。山や丘の頂の上空や、嵐の海岸を飛んでいます。見つかり次第襲ってくるので、避けるのが賢明です。近接攻撃がぎりぎり届かない距離に浮かび、離れた所から強力な雷撃を浴びせます。体は絶えず電気の光を放っているため、真っ暗な夜でも見えます。</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="ice_elemental">
+      <name>氷の精霊</name>
+      <desc>氷の精霊は、寒冷で雪の積もるバイオームをさまよう冷たい存在です。凍った体は強烈な冷気を放ち、近づきすぎた者の動きを遅くします。近くの炎を消し、通った跡の水を凍らせます。 !d 攻撃すると、氷の手で標的に深い霜を負わせ、移動を遅くして攻撃を弱めます。炎に弱く、炎や溶岩から受けるダメージが大幅に増えます。 !d 死ぬと激しく砕け散り、あらゆる方向に雪玉を飛び散らせます。</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="mob_dryad">
+      <name>ドライアド</name>
+      <desc>ドライアドは森や草原でよく見かける、穏やかな生き物です。苗木でおびき寄せることができ、定期的に近くの植物の成長を早めます。</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="mob_druid">
+      <name>ドルイド</name>
+      <desc>ドルイドは、ドライアドの近くをさまよい、ドライアドを危険から守る、自然の術者です。大地の魔法と絡みつく根で敵対的な生物を攻撃し、オオカミを1匹召喚して共に戦わせることもできます。 !d ドルイドは自然の精霊と大地の精霊に友好的です。また、植物、魔法の素材、マナの補給品の取引にも応じます。</desc>
+      <relatedEntries>mob_dryad,mob_nature_elemental,earth_elemental</relatedEntries>
+    </mob>
+    <mob id="mob_darkling">
+      <name>ダークリング</name>
+      <desc>ダークリングはネザーで見られる、犬に似た小さな生き物です。夜になると体が見えにくくなり、真夜中にはほぼ透明になります。夜明けが近づくと少しずつ姿を現し、日中にはまた完全に見えるようになります。</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="hell_cow">
+      <name>地獄牛</name>
+      <desc>モー？モーモーモー、モーモーモーモー。モー。モーモーモーモーモー、モーモーモー？モー！モーモーモーモーモー、モーモーモー。 !d 1.)モーモーモーモー !d 2.)モー、モーモーモーモー。 !d 3.)モー！ !d モー、モーモーモー、モーモーモー。モーモーモーモーモーモー。モー、モー！</desc>
+      <relatedEntries></relatedEntries>
+    </mob>
+    <mob id="Flicker">
+      <name>フリッカー</name>
+      <desc>フリッカーは、さまざまな元素界から私たちの世界へ渡ってきた下位の精霊です。魔法による結びつきは弱く、自分たちの界とこちらの界の間を「ちらつく」ように行き来することで知られています。#5Ars Magicaの自動化#0の出発点でもあります。 !d フリッカーは生まれつき臆病で、攻撃されたり身の危険を感じたりすると、自分の界へ逃げ帰ります。#5何らかの持続的な効果#0という形で少しばかりの魔力を与えると、安心して逃げにくくなります。#5フリッカーはフリッカーの瓶に捕獲できます#0。 !d 親和性ごとに1種類のフリッカーがいて、親和性ごとに行動が異なります。たとえば風のフリッカーは地面から高い位置にとどまりたがり、大地のフリッカーは低い位置を好みます。 !d 各親和性のフリッカーは、その親和性を思わせる地域の近くで見つかります。</desc>
+      <subitem id="water_flicker">
+        <name>水のフリッカー</name>
+        <desc>#5水のフリッカー#0は、沼地、川、海など、大部分が水の場所で見つかります。</desc>
+      </subitem>
+      <subitem id="air_flicker">
+        <name>風のフリッカー</name>
+        <desc>#5風のフリッカー#0は地下以外ならどこでも見つかり、空の高い所（地面から約25ブロック上）を飛び回ります。</desc>
+      </subitem>
+      <subitem id="earth_flicker">
+        <name>大地のフリッカー</name>
+        <desc>#5大地のフリッカー#0はどこでも見つかりますが、地下を好みます。地面の近くにとどまります。</desc>
+      </subitem>
+      <subitem id="fire_flicker">
+        <name>炎のフリッカー</name>
+        <desc>#5炎のフリッカー#0はネザーで見つかります。</desc>
+      </subitem>
+      <subitem id="lightning_flicker">
+        <name>雷のフリッカー</name>
+        <desc>#5雷のフリッカー#0は、嵐が生まれやすいビーチや海の上空で見つかります。嵐の間は、どの地域でも見つかります。</desc>
+      </subitem>
+      <subitem id="nature_flicker">
+        <name>自然のフリッカー</name>
+        <desc>#5自然のフリッカー#0は森で見つかります。</desc>
+      </subitem>
+      <subitem id="ice_flicker">
+        <name>氷のフリッカー</name>
+        <desc>#5氷のフリッカー#0は、タイガなどの凍った地域で見つかります。</desc>
+      </subitem>
+      <subitem id="arcane_flicker">
+        <name>神秘のフリッカー</name>
+        <desc>#5神秘のフリッカー#0は魔力のある地域で見つかります。ウィッチウッドの森をとても好みます。</desc>
+      </subitem>
+      <subitem id="life_flicker">
+        <name>生命のフリッカー</name>
+        <desc>#5生命のフリッカー#0はどこでも見つかります。フリッカーが出現するとき、本来出現するはずの種類ではなく生命のフリッカーになる、わずかな確率があります。</desc>
+      </subitem>
+      <subitem id="ender_flicker">
+        <name>エンダーのフリッカー</name>
+        <desc>#5エンダーのフリッカー#0はジ・エンドで見つかります。テレポートするエンダーマンが、エンダーのフリッカーがすり抜けられるほど大きな裂け目を開くことがあります。</desc>
+      </subitem>
+      <relatedEntries>flicker_jar,flickerFocus,flickerHabitat,crystalMarkers</relatedEntries>
+    </mob>
+  </mobs>
+  <bosses>
+    <boss id="boss_nature_guardian">
+      <name>自然の守護者</name>
+      <desc>自然の守護者は恐るべき敵です。致命的な大鎌と、それを使いこなす技を備えており、探し求めるのは最も強い者か愚か者だけでしょう。生き延びた数少ない者は、近距離と同じかそれ以上に、遠距離でも危険だと語っています。 !l 推奨レベル：60 !p 自然の僕が短時間に大勢倒されると、彼らを守るために現れるという噂があります。自然は厳しいものですが、虐殺は許しません。 !d 警告： !l 非常に難しいボスで、最高の装備を整えたプレイヤーでさえ倒されかねません。</desc>
+      <relatedEntries></relatedEntries>
+    </boss>
+    <boss id="boss_earth_guardian">
+      <name>大地の守護者</name>
+      <desc>大地の守護者は、石の核から形作られた頑強な敵で、途方もない量の物理攻撃に耐えられます。回転攻撃と大地そのものの力を備えているので、覚悟して戦いましょう。 !l 推奨レベル：25 !p 大地の守護者を召喚するには、まず黒曜石で3x3の足場を作り、中央に模様入りの石レンガを置きます。黒曜石の上に、鉄の象嵌の輪を作ります。輪の各辺の外側に、象嵌と同じ高さでヴィンテウムの松明を1本ずつ置きます。その後、ブルートパーズ、エメラルド、カイメライトを投げ入れます。 !d 召喚されると、大地の守護者は周囲のブロックを広範囲にえぐり取ります。自宅の地下室以外の場所で召喚するのが賢明です。</desc>
+      <relatedEntries></relatedEntries>
+    </boss>
+    <boss id="boss_water_guardian">
+      <name>水の守護者</name>
+      <desc>水の守護者は特異な存在です。常に流動する状態にあり、ときどき攻撃を受け流します。策士でもあり、自分の分身へと流れ込み、囮に惑わされた者を待ち伏せて攻撃します。 !l 推奨レベル：10 !p 水の守護者は、水が大部分を占めるバイオームにレッドストーンの象嵌の輪を作ることで召喚できます。その後、雨が降っている間に、海で失われた数多くの船への敬意として、ボートと水入りバケツを輪の中に投げ入れます。</desc>
+      <relatedEntries></relatedEntries>
+    </boss>
+    <boss id="boss_winter_guardian">
+      <name>冬の守護者</name>
+      <desc>冬の守護者は、その名のとおり冬そのものの化身です。近づく者すべての力を奪う凍てつく風をまとい、凍った敵を殴りつけ、強力な一撃で粉砕します。 !l 推奨レベル：75 !p 冬の守護者を召喚するには、冬に閉ざされた場所を探します。地面に金の象嵌の輪を作り、中央に冬の守護者の偶像を建てます。偶像は、2つのブルートパーズブロックの上に氷を載せたものです。次に、召喚の燃料として、近くにスノーゴーレムを3体作ります。 !d 警告： !l 非常に難しいボスで、最高の装備を整えたプレイヤーでさえ倒されかねません。</desc>
+      <relatedEntries></relatedEntries>
+    </boss>
+    <boss id="boss_arcane_guardian">
+      <name>神秘の守護者</name>
+      <desc>神秘の守護者は太古の魔導師で、多種多様な呪文を使いこなします。攻撃からバフ、デバフまで、対抗呪文の知識が試される魔法の決闘に備えましょう。強力な印章に守られており、近接戦の相手にも遠距離攻撃の相手にも、同じように多彩な手を打ってきます。 !l 推奨レベル：45 !p 神秘の守護者を召喚するには、まず知識の祠を建てます。祠は、本棚を3段積んだ柱2本と、その間の地面に置いた、秘儀大全の入った書見台でできています。構造物の真正面に鉄の象嵌の輪を作り、輪の真ん中に神秘のエッセンスを投げ入れて儀式を始めます。</desc>
+      <relatedEntries></relatedEntries>
+    </boss>
+    <boss id="boss_air_guardian">
+      <name>風の守護者</name>
+      <desc>風の守護者は風の化身で、ノックバックを伴う攻撃を多用します。落下対策なしで戦いを挑むのは愚かです。風の守護者は強力な遠距離魔法の使い手ですが、一部の呪文を完成させるには多大な集中が必要です… !l 推奨レベル：35 !p 風の守護者を召喚するには、雲よりはるか上まで登り、足場を作ります（Y座標150以上）。足場の上に金の象嵌の輪を作り、風のエッセンスを投げ入れます。</desc>
+      <relatedEntries></relatedEntries>
+    </boss>
+    <boss id="boss_fire_guardian">
+      <name>炎の守護者</name>
+      <desc>炎の守護者は、ネザーの奥底に棲む生ける業火です。召喚するには、ネザーで黒曜石の上に金の象嵌の輪を作り、中央に石炭ブロックを置きます。そこに水のエッセンスを投げ込むと、炎の守護者が現れます。ただし、自らの領域に水を持ち込もうとする者を、守護者は決して快く思いません。戦いの覚悟をしておきましょう！ !l 推奨レベル：90</desc>
+      <relatedEntries></relatedEntries>
+    </boss>
+    <boss id="boss_life_guardian">
+      <name>生命の守護者</name>
+      <desc>生命の守護者は、自然の摂理が滞りなく巡ることを好み、生命に対する真の冒涜が行われない限り、干渉することはありません。幸か不幸か、あなたはそのような行いをする方法を見つけてしまいました。魔導師のチョークで5x5の輪を作り、輪の外側の各辺の中央にウォーディングキャンドルを置きます（合計4本）。この円が行為を封じ込め、力を集中させてくれます。そして満月の夜に、円の内側で村人の子供を生贄に捧げます。これで生命の守護者を怒らせ、行動に駆り立てるには十分でしょう。 !d この人でなし。 !p 生命の守護者自身はあまり攻撃してきませんが、少し投げ飛ばしてくることはあるかもしれません。守護者は他の者に戦わせることを好み、凄まじい力をその者たちに注ぎ込みます。見返りに、その者たちは守護者を守るために命を投げ出すことも多いでしょう。生命の守護者との戦いは、他の守護者とは種類の違うものになります。 !d 推奨レベル：50</desc>
+      <relatedEntries></relatedEntries>
+    </boss>
+    <boss id="boss_lightning_guardian">
+      <name>雷の守護者</name>
+      <desc>雷の守護者は、その力に劣らず予測のつかない存在です。極めて遠い距離まで稲妻を放ち、生き物の脳内のシナプスをかき乱すことも知られています。また、帯電した大量の静電気を集中させて念動力に似た効果を再現したこともあり、犠牲者は他のさまざまな効果にも無防備になってしまいます。 !d 雷の守護者を召喚するには、#5金の象嵌の輪#0を作って中央にマナ電池を置きます。その上に鉄格子を2本重ねて、避雷針を作ります。 !d 最後に、嵐を待ちます。 !d この守護者は短時間で極めて大きなダメージを与えることができます。しっかり備えてから挑みましょう。 !l 推奨レベル：70</desc>
+      <relatedEntries></relatedEntries>
+    </boss>
+    <boss id="boss_ender_guardian">
+      <name>エンダーの守護者</name>
+      <desc>ジ・エンドの真の守護者については、今も声をひそめて語り継がれています。忌まわしい光を放つ目、月のない夜のように黒い鱗の肌。しかし、この悪夢のような存在の話は曖昧なものばかりで、いつも憶測のベールに包まれています。真実は、守護者の姿を見て生きて帰った者はいないということです。最も有名な話は、第二紀の大魔導師マグヌス・セヴェリヌスのものです。全盛期の彼は、思うだけで山を動かし、不毛の地に緑豊かな庭園を生み出し、軍勢をも止める結界を張れたと言われています。ところが、最も信頼していた女性の助言者が病に倒れ、その意地の悪い継子が代わりを務めるようになりました。継子は甘い言葉で彼の力をおだて、彼を傲慢にしていきました。そそのかされた彼は魔導師の集いを召集し、皆の目の前で世界の境目を引き裂いて、ジ・エンドへの門を開きました。その門は柔らかな紫の光を脈打たせ、周囲の光まで吸い取るかのようでした。彼は門の中へ足を踏み入れ、守護者を召喚しました。悲鳴を上げる暇さえありませんでした。やがて、黒い血の染みが点々と付いた一枚の紙が門を通って舞い戻り、門は音もなく閉じました。その紙には、次の儀式が記されていました。 !d ジ・エンドで、最も黒い石炭の台座の上にあるブラックアウレムの周りに、金の象嵌を作ります。象嵌の各辺に燃える火を灯します。エンダーのエッセンスとエンダーアイを投げ入れてアウレムを不安定にさせると、守護者が召喚されます。 !d その紙は魔法の保管庫に封じられ、数千年にわたり忘れ去られていました…今日までは。</desc>
+      <relatedEntries></relatedEntries>
+    </boss>
+  </bosses>
+  <blocks>
+    <block id="illusion_blocks">
+      <name>幻影ブロック</name>
+      <desc>幻影ブロックはあまりにも本物そっくりなので、自己保存の本能と常識が働いて、脳が通り抜けることを許してくれません。真実の視界を持つ者だけが、幻影は本物ではないと自分に言い聞かせて、向こう側へ通り抜けることができます。 !l 「あれがそうか？」 !l 「いや。ありゃ壁だ。」 !l 「偽装かもしれないぞ。」 !l 「おまえ、探し物は下手だな？」 !l 「壁探しなら得意だぞ。ほら、また壁を見つけた。」</desc>
+      <subitem id="illusion_block@0">
+        <name>幻影ブロック</name>
+        <desc>通常の幻影ブロックは、通り抜けようとするエンティティが#9真実の視界#0を発動していない限り、見た目も性質も普通の固体ブロックとして働きます。</desc>
+        <relatedEntries>illusion_block@1,everstone</relatedEntries>
+      </subitem>
+      <subitem id="illusion_block@1">
+        <name>幽体の幻影ブロック</name>
+        <desc>幽体の幻影ブロックは固体ブロックのように見えますが、何でも通り抜けられます。#9真実の視界#0を発動していると、パーティクルを放出します。ただし、真実の視界によって見た目が変わることはありません。</desc>
+        <relatedEntries>illusion_block@0,everstone</relatedEntries>
+      </subitem>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="essence_refiner">
+      <name>エッセンス精製器</name>
+      <desc>エッセンス精製器は、ありふれたアイテムを#5神秘の灰#0を使って精製し、その成分を純粋な形にしたもの、つまり#5エッセンス#0に変えます。各エッセンスのレシピは、#9アイテム→エッセンス#0で確認できます。また、動作には#2エーテリウム#0も必要です。中立エーテリウムは#9オベリスク#0から得られ、特に利点も欠点もありません。最後に、#9ブラックアウレム#0からは闇のエーテリウムを使え、エッセンスの精製にかかる時間が大幅に短くなります。精製が進むにつれて、UIの回転するリングは青から紫へと変わり、やがて完了します。リングが赤く点滅しているときは、エーテリウムが足りず、精製が中断されています。</desc>
+      <relatedEntries>essence</relatedEntries>
+    </block>
+    <block id="essence_conduit">
+      <name>エーテリウム導管</name>
+      <desc>粉末を染み込ませてエーテリウムを空中で導けるようにしたエーテリウム導管は、発明されるとすぐに盛んに使われるようになりました。エーテリウムを生成する装置の直接の射程よりも長い距離にエーテリウムを送れます。1つあたりの射程は10ブロックで、連結すると起点から最大100ブロック先までエーテリウムを運べます。</desc>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="casters">
+      <name>キャスターブロック</name>
+      <desc>呪文とは、方向づけられたエーテリウムにほかなりません。魔導師の意志がエーテリウムの働きを決め、十分な容量があれば魔法があふれ出します。キャスターは、その能力を再現するために作られました。生のエーテリウムを魔法の奔流に変え、呪文レンズ（場合によってはマナレンズ）を通して導き、呪文の巻物に書かれた指示に従って形作ります。呪文によってはエーテリウムの消費が極端に大きいため、内部のクリスタルにはチャージレンズ用のスロットが設けられ、流入するエーテリウムの量を大幅に増やせます。代わりに同じスロットにマナレンズを入れると、内部のエーテリウムの経路がはるかに効率的になります。</desc>
+      <subitem id="caster_rune">
+        <name>キャスタールーン</name>
+        <desc>キャスタールーンは#5キャスター#0と同じように働きますが、1つだけ違いがあります。キャスタールーンは動作にレッドストーン信号を必要とせず、上を歩くと呪文を発動します。呪文は、作動させたものに直接かかります。</desc>
+        <relatedEntries>foci</relatedEntries>
+      </subitem>
+      <subitem id="block_caster">
+        <name>キャスター</name>
+        <desc></desc>
+        <relatedEntries>foci</relatedEntries>
+      </subitem>
+      <relatedEntries>foci</relatedEntries>
+    </block>
+    <block id="seer_stone">
+      <name>見者の石</name>
+      <desc>アストラルバリアと似た原理で動く見者の石は、呪文レンズを通して投影したエーテリウムのオーラで、近くにある物を探知します。エーテリウムを特定の種類の対象に集中させて制御でき、エーテリウムの共鳴周波数はルーンの組み合わせで決められます。ルーンの組み合わせがないと、共鳴周波数は予測不能に揺らぎ、避けることはできません。ただし、見者の石は、より控えめな手段のためのものです。対象を阻まずに通過させたまま、小さな信号を発するだけですが、その信号がはるかに強力な防衛装置を作動させることもよくあります。スニークしながら石を起動すると、（正しい楔石を持っていれば）探知方法を反転させて、一致する楔石の組み合わせを持つ者を探知させることもできます。 !d 見者の石には、さまざまな#5レンズ#0を使用できます。#5下級・中級・上級レンズ#0は石の探知距離を変え（それぞれ5、10、15ブロック）、#5アイテム・プレイヤー・モンスター・生物レンズ#0は見者の石が探す対象を変えます。対象レンズと距離レンズがないと、見者の石は機能しません。 !d プレイヤーを探知する場合は、楔石の所持も調べられます。見者の石のルーンの組み合わせと一致する楔石をインベントリに持っているプレイヤーは、見者の石に無視され、反応しません。</desc>
+      <relatedEntries>lesserfocus,standardfocus,greaterfocus,item_focus,player_focus,monster_focus,creature_focus,keystone,foci</relatedEntries>
+    </block>
+    <block id="astral_barrier">
+      <name>アストラルバリア</name>
+      <desc>虚空を歩くときは、障壁に気をつけなければなりません。この障壁は、呪文レンズを通してエーテリウムのオーラを投影し、楔石で決められた特定の魔法周波数で共鳴しています。一致する楔石を持たない者の魔法は障壁に不安定にされ、虚空から弾き出されてしまいます。アストラルバリアに楔石が設定されていない場合、その魔法周波数は予測不能に揺らぎ、どれだけ楔石を持っていてもその影響から身を守ることはできません。闇の魔導師による襲撃がいくつも阻止され、障壁に気づくのが遅れた光の魔導師が何人も捕らえられました。 !d アストラルバリアには、さまざまな#5レンズ#0を使用できます。#5下級・中級・上級レンズ#0は障壁の範囲を、それぞれ5、10、15ブロックに変えます。距離レンズがないと、障壁は機能しません。 !d 障壁の範囲内へのテレポートは、エンダーパール、ブリンク、目印/帰還、エンダーマンも含めてすべて妨げられます。</desc>
+      <relatedEntries>lesserfocus,standardfocus,greaterfocus,keystone,foci</relatedEntries>
+    </block>
+    <block id="keystone_receptacle">
+      <name>楔石ソケット</name>
+      <desc>すべての魔導師が虚空を歩いて移動できるわけではなく、そうしたいと思う者ばかりでもありません。虚空は探知でき、遮断することもできます。転移門は、戦争の初期に闇の魔導師が開発したもので、別の経路を使って目的地へ移動するため、多くの光の魔導師の野営地を奇襲できました。アストラルバリアでは闇の魔導師の到着を止められず、到着側の転移門自体は動力を必要としませんでした。光の魔導師は見つけられる限りの転移門を破壊しましたが、闇の魔導師には1つあれば十分でした。唯一の希望は、ダミアン・カリトリという若い光の魔導師が、転移門の機構の中のちょうどよい位置にある設計上の欠陥に楔石を差し込むと、転移門を封じられることを発見したことでした。この方法では、闇の魔導師は別の転移門に送られます（ほかに封じられていない転移門がなければ、どこにも送られません）。これによって襲撃は完全に止み、光の魔導師は楔石で守られた自分たちの転移門に戻るために転移門を使えるようになったため、形勢を逆転できました。この設計上の欠陥は、光の魔導師たちの間で、冗談めかして「楔石ソケット」と呼ばれるようになりました。</desc>
+      <relatedEntries>keystone,gateways</relatedEntries>
+    </block>
+    <block id="vinteum_ore">
+      <name>ヴィンテウム鉱石</name>
+      <desc>ヴィンテウムは、光の魔導師と闇の魔導師の激しい戦いのさなかに発見されました。流れ弾となった神秘の魔弾がエンダーの魔弾と衝突し、その爆発で数メートルの深さのクレーターができました。その底で、午後の光を受けて青い鉱石がきらめいていたのです。この鉱石自体には魔法の性質はないようですが、熱を加えると、エーテリウムを伝える能力が非常に高い細かな粉になります。そのため、世界中の魔法装置に広く使われています。</desc>
+      <relatedEntries>vinteum_dust,vinteumTorch,warding_candle</relatedEntries>
+    </block>
+    <block id="mana_battery">
+      <name>マナ電池</name>
+      <desc>ヴィンテウムの粉を染み込ませた鉄と金の枠で、大量のエーテリウムを蓄えられます。#9クリスタルレンチ#0でこの電池を電源としてリンクした装置には、電池が常に受動的に電力を供給します。 !d 電池を充電するには、まず#9クリスタルレンチ#0で電源（#9オベリスク#0や#9吸魔の井戸#0など）を電池にリンクします。先に電源を右クリックし、次に電池を右クリックします。電源は10ブロック以内にある必要があります。 !d リンクしたら、電池に#9強いレッドストーン信号#0を与えます。信号がある間、電池はリンクした電源からエーテリウムを積極的に引き出します。レッドストーン信号を止めると充電が止まり、電池は出力専用モードに戻ります。</desc>
+      <relatedEntries>obelisk,mana_drain,crystal_wrench,powerTypes,essenceconduit</relatedEntries>
+    </block>
+    <block id="cerublossom">
+      <name>ケルブロッサム</name>
+      <desc>ケルブロッサムの花は、緑豊かな環境でよく育ちます。最初期に発見された魔法の植物の1つで、ポーションや軟膏に使われていました。ケルブロッサムはまた、周囲にかすかにきらめく光を放つため、錬金術の材料と同じくらい装飾にも使われました。発見から間もなく、ヴィンテウムの粉の精製工程の一部にも使えることがわかりました。</desc>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="desert_nova">
+      <name>デザートノヴァ</name>
+      <desc>デザートノヴァは乾燥した環境で育ちます。名前は、定期的に放つ小さな魔力の爆発に由来します。砂漠の植物としては並外れた魔法の性質を持ち、非常に珍重されています。ヴィンテウムの粉の精製工程で使われる2種類の植物のうちの1つです。</desc>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="keystone_chest">
+      <name>楔石のチェスト</name>
+      <desc>楔石のチェストは、魔法で鍵をかけたチェストを手軽に作れるように開発されました。内部のスロットに楔石を入れると、開けるには、手に一致する楔石を持っている必要があります。外側の錠前*に楔石を入れることでも、チェストを開けられます。楔石がなければ、チェストは普通に開きます。 !l !l * 手に楔石を持ってチェストを右クリックするだけです。</desc>
+      <relatedEntries>keystone</relatedEntries>
+    </block>
+    <block id="magic_wall">
+      <name>魔法の壁</name>
+      <desc>幻影ブロックの初期の試作品である魔法の壁は、周囲に溶け込むことができなかった。向こう側が透けて見えるのを防ぐことさえできなかった。それでも価値があったのは、達人魔導師レオニダスに私たちの努力を酷評された直後、彼が壁に顔からぶつかるのを見られたことだ。そのとき、少なくとも物を止める力は備わっていると確信した。けれども、彼が投げた火の玉が壁に跳ね返って彼のひげを焼き落としたとき、これは残す価値があると確信した。</desc>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="arcane_reconstructor">
+      <name>神秘の再構成器</name>
+      <desc>魔法は、適切な働きかけがあれば何でも成し遂げます。ありふれたアイテムの弱った箇所にエーテリウムを注ぎ込むと、エーテリウムが固まって損傷を修復し、新品同様にしてくれます。</desc>
+      <relatedEntries>chargefocus,arcane_deconstructor</relatedEntries>
+    </block>
+    <block id="lectern">
+      <name>書見台</name>
+      <desc>整理整頓を心がける魔導師には欠かせない書見台は、本や大全、ソーマノミコンをすぐ手に取れるように収納するのに最適な場所です。本は台から取り外さなくても読めるように、ぴったりと据えられます。また、呪文作成には整理が必要なので、創造の祭壇にとっても欠かせない部品です。</desc>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="occulus" unlocked="true">
+      <name>オキュラス</name>
+      <desc>星々への入り口であるオキュラスは、最も奥深い内面を映し出します。ここでスキルポイントを使って、新しい形態、主効果、補正効果を解放できます。スキルポイントは3種類あり、ダンジョンやその他のワールド生成物、召喚の儀式から無限のオーブを入手することで得られます。習得可能なスキルは、解放に必要なスキルポイントの色で光ります。青が最もよく手に入るスキルポイントで、次が緑、最後が赤です。</desc>
+      <relatedEntries>inscriptionTable,lectern,unlockingPowers</relatedEntries>
+    </block>
+    <block id="calefactor">
+      <name>加熱器</name>
+      <desc>魔法のかまどである加熱器は、精錬するときに、精錬したアイテムに加えてヴィンテウムの粉を作ることがあります。光、中立、闇のエーテリウムをすべて供給すると、鉱石を2倍にできます。食べ物は、エーテリウムがなくても常にわずかな確率で2倍になります。</desc>
+      <relatedEntries>foci,manafocus,chargefocus</relatedEntries>
+    </block>
+    <block id="inscription_table">
+      <name>文机</name>
+      <desc>成功を望む魔導師にとって、整理は欠かせません。この机と本と羽根ペンを使えば、並外れた力を持つ呪文を組み立てられます。多くの魔導師は、机の上部のソース領域に、自分が知っている呪文要素を並べます。そして、形態と補正効果を形態グループ用に用意された茶色の四角にドラッグし、主効果を下部の呪文文法の領域にドラッグして、呪文を組み立てます。呪文に満足したら、その呪文を本と羽根ペンに書き写せます（本と羽根ペンは持ってきましたよね？）。この本は創造の祭壇の構造物の一部である書見台に置くことができ、呪文を作るために必要な手順を案内してくれます。この本は読む価値もあります。作る呪文の要約、材料の一覧、親和性の内訳が載っているからです。さらに詳しい情報は、#5ガイド→初めての呪文#0を参照してください。</desc>
+      <relatedEntries>altarOfCreation,craftingAltar,magiciansWorkbench,spellComponents101,spell_parchment,inscriptionUpgrades</relatedEntries>
+    </block>
+    <block id="particleEmitter" unlocked="true">
+      <name>パーティクルエミッタ</name>
+      <desc>純粋な装飾ブロックであるパーティクルエミッタは、あらゆる場所に魔法のような雰囲気を作り出せます。エミッタは右クリックでカスタマイズでき、非表示にもできます。非表示にした場合は、近くでクリスタルレンチを持つだけで再び表示されます。リンク解除モードのクリスタルレンチでパーティクルエミッタを右クリックすると、その設定がコピーされます。同じくリンク解除モードで別のパーティクルエミッタを右クリックすると、その設定が2つ目のエミッタにコピーされます。</desc>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="aum">
+      <name>アウム</name>
+      <desc>癒やしの性質を持つ花で、多くの呪文の材料になります。ウィッチウッドの木の根元でしか見つかりません。</desc>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="tarmaroot">
+      <name>タルマの根</name>
+      <desc>タルマの根は見た目より軽く、洞窟などの暗い場所に生えています。呪文と風のエッセンスの材料になります。</desc>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="wakebloom">
+      <name>ウェイクブルーム</name>
+      <desc>ウェイクブルームは暖かい地域の水面に生え、水系の呪文によく使われるほか、水のエッセンスの材料にもなります。</desc>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="summoner">
+      <name>召喚装置</name>
+      <desc>召喚装置はエーテリウムをさらに一歩進めて活用し、レッドストーン信号を受け取ると生物を召喚して命令に従わせます。召喚には高いコストがかかるうえ、召喚した生物を維持するための維持コストも必要です。レッドストーン信号が途絶えるか動力が尽きると、生物は召喚解除されます。生物が召喚解除されるか倒されると、再び召喚できるようになるまで短い待ち時間があります。なお、召喚装置に必要なのは本格的な召喚の呪文であり、満たされたクリスタルの魂器ではありません。</desc>
+      <relatedEntries>crystal_phylactery,chargefocus,manafocus,foci</relatedEntries>
+    </block>
+    <block id="inlays">
+      <name>象嵌</name>
+      <desc>象嵌はルーンの一種で、装飾に使えるほか、正しい配置に並べるとボスの召喚にも使えます（建造物を参照）。象嵌にはいくつかの種類があります。</desc>
+      <subitem id="redstone_inlay">
+        <name>レッドストーンの象嵌</name>
+        <desc>レッドストーンの象嵌は最も基本的な象嵌です。ボスの召喚に使われるほか、レールとしても使えます。上を通るトロッコを加速させます。速すぎる状態でカーブを曲がると、トロッコが線路から完全に飛び出してしまうことがあるので注意してください。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="iron_inlay">
+        <name>鉄の象嵌</name>
+        <desc>鉄の象嵌は中級の象嵌です。ボスの召喚に使われるほか、レールとしても使えます。トロッコが鉄の象嵌に触れると、進行方向が反転します。勢いは一部だけ保たれ、すべてが残るわけではありません。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="gold_inlay">
+        <name>金の象嵌</name>
+        <desc>金の象嵌は最上級の象嵌です。最も強力なボスの召喚に使われます。レールとしても使えます。トロッコが金の象嵌に触れると、現在の進行方向にある8ブロック以内の次の金の象嵌へワープしようとします。これは実際にはテレポートなので、トロッコ（と乗っている全員）が固体の障害物を通り抜けることもあります。ワープした後、再び金の象嵌でテレポートできるようになるまで短い待ち時間があります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="stonebricksmooth@3" unlocked="true">
+      <name>模様入りの石レンガ</name>
+      <desc>必要な模様入りの石レンガは、石レンガ4個を2x2のマス目に並べてクラフトすると作れます。</desc>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="sapling_witchwood">
+      <name>ウィッチウッドの苗木</name>
+      <desc>ウィッチウッドの苗木は、ウィッチウッドの木の葉からごくまれに手に入ります。植えることはできますが、苗木の周囲1ブロック以内の1段下（x/z ±1、y-1）に液体エッセンスの源ブロックが必要です。近くにある液体エッセンスの源ブロックが多い（最大8個）ほど、苗木は速く成長します。ただし8個そろえても、成長にはかなり時間がかかることがあります。苗木が立派なウィッチウッドの木に成長すると、近くにアウムが生えることもあります。</desc>
+      <relatedEntries></relatedEntries>
+    </block>
+    <block id="altar_of_creation">
+      <name>創造の祭壇</name>
+      <desc>創造の祭壇は創造の力を操り、魔導師に魔法の奇跡を起こさせます。AM2のすべての呪文は、ここで作ります。創造の祭壇は#9マルチブロック構造#0の一部です。</desc>
+      <relatedEntries>runes,yourFirstSpell,gainingMagicLevels,obelisk,otherworldly_aura</relatedEntries>
+    </block>
+    <block id="magicians_workbench">
+      <name>魔導師の作業台</name>
+      <desc>魔導師の作業台は、魔導師がたくさんのアイテムを作る必要に迫られて生まれました。ところが、ある魔導師は、部品を一つ忘れるたびにクラフト欄を空にし、チェストまで走り、しかも途中でアイテムを落としてしまうことにうんざりしました。この作業台には#5複数のクラフト欄#0があり、同時に使ってアイテムを作れます。また、直近8件のクラフトレシピを記憶しており、材料が#5内部ストレージ#0にあれば、ボタン1つでそのレシピをクラフト欄に復元できます。2番目のクラフト欄を2x2から3x3に広げる作業台グリッド拡張もクラフトできます。</desc>
+      <relatedEntries>workbenchUpgrade</relatedEntries>
+    </block>
+    <block id="everstone" unlocked="true">
+      <name>エバーストーン</name>
+      <desc>エバーストーンは魔力を帯びたブロックで、#5幻影ブロック#0のように他のブロックに擬態できます。ただし壊してもドロップせず、#9しばらくの間、実体を失います#0。その後、再び固まって元の状態に戻ります。固まっている最中のエバーストーンは、そこに何もないかのように通り抜けられます。ブロックに擬態させるには、擬態させたいブロックを手に持ってエバーストーンを右クリックするだけです。まだどのブロックにも擬態していない場合に限り、新しいブロックの性質を引き継ぎます。擬態を解除するには、#5クリスタルレンチ#0でエバーストーンを右クリックします。まだ何のテクスチャにも擬態していないエバーストーンを右クリックすると、通常どおりドロップして回収できます。</desc>
+      <relatedEntries>illusion_block@0,illusion_block@1</relatedEntries>
+    </block>
+    <block id="vinteum_torch">
+      <name>ヴィンテウムの松明</name>
+      <desc>ヴィンテウムの松明は簡単にクラフトでき、通常の松明とほぼ同じ明るさで光ります。見た目を変えるだけの代用品です。</desc>
+      <relatedEntries>ores</relatedEntries>
+    </block>
+    <block id="slipstream_generator">
+      <name>気流発生装置</name>
+      <desc>あなたは、周囲に空気のクッションを作り出し、体を上へ浮かせたり、地面へゆっくり降ろしたりできる装置を完成させました。この装置は上にいる魔導師（#5プレイヤーのみ#0）にしか効果がありませんが、垂直方向の範囲は広大です。試してみると、効果範囲に落下しながら入った場合は、完全に受け止められるまで少し時間がかかることがわかりました。さらに、#9視線の向きに応じて#0働かせることにも成功しました。上を向けば上昇、下を向けば下降、正面を向けばホバリングします。また、#9スニークすると、どこを向いていても垂直方向に静止#0できます。</desc>
+    </block>
+    <block id="obelisk">
+      <name>オベリスク</name>
+      <desc>オベリスクは、#5エーテリウム#0（Ars Magica 2の動力システム）を生み出すルーン入りのブロックです。魔法のかまどのように働き、ヴィンテウムの粉か液体エッセンスを燃やして動力を生み出します。 !d #9儀式#0を使って改造すると、#4ブラックアウレム#0や#9天のプリズム#0にできます。</desc>
+      <relatedEntries>obelisk_structure,blackaurem_structure,celestialprism_structure,essenceAllAround,powerTypes,mana_battery,essence_refiner,essenceconduit,casters,arcanereconstructor,slipstreamGenerator,crystal_wrench</relatedEntries>
+    </block>
+    <block id="mana_drain">
+      <name>吸魔の井戸</name>
+      <desc>吸魔の井戸は、水盤の中に立っている周囲の生物のマナを#5中立エーテリウム#0に変換します。生物は毎ティック、マナの一部を失います。マナが残っていない場合は、代わりにダメージを受けます。 !d 強い#9レッドストーン信号#0を与えると、流れが逆転します。井戸は蓄えたエーテリウムをマナとして、水盤の中に立っている#9プレイヤー#0に返します。このモードでは吸い取りを行わなくなり、動力供給源としても機能しなくなります。 !d 蓄えたエーテリウムを#9マナ電池#0やその他の動力消費装置へ移すには、#9クリスタルレンチ#0で両者をリンクさせます。まず（レッドストーン信号がない状態で）吸魔の井戸を右クリックし、次に送り先を右クリックします。吸魔の井戸が動力を供給するのは、レッドストーン信号がない間だけです。リンクはその状態で作る必要があり、そうしないとペアリングに失敗します。 !d 機能させるには、特定のマルチブロック構造が必要です。</desc>
+      <relatedEntries>mana_drain_block,magic_wall,powerTypes,mana_battery,crystal_wrench</relatedEntries>
+    </block>
+    <block id="broken_link">
+      <name>壊れたパワーリンク</name>
+      <desc>動力経路が作られた後、中継装置（導管など）や発生装置（オベリスク、プリズム、アウレムなど）がどこかで壊されると、動力システムは、そこに何かがあったこと、そして何かがおかしいことを知らせようとします。リンク切れが検出されると、動力システムがこれらのブロックを自動的に設置します。ブロックは、中継装置や発生装置があった位置に置かれます。 !d これらのブロックは、ほかのブロックが何もない場所にしか設置されません。手では壊せませんが、任意のブロックで置き換えられます。壊れたパワーリンクのブロックは、#9魔導ゴーグル#0を着用しているときだけ見えます。</desc>
+      <relatedEntries>magitech_goggles</relatedEntries>
+    </block>
+    <block id="flicker_habitat">
+      <name>フリッカーの住処</name>
+      <desc>フリッカーの住処は、フリッカーがこの世界にとどまれるように設計されたクリスタルの集まりです。#9フリッカーレンズ#0を入れると、レンズの中のフリッカーが住処を利用して、植物の栽培、アイテムの仕分け、釣り、魔法の障壁の生成など、周囲でさまざまな作業を行います。 !d 住処に#9フリッカーの瓶#0を置くこともできます。瓶は、隣り合う住処のうちフリッカーレンズが入っているものの機能を変化させます。 !d 変更方法の詳細は、フリッカーレンズの項目を参照してください。</desc>
+      <relatedEntries>flickerFocus,flicker_jar,crystalMarkers</relatedEntries>
+    </block>
+    <block id="crystal_marker">
+      <name>クリスタルマーカー</name>
+      <desc>クリスタルマーカーは、フリッカーの住処の中のフリッカーに、アイテムの仕分け方法を指示するために使います。#9魔導ゴーグル#0を着けていると、各クリスタルの優先度が見えます。この優先度は、フリッカーがアイテムを移動しようとする順序を示します。優先度の数値が小さいクリスタルから先に試されます。#9同調の杖#0を持ってクリスタルを右クリックすると、そのクリスタルの優先度を変更できます。</desc>
+      <subitem id="crystal_marker@0">
+        <name>搬入クリスタル</name>
+        <desc>このクリスタルは、取り付けられているインベントリからアイテムを集め、アイテム輸送ネットワークへ運ぶようフリッカーに指示します。搬入クリスタルには優先度を設定できません。</desc>
+        <relatedEntries>flickerFocus,crystal_wrench</relatedEntries>
+      </subitem>
+      <subitem id="crystal_marker@1">
+        <name>搬出クリスタル</name>
+        <desc>このクリスタルは、アイテム輸送ネットワーク内のすべてのアイテムを、このクリスタルが取り付けられているインベントリへ出力してよいとフリッカーに指示します。</desc>
+        <relatedEntries>flickerFocus,attuning_staff,magitech_goggles,crystal_wrench</relatedEntries>
+      </subitem>
+      <subitem id="crystal_marker@2">
+        <name>模倣搬出クリスタル</name>
+        <desc>このクリスタルは、アイテム輸送ネットワークからこのクリスタルが取り付けられているインベントリへ、そのインベントリにすでに入っているアイテムに限り、出力してよいとフリッカーに指示します。</desc>
+        <relatedEntries>flickerFocus,attuning_staff,magitech_goggles,crystal_wrench</relatedEntries>
+      </subitem>
+      <subitem id="crystal_marker@3">
+        <name>搬出指定クリスタル</name>
+        <desc>このクリスタルは、アイテム輸送ネットワークからこのクリスタルが取り付けられているインベントリへ、このクリスタルのGUIで設定されたアイテムに限り、出力してよいとフリッカーに指示します。</desc>
+        <relatedEntries>flickerFocus,attuning_staff,magitech_goggles,crystal_wrench</relatedEntries>
+      </subitem>
+      <subitem id="crystal_marker@4">
+        <name>搬出制限クリスタル</name>
+        <desc>このクリスタルは、アイテム輸送ネットワークからこのクリスタルが取り付けられているインベントリへ、このクリスタルのGUIで設定されたアイテムで、かつインベントリ内の個数がGUIで設定された個数より少ない場合に限り、出力してよいとフリッカーに指示します。</desc>
+        <relatedEntries>flickerFocus,attuning_staff,magitech_goggles,crystal_wrench</relatedEntries>
+      </subitem>
+      <subitem id="crystal_marker@5">
+        <name>双方向制限クリスタル</name>
+        <desc>このクリスタルは、取り付けられているインベントリに対して、入力と出力の両方を行ってよいとフリッカーに指示します。 !d 入力： !l このクリスタルのGUIに追加されているアイテムで、かつチェスト内の個数がGUIで設定された個数より多い間、フリッカーはインベントリからアイテムを取り出します。 !d 出力： !l このクリスタルのGUIに追加されているアイテムで、かつ個数がGUIで設定された個数を下回っている間、フリッカーはインベントリにアイテムを入れます。</desc>
+        <relatedEntries>flickerFocus,attuning_staff,magitech_goggles,crystal_wrench</relatedEntries>
+      </subitem>
+      <subitem id="crystal_marker@6">
+        <name>搬入指定クリスタル</name>
+        <desc>このクリスタルは、取り付けられているインベントリからアイテム輸送ネットワークへ、このクリスタルのGUIに追加されたアイテムに限り、入力してよいとフリッカーに指示します。</desc>
+        <relatedEntries>flickerFocus,attuning_staff,magitech_goggles,crystal_wrench</relatedEntries>
+      </subitem>
+	  <subitem id="crystal_marker@7">
+        <name>最終搬出クリスタル</name>
+        <desc>このクリスタルは、他のインベントリには入れられないアイテムを、このクリスタルが示すインベントリに入れるようフリッカーに指示します。このクリスタルの優先度の数値は常に最大になるため、アイテムは最後にここへ入れられます。</desc>
+        <relatedEntries>flickerFocus,attuning_staff,magitech_goggles,crystal_wrench</relatedEntries>
+      </subitem>
+	  <subitem id="crystal_marker@8">
+        <name>呪文搬出クリスタル</name>
+        <desc>このクリスタルは、10ブロック以内にある創造の祭壇を監視するようフリッカーに指示します。祭壇が呪文を作成中であれば、フリッカーは呪文に必要な次のアイテムを取りに行き、このクリスタルが示すインベントリに入れようとします。</desc>
+        <relatedEntries>flickerFocus,attuning_staff,magitech_goggles,crystal_wrench</relatedEntries>
+      </subitem>
+    </block>
+    <block id="keystone_doors">
+      <name>楔石のドア</name>
+      <desc>楔石のドアは、ルーンの組み合わせで施錠できます。施錠されている場合は、一致する鍵を持つ楔石をインベントリに持っているときだけ開きます。施錠されていない場合は、単なるドアとして機能します。どちらの場合も、ゾンビにドアを壊されることはありません。</desc>
+      <subitem id="keystone_door">
+        <name>楔石のドア</name>
+        <desc></desc>
+        <relatedEntries>keystone, keystoneTrapdoor</relatedEntries>
+      </subitem>
+      <subitem id="keystone_trapdoor">
+        <name>楔石のトラップドア</name>
+        <desc></desc>
+        <relatedEntries>keystone, keystoneDoor</relatedEntries>
+      </subitem>
+      <subitem id="spell_sealed_door">
+        <name>呪文封印のドア</name>
+        <desc>呪文封印のドアは、ルーンではなく魔法で施錠されます。楔石の代わりに、呪文を鍵として使います。 !d ドアを設定するには、スニーク＋右クリックでGUIを開き、呪文スロットに呪文を入れます。GUIを閉じると、ドアはその呪文から主効果を読み取り、鍵の並びとして記憶します。 !d ドアを開けるには、ブロックに命中するあらゆる形態（#5射撃#0や#5接触#0など）を使って、同じ呪文をドアに向けて唱えます。ドアは主効果を順番に確認し、設定した鍵と一致すれば、短時間だけ開いてから再び閉じます。 !d ドアは補正効果と形態を無視します。重要なのは#5主効果#0とその#5順序#0だけです。ドアには好きなアイテムを保管でき、ドアが壊れるとドロップします。</desc>
+        <relatedEntries>keystoneDoor, keystoneTrapdoor</relatedEntries>
+      </subitem>
+    </block>
+    <block id="armor_infuser_index">
+      <name>防具魔導付与台</name>
+      <desc>防具魔導付与台を使うと、Minecraftのあらゆる防具に特別な魔導付与を施せます。そのためには、まず防具を装備している必要があります。防具にカーソルを合わせると「左Shiftを押し続けると詳細を表示」と表示され、そのとおりにすると防具に吸収された経験値の量がわかります。あなたが経験値を得ると、防具も経験値を得ます。詳細は「仕組み」カテゴリの#5防具経験値の注入#0を参照してください。 !d 防具のレベルが30以上になると、第1段階の魔導付与を施せます。防具を装備した状態で防具魔導付与台を使用し、画面下部の装備スロットにある防具を、アクティブスロットに入れてください。施せる魔導付与はカラーで、施せないものはグレースケールで表示されます。1つの防具に施せる魔導付与は1段階分だけなので、慎重に選びましょう！ !d 各段階に必要なレベルは次のとおりです。 !l 第1段階：30レベル !l 第2段階：42レベル !l 第3段階：54レベル !l 第4段階：66レベル !d 防具に魔導付与を施すたびに、その分の経験値が防具から差し引かれます。 !d 利用できる魔導付与とその効果の一覧は、「仕組み」カテゴリの#5魔導付与#0を参照してください。</desc>
+	  <subitem id="armor_infuser">
+		<name>ブロックのレシピ</name>
+		<desc></desc>
+		<relatedEntries>imbuements,armor_xp_infusion</relatedEntries>
+	  </subitem>
+    </block>
+	<block id="flicker_lure">
+      <name>フリッカールアー</name>
+      <desc>フリッカーは通常この世界に入ってこられませんが、ちょっとした助けと誘いがあれば、それを実現できます。このブロックを設置してエーテリウムで動かすと、フリッカーをこの世界に引き寄せられます！必要になったら、レッドストーン信号を与えるだけです。フリッカーの種類は、ルアーを置いた場所によって決まります。特定のフリッカーの見つけ方については、#9フリッカー#0の項目を参照してください。</desc>
+      <relatedEntries>Flicker</relatedEntries>
+    </block>
+	<block id="arcane_deconstructor">
+      <name>神秘の分解器</name>
+      <desc>神秘の分解器は、#5闇のエーテリウム#0で動かすと、アイテムをクラフト素材に分解できます。 !d ああ、それと、呪文も分解できます。呪文からは大半のアイテムが戻ってきますが、最初の空のルーンや注ぎ込んだエーテリウム、そして最後の呪文羊皮紙は戻ってきません。 !d 分解器は、分解時に自身のインベントリがいっぱいだと、隣接するインベントリにアイテムを入れようとします。入れられなかったアイテムは、そのままワールドに排出されます。</desc>
+      <relatedEntries>chargefocus</relatedEntries>
+    </block>
+	<block id="otherworldly_aura">
+      <name>異界のオーラ</name>
+      <desc>異界のオーラは、呪文作成を自動化するために使います。作成者の影のコピーを召喚して、呪文を完成させます。 !d 使うには、次のものが必要です。 !l ・#5創造の祭壇#0から10ブロック以内に置く !l ・#4闇#0または#9中立#0のエーテリウム（異次元への移動は高くつくので、十分な量を用意しておきましょう！） !l ・オーラから8ブロック以内にあるブロック型インベントリ（チェスト、ホッパーなど）が1つ以上。これらのインベントリから呪文の触媒が探されます。 !d オーラは、動力が足りている限り、必要な間ずっと影を維持します。動力が尽きると影は消えてしまいます。迷惑をかけられた腹いせに、そのとき運んでいる触媒を持ち去ることもあります！1つの祭壇を手伝うオーラは1つだけなので、複数のオーラは必要ありません。 !d オーラを入手するには、#5不活性スポナー#0の周りで、触媒に#5位置交換#0を使って#5十字の儀式#0を行います。</desc>
+      <relatedEntries>rituals_overview,Transplace,corruption_obelisk,inertSpawner</relatedEntries>
+    </block>
+	<block id="inert_spawner">
+		<name>不活性スポナー</name>
+		<desc>モンスタースポナーを拾うことには成功しましたが、もう何も湧かせられないようです。この装置の別の使い道を探すか、再び動かす方法を見つけたほうがいいでしょう。 !d もしかすると、#5闇のエーテリウム#0と#5満たされたクリスタルの魂器#0があれば、また動くかもしれません…</desc>
+		<relatedEntries>otherworldly_aura,blackaurem_structure,crystal_phylactery</relatedEntries>
+	</block>
+  </blocks>
+  <mechanics>
+    <mechanic id="affinity">
+      <name>親和性</name>
+      <desc>#5親和性#0は、魔法の特定の領域との結びつきを表します。最初は親和性を持っていません。親和性は小さなグラフとしてHUDに表示され、オキュラス（クラフトできるブロック）でさらに詳しく確認できます。親和性は、唱えた呪文に応じて変化します。特定の種類の呪文を多く唱えるほど、その分野が得意になっていきます。異なる親和性の呪文を唱えると、その親和性の方向へ移ります。ある親和性が100%%に達すると、その親和性に固定されます。通常の変化を再開するには、対立する親和性の書を読んで固定を解除する必要があります。完全な親和性の固定を解除すると、親和度80%%まで下がります。各主効果には親和性があります。自分と同じ親和性の主効果は消費マナが少なくなり、親和度（その親和性にどれだけ深く入っているか）によっては、触媒が不要になることさえあります。一方、対立する親和性の主効果は消費マナが増え、やはり親和度によっては追加の触媒が必要になることがあります。親和性には固有の利点と欠点があり、親和性ごとのページで説明されています。</desc>
+      <subitem id="earth_affinity">
+        <name>大地の親和</name>
+        <desc>大地の親和は、硬くなった肌によって、わずかな防御ボーナスを与えます。このボーナスは親和度に応じて大きくなり、親和度50%%で解放され、最大時にはダメージ全体の10%%軽減（防具の計算より前に適用）に達します。 !d 同じく親和度50%%から、体が重くなり、水中でより速く沈むようになります（水面に浮上できなくなるほどではありません）。また、落下ダメージを受けずに落下できる距離が短くなります。 !d 親和度30%%から、#5不動#0がノックバック耐性を与えます。この耐性は親和が深いほど強くなり、最大時には完全に無効化します。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="water_affinity">
+        <name>水の親和</name>
+        <desc>水の親和は、親和度50%%から泳ぐ速度にボーナスを与え、親和度75%%を超えるとさらに上昇します。また、親和度50%%を超えると、流れる水に押されなくなります。水の親和が親和度90%%に達すると、あなたを攻撃したエンダーマンは、水に触れたときと同じようにダメージを受けます。 !d 親和度40%%から、水中で息が減る速度が遅くなります。このボーナスは親和度に応じて大きくなり、最大時には息を止められる時間が通常の3倍になります。 !d 水の親和が親和度50%%に達すると、炎にさらされたときに定期的にダメージを受けるようになるため、ネザーは特に危険になります。このダメージで体力が75%%を下回ることはなく、すでに下回っている場合は発生しません。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="air_affinity">
+        <name>風の親和</name>
+        <desc>風を操れるようになる前は、風があなたを操ります。#5風に翻弄される#0は、戦闘でダメージを受けるたびに追加で押し飛ばされる効果です。親和度が低いほど強く、親和度95%%で完全に使いこなせるようになるにつれて弱まっていきます。 !d 風の親和は、ジャンプの高さにボーナスを与え、ダメージを受けずに落下できる距離を延ばします。最大時には2ブロック長くなります。この効果は親和度40%%で解放され、親和が深いほど強くなります。親和度50%%では、#5疾風の拳#0が近接攻撃に突風をまとわせ、相手をノックバックさせます。 !d 親和度60%%で、#5追い風#0が切り替え式の能力として使えるようになります。二段ジャンプで本物の飛行ができ、短い空気の蓄えを消費します。この蓄えは親和が深いほど長くなり、最大時には6秒です。 !d 親和度90%%では、戦闘で瀕死になった魔導師は本能的に#5嵐の目#0を解き放ちます。周囲のモブをノックバックさせ、自分自身と周囲のブロックの火を消す瞬間的な突風で、一定の間隔ごとに一度発動します。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="fire_affinity">
+        <name>炎の親和</name>
+        <desc>炎の親和は、炎や溶岩の中で受けるダメージを軽減しますが、完全に無効化することはありません。この防護は親和度にそのまま比例し、最大時には60%%の軽減に達します。親和度80%%では、素手で敵を殴ると敵に火をつけ、少量の追加ダメージを与えます。 !d 炎の親和が親和度50%%に達すると、水源に触れたときに定期的にダメージを受けるようになります。このダメージで体力が75%%を下回ることはなく、すでに下回っている場合は発生しません。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="nature_affinity">
+        <name>自然の親和</name>
+        <desc>親和度50%%で、トゲのオーラの効果を得て、近接攻撃をしてきた相手にダメージを与えます（防具のエンチャント「棘の鎧」に似ています）。このダメージは、親和度75%%と最大時にさらに増加します。自然の親和が最大になると、直射日光の下で満腹度がゆっくり回復しますが、夜間や暗い場所では満腹度がより速く減ります。 !d 自然の親和は、根のせいで、親和度50%%から移動速度をわずかに低下させます。最大時には、その同じ根のおかげで壁を登れるようになります。壁に体を押しつけると登ることができ、落下距離がリセットされるので、安全に手を離せます。代わりに壁際でスニークすると、ゆっくりと滑り降ります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="ice_affinity">
+        <name>氷の親和</name>
+        <desc>氷の親和は、攻撃してきた相手を鈍足にします。この効果は、親和度50%%、75%%、最大時に強まります。親和度50%%に達すると、#5凍結の足跡#0（初期キー設定：氷の橋の切り替え）を切り替えて、歩くと足元の水が氷に凍るようにできます。これで水の上に橋を架けるように渡れます。最大時には、同じ切り替えで溶岩も黒曜石に凍らせます。 !d 氷の魔導師は皆、親和度が10%%を超えると、冷血のためわずかに移動が遅くなります。氷や雪の上に立っているときは除きます。 !d 親和度60%%を超えると、傷つかずに15秒立っているだけで#5霜の守り#0が現れます。霜の殻があなたを守り始め、5秒ごとにハート1つ分ずつ増えていきます。この防護は本来の体力より先に減り、親和が深いほど大きくなり、最大時には最大体力の30%%に達します。ダメージを受けると、殻が再び成長を始めるまでの待機時間がリセットされます。殻が完全に壊れると、氷の爆発とともに砕け散り、周囲のモブに氷結ダメージを与えます。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="lightning_affinity">
+        <name>雷の親和</name>
+        <desc>雷の親和は、あなたの走る速度を上げます。親和度50%%では、高さ1ブロックの段差を登れるようになり、反射神経が研ぎ澄まされ始めます。ここから移動速度は親和度に応じて上昇し、最大時には50%%上昇します。親和度75%%では、素手で敵を殴ると敵に落雷を呼ぶことがあります。ただし、発生するのは15秒に一度までです。 !d 残念ながら、水の中に立つとショートしてしまいます。親和度25%%から、濡れていると一定の確率でマナを奪われます。親和度50%%から90%%の間は、濡れていると弱体化して最大体力も減少します。親和度90%%を超えて使いこなせば、この弱点は完全になくなります。 !d 親和度50%%から80%%の間は、不安定な親和のせいで、近くのTNTを誤って爆発させることがあります。親和度70%%以上では、近くのクリーパーを電撃で帯電させることもできます！ご安心ください。電気の性質を制御できるようになるにつれ、親和度80%%を超えるとTNTに引火しなくなります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="life_affinity">
+        <name>生命の親和</name>
+        <desc>生命の親和は、親和を得た瞬間から、親和度に応じて体力を非常にゆっくりと追加で回復させます。この回復は満腹度に関係なく起こります。生命の親和が親和度40%%に達すると、素手で生物に触れて体力を4回復させられます。クールダウンは10秒です。 !d 親和度60%%以降は、生きている（アンデッドではない）生物を倒すと気分が悪くなります。しばらくの間、吐き気、空腹、弱体化、採掘速度低下の状態になります。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="arcane_affinity">
+        <name>神秘の親和</name>
+        <desc>神秘の親和が親和度40%%に達すると、呪文の発動に成功するたびに5%%の確率（クールダウン10秒）で明晰の効果を得られます。この効果は次の発動で消費され、その呪文のマナと魔術疲労が完全に0になります。親和度90%%を超えると、この確率は余剰の親和度1%%ごとに1%%上昇し、最大時には15%%に達します。これとは別に、親和度50%%では、魔力集中がすべての呪文のコストを一律5%%軽減します。 !d 欠点として、神秘の親和が親和度25%%を超えると、魔法によるダメージを10%%多く受けます。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="ender_affinity">
+        <name>エンダーの親和</name>
+        <desc>エンダーの親和が親和度25%%に達すると、毒への耐性を得て、魔法と衰弱によるダメージが軽減されます。軽減率は最大時に75%%まで上がります。親和度75%%では、転位も得られます。エンダーテレポートのキーを押すと、向いている方向へ最大32ブロックまでブリンクします。クールダウンは短めです。同じ親和度で、闇視（初期キー設定：闇視の切り替え）を切り替えると、有効な間、暗視の効果を常時得られます。 !d 闇の性質のため、親和度65%%から95%%の間は、日中に直射日光の下に立っていると最大体力が減少します。また、親和度が50%%に達すると、濡れているときも減少します。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="elemental_alliance">
+        <name>精霊の同盟</name>
+        <desc>#5風の精霊#0、#5大地の精霊#0、#5炎の精霊#0、#5氷の精霊#0、#5雷の精霊#0、#5水の精霊#0は、魔導師に対する通常の態度とは別に、対応する親和がどれだけ深いかであなたを判断します。 !d 親和度75%%未満では、その属性の精霊は今まで通り、獲物のようにあなたを追い回します。親和度75%%を超えると、精霊はあなたに対して中立になり、あなたを放っておいて、探し回ることもなくなります。ただし、あなたが先に攻撃した場合は自衛します。 !d 親和度100%%になると、精霊は友好的になり、あなたを見守ります。近くに精霊がいるときに何者かがあなたを攻撃すると、精霊はその攻撃者に敵意を向け、あなたと並んで戦います。ただし、先に攻撃したのがあなた自身だった場合を除きます。</desc>
+        <relatedEntries>mob_air_elemental,earth_elemental,mob_fire_elemental,ice_elemental,lightning_elemental,mob_water_elemental,mob_nature_elemental</relatedEntries>
+      </subitem>
+      <relatedEntries></relatedEntries>
+    </mechanic>
+    <mechanic id="spell_creation" unlocked="true">
+      <name>呪文作成</name>
+      <desc>呪文の作成は少し時間がかかりますが、手順は単純です。まず、#5オキュラス#0で呪文要素をいくつか習得します。次に、#5文机#0で作りたい呪文を組み立てます。文机にある本を創造の祭壇の構造物の書見台に置き、#5空のルーン#0を投げ入れます。あとは本が、必要なものを示しながら残りの手順を案内してくれます。呪文の作成中にエーテリウムが必要になったら、必要に応じて#5クリスタルレンチ#0でエーテリウムの種類を切り替えてから、マルチブロックのスイッチを入れます。構造物が十分なエーテリウムを引き出すと、スイッチは自動的に切れます。呪文が完成したら、装備して右クリックし、名前とアイコンを設定します。これを正しく行うと、その呪文が使えるようになります！そうしないと、発動したときにカスタマイズ画面が再び表示されます。</desc>
+      <relatedEntries></relatedEntries>
+    </mechanic>
+    <mechanic id="infusion">
+      <name>魔力注入</name>
+      <desc>#5魔力注入#0は、AMの防具があなたのマナを消費して、自分自身を修復する仕組みです。この仕組みのため、AMの防具はすべて耐久値が低く、長引く戦いには耐えられません。防具を外すと注入は止まります。この仕組みが働くには、防具を装備している必要があります。防具の耐久値が満タンのときは、マナを消費しません。</desc>
+      <relatedEntries></relatedEntries>
+    </mechanic>
+    <mechanic id="mana" unlocked="true">
+      <name>マナ</name>
+      <desc>マナは、魔力のエネルギー量です。魔法レベルを上げると、より多くのマナを得られます。 !d マナは時間とともに回復しますが、#9マナケーキ#0を食べるか、蓄えが10%%を超えているオベリスク、天のプリズム、ブラックアウレムの近くに立つと、回復が速まります。#9マナポーション#0と#9マナポーションの束#0を使うと、マナを即座に増やせます。マナはHUDの青いバーで表されます。「#2/amuicfg#0」を使うと、マナの実際の数値を表示する設定を切り替えられます。</desc>
+      <relatedEntries></relatedEntries>
+    </mechanic>
+    <mechanic id="magic_level" unlocked="true">
+      <name>魔法レベル</name>
+      <desc>魔法レベルは、魔導師としてのあなたの強さを表します。魔法レベルが上がると、マナと魔術疲労の上限も増えます。魔法レベルは、有効な呪文を発動することで上げられます。有効な呪文とは、意図した働きをする呪文のことです。つまり、壁に向かって1時間ファイアボルトを撃ち続けても、何も得られません。有効な対象を得る機会が少ない主効果ほど、次のレベルに向けて多くの魔法経験値が与えられます。魔法レベルはHUDの青い数字で表されます。「#2/amuicfg#0」を使うと、魔法経験値バーの実際の数値を表示する設定を切り替えられます。</desc>
+      <relatedEntries></relatedEntries>
+    </mechanic>
+    <mechanic id="burnout" unlocked="true">
+      <name>魔術疲労</name>
+      <desc>魔術疲労は、呪文を使うときの負担の度合いです。魔術疲労が高いほど、呪文1回ごとのマナ消費が増えます。より強力な呪文を発動すると、魔術疲労も大きく増えます。魔術疲労は時間とともに減少します。魔法レベルが上がると魔術疲労の上限も上がり、完全に疲れ切るまでにより多くの呪文を発動できるようになります。魔術疲労はHUDの赤いバーで表示されます。「#2/amuicfg#0」を使うと、魔術疲労の実際の数値を表示する設定を切り替えられます。</desc>
+      <relatedEntries></relatedEntries>
+    </mechanic>
+    <mechanic id="rituals">
+      <name>召喚の儀式</name>
+      <desc>召喚の儀式は、Ars Magicaでボスを呼び出すために行う儀式です。各ボス固有の儀式については、この秘儀大全の#5ボスの項目#0を参照してください。</desc>
+      <relatedEntries></relatedEntries>
+    </mechanic>
+    <mechanic id="moonstone_meteors">
+      <name>ムーンストーンの隕石</name>
+      <desc>夜間にときどき、小さな隕石がオーバーワールドに落ちてくることがあります。ムーンストーン鉱石を入手する方法は、これだけです。満月の夜は、隕石が発生しやすくなります。隕石は必ずプレイヤーから32ブロック以内に落ち、バイオームの表面のブロックにしか落ちません。つまり、草でできた家でもない限り、あなたの家に当たることすらありません。もし草でできた家に住んでいるのなら、いったいどうしたというのですか？「三匹のこぶた」を読んだことはないのですか？</desc>
+      <relatedEntries></relatedEntries>
+    </mechanic>
+    <mechanic id="enchantments" unlocked="true">
+      <name>エンチャント</name>
+      <desc>AMは、魔導の極みへの道のりを助けるため、便利なエンチャントをいくつかゲームに追加します。</desc>
+      <subitem id="magic_resistance">
+        <name>魔法耐性</name>
+        <desc>名前のとおり、このエンチャントは魔法ダメージから身を守ります。ランクは4段階あり、防具に付けられます。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <subitem id="soulbound">
+        <name>ソウルバウンド</name>
+        <desc>死んで装備を失うのにうんざりしたことはありませんか？これで解決できます。ソウルバウンドのエンチャントは、エンチャントを受け付けるほとんどのアイテムに付けることができ、そのアイテムは死んだときにインベントリに残ります。リスポーンしたときは、死亡時と同じインベントリのスロットにそのアイテムがあります。ソウルバウンドの最大エンチャントレベルは1です。</desc>
+        <relatedEntries></relatedEntries>
+      </subitem>
+      <relatedEntries></relatedEntries>
+    </mechanic>
+    <mechanic id="armor_xp_infusion">
+      <name>防具経験値の注入</name>
+      <desc>経験値を得るたびに、装備している防具も経験値を得ます。得られる量は、あなたが今得た経験値の合計を、装備中のすべての防具で均等に割った値です。どの防具でも経験値を得られます。蓄えられた防具経験値は、#9防具魔導付与台#0で使えます。</desc>
+      <relatedEntries>armor_infuser</relatedEntries>
+    </mechanic>
+    <mechanic id="silver_skills">
+      <name>シルバースキル</name>
+      <desc>シルバースキルは、オキュラス内にある、通常の方法では入手できないスキルです。シルバースキルを解放するには、正しい呪文の組み合わせを作成し、それを発動する必要があります。シルバースキルの解放条件には、いくつか解読しやすくなる決まりがあります。 !d 1.) シルバースキルの解放に必要な要素はすべて、#9そのシルバースキルと同じツリーにあります#0。 !d 2.) すべてのシルバースキルの解放には、#9主効果や補正効果が合計2〜4個#0必要です。 !d 3.) 形態はシルバースキルの解放に関係しません。#9どの形態でも使えます#0。 !d 4.) 組み合わせに#9特定の順序はありません#0。正しい主効果がそろっていれば成功します。 !d 5.) 主効果と補正効果は#9すべて同じ段階になければなりません#0。 !d 6.) 主効果と補正効果は#9そのシルバースキルと論理的に関連しています#0。たとえば、炎の嵐に溺水が必要になることはありません。 !d 7.) シルバースキルを解放するための呪文は、普段使いにはあまり実用的でないことがあります。</desc>
+      <relatedEntries></relatedEntries>
+    </mechanic>
+    <mechanic id="imbuements">
+      <name>魔導付与</name>
+      <desc>魔導付与は、#9防具魔導付与台#0で防具に付けられる特殊効果です。防具1点につき魔導付与を1つ付けられ、複数の防具に同じ魔導付与がある場合は効果が重なります。</desc>
+      <subitem id="imbuement_burnout_reduction">
+        <name>魔導付与：魔術疲労軽減</name>
+        <desc>魔術疲労軽減の魔導付与は、魔術疲労が減る速度を150%%上昇させます。この効果は防具1点ごとに加算され、最大600%%です。 !d 装備可能な部位：頭、胴体、脚、足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_fall_damage">
+        <name>魔導付与：落下ダメージ耐性</name>
+        <desc>落下ダメージ耐性の魔導付与は、落下ダメージを15%%軽減します。この効果は複数の防具で重なります。 !d 装備可能な部位：頭、胴体、脚、足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_drown_damage">
+        <name>魔導付与：溺水ダメージ耐性</name>
+        <desc>溺水ダメージ耐性の魔導付与は、溺水ダメージを15%%軽減します。この効果は複数の防具で重なります。 !d 装備可能な部位：頭、胴体、脚、足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_explosive_damage">
+        <name>魔導付与：爆発ダメージ耐性</name>
+        <desc>爆発ダメージ耐性の魔導付与は、爆発ダメージを15%%軽減します。この効果は複数の防具で重なります。 !d 装備可能な部位：頭、胴体、脚、足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_phys_damage">
+        <name>魔導付与：物理ダメージ耐性</name>
+        <desc>物理ダメージ耐性の魔導付与は、物理ダメージを15%%軽減します。この効果は複数の防具で重なります。 !d 装備可能な部位：頭、胴体、脚、足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_fire_damage">
+        <name>魔導付与：炎ダメージ耐性</name>
+        <desc>炎ダメージ耐性の魔導付与は、炎ダメージを15%%軽減します。この効果は複数の防具で重なります。 !d 装備可能な部位：頭、胴体、脚、足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_frost_damage">
+        <name>魔導付与：氷結ダメージ耐性</name>
+        <desc>氷結ダメージ耐性の魔導付与は、氷結ダメージを15%%軽減します。この効果は複数の防具で重なります。 !d 装備可能な部位：頭、胴体、脚、足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_lightning_damage">
+        <name>魔導付与：雷ダメージ耐性</name>
+        <desc>雷ダメージ耐性の魔導付与は、雷ダメージを15%%軽減します。この効果は複数の防具で重なります。 !d 装備可能な部位：頭、胴体、脚、足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_magic_damage">
+        <name>魔導付与：魔法ダメージ耐性</name>
+        <desc>魔法ダメージ耐性の魔導付与は、魔法ダメージを15%%軽減します。この効果は複数の防具で重なります。 !d 装備可能な部位：頭、胴体、脚、足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_mana_regeneration">
+        <name>魔導付与：マナ回復速度上昇</name>
+        <desc>マナ回復速度上昇の魔導付与は、マナの回復速度にボーナスを与えます。この効果は防具1点ごとに加算されます。 !d 装備可能な部位：頭、胴体、脚、足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_magitech">
+        <name>魔導付与：魔導ゴーグル統合</name>
+        <desc>魔導ゴーグル統合の魔導付与を付けると、ヘルメットを着用している間、魔導ゴーグルとして機能します。 !d 装備可能な部位：頭</desc>
+        <relatedEntries>armor_infuser,magitech_goggles</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_light_step">
+        <name>魔導付与：灯火の足取り</name>
+        <desc>灯火の足取りの魔導付与は、モブが湧ける程度に明るさが低い場所で、足元に魔導の灯りを（可能であれば）自動的に設置します。 !d 装備可能な部位：足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_dispelling">
+        <name>魔導付与：ディスペル</name>
+        <desc>ディスペルの魔導付与は、あなたにかかっているマイナスの効果をすべて取り除きます。短いクールダウンがあります。 !d 装備可能な部位：脚</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_freedom">
+        <name>魔導付与：移動阻害無効</name>
+        <desc>移動阻害無効の魔導付与は、移動を妨げるほとんどの効果があなたに影響しないようにします。 !d 装備可能な部位：足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_healing">
+        <name>魔導付与：緊急回復</name>
+        <desc>緊急回復の魔導付与は、体力が低くなると、強力な再生能力のバフを得られるようにします。 !d 装備可能な部位：胴体</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_hunger_regen">
+        <name>魔導付与：空腹回復</name>
+        <desc>空腹回復の魔導付与は、満腹度を自然に回復させます。 !d 装備可能な部位：頭</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_jump_boost">
+        <name>魔導付与：跳躍力上昇</name>
+        <desc>跳躍力上昇の魔導付与は、ジャンプの高さを大幅に上げます。 !d 装備可能な部位：脚</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_life_saving">
+        <name>魔導付与：致命傷回避</name>
+        <desc>致命傷回避の魔導付与は、死亡を打ち消して死ななかったことにし、体力を50%%回復します。防具に極めて大きなダメージを与え、クールダウンも長めです。 !d 装備可能な部位：胴体</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_mining_speed">
+        <name>魔導付与：採掘速度上昇</name>
+        <desc>採掘速度上昇の魔導付与を施すと、ブロックを50%%速く採掘できるようになります。 !d 装備可能な部位：頭</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_recoil">
+        <name>魔導付与：反動</name>
+        <desc>反動の魔導付与を施すと、近接攻撃をしてきた相手が激しく後方へ吹き飛ばされます。 !d 装備可能な部位：胴体</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_swim_boost">
+        <name>魔導付与：水泳速度上昇</name>
+        <desc>水泳速度上昇の魔導付与を施すと、水中をかなり速く泳げるようになります。 !d 装備可能な部位：脚</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_water_breathing">
+        <name>魔導付与：水中呼吸</name>
+        <desc>水中呼吸の魔導付与を施すと、空気が少なくなったときに、短時間だけ水中で息ができるようになります。 !d 装備可能な部位：頭</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_water_walking">
+        <name>魔導付与：水上歩行</name>
+        <desc>このブーツを履けば、水の上を歩けます。まるで忍者です！ !d 水上歩行が働くのは、水面の上に立っているときだけです。水に浸かっているときや水中にいるときは、通常どおり泳げます。水面まで泳いで、ジャンプで水の上に出れば水上歩行が始まります。水面でスニークすると、水中へ沈みます。 !d 装備可能な部位：足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_soulbound">
+        <name>魔導付与：ソウルバウンド</name>
+        <desc>ソウルバウンドの魔導付与を施した防具は、死亡時にその場に落ちず、持ち主のもとに残ります。この効果は防具1つごとに個別に働きます。 !d 装備可能な部位：頭、胴体、脚、足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_flicker_lure">
+        <name>魔導付与：フリッカールアー</name>
+        <desc>フリッカールアーの魔導付与を施すと、近づいても#9フリッカー#0が逃げなくなります。 !d 装備可能な部位：胴体</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_bonus_xp">
+        <name>魔導付与：魔法経験値ボーナス</name>
+        <desc>魔法経験値ボーナスの魔導付与を施すと、呪文の詠唱で得られる魔法経験値が50%%増加します。 !d 装備可能な部位：胴体</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_pinpoint_ores">
+        <name>魔導付与：鉱石探知強化</name>
+        <desc>鉱石探知強化の魔導付与を施すと、#5ウォーディングキャンドル#0の精度がさらに上がります。対象の鉱石から2ブロック以内に近づくと、炎が黒くなります。 !d 装備可能な部位：頭</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_stepassist">
+        <name>魔導付与：段差補助</name>
+        <desc>段差補助の魔導付与を施すと、1ブロックの段差を登れるようになります。 !d 装備可能な部位：脚</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_run_speed">
+        <name>魔導付与：移動速度上昇</name>
+        <desc>移動速度上昇の魔導付与を施すと、かなり速く走れるようになります。 !d 装備可能な部位：足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <subitem id="imbuement_fall_protection">
+        <name>魔導付与：ソフトランディング</name>
+        <desc>ソフトランディングの魔導付与を施すと、地面に着く直前に低速落下の効果が自動的にかかり、ダメージを完全に防ぎます。クールダウンは短めです。 !d 装備可能な部位：足</desc>
+        <relatedEntries>armor_infuser</relatedEntries>
+      </subitem>
+      <relatedEntries>armor_infuser,armor_xp_infusion</relatedEntries>
+    </mechanic>
+  </mechanics>
+  <guides>
+    <guide id="intro_to_ars_magica" order="0" unlocked="true" new="false">
+      <name>序文</name>
+      <desc>Ars Magicaは、私にとって初めてのMOD開発でした。AM2のリリース時点で、ソフトウェア開発を仕事にして約11年になりますが、ゲームデザインはほとんど経験がありませんでした。私はMinecraftが大好きで、ここは魔法の世界にぴったりの舞台だと感じていました。そうして開発を始めたのですが、これほど楽しくなるとは思いもしませんでした。AM1とAM2の開発には、文字どおり何百時間も費やしました。いくつかの良いチュートリアルと少しの幸運のおかげで、なんとかAM1を作り上げることができました。そして今回、そこで学んだことを活かし、出てきた問題をいくつか解決し（おそらくその倍の問題を新たに生み出しつつ）、Ars Magica 2を作りました。このMODが今の形になるまでに力を貸してくれたすべての人々、ベータテスターの皆さん、コード、モデル、テクスチャで協力してくれた皆さんに感謝します。皆さんがいなければ、このMODは今の姿にはなりませんでした。そしてプレイヤーの皆さんが、私が作って楽しんだのと同じくらい、このMODを楽しんでくれることを願っています。 !d 良い詠唱を！ !l ～Mithion !l !l 何年も前、Ars Magicaは私が初めて遊んだ魔法MODでした。その後、Electroblob's Wizardryにのめり込み、そのアドオンもたくさん作りましたが、あの体験をMinecraftでずっと懐かしく思っていました。それでも、1.12.2版のAMが存在して、この2つを一緒に遊べたらと願い続けていました。今後は、この2つの魔法MODをより密接に連携させたいと考えています。私と同じくらい、Ars Magica 2を楽しんでもらえたら嬉しいです！ !l ～WinDanesz</desc>
+    </guide>
+    <guide id="using_this_compendium" order="1" unlocked="true">
+      <name>秘儀大全の使い方</name>
+      <desc>この秘儀大全は、項目に到達するたびに解放される仕組みになっています。MODの序盤の進め方を、ある程度案内するためです。新しい項目が解放されると通知が表示されます。新しい項目があるカテゴリはきらめき、新しい項目そのものには、新着を示す三日月の印が付きます。 !d この仕組みが不要な場合は、コンフィグで「Staged Compendium」をfalseに変更すると無効にできます。この秘儀大全には#9相互リンク#0があります。緑色の文字が表示される項目にカーソルを合わせてクリックすると、その項目の解説に移動できます。 !d また、この秘儀大全は閲覧履歴を残します。見てきたページを逆の順番にたどって戻ることができます。</desc>
+    </guide>
+    <guide id="the_am_ui" order="2" unlocked="true">
+      <name>Ars Magica 2のUI</name>
+      <desc>秘儀大全を手に取ったことで、あなたの内なる秘術が目覚めました。これでAM2のHUDが有効になっています。このUIを設定するには、いつでもコマンド「#2/amuicfg#0」を入力してください。ドラッグ＆ドロップで設定できる画面が開きます。変更したらESCキーを押して保存します。</desc>
+    </guide>
+    <guide id="spell_components_101" order="5">
+      <name>呪文要素入門</name>
+      <desc>呪文は、#4形態#0、#9主効果#0、#2補正効果#0で構成されます。形態は呪文が対象をどう狙うかを決め、主効果は狙った対象に呪文が何をするかを決め、補正効果は呪文の特定の要素を変化させます。#4形態#0は、1つの呪文に1つしか入れられません。形態は連結して、呪文の段階を作れます。たとえば「射撃＋範囲」のようにします。主効果は、呪文の段階ごとに1つずつ追加できます。補正効果は、呪文の1つの要素を、1つの段階の中で3回まで補正できます。つまり、複数の要素を変化させる補正効果を使う場合、その形態に対する同じ能力値の補正が合計で3に達すると、同じ能力値を変化させる他の補正効果は入れられなくなることがあります。秘儀大全には、すでに習得している形態、主効果、補正効果と、これから習得できる形態、主効果、補正効果だけが表示されます。</desc>
+    </guide>
+    <guide id="your_first_spell" order="3" unlocked="true">
+      <name>初めての呪文</name>
+      <desc>呪文を作るには、まず#5オキュラス#0を作り、形態を1つ以上と主効果を1つ以上解放する必要があります。そのために、最初から青のスキルポイントが3つ与えられています。次に、本と羽根ペンを作り、#5文机#0に向かいます。本を文机に置いてください。 !d 文机のUIには、重要な部分が3つあります。ソース領域は、上部にある大きな灰色の正方形で、習得済みの形態、主効果、補正効果がすべて並びます。形態グループの領域は、茶色の正方形で見分けられます。形態グループは複数作れるので、茶色の正方形も複数あります。最後に、下部の灰色の長方形が、呪文文法の領域です。 !d #5形態グループ#0を作るには、ソース領域から形態や補正効果を、UI上の好きな形態グループへドラッグします。1つの呪文に、形態グループは複数作れます（初期状態では3つまで）。1つの形態グループには、形態と補正効果を合わせて最大4つまで入れられます。形態グループに主効果は入れられません。形態グループは呪文が対象を狙うさまざまな方法、呪文文法は呪文が実際に行うこと、と考えると分かりやすいでしょう。 !d 形態グループができたら、使いたい呪文要素をソース領域から順番に呪文文法の領域へドラッグします。呪文文法の領域には、形態グループに加えて、形態、主効果、補正効果も入れられます。組み合わせが完成したら、#5創造の祭壇#0へ行き、呪文のレシピを書いた本を書見台に置きます。作業を始めるには、創造の祭壇の中央に#5空のルーン#0を投げ入れ、あとは本の指示に従ってください。本そのものも読む価値があります。何の呪文のレシピかという要約、呪文に必要な材料リスト、呪文の親和性の内訳が載っています。創造の祭壇によっては、一定の強さまでの呪文しか作れないものがあります。強すぎる呪文を作ろうとすると、悪いことが起こりかねません。詳しくは#5創造の祭壇#0の項目を参照してください。</desc>
+    </guide>
+	<guide id="a_few_spells" order="4" unlocked="true">
+      <name>おすすめの呪文</name>
+      <desc>始めたばかりのときは、オキュラスで#9形態#0を1つ以上と#9主効果#0を1つ以上必ず習得しておくことをおすすめします。そうしないと、呪文を1つも作れなくなってしまいます。習得しておけば、ダンジョンで#9無限のオーブ#0を探すか、ボスを1、2体倒してオーブを集められます。ズルをしてもかまわないなら、/respecコマンドも使えます。 !p 始めるにあたって、呪文の例をいくつか紹介します。 !d 基本の防御： !l 射撃＋物理ダメージ !d 生き延びる： !l 自己＋再生能力 !d 採掘の時間： !l 接触/射撃＋掘削 !d 葉を片付ける： !l 射撃＋魔導師の秋 !d 高速移動： !l 自己/射撃＋跳躍＋低速落下＋俊足＋重力井戸</desc>
+    </guide>
+    <guide id="gaining_magic_levels" order="6">
+      <name>魔法レベルの上げ方</name>
+      <desc>魔法レベルは、呪文を詠唱することで上がります。詠唱に失敗すると魔法経験値は得られず、クールダウン中は得られる量が逓減するので、呪文を連発してレベル上げをしても意味がありません。呪文を詠唱すると、親和性も変化します。詳しくは「仕組み」カテゴリの#5親和性#0を参照してください。</desc>
+    </guide>
+    <guide id="unlocking_powers" order="7">
+      <name>スキルポイントの入手</name>
+      <desc>スキルポイントは、主にレベルアップで手に入ります。偶数レベルになるたびに、スキルポイントを1つ獲得します。レベル2〜20では青、22〜40では緑、42〜50では赤のスキルポイントが得られます。ボスとの戦闘、村人との取引、探索によって、追加のポイントを入手することもできます。どう進めるかは自分次第です。#5オキュラス#0で解放できるものを見ているとき、その項目にカーソルを合わせると、#9解放に必要なスキルポイントの色と同じ色の文字#0が表示されます。</desc>
+    </guide>
+    <guide id="essence_all_around" order="8">
+      <name>エーテリウムの仕組み</name>
+      <desc>Ars Magicaには、#5エーテリウム#0という独自の動力システムがあります。エーテリウムは#5オベリスク#0から生み出されます。オベリスクは、半径10ブロック以内にある、動力を必要とする他のブロックへ、エーテリウムを送り出します。オベリスクの範囲を延ばすには、オベリスクから10ブロック以内に#5エーテリウム導管#0を設置します。導管も、それぞれ半径10ブロックの範囲に、オベリスクからの動力を中継して送れます。こうして連鎖的に範囲を延ばしていけます。 !d エーテリウムには複数の種類があります。種類の違うエーテリウムは、他のブロックから生み出せます。たとえば、#5天のプリズム#0からは#9光のエーテリウム#0、#5ブラックアウレム#0からは#4闇のエーテリウム#0が得られます。どの種類のエーテリウムも、オベリスクと同じ送信ルールに従い、エーテリウム導管で範囲を延ばせます。</desc>
+    </guide>
+    <guide id="power_types" order="9">
+      <name>エーテリウムの種類</name>
+      <desc>エーテリウムには、標準で3種類あります。アドオンが新しい種類のエーテリウムを登録することもありますが、標準のものは光、中立、闇です。それぞれの作り方と派生については、#5オベリスク#0、#5天のプリズム#0、#5ブラックアウレム#0の項目を参照してください。エーテリウムの種類ごとに機械への働き方が異なり、長所と短所があります。呪文の作成には、3種類すべてのエーテリウムが必要です。形態、主効果、補正効果によって、必要になるエーテリウムの種類が異なるためです。特定の種類のエーテリウムでしか動かない機械もあり、複数の種類を同時に必要とする機械もあります。</desc>
+    </guide>
+  </guides>
+</compendium>
