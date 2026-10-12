@@ -31,6 +31,7 @@ import am2.common.armor.ArmorHelper;
 import am2.common.blocks.tileentity.*;
 import am2.common.defs.Keybindings;
 import am2.common.extensions.RiftStorage;
+import am2.common.lore.CompendiumXMLLoader;
 import am2.common.handler.BakingHandler;
 import am2.common.items.*;
 import am2.common.power.PowerNodeEntry;
@@ -50,6 +51,8 @@ import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -252,6 +255,9 @@ public class ClientProxy extends CommonProxy {
     public void postInit() {
         super.postInit();
         CompendiumRegistry.postInit();
+        // Rebuild the compendium when the language (or a resource pack) changes, since its text comes from a per-language XML
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager())
+                .registerReloadListener((IResourceManagerReloadListener) resourceManager -> CompendiumXMLLoader.reloadFromXML());
     }
 
     @Override

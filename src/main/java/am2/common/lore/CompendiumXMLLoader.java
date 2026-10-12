@@ -14,7 +14,7 @@ import am2.common.registry.AMSkills;
 import am2.common.registry.CompendiumRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -30,8 +30,16 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * Loader for the Arcane Compendium content from XML files.
@@ -39,11 +47,51 @@ import java.lang.reflect.Field;
  */
 public class CompendiumXMLLoader {
 
+    private static final String FALLBACK_LANGUAGE = "en_us";
+
+    /**
+     * Entries this loader registered on its last run, so they can be replaced when the language changes.
+     */
+    private static final List<CompendiumEntry> loadedEntries = new ArrayList<>();
+
+    /**
+     * Resource path of the compendium XML for a language code, e.g. {@code docs/arcanecompendium_ja_jp.xml}.
+     */
+    public static String xmlPathForLanguage(String languageCode) {
+        return "docs/arcanecompendium_" + languageCode.toLowerCase(Locale.ROOT) + ".xml";
+    }
+
+    /**
+     * Opens the compendium XML for the selected language, falling back to English if there is none.
+     */
+    private static InputStream openXML() throws IOException {
+        IResourceManager resources = Minecraft.getMinecraft().getResourceManager();
+        String language = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
+        if (!FALLBACK_LANGUAGE.equalsIgnoreCase(language)) {
+            try {
+                return resources.getResource(new ResourceLocation("arsmagica2", xmlPathForLanguage(language))).getInputStream();
+            } catch (FileNotFoundException e) {
+                LogHelper.info("No compendium XML for language " + language + ", using English");
+            }
+        }
+        return resources.getResource(new ResourceLocation("arsmagica2", xmlPathForLanguage(FALLBACK_LANGUAGE))).getInputStream();
+    }
+
+    /**
+     * Replaces the entries loaded from XML with ones for the currently selected language.
+     * Entries registered by other mods are left alone.
+     */
+    public static void reloadFromXML() {
+        CompendiumCategory.removeEntries(loadedEntries);
+        loadedEntries.clear();
+        loadFromXML();
+    }
+
     public static void loadFromXML() {
+        Set<CompendiumEntry> existing = Collections.newSetFromMap(new IdentityHashMap<>());
+        existing.addAll(CompendiumCategory.getAllEntries());
         try {
-            ResourceLocation xmlLocation = new ResourceLocation("arsmagica2", "docs/arcanecompendium_en_us.xml");
-            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(xmlLocation);
-            InputStream stream = resource.getInputStream();
+            InputStream stream = openXML();
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -117,6 +165,9 @@ public class CompendiumXMLLoader {
             LogHelper.info("Successfully loaded compendium from XML");
         } catch (Exception e) {
             LogHelper.log(Level.ERROR, e, "Failed to load compendium XML");
+        }
+        for (CompendiumEntry entry : CompendiumCategory.getAllEntries()) {
+            if (!existing.contains(entry)) loadedEntries.add(entry);
         }
     }
 

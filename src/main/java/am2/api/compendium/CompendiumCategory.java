@@ -11,6 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public final class CompendiumCategory {
 
@@ -117,6 +118,15 @@ public final class CompendiumCategory {
 
     public void addEntry(CompendiumEntry entry) {
         entries.add(entry.setCategory(this));
+    }
+
+    /**
+     * Removes the given entries from whichever categories hold them.
+     */
+    public static void removeEntries(Collection<CompendiumEntry> toRemove) {
+        for (CompendiumCategory category : CATEGORIES) {
+            category.entries.removeAll(toRemove);
+        }
     }
 
     public String getCategoryName() {

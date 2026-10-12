@@ -170,16 +170,18 @@ public class CompendiumEntry {
 
         // Convert markers for processing
         string = string.replace("!d", " !d ").replace("!l", " !l ");
-        String[] words = string.split(" ");
+        // Words are split at spaces and, for CJK text, between characters
+        List<CompendiumText.Token> words = CompendiumText.tokenize(string);
         StringBuilder sb = new StringBuilder();
         String curLine = "";
+        boolean spaceBefore = true;
 
-        for (String s : words) {
-            s = s.trim();
+        for (CompendiumText.Token token : words) {
+            String s = token.text.trim();
             if (s.isEmpty()) continue;
 
             // Calculate word width (removing color codes #X for width calculation)
-            int wordWidth = fontRenderer.getStringWidth(s.replaceAll("#.", "") + " ");
+            int wordWidth = fontRenderer.getStringWidth(s.replaceAll("#.", "") + (token.spaceAfter ? " " : ""));
 
             // Handle paragraph break (double newline)
             if (s.equals("!d")) {
@@ -242,7 +244,8 @@ public class CompendiumEntry {
                 }
             }
 
-            curLine = curLine + " " + s;
+            curLine = curLine + (spaceBefore ? " " : "") + s;
+            spaceBefore = token.spaceAfter;
             len += wordWidth;
         }
 

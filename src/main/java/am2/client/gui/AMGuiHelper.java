@@ -2,6 +2,7 @@ package am2.client.gui;
 
 import am2.api.ArsMagicaAPI;
 import am2.api.compendium.CompendiumEntry;
+import am2.api.compendium.CompendiumText;
 import am2.client.particles.AMParticleIcons;
 import am2.client.texture.SpellIconManager;
 import am2.common.LogHelper;
@@ -407,12 +408,14 @@ public class AMGuiHelper {
         currentLinkText = null;
         int cur_color = start_color;
         text = text.replaceAll("!d", "\n\n").replace("!l", "\n");
-        String[] words = text.split(" ");
+        // Words are split at spaces and, for CJK text, between characters
+        List<CompendiumText.Token> words = CompendiumText.tokenize(text);
         int lineLength = 0;
         int posX = x_start;
         int posY = y_start;
 
-        for (String word : words) {
+        for (CompendiumText.Token token : words) {
+            String word = token.text;
             if (word.equals("")) continue;
             int linesBefore = 0;
             int linesAfter = 0;
@@ -443,7 +446,7 @@ public class AMGuiHelper {
                 continue;
             }
 
-            int wordLength = fontRenderer.getStringWidth(word.replaceAll("#.", "") + " ");
+            int wordLength = fontRenderer.getStringWidth(word.replaceAll("#.", "") + (token.spaceAfter ? " " : ""));
             if (lineLength + wordLength > max_width) {
                 posY += fontRenderer.FONT_HEIGHT;
                 posX = x_start;
