@@ -5,6 +5,7 @@ import am2.api.ArsMagicaAPI;
 import am2.api.items.IMultiTexturedItem;
 import am2.api.skill.Skill;
 import am2.client.blocks.render.IllusionBakedModel;
+import am2.client.blocks.render.WitchwoodLeavesBakedModel;
 import am2.client.compat.electroblob.EBWizSpellBindingRenderer;
 import am2.client.items.rendering.SpellBakedModel;
 import am2.client.items.rendering.SpellBookBakedModel;
@@ -27,7 +28,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.DefaultStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -41,6 +44,7 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -211,6 +215,24 @@ public final class AMModels {
             if (fallback != null) {
                 event.getModelRegistry().putObject(mrl, new IllusionBakedModel(fallback));
             }
+        }
+
+        // Witchwood leaves: use the opaque texture when the player is on Fast graphics
+        try {
+            IBakedModel fastModel = ModelLoaderRegistry.getModel(new ResourceLocation(ArsMagica.MODID, "block/witchwood_leaves_fast"))
+                    .bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK,
+                            location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
+            StateMapperBase stateMapper = new DefaultStateMapper();
+            for (IBlockState state : AMBlocks.witchwood_leaves.getBlockState().getValidStates()) {
+                ModelResourceLocation mrl = new ModelResourceLocation(
+                        AMBlocks.witchwood_leaves.getRegistryName(), stateMapper.getPropertyString(state.getProperties()));
+                IBakedModel fancyModel = event.getModelRegistry().getObject(mrl);
+                if (fancyModel != null) {
+                    event.getModelRegistry().putObject(mrl, new WitchwoodLeavesBakedModel(fancyModel, fastModel));
+                }
+            }
+        } catch (Exception e) {
+            ArsMagica.LOGGER.error("Could not set up fast-graphics model for witchwood leaves", e);
         }
 
         for (ModelResourceLocation modelResourceLocation : modelResourceLocationList) {

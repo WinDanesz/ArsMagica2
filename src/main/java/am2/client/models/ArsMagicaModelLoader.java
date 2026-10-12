@@ -100,6 +100,7 @@ public class ArsMagicaModelLoader implements ICustomModelLoader {
         registerParticle(e.getMap(), "water_drop");
         registerParticle(e.getMap(), "wind");
         registerParticle(e.getMap(), "witchwood_leaf");
+        e.getMap().registerSprite(new ResourceLocation("arsmagica2:blocks/witchwood_leaves_opaque"));
         e.getMap().registerSprite(new ResourceLocation("arsmagica2:blocks/custom/black_aurem"));
 //        e.getMap().registerSprite(new ResourceLocation("arsmagica2:blocks/custom/obelisk"));
 //        e.getMap().registerSprite(new ResourceLocation("arsmagica2:blocks/custom/obelisk_active"));

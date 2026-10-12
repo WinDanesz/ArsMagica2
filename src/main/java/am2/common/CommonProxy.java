@@ -338,6 +338,11 @@ public class CommonProxy implements IGuiHandler {
         ImbuementRegistry.registerAll();
     }
 
+    /** Whether leaves should use fancy (transparent) rendering. The server has no graphics setting, so it keeps the non-opaque behaviour. */
+    public boolean isFancyGraphics() {
+        return true;
+    }
+
     public void flashManaBar() {
     }
 

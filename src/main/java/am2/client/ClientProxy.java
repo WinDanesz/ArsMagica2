@@ -298,6 +298,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
+    public boolean isFancyGraphics() {
+        return Minecraft.getMinecraft().gameSettings.fancyGraphics;
+    }
+
+    @Override
     public void setTrackedLocation(AMVector3 location) {
         clientTickHandler.setTrackLocation(location.toVec3D());
     }

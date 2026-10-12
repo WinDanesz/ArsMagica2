@@ -13,6 +13,8 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -30,7 +32,29 @@ public class BlockWitchwoodLeaves extends BlockLeaves {
         this.setTickRandomly(true);
         setCreativeTab(AMTabs.AMBLOCKS);
         this.setDefaultState(blockState.getBaseState().withProperty(CHECK_DECAY, true).withProperty(DECAYABLE, true));
-        leavesFancy = true;
+    }
+
+    /**
+     * Vanilla only feeds the graphics setting to its own leaves (RenderGlobal.loadRenderers), so we ask the proxy
+     * ourselves. Before the proxy exists (block construction) we report fast, same as vanilla's default.
+     */
+    private static boolean isFancy() {
+        return ArsMagica.proxy != null && ArsMagica.proxy.isFancyGraphics();
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return !isFancy();
+    }
+
+    @Override
+    public BlockRenderLayer getRenderLayer() {
+        return isFancy() ? BlockRenderLayer.CUTOUT_MIPPED : BlockRenderLayer.SOLID;
+    }
+
+    @Override
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        return !isFancy() && blockAccess.getBlockState(pos.offset(side)).getBlock() == this ? false : super.shouldSideBeRendered(blockState, blockAccess, pos, side);
     }
 
     @Override
